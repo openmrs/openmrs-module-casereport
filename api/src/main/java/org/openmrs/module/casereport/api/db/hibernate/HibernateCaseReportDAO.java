@@ -1,42 +1,94 @@
 /**
- * The contents of this file are subject to the OpenMRS Public License
- * Version 1.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://license.openmrs.org
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations
- * under the License.
- *
- * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
  */
 package org.openmrs.module.casereport.api.db.hibernate;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 
 /**
- * It is a default implementation of  {@link CaseReportDAO}.
+ * Default implementation of {@link CaseReportDAO}.
  */
 public class HibernateCaseReportDAO implements CaseReportDAO {
+	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	private SessionFactory sessionFactory;
 	
 	/**
-     * @param sessionFactory the sessionFactory to set
-     */
-    public void setSessionFactory(SessionFactory sessionFactory) {
-	    this.sessionFactory = sessionFactory;
-    }
-    
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+	
 	/**
-     * @return the sessionFactory
-     */
-    public SessionFactory getSessionFactory() {
-	    return sessionFactory;
-    }
+	 * @return the sessionFactory
+	 */
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	
+	private Session getCurrentSession() {
+		return getSessionFactory().getCurrentSession();
+	}
+	
+	/**
+	 * @see CaseReportDAO#getCaseReport(Integer)
+	 */
+	@Override
+	public CaseReport getCaseReport(Integer caseReportId) {
+		return (CaseReport) getCurrentSession().get(CaseReport.class, caseReportId);
+	}
+	
+	/**
+	 * @see CaseReportDAO#getCaseReportByUuid(String)
+	 */
+	@Override
+	public CaseReport getCaseReportByUuid(String uuid) {
+		return (CaseReport) getCurrentSession().createCriteria(CaseReport.class).add(Restrictions.eq("uuid", uuid))
+		        .uniqueResult();
+	}
+	
+	/**
+	 * @see CaseReportDAO#getCaseReports(boolean, boolean, boolean)
+	 */
+	@Override
+	public List<CaseReport> getCaseReports(boolean includeVoided, boolean includeSubmitted, boolean includeDismissed) {
+		Criteria criteria = getCurrentSession().createCriteria(CaseReport.class);
+		if (!includeVoided) {
+			criteria.add(Restrictions.eq("voided", false));
+		}
+		if (!includeSubmitted) {
+			criteria.add(Restrictions.ne("status", CaseReport.Status.SUBMITTED));
+		}
+		if (!includeDismissed) {
+			criteria.add(Restrictions.ne("status", CaseReport.Status.DISMISSED));
+		}
+		
+		return criteria.list();
+	}
+	
+	/**
+	 * @see CaseReportDAO#saveCaseReport(CaseReport)
+	 */
+	@Override
+	public CaseReport saveCaseReport(CaseReport caseReport) {
+		getCurrentSession().saveOrUpdate(caseReport);
+		return caseReport;
+	}
 }

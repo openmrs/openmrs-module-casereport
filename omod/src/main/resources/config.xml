@@ -46,5 +46,15 @@
 	</messages>
 	<!-- /Internationalization -->
 
+    <privilege>
+        <name>Get Case Reports</name>
+        <description>Able to get case reports</description>
+    </privilege>
+
+    <privilege>
+        <name>Manage Case Reports</name>
+        <description>Able to manage case reports</description>
+    </privilege>
+
 </module>
 

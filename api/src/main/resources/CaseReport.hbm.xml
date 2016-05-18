@@ -16,7 +16,7 @@
 
         <property name="trigger" type="string" length="255" not-null="true" />
 
-        <property name="patient" column="patient_id" type="int" not-null="true" />
+        <many-to-one name="patient" column="patient_id" class="org.openmrs.Patient" not-null="true" />
 
         <property name="status" length="50" not-null="true">
             <type name="org.hibernate.type.EnumType">
