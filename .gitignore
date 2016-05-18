@@ -1,0 +1,31 @@
+/.classpath
+/.settings
+/.project
+.idea/
+/install_deploy_jetty.bat
+/run_jetty.bat
+/target
+/activemq-data
+/api/.classpath
+/api/.settings
+/api/.project
+/api/target
+/api/activemq-data
+/omod/.classpath
+/omod/.settings
+/omod/.project
+/omod/target
+
+### Sass ###
+omod/src/main/compass/sass-external/
+*.css
+#############
+
+# Rubygems build directories #
+omod/.rubygems
+omod/.rubygems-provided
+
+/.idea
+*.iml
+*.sass-cache
+*.DS_Store
