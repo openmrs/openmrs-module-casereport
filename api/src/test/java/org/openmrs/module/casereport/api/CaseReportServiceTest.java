@@ -13,15 +13,16 @@
  */
 package org.openmrs.module.casereport.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
- * Tests {@link ${CaseReportService}}.
+ * Contains tests for CaseReportService
  */
-public class  CaseReportServiceTest extends BaseModuleContextSensitiveTest {
+public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldSetupContext() {

@@ -14,26 +14,83 @@
 package org.openmrs.module.casereport;
 
 import java.io.Serializable;
-import org.openmrs.BaseOpenmrsObject;
-import org.openmrs.BaseOpenmrsMetadata;
+
+import org.openmrs.BaseOpenmrsData;
+import org.openmrs.Patient;
 
 /**
- * It is a model class. It should extend either {@link BaseOpenmrsObject} or {@link BaseOpenmrsMetadata}.
+ * An instance of this class encapsulates data for a single case report for a patient
  */
-public class CaseReport extends BaseOpenmrsObject implements Serializable {
-
+public class CaseReport extends BaseOpenmrsData implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
-	private Integer id;
+	private Integer caseReportId;
+	
+	private String trigger;
+	
+	private Patient patient;
+	
+	private Status status = Status.NEW;
+	
+	private String report;
+	
+	public CaseReport(String trigger, Patient patient) {
+		this.trigger = trigger;
+		this.patient = patient;
+	}
+	
+	public enum Status {
+		NEW, SUBMITTED, DISMISSED;
+	}
 	
 	@Override
 	public Integer getId() {
-		return id;
+		return getCaseReportId();
 	}
 	
 	@Override
 	public void setId(Integer id) {
-		this.id = id;
+		setCaseReportId(id);
 	}
 	
+	public Integer getCaseReportId() {
+		return caseReportId;
+	}
+	
+	public void setCaseReportId(Integer caseReportId) {
+		this.caseReportId = caseReportId;
+	}
+	
+	public String getTrigger() {
+		return trigger;
+	}
+	
+	public void setTrigger(String trigger) {
+		this.trigger = trigger;
+	}
+	
+	public Patient getPatient() {
+		return patient;
+	}
+	
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
+	
+	public Status getStatus() {
+		return status;
+	}
+	
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	public String getReport() {
+		return report;
+	}
+	
+	public void setReport(String report) {
+		this.report = report;
+	}
 }

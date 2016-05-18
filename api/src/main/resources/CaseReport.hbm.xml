@@ -3,18 +3,48 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 
-<hibernate-mapping package="org.openmrs.module.casereport">
+<hibernate-mapping>
 
-<!--
-	<class name="CaseReport"
-		table="${project.parent.artifactId}_CaseReport">
-		<id name="id" type="int" column="id" unsaved-value="0">
-			<generator class="native" />
-		</id>
-		<discriminator column="id" insert="false" />
-		<property name="uuid" type="java.lang.String" column="uuid"
-			length="38" unique="true" />
-	</class>
--->
+    <class name="${project.parent.groupId}.${project.parent.artifactId}.CaseReport" table="${project.parent.artifactId}_case_report">
+
+        <id name="caseReportId" type="int" column="case_report_id">
+            <generator class="native">
+                <param name="sequence">case_report_case_report_id_seq</param>
+            </generator>
+        </id>
+		<discriminator column="case_report_id" insert="false" />
+
+        <property name="trigger" type="string" length="255" not-null="true" />
+
+        <property name="patient" column="patient_id" type="int" not-null="true" />
+
+        <property name="status" length="50" not-null="true">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">${project.parent.groupId}.${project.parent.artifactId}.CaseReport$Status</param>
+                <param name="type">12</param>
+            </type>
+        </property>
+
+        <property name="report" type="text" length="65535" />
+
+        <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
+
+        <property name="dateCreated" column="date_created" type="java.util.Date" length="19" not-null="true" />
+
+        <many-to-one name="changedBy" column="changed_by" class="org.openmrs.User" />
+
+        <property name="dateChanged" column="date_changed" type="java.util.Date" length="19" />
+
+        <property name="voided" type="boolean" length="1" not-null="true" />
+
+        <property name="dateVoided" column="date_voided" type="java.util.Date" length="19" />
+
+        <many-to-one name="voidedBy" column="voided_by" class="org.openmrs.User" />
+
+        <property name="voidReason" column="void_reason" type="string" length="255" />
+
+		<property name="uuid" type="string" length="38" unique="true" not-null="true" />
+
+    </class>
 
 </hibernate-mapping>
