@@ -17,19 +17,19 @@ import org.springframework.stereotype.Component;
 @Component("demoSqlCohortQueryLoader")
 public class DemoSqlCohortQueryLoader extends ClasspathScanningSqlCohortQueryLoader {
 	
-	public static final String DEFAULT_LOCATION = "test_cohortqueries";
+	public static final String DEFAULT_PATTERN = "valid_cohortqueries/*.json";
 	
-	private String locationName = DEFAULT_LOCATION;
+	private String pattern = DEFAULT_PATTERN;
 	
 	/**
-	 * @see ClasspathScanningSqlCohortQueryLoader#getLocation()
+	 * @see ClasspathScanningSqlCohortQueryLoader#getPathPattern()
 	 */
 	@Override
-	public String getLocation() {
-		return locationName;
+	public String getPathPattern() {
+		return pattern;
 	}
 	
-	public void setLocation(String location) {
-		this.locationName = location;
+	public void setPathPattern(String pattern) {
+		this.pattern = pattern;
 	}
 }

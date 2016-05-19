@@ -16,10 +16,10 @@ package org.openmrs.module.casereport;
 public class DefaultSqlCohortQueryLoader extends ClasspathScanningSqlCohortQueryLoader {
 	
 	/**
-	 * @see ClasspathScanningSqlCohortQueryLoader#getLocation()
+	 * @see ClasspathScanningSqlCohortQueryLoader#getPathPattern()
 	 */
 	@Override
-	public String getLocation() {
-		return "cohortqueries";
+	public String getPathPattern() {
+		return "cohortqueries/*.json";
 	}
 }

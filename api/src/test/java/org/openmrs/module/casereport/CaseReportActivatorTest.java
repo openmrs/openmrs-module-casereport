@@ -17,40 +17,31 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.api.APIException;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
-import org.openmrs.module.reporting.definition.service.DefinitionService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
+	
+	private static final String INVALID_FILE_DIR_NAME = "invalid_cohortqueries";
 	
 	@Autowired
 	private DemoSqlCohortQueryLoader loader;
 	
 	private CaseReportActivator activator = new CaseReportActivator();
 	
-	private DefinitionService<SqlCohortDefinition> defService = null;
-	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
-	
-	@Before
-	public void setup() {
-		if (defService == null) {
-			defService = DefinitionContext.getDefinitionService(SqlCohortDefinition.class);
-		}
-	}
 	
 	@After
 	public void cleanup() {
 		//reset
-		loader.setLocation(DemoSqlCohortQueryLoader.DEFAULT_LOCATION);
+		loader.setPathPattern(DemoSqlCohortQueryLoader.DEFAULT_PATTERN);
 	}
 	
 	/**
@@ -59,7 +50,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void contextRefreshed_shouldFailForAQueryWithNoName() throws Exception {
-		loader.setLocation("missing_name_query");
+		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/missing_name_cohort_query.json");
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("Failed to load cohort query because of missing name field"));
 		
@@ -72,7 +63,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void contextRefreshed_shouldFailForAQueryWithNoSql() throws Exception {
-		loader.setLocation("missing_sql_query");
+		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/missing_sql_cohort_query.json");
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("Failed to load cohort query because of missing sql field"));
 		
@@ -94,7 +85,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		definition.setName(name);
 		definition.setQuery(initialQuery);
 		assertNull(definition.getId());
-		definition = defService.saveDefinition(definition);
+		definition = DefinitionContext.saveDefinition(definition);
 		assertNotNull(definition.getId());
 		matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class).getDefinitions(name, true);
 		assertEquals(1, matches.size());
@@ -122,7 +113,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		definition.setQuery(initialQuery);
 		definition.setRetired(true);
 		assertNull(definition.getId());
-		definition = defService.saveDefinition(definition);
+		definition = DefinitionContext.saveDefinition(definition);
 		assertNotNull(definition.getId());
 		matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class).getDefinitions(name, true);
 		assertEquals(1, matches.size());

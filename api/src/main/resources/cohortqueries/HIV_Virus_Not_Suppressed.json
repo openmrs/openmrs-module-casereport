@@ -1,4 +1,5 @@
 {
   "name": "HIV Virus Not Suppressed",
-  "sql": "Select * from Patients where dead = 0"
+  "sql": "TODO",
+  "description": "HIV patients with their viral load not suppressed below the required threshold"
 }

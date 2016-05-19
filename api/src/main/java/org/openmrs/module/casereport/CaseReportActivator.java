@@ -20,6 +20,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 
@@ -72,12 +73,11 @@ public class CaseReportActivator extends BaseModuleActivator {
 				throw new APIException("Failed to load cohort query because of missing sql field");
 			}
 			
-			SqlCohortDefinition definition;
 			List<SqlCohortDefinition> duplicates = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
 			        .getDefinitions(cohortQuery.getName(), true);
 			
 			if (duplicates.size() == 0 || (duplicates.size() == 1 && duplicates.get(0).isRetired())) {
-				definition = new SqlCohortDefinition(cohortQuery.getSql());
+				CohortDefinition definition = new SqlCohortDefinition(cohortQuery.getSql());
 				definition.setName(cohortQuery.getName());
 				definition.setDescription(cohortQuery.getSql());
 				DefinitionContext.saveDefinition(definition);

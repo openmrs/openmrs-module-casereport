@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.openmrs.api.APIException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -28,19 +30,29 @@ public abstract class ClasspathScanningSqlCohortQueryLoader implements SqlCohort
 	private ObjectMapper mapper = new ObjectMapper();
 	
 	/**
-	 * Implementation of this method should return the name of the folder on the classpath that
-	 * contains .json files with sql cohort queries
+	 * Implementation of this method should the portion of the path pattern to be used when scanning
+	 * for .json files that contains sql cohort queries. Note that the pattern should not have a
+	 * leading forward slash and should not include 'classpath*:' prefix. An Example pattern is
+	 * 'cohortqueries/*.json' which would become 'classpath*:/cohortqueries/*.json' as the path
+	 * pattern to be used by the scanner
 	 * 
 	 * @return
 	 */
-	public abstract String getLocation();
+	public abstract String getPathPattern();
 	
 	/**
 	 * @see SqlCohortQueryLoader#load()
 	 */
 	@Override
 	public List<SqlCohortQuery> load() throws IOException {
-		Resource[] resources = resourceResolver.getResources("classpath*:/" + getLocation() + "/*.json");
+		String pattern = getPathPattern();
+		if (StringUtils.isBlank(pattern)) {
+			throw new APIException("path pattern is required");
+		} else if (!pattern.endsWith(".json")) {
+			throw new APIException("path pattern should end with .json");
+		}
+		
+		Resource[] resources = resourceResolver.getResources("classpath*:/" + pattern);
 		List<SqlCohortQuery> sqlCohortQueries = new ArrayList<SqlCohortQuery>();
 		for (Resource resource : resources) {
 			sqlCohortQueries.add(mapper.readValue(resource.getInputStream(), SqlCohortQuery.class));
