@@ -77,7 +77,7 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport saveCaseReport(CaseReport caseReport);
 	
 	/**
-	 * Submits the specified case report and sets its status to submitted in the database
+	 * Marks the specified case report as submitted in the database
 	 * 
 	 * @param caseReport the case report to submit
 	 * @return the submitted case report
@@ -87,7 +87,7 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport submitCaseReport(CaseReport caseReport);
 	
 	/**
-	 * Dismisses the specified case report and sets its status to dismissed in the database
+	 * Marks the specified case report as dismissed in the database
 	 *
 	 * @param caseReport the case report to dismiss
 	 * @return the dismissed case report
@@ -97,7 +97,7 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport dismissCaseReport(CaseReport caseReport);
 	
 	/**
-	 * Marks the specified as voided
+	 * Marks the specified case report as voided
 	 * 
 	 * @param caseReport the case report to void
 	 * @param voidReason for voiding
@@ -108,7 +108,7 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport voidCaseReport(CaseReport caseReport, String voidReason);
 	
 	/**
-	 * Marks the specified as not voided
+	 * Marks the specified case report as not voided
 	 *
 	 * @param caseReport the case report to unvoid
 	 * @return the unvoided case report

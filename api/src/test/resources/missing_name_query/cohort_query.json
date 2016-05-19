@@ -1,0 +1,4 @@
+{
+  "name": "",
+  "sql": "Select * from Patients where dead = 0"
+}

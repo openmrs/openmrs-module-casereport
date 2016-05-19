@@ -9,10 +9,19 @@
  */
 package org.openmrs.module.casereport;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.definition.DefinitionContext;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -30,8 +39,51 @@ public class CaseReportActivator extends BaseModuleActivator {
 	
 	/**
 	 * @see ModuleActivator#contextRefreshed()
+	 * @should fail for a query with no name
+	 * @should fail for a query with no sql
+	 * @should ignore a cohort query with a duplicate name
+	 * @should save a cohort queries with a name that matches a retired duplicate
+	 * @should load queries and register them with the reporting module
 	 */
 	public void contextRefreshed() {
+		
+		log.info("Loading queries...");
+		
+		List<SqlCohortQueryLoader> loaders = new ArrayList<SqlCohortQueryLoader>();
+		loaders.addAll(Context.getRegisteredComponents(SqlCohortQueryLoader.class));
+		if (loaders.isEmpty()) {
+			loaders.add(new DefaultSqlCohortQueryLoader());
+		}
+		
+		List<SqlCohortQuery> cohortQueries = new ArrayList<SqlCohortQuery>();
+		for (SqlCohortQueryLoader loader : loaders) {
+			try {
+				cohortQueries.addAll(loader.load());
+			}
+			catch (IOException e) {
+				throw new APIException("Failed to load some cohort queries by SqlQueryLoader: " + loader, e);
+			}
+		}
+		
+		for (SqlCohortQuery cohortQuery : cohortQueries) {
+			if (StringUtils.isBlank(cohortQuery.getName())) {
+				throw new APIException("Failed to load cohort query because of missing name field");
+			} else if (StringUtils.isBlank(cohortQuery.getSql())) {
+				throw new APIException("Failed to load cohort query because of missing sql field");
+			}
+			
+			SqlCohortDefinition definition;
+			List<SqlCohortDefinition> duplicates = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
+			        .getDefinitions(cohortQuery.getName(), true);
+			
+			if (duplicates.size() == 0 || (duplicates.size() == 1 && duplicates.get(0).isRetired())) {
+				definition = new SqlCohortDefinition(cohortQuery.getSql());
+				definition.setName(cohortQuery.getName());
+				definition.setDescription(cohortQuery.getSql());
+				DefinitionContext.saveDefinition(definition);
+			}
+		}
+		
 		log.info("Case Report Module refreshed");
 	}
 	
