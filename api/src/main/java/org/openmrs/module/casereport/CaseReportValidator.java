@@ -44,7 +44,6 @@ public class CaseReportValidator implements Validator {
 	 */
 	@Override
 	public void validate(Object target, Errors errors) {
-		//System.out.println("Validating:"+target);
 		if (target == null || !(target instanceof CaseReport)) {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type" + CaseReport.class);
 		}
@@ -58,13 +57,14 @@ public class CaseReportValidator implements Validator {
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		if (service.getSqlCohortDefinition(caseReport.getTriggerName()) == null) {
-			errors.rejectValue("triggerName", "casereport.error.sqlCohortQuery.notFound");
+			errors.rejectValue("triggerName", "casereport.error.sqlCohortQuery.notFound",
+			    new Object[] { caseReport.getTriggerName() }, null);
 		}
 		
 		CaseReport duplicate = service
 		        .getCaseReportByPatientAndTrigger(caseReport.getPatient(), caseReport.getTriggerName());
 		if (duplicate != null && !duplicate.equals(caseReport)) {
-			errors.reject("casereports.error.duplicate");
+			errors.reject("casereports.error.duplicate", new Object[] { caseReport.getTriggerName() }, null);
 		}
 	}
 }

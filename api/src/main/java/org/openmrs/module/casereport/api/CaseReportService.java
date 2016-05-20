@@ -136,8 +136,8 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException;
 	
 	/**
-	 * Runs the SQL cohort query with the specified name and creates case reports for the matched
-	 * patients of none exists
+	 * Runs the SQL cohort query with the specified name and creates a case report for each matched
+	 * patient of none exists
 	 *
 	 * @param triggerName the name of the sql cohort query to be run
 	 * @throws APIException
