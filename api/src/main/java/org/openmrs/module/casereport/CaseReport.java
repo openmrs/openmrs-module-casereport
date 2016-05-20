@@ -11,6 +11,7 @@ package org.openmrs.module.casereport;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Patient;
 
@@ -34,7 +35,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	public CaseReport() {
 	}
 	
-	public CaseReport(String triggerName, Patient patient) {
+	public CaseReport(Patient patient, String triggerName) {
 		this.triggerName = triggerName;
 		this.patient = patient;
 	}
@@ -99,5 +100,27 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	public boolean isDismissed() {
 		return getStatus() == Status.DISMISSED;
+	}
+	
+	/**
+	 * @see Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String str = "";
+		if (patient != null) {
+			str += patient.toString();
+		}
+		if (StringUtils.isNotBlank(getTriggerName())) {
+			str += " Trigger(s):" + getTriggerName();
+		}
+		if (StringUtils.isBlank(str) && getId() != null) {
+			str += "CaseReport #" + getId();
+		}
+		if (StringUtils.isBlank(str)) {
+			str = super.toString();
+		}
+		
+		return str;
 	}
 }

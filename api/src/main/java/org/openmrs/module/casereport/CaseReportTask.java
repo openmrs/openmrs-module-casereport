@@ -9,20 +9,13 @@
  */
 package org.openmrs.module.casereport;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Cohort;
-import org.openmrs.Patient;
 import org.openmrs.api.APIException;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.definition.DefinitionContext;
-import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
 /**
@@ -47,34 +40,12 @@ public class CaseReportTask extends AbstractTask {
 			startExecuting();
 			
 			try {
-				String trigger = getTaskDefinition().getProperty("Trigger Name");
+				String trigger = getTaskDefinition().getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY);
 				if (StringUtils.isBlank(trigger)) {
-					throw new APIException("The Triggery Name property is required for a Case Report Task");
+					throw new APIException("The Trigger Name property is required for a Case Report Task");
 				}
 				
-				List<SqlCohortDefinition> duplicates = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
-				        .getDefinitions(trigger, true);
-				if (duplicates.size() > 1) {
-					throw new APIException("Found multiple Sql Cohort Queries with name:" + trigger);
-				} else if (duplicates.size() == 0) {
-					throw new APIException("Cannot find a Sql Cohort Query with name:" + trigger);
-				} else if (duplicates.get(0).isRetired()) {
-					throw new APIException(trigger + " is a retired Sql Cohort Query");
-				}
-				
-				EvaluationContext evaluationContext = new EvaluationContext();
-				Cohort cohort = (Cohort) DefinitionContext.evaluate(duplicates.get(0), evaluationContext);
-				
-				PatientService ps = Context.getPatientService();
-				CaseReportService crs = Context.getService(CaseReportService.class);
-				for (Integer patientId : cohort.getMemberIds()) {
-					Patient patient = ps.getPatient(patientId);
-					if (patient == null) {
-						throw new APIException("No patient found with patientId:" + patientId);
-					}
-					
-					crs.saveCaseReport(new CaseReport(trigger, patient));
-				}
+				Context.getService(CaseReportService.class).runTrigger(trigger);
 				
 				if (log.isDebugEnabled()) {
 					log.debug("Case report task completed successfully ...");

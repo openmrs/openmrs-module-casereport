@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.api.db;
 
 import java.util.List;
 
+import org.openmrs.Patient;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
 
@@ -23,7 +24,19 @@ public interface CaseReportDAO {
 	
 	CaseReport getCaseReportByUuid(String uuid);
 	
-	List<CaseReport> getCaseReports(boolean includeVoided, boolean includeSubmitted, boolean includeDismissed);
+	/**
+	 * Gets case reports from the database that match the specified arguments.
+	 * 
+	 * @param patient the patient to match against
+	 * @param trigger the trigger to match against
+	 * @param includeVoided specifies whether voided reports should be included
+	 * @param includeSubmitted specifies whether submitted reports should be included
+	 * @param includeDismissed specifies whether dismissed reports should be included
+	 * @return the case reports in the database including voided ones if includeVoided is set to
+	 *         true otherwise they will be excluded
+	 */
+	List<CaseReport> getCaseReports(Patient patient, String trigger, boolean includeVoided, boolean includeSubmitted,
+	                                boolean includeDismissed);
 	
 	CaseReport saveCaseReport(CaseReport caseReport);
 }

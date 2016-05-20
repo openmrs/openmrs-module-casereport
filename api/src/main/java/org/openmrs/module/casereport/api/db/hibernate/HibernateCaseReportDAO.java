@@ -17,6 +17,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Patient;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 
@@ -65,11 +66,19 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 	}
 	
 	/**
-	 * @see CaseReportDAO#getCaseReports(boolean, boolean, boolean)
+	 * @see CaseReportDAO#getCaseReports(Patient, String,boolean, boolean, boolean)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(boolean includeVoided, boolean includeSubmitted, boolean includeDismissed) {
+	public List<CaseReport> getCaseReports(Patient patient, String trigger, boolean includeVoided, boolean includeSubmitted,
+	                                       boolean includeDismissed) {
+		
 		Criteria criteria = getCurrentSession().createCriteria(CaseReport.class);
+		if (patient != null) {
+			criteria.add(Restrictions.eq("patient", patient));
+		}
+		if (trigger != null) {
+			criteria.add(Restrictions.eq("triggerName", trigger));
+		}
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
 		}
