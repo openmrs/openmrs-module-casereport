@@ -23,7 +23,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	private Integer caseReportId;
 	
-	private String trigger;
+	private String triggerName;
 	
 	private Patient patient;
 	
@@ -34,8 +34,8 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	public CaseReport() {
 	}
 	
-	public CaseReport(String trigger, Patient patient) {
-		this.trigger = trigger;
+	public CaseReport(String triggerName, Patient patient) {
+		this.triggerName = triggerName;
 		this.patient = patient;
 	}
 	
@@ -61,12 +61,12 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		this.caseReportId = caseReportId;
 	}
 	
-	public String getTrigger() {
-		return trigger;
+	public String getTriggerName() {
+		return triggerName;
 	}
 	
-	public void setTrigger(String trigger) {
-		this.trigger = trigger;
+	public void setTriggerName(String triggerName) {
+		this.triggerName = triggerName;
 	}
 	
 	public Patient getPatient() {

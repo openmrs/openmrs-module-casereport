@@ -14,7 +14,7 @@
         </id>
 		<discriminator column="case_report_id" insert="false" />
 
-        <property name="trigger" type="string" length="255" not-null="true" />
+        <property name="triggerName" column="trigger_name" type="string" length="255" not-null="true" />
 
         <many-to-one name="patient" column="patient_id" class="org.openmrs.Patient" not-null="true" />
 

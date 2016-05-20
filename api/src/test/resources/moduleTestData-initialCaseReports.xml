@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-    <casereport_case_report case_report_id="1" trigger="HIV Virus Not Suppressed" patient_id="2" status="NEW" report="Some report" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="5f7d57f0-9077-11e1-aaa4-00248140a5ef" />
-    <casereport_case_report case_report_id="2" trigger="HIV Patient Died" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="6f7d57f0-9077-11e1-aaa4-00248140a5ef" />
-    <casereport_case_report case_report_id="3" trigger="HIV Virus Not Suppressed" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="1" voided_by="1" void_reason="Patient was already dead" date_voided="2016-04-02 00:01:00.0" changed_by="1" date_changed="2016-04-02 00:01:00.0" uuid="4f7d57f0-9077-11e1-aaa4-00248140a5ec" />
-    <casereport_case_report case_report_id="4" trigger="HIV Virus Not Suppressed" patient_id="6" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="7u7d57f0-9077-11e1-aaa4-00248140a5ec" />
-    <casereport_case_report case_report_id="5" trigger="HIV Virus Not Suppressed" patient_id="7" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="5e7d57f0-9077-11e1-aaa4-00248140a5ec" />
-    <casereport_case_report case_report_id="6" trigger="HIV Patient Died" patient_id="8" status="DISMISSED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="6y7d57f0-9077-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="1" trigger_name="HIV Virus Not Suppressed" patient_id="2" status="NEW" report="Some report" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="5f7d57f0-9077-11e1-aaa4-00248140a5ef" />
+    <casereport_case_report case_report_id="2" trigger_name="HIV Patient Died" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="6f7d57f0-9077-11e1-aaa4-00248140a5ef" />
+    <casereport_case_report case_report_id="3" trigger_name="HIV Virus Not Suppressed" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="1" voided_by="1" void_reason="Patient was already dead" date_voided="2016-04-02 00:01:00.0" changed_by="1" date_changed="2016-04-02 00:01:00.0" uuid="4f7d57f0-9077-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="4" trigger_name="HIV Virus Not Suppressed" patient_id="6" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="7u7d57f0-9077-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="5" trigger_name="HIV Virus Not Suppressed" patient_id="7" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="5e7d57f0-9077-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="6" trigger_name="HIV Patient Died" patient_id="8" status="DISMISSED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="6y7d57f0-9077-11e1-aaa4-00248140a5ec" />
 </dataset>

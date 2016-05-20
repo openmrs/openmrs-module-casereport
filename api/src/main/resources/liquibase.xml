@@ -9,7 +9,7 @@
         for a list of supported elements and attributes
     -->
     
-    <changeSet id="${project.parent.artifactId}-20160518" author="Wyclif">
+    <changeSet id="${project.parent.artifactId}-20160518-1301" author="Wyclif">
         <preConditions>
             <not>
                 <tableExists tableName="${project.parent.artifactId}_case_report"/>
@@ -20,7 +20,7 @@
             <column name="case_report_id" type="int" autoIncrement="true" >
                 <constraints primaryKey="true" nullable="false" unique="true" />
             </column>
-            <column name="trigger" type="varchar(255)">
+            <column name="trigger_name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="patient_id" type="int">

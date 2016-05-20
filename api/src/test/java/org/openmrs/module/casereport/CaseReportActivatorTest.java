@@ -23,6 +23,7 @@ import org.junit.rules.ExpectedException;
 import org.openmrs.api.APIException;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.module.reporting.definition.service.DefinitionService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -134,5 +135,15 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		
 		activator.contextRefreshed();
 		assertEquals(originalCount + 2, DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, false).size());
+		DefinitionService<SqlCohortDefinition> defService = DefinitionContext
+		        .getDefinitionService(SqlCohortDefinition.class);
+		SqlCohortDefinition query = defService.getDefinitions("HIV Patient Died", true).get(0);
+		assertEquals("Select patient_id from patient pa, person p where pa.patient_id=p.person_id and dead = 1",
+		    query.getQuery());
+		assertEquals("HIV patients that have died", query.getDescription());
+		
+		query = defService.getDefinitions("HIV Virus Not Suppressed", true).get(0);
+		assertEquals("Select patient_id from patient", query.getQuery());
+		assertNull(query.getDescription());
 	}
 }

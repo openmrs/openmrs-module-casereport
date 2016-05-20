@@ -79,7 +79,7 @@ public class CaseReportActivator extends BaseModuleActivator {
 			if (duplicates.size() == 0 || (duplicates.size() == 1 && duplicates.get(0).isRetired())) {
 				CohortDefinition definition = new SqlCohortDefinition(cohortQuery.getSql());
 				definition.setName(cohortQuery.getName());
-				definition.setDescription(cohortQuery.getSql());
+				definition.setDescription(cohortQuery.getDescription());
 				DefinitionContext.saveDefinition(definition);
 			}
 		}

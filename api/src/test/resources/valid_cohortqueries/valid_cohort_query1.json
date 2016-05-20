@@ -1,4 +1,4 @@
 {
 "name": "HIV Virus Not Suppressed",
-"sql": "Select * from Patients where dead = 0"
+"sql": "Select patient_id from patient"
 }
