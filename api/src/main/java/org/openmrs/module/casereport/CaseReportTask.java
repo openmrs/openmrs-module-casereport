@@ -26,7 +26,9 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
 /**
- * An instance of this task runs all
+ * An instance of this task runs a specified SQL cohort query and creates case reports for an
+ * patients that get returned from the query, the name of the sql cohort query must be specified as
+ * a task property with the name CaseReportTask.TRIGGER_NAME_TASK_PROPERTY
  */
 public class CaseReportTask extends AbstractTask {
 	

@@ -11,6 +11,8 @@ package org.openmrs.module.casereport.api;
 
 public class CaseReportConstants {
 	
+	public static final String TRIGGER_NAME_TASK_PROPERTY = "Trigger Name";
+	
 	public static final String PRIV_GET_CASE_REPORTS = "Get Case Reports";
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";

@@ -1,5 +1,5 @@
 {
   "name": "HIV Patient Died",
-  "sql": "TODO",
+  "sql": "select patient_id from patient where patient_id < 10",
   "description": "HIV patients that have died"
 }
