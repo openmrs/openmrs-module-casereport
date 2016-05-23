@@ -20,9 +20,6 @@
             <column name="case_report_id" type="int" autoIncrement="true" >
                 <constraints primaryKey="true" nullable="false" unique="true" />
             </column>
-            <column name="trigger_name" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
             <column name="patient_id" type="int">
                 <constraints nullable="false" />
             </column>
@@ -62,6 +59,50 @@
                                  constraintName="case_report_voided_by"
                                  referencedTableName="users"
                                  referencedColumnNames="user_id" />
+
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_case_report"
+                                 baseColumnNames="changed_by"
+                                 constraintName="case_report_changed_by"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id" />
+    </changeSet>
+
+    <changeSet id="${project.parent.artifactId}-20160520-1501" author="Wyclif">
+        <preConditions>
+            <not>
+                <tableExists tableName="${project.parent.artifactId}_case_report_trigger" />
+            </not>
+        </preConditions>
+        <comment>Adding ${project.parent.artifactId}_case_report_trigger table</comment>
+        <createTable tableName="${project.parent.artifactId_case_report}_case_report_trigger">
+            <column name="case_report_trigger_id"  type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true" />
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="case_report_id" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="creator" type="int" />
+            <column name="date_created" type="DATETIME"><constraints nullable="false" /></column>
+            <column name="uuid" type="varchar(38)">
+                <constraints nullable="false" unique="true" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId_case_report}_case_report_trigger"
+                                 baseColumnNames="case_report_id"
+                                 constraintName="parent_case_report"
+                                 referencedTableName="${project.parent.artifactId}_case_report"
+                                 referencedColumnNames="case_report_id" />
+
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId_case_report}_case_report_trigger"
+                                 baseColumnNames="creator"
+                                 constraintName="case_report_creator"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id" />
+
     </changeSet>
     
 </databaseChangeLog>

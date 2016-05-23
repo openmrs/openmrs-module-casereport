@@ -30,6 +30,7 @@
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 		CaseReport.hbm.xml
+        CaseReportTrigger.hbm.xml
 	</mappingFiles>
 
 	<!-- Internationalization -->

@@ -77,7 +77,8 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 			criteria.add(Restrictions.eq("patient", patient));
 		}
 		if (trigger != null) {
-			criteria.add(Restrictions.eq("triggerName", trigger));
+			criteria.createAlias("reportTriggers", "rt");
+			criteria.add(Restrictions.eq("rt.name", trigger));
 		}
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));

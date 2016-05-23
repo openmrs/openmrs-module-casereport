@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.api.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
@@ -90,6 +91,12 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public CaseReport getCaseReportByPatientAndTrigger(Patient patient, String triggerName) throws APIException {
+		if (patient == null) {
+			throw new APIException("patient is required");
+		} else if (StringUtils.isBlank(triggerName)) {
+			throw new APIException("triggerName cannot be null or blank");
+		}
+		
 		List<CaseReport> caseReports = dao.getCaseReports(patient, triggerName, false, false, false);
 		if (caseReports.size() == 0) {
 			return null;

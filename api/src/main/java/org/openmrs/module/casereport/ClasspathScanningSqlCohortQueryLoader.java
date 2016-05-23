@@ -20,7 +20,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
- * Base class for SqlCohortQueryLoader that scan the classpath for json files that contain cohort
+ * Base class for SqlCohortQueryLoaders that scan the classpath for json files that contain cohort
  * queries
  */
 public abstract class ClasspathScanningSqlCohortQueryLoader implements SqlCohortQueryLoader {
@@ -56,7 +56,6 @@ public abstract class ClasspathScanningSqlCohortQueryLoader implements SqlCohort
 		List<SqlCohortQuery> sqlCohortQueries = new ArrayList<SqlCohortQuery>();
 		for (Resource resource : resources) {
 			sqlCohortQueries.add(mapper.readValue(resource.getInputStream(), SqlCohortQuery.class));
-			
 		}
 		
 		return sqlCohortQueries;

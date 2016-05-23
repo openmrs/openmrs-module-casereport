@@ -9,9 +9,9 @@
  */
 package org.openmrs.module.casereport;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.openmrs.annotation.Handler;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.casereport.api.CaseReportService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -20,6 +20,9 @@ import org.springframework.validation.Validator;
 @Component
 @Handler(supports = CaseReport.class, order = 50)
 public class CaseReportValidator implements Validator {
+	
+	@Autowired
+	private CaseReportTriggerValidator triggerValidator;
 	
 	/**
 	 * @see Validator#validate(Object, Errors)
@@ -33,38 +36,35 @@ public class CaseReportValidator implements Validator {
 	 * @see Validator#validate(Object, Errors)
 	 * @should fail if the case report object is null
 	 * @should fail if the patient is null
-	 * @should fail if the trigger name is null
-	 * @should fail if the trigger name is an empty string
-	 * @should fail if the trigger name is a white space character
-	 * @should fail if a case report with the same trigger already exists for the patient
-	 * @should fail if multiple sql cohort queries match the trigger name
-	 * @should fail if no sql cohort query matches the trigger name
-	 * @should fail if the sql cohort query associated to the trigger is retired
+	 * @should fail if the report has no trigger added
 	 * @should pass for a valid case report
 	 */
 	@Override
 	public void validate(Object target, Errors errors) {
 		if (target == null || !(target instanceof CaseReport)) {
-			throw new IllegalArgumentException("The parameter obj should not be null and must be of type" + CaseReport.class);
+			throw new IllegalArgumentException("The parameter obj should not be null and must be of type" + getClass());
 		}
 		
 		CaseReport caseReport = (CaseReport) target;
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "patient", "casereports.error.patient.required");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "triggerName", "casereports.error.triggerName.required");
+		ValidationUtils.rejectIfEmpty(errors, "patient", "casereports.error.patient.required");
+		if (CollectionUtils.isEmpty(caseReport.getReportTriggers())) {
+			errors.rejectValue("reportTriggers", "casereports.error.atleast.one.trigger.required");
+		}
+		
 		if (errors.hasErrors()) {
 			return;
 		}
 		
-		CaseReportService service = Context.getService(CaseReportService.class);
-		if (service.getSqlCohortDefinition(caseReport.getTriggerName()) == null) {
-			errors.rejectValue("triggerName", "casereport.error.sqlCohortQuery.notFound",
-			    new Object[] { caseReport.getTriggerName() }, null);
-		}
-		
-		CaseReport duplicate = service
-		        .getCaseReportByPatientAndTrigger(caseReport.getPatient(), caseReport.getTriggerName());
-		if (duplicate != null && !duplicate.equals(caseReport)) {
-			errors.reject("casereports.error.duplicate", new Object[] { caseReport.getTriggerName() }, null);
+		int index = 0;
+		for (CaseReportTrigger trigger : caseReport.getReportTriggers()) {
+			try {
+				errors.pushNestedPath("reportTriggers[" + index + "]");
+				ValidationUtils.invokeValidator(triggerValidator, trigger, errors);
+			}
+			finally {
+				errors.popNestedPath();
+				index++;
+			}
 		}
 	}
 }

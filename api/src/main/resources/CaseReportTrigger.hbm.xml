@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+
+    <class name="${project.parent.groupId}.${project.parent.artifactId}.CaseReportTrigger" table="${project.parent.artifactId}_case_report_trigger">
+
+        <id name="caseReportTriggerId" type="int" column="case_report_trigger_id">
+            <generator class="native">
+                <param name="sequence">case_report_trigger_case_report_trigger_id_seq</param>
+            </generator>
+        </id>
+
+		<discriminator column="case_report_trigger_id" insert="false" />
+
+        <property name="name" type="string" length="255" not-null="true" />
+        
+        <many-to-one name="caseReport" column="case_report_id" class="org.openmrs.module.casereport.CaseReport" not-null="true" />
+
+        <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
+
+        <property name="dateCreated" column="date_created" type="java.util.Date" length="19" not-null="true" />
+
+		<property name="uuid" type="string" length="38" unique="true" not-null="true" />
+
+    </class>
+
+</hibernate-mapping>

@@ -12,9 +12,8 @@
                 <param name="sequence">case_report_case_report_id_seq</param>
             </generator>
         </id>
-		<discriminator column="case_report_id" insert="false" />
 
-        <property name="triggerName" column="trigger_name" type="string" length="255" not-null="true" />
+		<discriminator column="case_report_id" insert="false" />
 
         <many-to-one name="patient" column="patient_id" class="org.openmrs.Patient" not-null="true" />
 
@@ -24,6 +23,11 @@
                 <param name="type">12</param>
             </type>
         </property>
+
+        <set name="reportTriggers" lazy="true" cascade="all-delete-orphan,evict" inverse="true" access="field" >
+            <key column="case_report_id" not-null="true" />
+            <one-to-many class="org.openmrs.module.casereport.CaseReportTrigger" />
+        </set>
 
         <property name="report" type="text" length="65535" />
 

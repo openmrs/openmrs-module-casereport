@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
@@ -27,6 +28,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -63,6 +65,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		CaseReport report = service.getCaseReport(1);
 		assertNotNull(report);
 		assertEquals("5f7d57f0-9077-11e1-aaa4-00248140a5ef", report.getUuid());
+		assertEquals(2, report.getReportTriggers().size());
+		Iterator<CaseReportTrigger> it = report.getReportTriggers().iterator();
+		assertEquals("HIV Virus Not Suppressed", it.next().getName());
+		assertEquals("Another Trigger", it.next().getName());
 	}
 	
 	/**
@@ -160,7 +166,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		CaseReport caseReport = service.getCaseReportByPatientAndTrigger(patient, trigger);
 		assertNotNull(caseReport);
 		assertEquals(patient, caseReport.getPatient());
-		assertEquals(trigger, caseReport.getTriggerName());
+		assertEquals(trigger, caseReport.getReportTriggers().iterator().next().getName());
 	}
 	
 	/**

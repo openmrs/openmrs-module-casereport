@@ -5,6 +5,7 @@
 
 <hibernate-configuration>
     <session-factory>
-      <mapping resource="CaseReport.hbm.xml" />
+        <mapping resource="CaseReport.hbm.xml" />
+        <mapping resource="CaseReportTrigger.hbm.xml" />
     </session-factory>
 </hibernate-configuration>

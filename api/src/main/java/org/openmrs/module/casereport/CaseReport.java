@@ -10,13 +10,19 @@
 package org.openmrs.module.casereport;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Patient;
 
 /**
- * An instance of this class encapsulates data for a single case report for a patient
+ * An instance of this class encapsulates data for a single case report for a patient. A case report
+ * can have several child trigger instances associated to it
+ * 
+ * @see CaseReportTrigger
  */
 public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
@@ -24,24 +30,27 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	private Integer caseReportId;
 	
-	private String triggerName;
-	
 	private Patient patient;
 	
 	private Status status = Status.NEW;
+	
+	private Set<CaseReportTrigger> reportTriggers;
 	
 	private String report;
 	
 	public CaseReport() {
 	}
 	
-	public CaseReport(Patient patient, String triggerName) {
-		this.triggerName = triggerName;
+	public CaseReport(Patient patient, String... triggerNames) {
 		this.patient = patient;
+		for (String tName : triggerNames) {
+			addTrigger(new CaseReportTrigger(tName));
+		}
+		
 	}
 	
 	public enum Status {
-		NEW, SUBMITTED, DISMISSED;
+		NEW, DRAFT, SUBMITTED, DISMISSED;
 	}
 	
 	@Override
@@ -62,14 +71,6 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		this.caseReportId = caseReportId;
 	}
 	
-	public String getTriggerName() {
-		return triggerName;
-	}
-	
-	public void setTriggerName(String triggerName) {
-		this.triggerName = triggerName;
-	}
-	
 	public Patient getPatient() {
 		return patient;
 	}
@@ -84,6 +85,18 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+	
+	public Set<CaseReportTrigger> getReportTriggers() {
+		if (reportTriggers == null) {
+			reportTriggers = new LinkedHashSet<CaseReportTrigger>();
+		}
+		return reportTriggers;
+	}
+	
+	public void addTrigger(CaseReportTrigger trigger) {
+		trigger.setCaseReport(this);
+		getReportTriggers().add(trigger);
 	}
 	
 	public String getReport() {
@@ -111,8 +124,8 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		if (patient != null) {
 			str += patient.toString();
 		}
-		if (StringUtils.isNotBlank(getTriggerName())) {
-			str += " Trigger(s):" + getTriggerName();
+		if (CollectionUtils.isNotEmpty(getReportTriggers())) {
+			str += " Trigger(s):" + StringUtils.join(getReportTriggers(), ",");
 		}
 		if (StringUtils.isBlank(str) && getId() != null) {
 			str += "CaseReport #" + getId();
