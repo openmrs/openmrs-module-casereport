@@ -5,7 +5,8 @@
 
 <hibernate-mapping>
 
-    <class name="${project.parent.groupId}.${project.parent.artifactId}.CaseReportTrigger" table="${project.parent.artifactId}_case_report_trigger">
+    <class name="${project.parent.groupId}.${project.parent.artifactId}.CaseReportTrigger"
+           table="${project.parent.artifactId}_case_report_trigger">
 
         <id name="caseReportTriggerId" type="int" column="case_report_trigger_id">
             <generator class="native">
@@ -17,7 +18,8 @@
 
         <property name="name" type="string" length="255" not-null="true" />
         
-        <many-to-one name="caseReport" column="case_report_id" class="org.openmrs.module.casereport.CaseReport" not-null="true" />
+        <many-to-one name="caseReport" column="case_report_id" not-null="true"
+            class="${project.parent.groupId}.${project.parent.artifactId}.CaseReport" />
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
 

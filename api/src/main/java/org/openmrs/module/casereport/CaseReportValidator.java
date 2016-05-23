@@ -17,7 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-@Component
+@Component("caseReportValidator")
 @Handler(supports = CaseReport.class, order = 50)
 public class CaseReportValidator implements Validator {
 	

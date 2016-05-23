@@ -120,23 +120,23 @@ public class CaseReportTrigger extends BaseOpenmrsObject implements Auditable, S
 	
 	@Override
 	public User getChangedBy() {
-		//current not in use
+		//currently not in use
 		return null;
 	}
 	
 	@Override
 	public void setChangedBy(User user) {
-		//current not in use
+		//currently not in use
 	}
 	
 	@Override
 	public Date getDateChanged() {
-		//current not in use
+		//currently not in use
 		return null;
 	}
 	
 	@Override
 	public void setDateChanged(Date date) {
-		//current not in use
+		//currently not in use
 	}
 }
