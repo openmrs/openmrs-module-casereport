@@ -65,6 +65,5 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		SimpleObject result = deserialize(handle(newGetRequest(getURI())));
 		assertNotNull(result);
 		assertEquals(getAllCount(), Util.getResultsSize(result));
-		Util.log("Case report queue:\n", result);
 	}
 }
