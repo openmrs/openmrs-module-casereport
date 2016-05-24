@@ -47,7 +47,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	}
 	
 	public enum Status {
-		NEW, DRAFT, SUBMITTED, DISMISSED;
+		NEW, SUBMITTED, DISMISSED;
 	}
 	
 	@Override
@@ -122,7 +122,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 			str += patient.toString();
 		}
 		if (CollectionUtils.isNotEmpty(getReportTriggers())) {
-			str += " Trigger(s):" + StringUtils.join(getReportTriggers(), ",");
+			str += " Trigger(s): " + StringUtils.join(getReportTriggers(), ", ");
 		}
 		if (StringUtils.isBlank(str) && getId() != null) {
 			str += "CaseReport #" + getId();

@@ -104,6 +104,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport submitCaseReport(CaseReport caseReport) throws APIException {
+		//TODO Implement more submission logic here
 		caseReport.setStatus(CaseReport.Status.SUBMITTED);
 		return dao.saveCaseReport(caseReport);
 	}

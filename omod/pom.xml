@@ -28,6 +28,14 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>${project.parent.artifactId}-api</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
@@ -37,7 +45,7 @@
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
@@ -61,6 +69,21 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
+            <artifactId>webservices.rest-omod-common</artifactId>
+            <version>${webservices.restVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>webservices.rest-omod-common</artifactId>
+            <version>${webservices.restVersion}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
             <artifactId>uicommons-scss</artifactId>
             <type>zip</type>
             <version>${uicommonsVersion}</version>
@@ -81,6 +104,28 @@
             <version>3.2.5</version>
             <type>gem</type>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>reporting-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>calculation-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>serialization.xstream-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>uiframework-api</artifactId>
+            <version>${uiframeworkVersion}</version>
+            <scope>test</scope>
         </dependency>
 
 	</dependencies>
@@ -110,13 +155,6 @@
 			</resource>
 		</resources>
 
-		<testResources>
-			<testResource>
-				<directory>src/test/resources</directory>
-				<filtering>true</filtering>
-			</testResource>
-		</testResources>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -143,9 +181,6 @@
 											<goal>initialize-module</goal>
 										</goals>
 									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
@@ -156,9 +191,6 @@
 											<goal>unpack-dependencies</goal>
 										</goals>
 									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
 								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>

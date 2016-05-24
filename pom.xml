@@ -42,6 +42,8 @@
         <reportingVersion>0.9.8.1</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
         <serializationXstreamVersion>0.2.10</serializationXstreamVersion>
+        <webservices.restVersion>2.14</webservices.restVersion>
+        <javaCompilerVersion>1.6</javaCompilerVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -114,10 +116,22 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<target>1.6</target>
-						<source>1.6</source>
+                        <target>${javaCompilerVersion}</target>
+                        <source>${javaCompilerVersion}</source>
 					</configuration>
 				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 				<plugin>
 					<groupId>org.openmrs.maven.plugins</groupId>
 					<artifactId>maven-openmrs-plugin</artifactId>
