@@ -74,7 +74,7 @@
             </not>
         </preConditions>
         <comment>Adding ${project.parent.artifactId}_case_report_trigger table</comment>
-        <createTable tableName="${project.parent.artifactId_case_report}_case_report_trigger">
+        <createTable tableName="${project.parent.artifactId}_case_report_trigger">
             <column name="case_report_trigger_id"  type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" unique="true" />
             </column>
@@ -91,15 +91,15 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="${project.parent.artifactId_case_report}_case_report_trigger"
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_case_report_trigger"
                                  baseColumnNames="case_report_id"
                                  constraintName="parent_case_report"
                                  referencedTableName="${project.parent.artifactId}_case_report"
                                  referencedColumnNames="case_report_id" />
 
-        <addForeignKeyConstraint baseTableName="${project.parent.artifactId_case_report}_case_report_trigger"
+        <addForeignKeyConstraint baseTableName="${project.parent.artifactId}_case_report_trigger"
                                  baseColumnNames="creator"
-                                 constraintName="case_report_creator"
+                                 constraintName="case_report_trigger_creator"
                                  referencedTableName="users"
                                  referencedColumnNames="user_id" />
 

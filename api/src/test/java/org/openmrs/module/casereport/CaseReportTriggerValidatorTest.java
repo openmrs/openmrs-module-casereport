@@ -112,7 +112,14 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 		executeDataSet("moduleTestData-initialCaseReports.xml");
 		final String name = "HIV Virus Not Suppressed";
 		final Patient patient = Context.getPatientService().getPatient(2);
-		assertNotNull(Context.getService(CaseReportService.class).getCaseReportByPatientAndTrigger(patient, name));
+		CaseReportTrigger existingTrigger = null;
+		CaseReport existingCaseReport = Context.getService(CaseReportService.class).getCaseReportByPatient(patient);
+		for (CaseReportTrigger crt : existingCaseReport.getReportTriggers()) {
+			if (name.equalsIgnoreCase(crt.getName())) {
+				existingTrigger = crt;
+			}
+		}
+		assertNotNull(existingTrigger);
 		
 		CaseReportTrigger trigger = new CaseReportTrigger(name);
 		CaseReport caseReport = new CaseReport();

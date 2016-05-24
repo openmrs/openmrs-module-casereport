@@ -41,12 +41,9 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	public CaseReport() {
 	}
 	
-	public CaseReport(Patient patient, String... triggerNames) {
+	public CaseReport(Patient patient, String triggerName) {
 		this.patient = patient;
-		for (String tName : triggerNames) {
-			addTrigger(new CaseReportTrigger(tName));
-		}
-		
+		addTrigger(new CaseReportTrigger(triggerName));
 	}
 	
 	public enum Status {

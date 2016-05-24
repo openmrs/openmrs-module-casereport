@@ -42,6 +42,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String XML_DATASET = "moduleTestData-initialCaseReports.xml";
 	
+	@Autowired
 	private CaseReportService service;
 	
 	@Autowired
@@ -52,7 +53,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Before
 	public void setup() throws Exception {
-		service = Context.getService(CaseReportService.class);
 		executeDataSet(XML_DATASET);
 	}
 	
@@ -80,6 +80,17 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		CaseReport report = service.getCaseReportByUuid("5f7d57f0-9077-11e1-aaa4-00248140a5ef");
 		assertNotNull(report);
 		assertEquals(1, report.getId().intValue());
+	}
+	
+	/**
+	 * @see CaseReportService#getCaseReportByPatient(Patient)
+	 * @verifies get the case report for the patient
+	 */
+	@Test
+	public void getCaseReportByPatient_shouldGetTheCaseReportForThePatient() throws Exception {
+		CaseReport caseReport = service.getCaseReportByPatient(patientService.getPatient(2));
+		assertNotNull(caseReport);
+		assertEquals(1, caseReport.getId().intValue());
 	}
 	
 	/**
@@ -141,53 +152,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReportByPatientAndTrigger(Patient,String)
-	 * @verifies fail if multiple case reports are found
-	 */
-	@Test
-	public void getCaseReportByPatientAndTrigger_shouldFailIfMultipleCaseReportsAreFound() throws Exception {
-		executeDataSet("CaseReportServiceTest-duplicateCaseReport.xml");
-		final String trigger = "HIV Virus Not Suppressed";
-		Patient patient = patientService.getPatient(2);
-		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Found multiple case reports(2) that match the patient with id:"
-		        + patient.getId() + " and trigger:" + trigger));
-		service.getCaseReportByPatientAndTrigger(patient, trigger);
-	}
-	
-	/**
-	 * @see CaseReportService#getCaseReportByPatientAndTrigger(Patient, String)
-	 * @verifies get the matched case report
-	 */
-	@Test
-	public void getCaseReportByPatientAndTrigger_shouldGetTheMatchedCaseReport() throws Exception {
-		Patient patient = patientService.getPatient(2);
-		final String trigger = "HIV Virus Not Suppressed";
-		CaseReport caseReport = service.getCaseReportByPatientAndTrigger(patient, trigger);
-		assertNotNull(caseReport);
-		assertEquals(patient, caseReport.getPatient());
-		assertEquals(trigger, caseReport.getReportTriggers().iterator().next().getName());
-	}
-	
-	/**
-	 * @see CaseReportService#saveCaseReport(CaseReport)
-	 * @verifies return the saved case report
-	 */
-	@Test
-	public void saveCaseReport_shouldReturnTheSavedCaseReport() throws Exception {
-		final String name = "some valid cohort query name";
-		SqlCohortDefinition definition = new SqlCohortDefinition("some query");
-		definition.setName(name);
-		DefinitionContext.saveDefinition(definition);
-		
-		int originalCount = service.getCaseReports().size();
-		CaseReport cr = new CaseReport(patientService.getPatient(2), name);
-		service.saveCaseReport(cr);
-		assertNotNull(cr.getId());
-		assertEquals(++originalCount, service.getCaseReports().size());
-	}
-	
-	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
 	 * @verifies submit the specified case report
 	 */
@@ -218,21 +182,51 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void runTrigger_shouldCreateCaseReportsForTheMatchedPatients() throws Exception {
 		final String name = "some cohort query";
-		Integer[] patientIds = { 2, 7 };
+		Integer[] patientIds = { 7, 8 };
 		SqlCohortDefinition definition = new SqlCohortDefinition("select patient_id from patient where patient_id in ("
 		        + patientIds[0] + "," + patientIds[1] + ")");
 		definition.setName(name);
 		DefinitionContext.saveDefinition(definition);
 		int originalCount = service.getCaseReports().size();
-		assertNull(service.getCaseReportByPatientAndTrigger(patientService.getPatient(patientIds[0]), name));
-		assertNull(service.getCaseReportByPatientAndTrigger(patientService.getPatient(patientIds[1]), name));
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 		
 		service.runTrigger(name);
 		List<CaseReport> reports = service.getCaseReports();
 		int newCount = reports.size();
 		assertEquals(originalCount + 2, newCount);
-		assertNotNull(service.getCaseReportByPatientAndTrigger(patientService.getPatient(patientIds[0]), name));
-		assertNotNull(service.getCaseReportByPatientAndTrigger(patientService.getPatient(patientIds[1]), name));
+		CaseReport caseReport1 = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]));
+		assertNotNull(caseReport1);
+		assertEquals(1, caseReport1.getReportTriggers().size());
+		assertEquals(name, caseReport1.getReportTriggers().iterator().next().getName());
+		CaseReport caseReport2 = service.getCaseReportByPatient(patientService.getPatient(patientIds[1]));
+		assertNotNull(caseReport2);
+		assertEquals(1, caseReport2.getReportTriggers().size());
+		assertEquals(name, caseReport2.getReportTriggers().iterator().next().getName());
+	}
+	
+	/**
+	 * @see CaseReportService#runTrigger(String)
+	 * @verifies add a new trigger to an existing queue item for the patient
+	 */
+	@Test
+	public void runTrigger_shouldAddANewTriggerToAnExistingQueueItemForThePatient() throws Exception {
+		final String name = "some valid cohort query name";
+		final Integer patientId = 2;
+		CaseReport caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
+		assertNotNull(caseReport);
+		int originalTriggerCount = caseReport.getReportTriggers().size();
+		SqlCohortDefinition definition = new SqlCohortDefinition("select patient_id from patient where patient_id = "
+		        + patientId);
+		definition.setName(name);
+		DefinitionContext.saveDefinition(definition);
+		
+		service = Context.getService(CaseReportService.class);
+		int originalCount = service.getCaseReports().size();
+		service.runTrigger(name);
+		assertEquals(originalCount, service.getCaseReports().size());
+		caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
+		assertEquals(++originalTriggerCount, caseReport.getReportTriggers().size());
 	}
 	
 	/**

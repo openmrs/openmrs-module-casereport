@@ -66,19 +66,15 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 	}
 	
 	/**
-	 * @see CaseReportDAO#getCaseReports(Patient, String,boolean, boolean, boolean)
+	 * @see CaseReportDAO#getCaseReports(Patient, boolean, boolean, boolean)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(Patient patient, String trigger, boolean includeVoided, boolean includeSubmitted,
+	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, boolean includeSubmitted,
 	                                       boolean includeDismissed) {
 		
 		Criteria criteria = getCurrentSession().createCriteria(CaseReport.class);
 		if (patient != null) {
 			criteria.add(Restrictions.eq("patient", patient));
-		}
-		if (trigger != null) {
-			criteria.createAlias("reportTriggers", "rt");
-			criteria.add(Restrictions.eq("rt.name", trigger));
 		}
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));

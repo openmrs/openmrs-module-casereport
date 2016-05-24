@@ -8,31 +8,32 @@
 		<property name="moduleService">
 			<list>
 				<value>${project.parent.groupId}.${project.parent.artifactId}.api.CaseReportService</value>
-				<bean
-					class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-					<property name="transactionManager">
-						<ref bean="transactionManager" />
-					</property>
-					<property name="target">
-						<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.CaseReportServiceImpl">
-							<property name="dao">
-								<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateCaseReportDAO">
-									<property name="sessionFactory">
-										<ref bean="sessionFactory" />
-									</property>
-								</bean>
-							</property>
-						</bean>
-					</property>
-					<property name="preInterceptors">
-						<ref bean="serviceInterceptors" />
-					</property>
-					<property name="transactionAttributeSource">
-						<ref bean="transactionAttributeSource" />
-					</property>
-				</bean>
+                <ref bean="caseReportService" />
 			</list>
 		</property>
 	</bean>
+
+    <bean name="caseReportService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.CaseReportServiceImpl">
+                <property name="dao" ref="caseReportDAO" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean name="caseReportDAO" class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateCaseReportDAO">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory" />
+        </property>
+    </bean>
 	
 </beans>

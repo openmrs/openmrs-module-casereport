@@ -45,6 +45,16 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport getCaseReportByUuid(String uuid) throws APIException;
 	
 	/**
+	 * Gets the non voided case report for the specified patient.
+	 *
+	 * @param patient the patient match against
+	 * @return a list of the case reports for the patient
+	 * @should get the case report for the patient
+	 */
+	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
+	CaseReport getCaseReportByPatient(Patient patient);
+	
+	/**
 	 * Gets all non voided case reports from the database that are not yet submitted nor dismissed
 	 * 
 	 * @return all non voided case reports in the database
@@ -72,29 +82,6 @@ public interface CaseReportService extends OpenmrsService {
 	    throws APIException;
 	
 	/**
-	 * Gets the non voided case report that matches the specified patient and trigger.
-	 * 
-	 * @param patient the patient to match against
-	 * @param triggerName the trigger to match against
-	 * @return the matched case report
-	 * @throws APIException
-	 * @should get the matched case report
-	 * @should fail if multiple case reports are found
-	 */
-	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
-	CaseReport getCaseReportByPatientAndTrigger(Patient patient, String triggerName) throws APIException;
-	
-	/**
-	 * Saves a case report to the database
-	 * 
-	 * @param caseReport the case report to save
-	 * @return the saved case report
-	 * @should return the saved case report
-	 */
-	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	CaseReport saveCaseReport(CaseReport caseReport) throws APIException;
-	
-	/**
 	 * Marks the specified case report as submitted in the database
 	 * 
 	 * @param caseReport the case report to submit
@@ -115,27 +102,6 @@ public interface CaseReportService extends OpenmrsService {
 	CaseReport dismissCaseReport(CaseReport caseReport) throws APIException;
 	
 	/**
-	 * Marks the specified case report as voided
-	 * 
-	 * @param caseReport the case report to void
-	 * @param voidReason for voiding
-	 * @return the voided case report
-	 * @should void the specified case report
-	 */
-	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	CaseReport voidCaseReport(CaseReport caseReport, String voidReason) throws APIException;
-	
-	/**
-	 * Marks the specified case report as not voided
-	 *
-	 * @param caseReport the case report to unvoid
-	 * @return the none voided case report
-	 * @should unvoid the specified case report
-	 */
-	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException;
-	
-	/**
 	 * Runs the SQL cohort query with the specified name and creates a case report for each matched
 	 * patient of none exists
 	 *
@@ -143,6 +109,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @throws APIException
 	 * @throws EvaluationException
 	 * @should create case reports for the matched patients
+	 * @should add a new trigger to an existing queue item for the patient
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	void runTrigger(String triggerName) throws APIException, EvaluationException;
@@ -160,4 +127,25 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should return the matched cohort query
 	 */
 	SqlCohortDefinition getSqlCohortDefinition(String triggerName) throws APIException;
+	
+	/**
+	 * Marks the specified case report as voided
+	 *
+	 * @param caseReport the case report to void
+	 * @param voidReason for voiding
+	 * @return the voided case report
+	 * @should void the specified case report
+	 */
+	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
+	CaseReport voidCaseReport(CaseReport caseReport, String voidReason) throws APIException;
+	
+	/**
+	 * Marks the specified case report as not voided
+	 *
+	 * @param caseReport the case report to unvoid
+	 * @return the none voided case report
+	 * @should unvoid the specified case report
+	 */
+	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
+	CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException;
 }

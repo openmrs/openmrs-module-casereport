@@ -28,15 +28,23 @@ public interface CaseReportDAO {
 	 * Gets case reports from the database that match the specified arguments.
 	 * 
 	 * @param patient the patient to match against
-	 * @param trigger the trigger to match against
 	 * @param includeVoided specifies whether voided reports should be included
 	 * @param includeSubmitted specifies whether submitted reports should be included
 	 * @param includeDismissed specifies whether dismissed reports should be included
 	 * @return the case reports in the database including voided ones if includeVoided is set to
 	 *         true otherwise they will be excluded
 	 */
-	List<CaseReport> getCaseReports(Patient patient, String trigger, boolean includeVoided, boolean includeSubmitted,
+	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, boolean includeSubmitted,
 	                                boolean includeDismissed);
 	
+	/**
+	 * Saves a case report to the database, if a patient already has a case report queue item in the
+	 * database, you should look up the existing item and add the new one to the list of report
+	 * triggers.
+	 *
+	 * @param caseReport the case report to save
+	 * @return the saved case report
+	 * @should return the saved case report
+	 */
 	CaseReport saveCaseReport(CaseReport caseReport);
 }

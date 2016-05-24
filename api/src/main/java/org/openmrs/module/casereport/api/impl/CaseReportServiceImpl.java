@@ -11,7 +11,6 @@ package org.openmrs.module.casereport.api.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
@@ -21,6 +20,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
@@ -47,13 +47,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	}
 	
 	/**
-	 * @return the dao
-	 */
-	public CaseReportDAO getDao() {
-		return dao;
-	}
-	
-	/**
 	 * @See CaseReportService#getCaseReport(Integer)
 	 */
 	@Override
@@ -70,11 +63,30 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	}
 	
 	/**
+	 * @see CaseReportService#getCaseReportByPatient(Patient)
+	 */
+	@Override
+	public CaseReport getCaseReportByPatient(Patient patient) {
+		if (patient == null) {
+			throw new APIException("patient is required");
+		}
+		List<CaseReport> caseReports = dao.getCaseReports(patient, false, false, false);
+		if (caseReports.size() == 0) {
+			return null;
+		} else if (caseReports.size() > 1) {
+			throw new APIException("Found multiple case reports(" + caseReports.size() + ") that match the patient with id:"
+			        + patient.getId());
+		}
+		
+		return caseReports.get(0);
+	}
+	
+	/**
 	 * @See CaseReportService#getCaseReports()
 	 */
 	@Override
 	public List<CaseReport> getCaseReports() throws APIException {
-		return dao.getCaseReports(null, null, false, false, false);
+		return dao.getCaseReports(null, false, false, false);
 	}
 	
 	/**
@@ -83,38 +95,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	public List<CaseReport> getCaseReports(boolean includeVoided, boolean includeSubmitted, boolean includeDismissed)
 	    throws APIException {
-		return dao.getCaseReports(null, null, includeVoided, includeSubmitted, includeDismissed);
-	}
-	
-	/**
-	 * @see CaseReportService#getCaseReportByPatientAndTrigger(Patient, String)
-	 */
-	@Override
-	public CaseReport getCaseReportByPatientAndTrigger(Patient patient, String triggerName) throws APIException {
-		if (patient == null) {
-			throw new APIException("patient is required");
-		} else if (StringUtils.isBlank(triggerName)) {
-			throw new APIException("triggerName cannot be null or blank");
-		}
-		
-		List<CaseReport> caseReports = dao.getCaseReports(patient, triggerName, false, false, false);
-		if (caseReports.size() == 0) {
-			return null;
-		} else if (caseReports.size() > 1) {
-			throw new APIException("Found multiple case reports(" + caseReports.size() + ") that match the patient with id:"
-			        + patient.getId() + " and trigger:" + triggerName);
-		}
-		
-		return caseReports.get(0);
-	}
-	
-	/**
-	 * @See CaseReportService#saveCaseReport(CaseReport)
-	 */
-	@Override
-	@Transactional(readOnly = false)
-	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
-		return dao.saveCaseReport(caseReport);
+		return dao.getCaseReports(null, includeVoided, includeSubmitted, includeDismissed);
 	}
 	
 	/**
@@ -138,26 +119,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	}
 	
 	/**
-	 * @See CaseReportService#voidCaseReport(CaseReport,String)
-	 */
-	@Override
-	@Transactional(readOnly = false)
-	public CaseReport voidCaseReport(CaseReport caseReport, String voidReason) throws APIException {
-		//TODO Add Implementation code
-		return null;
-	}
-	
-	/**
-	 * @See CaseReportService#unvoidCaseReport(CaseReport)
-	 */
-	@Override
-	@Transactional(readOnly = false)
-	public CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException {
-		//TODO Add Implementation code
-		return null;
-	}
-	
-	/**
 	 * @see CaseReportService#runTrigger(String)
 	 */
 	@Override
@@ -169,14 +130,18 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
 			
 			PatientService ps = Context.getPatientService();
-			CaseReportService crs = Context.getService(CaseReportService.class);
 			for (Integer patientId : cohort.getMemberIds()) {
 				Patient patient = ps.getPatient(patientId);
 				if (patient == null) {
 					throw new APIException("No patient found with patientId:" + patientId);
 				}
-				
-				crs.saveCaseReport(new CaseReport(patient, triggerName));
+				CaseReport caseReport = getCaseReportByPatient(patient);
+				if (caseReport == null) {
+					caseReport = new CaseReport(patient, triggerName);
+				} else {
+					caseReport.addTrigger(new CaseReportTrigger(triggerName));
+				}
+				dao.saveCaseReport(caseReport);
 			}
 		}
 	}
@@ -204,5 +169,25 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * @See CaseReportService#voidCaseReport(CaseReport,String)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public CaseReport voidCaseReport(CaseReport caseReport, String voidReason) throws APIException {
+		//TODO Add Implementation code
+		return null;
+	}
+	
+	/**
+	 * @See CaseReportService#unvoidCaseReport(CaseReport)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException {
+		//TODO Add Implementation code
+		return null;
 	}
 }
