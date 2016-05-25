@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -187,6 +188,60 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		Context.flushSession();
 		assertNotNull(caseReport.getDateChanged());
 		assertNotNull(caseReport.getChangedBy());
+	}
+	
+	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 * @verifies change the status of a report from draft to new if the reportForm is blank
+	 */
+	@Test
+	public void saveCaseReport_shouldChangeTheStatusOfAReportFromDraftToNewIfTheReportFormIsBlank() throws Exception {
+		CaseReport caseReport = service.getCaseReport(2);
+		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
+		assertTrue(StringUtils.isNotBlank(caseReport.getReport()));
+		caseReport.setReport(null);
+		service.saveCaseReport(caseReport);
+		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
+	}
+	
+	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 * @verifies not change the status of a report from draft to new if the reportForm is not blank
+	 */
+	@Test
+	public void saveCaseReport_shouldNotChangeTheStatusOfAReportFromDraftToNewIfTheReportFormIsNotBlank() throws Exception {
+		CaseReport caseReport = service.getCaseReport(2);
+		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
+		assertTrue(StringUtils.isNotBlank(caseReport.getReport()));
+		service.saveCaseReport(caseReport);
+		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
+	}
+	
+	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 * @verifies change the status of a report from new to draft if the reportForm is not blank
+	 */
+	@Test
+	public void saveCaseReport_shouldChangeTheStatusOfAReportFromNewToDraftIfTheReportFormIsNotBlank() throws Exception {
+		CaseReport caseReport = service.getCaseReport(1);
+		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
+		assertTrue(StringUtils.isBlank(caseReport.getReport()));
+		caseReport.setReport("{}");
+		service.saveCaseReport(caseReport);
+		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
+	}
+	
+	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 * @verifies not change the status of a report from new to draft if the reportForm is blank
+	 */
+	@Test
+	public void saveCaseReport_shouldNotChangeTheStatusOfAReportFromNewToDraftIfTheReportFormIsBlank() throws Exception {
+		CaseReport caseReport = service.getCaseReport(1);
+		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
+		assertTrue(StringUtils.isBlank(caseReport.getReport()));
+		service.saveCaseReport(caseReport);
+		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
 	}
 	
 	/**

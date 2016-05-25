@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.api.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
@@ -104,6 +105,18 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
+		if (CaseReport.Status.SUBMITTED != caseReport.getStatus() && CaseReport.Status.DISMISSED != caseReport.getStatus()) {
+			if (StringUtils.isBlank(caseReport.getReport())) {
+				if (CaseReport.Status.NEW != caseReport.getStatus()) {
+					caseReport.setStatus(CaseReport.Status.NEW);
+				}
+			} else {
+				if (CaseReport.Status.DRAFT != caseReport.getStatus()) {
+					caseReport.setStatus(CaseReport.Status.DRAFT);
+				}
+			}
+		}
+		
 		return dao.saveCaseReport(caseReport);
 	}
 	

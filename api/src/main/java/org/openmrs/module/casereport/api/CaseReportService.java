@@ -91,6 +91,10 @@ public interface CaseReportService extends OpenmrsService {
 	 * @return the saved case report
 	 * @should return the saved case report
 	 * @should update an existing case report
+	 * @should change the status of a report from new to draft if the reportForm is not blank
+	 * @should not change the status of a report from new to draft if the reportForm is blank
+	 * @should change the status of a report from draft to new if the reportForm is blank
+	 * @should not change the status of a report from draft to new if the reportForm is not blank
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport saveCaseReport(CaseReport caseReport) throws APIException;
