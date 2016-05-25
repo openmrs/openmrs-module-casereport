@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.casereport.api.impl;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +46,24 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	public void setDao(CaseReportDAO dao) {
 		this.dao = dao;
+	}
+	
+	private void setStatus(CaseReport caseReport, CaseReport.Status status) {
+		Boolean isAccessible = null;
+		Field field = null;
+		try {
+			field = CaseReport.class.getDeclaredField("status");
+			field.setAccessible(true);
+			field.set(caseReport, status);
+		}
+		catch (Exception e) {
+			throw new APIException("Failed to set status for CaseReport:" + caseReport, e);
+		}
+		finally {
+			if (field != null && isAccessible != null) {
+				field.setAccessible(isAccessible);
+			}
+		}
 	}
 	
 	/**
@@ -108,11 +127,11 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (CaseReport.Status.SUBMITTED != caseReport.getStatus() && CaseReport.Status.DISMISSED != caseReport.getStatus()) {
 			if (StringUtils.isBlank(caseReport.getReport())) {
 				if (CaseReport.Status.NEW != caseReport.getStatus()) {
-					caseReport.setStatus(CaseReport.Status.NEW);
+					setStatus(caseReport, CaseReport.Status.NEW);
 				}
 			} else {
 				if (CaseReport.Status.DRAFT != caseReport.getStatus()) {
-					caseReport.setStatus(CaseReport.Status.DRAFT);
+					setStatus(caseReport, CaseReport.Status.DRAFT);
 				}
 			}
 		}
@@ -127,7 +146,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Transactional(readOnly = false)
 	public CaseReport submitCaseReport(CaseReport caseReport) throws APIException {
 		//TODO Implement more submission logic here
-		caseReport.setStatus(CaseReport.Status.SUBMITTED);
+		setStatus(caseReport, CaseReport.Status.SUBMITTED);
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
@@ -137,7 +156,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport dismissCaseReport(CaseReport caseReport) throws APIException {
-		caseReport.setStatus(CaseReport.Status.DISMISSED);
+		setStatus(caseReport, CaseReport.Status.DISMISSED);
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	

@@ -80,7 +80,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		return status;
 	}
 	
-	public void setStatus(Status status) {
+	protected void setStatus(Status status) {
 		this.status = status;
 	}
 	
