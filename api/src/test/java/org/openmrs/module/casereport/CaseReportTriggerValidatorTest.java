@@ -203,10 +203,8 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 	@Test
 	public void validate_shouldPassForAValidCaseReportTrigger() throws Exception {
 		executeDataSet("moduleTestData-initialCaseReports.xml");
-		CaseReportTrigger trigger = new CaseReportTrigger("HIV Virus Not Suppressed");
-		CaseReport caseReport = new CaseReport();
-		caseReport.setPatient(Context.getPatientService().getPatient(7));
-		trigger.setCaseReport(caseReport);
+		CaseReportTrigger trigger = Context.getService(CaseReportService.class).getCaseReport(1).getReportTriggers()
+		        .iterator().next();
 		Errors errors = new BindException(trigger, "trigger");
 		validator.validate(trigger, errors);
 		assertFalse(errors.hasErrors());

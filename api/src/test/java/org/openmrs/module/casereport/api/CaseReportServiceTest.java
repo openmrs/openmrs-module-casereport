@@ -59,9 +59,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	private void createTestSqlCohortDefinition(String name, String sql, boolean retired) {
 		SqlCohortDefinition definition = new SqlCohortDefinition(sql);
 		definition.setName(name);
-		if (retired) {
-			definition.setRetired(true);
-		}
+		definition.setRetired(retired);
 		DefinitionContext.saveDefinition(definition);
 	}
 	

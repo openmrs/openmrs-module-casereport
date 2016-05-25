@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
@@ -76,7 +77,7 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void validate_shouldPassForAValidCaseReport() throws Exception {
 		executeDataSet("moduleTestData-initialCaseReports.xml");
-		CaseReport caseReport = new CaseReport(Context.getPatientService().getPatient(7), "HIV Virus Not Suppressed");
+		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReport(1);
 		Errors errors = new BindException(caseReport, "casereport");
 		validator.validate(caseReport, errors);
 		assertFalse(errors.hasErrors());
