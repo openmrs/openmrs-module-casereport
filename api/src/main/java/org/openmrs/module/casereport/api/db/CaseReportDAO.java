@@ -37,14 +37,5 @@ public interface CaseReportDAO {
 	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, boolean includeSubmitted,
 	                                boolean includeDismissed);
 	
-	/**
-	 * Saves a case report to the database, if a patient already has a case report queue item in the
-	 * database, you should look up the existing item and add the new one to the list of report
-	 * triggers.
-	 *
-	 * @param caseReport the case report to save
-	 * @return the saved case report
-	 * @should return the saved case report
-	 */
 	CaseReport saveCaseReport(CaseReport caseReport);
 }

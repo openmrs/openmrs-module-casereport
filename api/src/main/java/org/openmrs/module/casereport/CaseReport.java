@@ -47,7 +47,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	}
 	
 	public enum Status {
-		NEW, SUBMITTED, DISMISSED;
+		NEW, DRAFT, SUBMITTED, DISMISSED;
 	}
 	
 	@Override

@@ -188,7 +188,7 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 		
 		CaseReportTrigger trigger = new CaseReportTrigger(name);
 		CaseReport caseReport = new CaseReport();
-		caseReport.setPatient(Context.getPatientService().getPatient(2));
+		caseReport.setPatient(Context.getPatientService().getPatient(7));
 		trigger.setCaseReport(caseReport);
 		Errors errors = new BindException(trigger, "trigger");
 		validator.validate(trigger, errors);
@@ -202,14 +202,10 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 	 */
 	@Test
 	public void validate_shouldPassForAValidCaseReportTrigger() throws Exception {
-		final String name = "some valid cohort query name";
-		SqlCohortDefinition definition = new SqlCohortDefinition("some query");
-		definition.setName(name);
-		DefinitionContext.saveDefinition(definition);
-		
-		CaseReportTrigger trigger = new CaseReportTrigger(name);
+		executeDataSet("moduleTestData-initialCaseReports.xml");
+		CaseReportTrigger trigger = new CaseReportTrigger("HIV Virus Not Suppressed");
 		CaseReport caseReport = new CaseReport();
-		caseReport.setPatient(Context.getPatientService().getPatient(2));
+		caseReport.setPatient(Context.getPatientService().getPatient(7));
 		trigger.setCaseReport(caseReport);
 		Errors errors = new BindException(trigger, "trigger");
 		validator.validate(trigger, errors);

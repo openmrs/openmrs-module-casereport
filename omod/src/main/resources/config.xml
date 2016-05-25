@@ -58,5 +58,10 @@
         <description>Able to manage case reports</description>
     </privilege>
 
+    <privilege>
+        <name>App: casereport.manageCaseReports</name>
+        <description>Able to access the manage case reports app</description>
+    </privilege>
+
 </module>
 

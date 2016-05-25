@@ -56,6 +56,15 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_DATASET);
 	}
 	
+	private void createTestSqlCohortDefinition(String name, String sql, boolean retired) {
+		SqlCohortDefinition definition = new SqlCohortDefinition(sql);
+		definition.setName(name);
+		if (retired) {
+			definition.setRetired(true);
+		}
+		DefinitionContext.saveDefinition(definition);
+	}
+	
 	/**
 	 * @see CaseReportService#getCaseReport(Integer)
 	 * @verifies return the case report that matches the specified id
@@ -152,12 +161,43 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 * @verifies return the saved case report
+	 */
+	@Test
+	public void saveCaseReport_shouldReturnTheSavedCaseReport() throws Exception {
+		int originalCount = service.getCaseReports().size();
+		CaseReport cr = new CaseReport(patientService.getPatient(7), "HIV Virus Not Suppressed");
+		service.saveCaseReport(cr);
+		assertNotNull(cr.getId());
+		assertEquals(++originalCount, service.getCaseReports().size());
+	}
+	
+	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 * @verifies update an existing case report
+	 */
+	@Test
+	public void saveCaseReport_shouldUpdateAnExistingCaseReport() throws Exception {
+		CaseReport caseReport = service.getCaseReport(4);
+		assertNull(caseReport.getDateChanged());
+		assertNull(caseReport.getChangedBy());
+		
+		caseReport.setReport("{}");
+		service.saveCaseReport(caseReport);
+		//Flush so that the AuditableInterceptor is invoked to set Auditable fields
+		Context.flushSession();
+		assertNotNull(caseReport.getDateChanged());
+		assertNotNull(caseReport.getChangedBy());
+	}
+	
+	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
 	 * @verifies submit the specified case report
 	 */
 	@Test
 	public void submitCaseReport_shouldSubmitTheSpecifiedCaseReport() throws Exception {
-		CaseReport cr = service.getCaseReport(1);
+		CaseReport cr = service.getCaseReport(4);
 		assertFalse(cr.isSubmitted());
 		service.submitCaseReport(cr);
 		assertTrue(cr.isSubmitted());
@@ -169,7 +209,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void dismissCaseReport_shouldDismissTheSpecifiedCaseReport() throws Exception {
-		CaseReport cr = service.getCaseReport(1);
+		CaseReport cr = service.getCaseReport(4);
 		assertFalse(cr.isDismissed());
 		service.dismissCaseReport(cr);
 		assertTrue(cr.isDismissed());
@@ -183,10 +223,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void runTrigger_shouldCreateCaseReportsForTheMatchedPatients() throws Exception {
 		final String name = "some cohort query";
 		Integer[] patientIds = { 7, 8 };
-		SqlCohortDefinition definition = new SqlCohortDefinition("select patient_id from patient where patient_id in ("
-		        + patientIds[0] + "," + patientIds[1] + ")");
-		definition.setName(name);
-		DefinitionContext.saveDefinition(definition);
+		createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in (" + patientIds[0] + ","
+		        + patientIds[1] + ")", false);
 		int originalCount = service.getCaseReports().size();
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
@@ -216,10 +254,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		CaseReport caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
 		assertNotNull(caseReport);
 		int originalTriggerCount = caseReport.getReportTriggers().size();
-		SqlCohortDefinition definition = new SqlCohortDefinition("select patient_id from patient where patient_id = "
-		        + patientId);
-		definition.setName(name);
-		DefinitionContext.saveDefinition(definition);
+		createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id = " + patientId, false);
 		
 		service = Context.getService(CaseReportService.class);
 		int originalCount = service.getCaseReports().size();
@@ -245,12 +280,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getSqlCohortDefinition_shouldFailIfMultipleCohortQueriesAreFoundThatMatchTheTriggerName() throws Exception {
 		final String name = "some name that is a duplicate";
-		SqlCohortDefinition definition1 = new SqlCohortDefinition("some query");
-		definition1.setName(name);
-		DefinitionContext.saveDefinition(definition1);
-		SqlCohortDefinition definition2 = new SqlCohortDefinition("some query");
-		definition2.setName(name);
-		DefinitionContext.saveDefinition(definition2);
+		createTestSqlCohortDefinition(name, "some query", false);
+		createTestSqlCohortDefinition(name, "some query", false);
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("Found multiple Sql Cohort Queries with name:" + name));
 		service.getSqlCohortDefinition(name);
@@ -263,10 +294,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getSqlCohortDefinition_shouldNotReturnARetiredCohortQuery() throws Exception {
 		final String name = "some retired cohort query";
-		SqlCohortDefinition definition = new SqlCohortDefinition("some query");
-		definition.setName(name);
-		definition.setRetired(true);
-		DefinitionContext.saveDefinition(definition);
+		createTestSqlCohortDefinition(name, "some query", true);
 		assertNull(service.getSqlCohortDefinition(name));
 	}
 	
@@ -276,11 +304,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getSqlCohortDefinition_shouldReturnTheMatchedCohortQuery() throws Exception {
-		final String name = "some cohort query";
-		assertNull(service.getSqlCohortDefinition(name));
-		SqlCohortDefinition definition = new SqlCohortDefinition("some query");
-		definition.setName(name);
-		DefinitionContext.saveDefinition(definition);
-		assertNotNull(service.getSqlCohortDefinition(name));
+		SqlCohortDefinition definition = service.getSqlCohortDefinition("HIV Virus Not Suppressed");
+		assertNotNull(definition);
+		assertEquals("5b4f091e-4f28-4810-944b-4e4ccf9bfbb3", definition.getUuid());
 	}
 }

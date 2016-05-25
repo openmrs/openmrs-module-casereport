@@ -17,8 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
@@ -77,12 +75,8 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void validate_shouldPassForAValidCaseReport() throws Exception {
-		final String name = "some valid cohort query name";
-		SqlCohortDefinition definition = new SqlCohortDefinition("some query");
-		definition.setName(name);
-		DefinitionContext.saveDefinition(definition);
-		
-		CaseReport caseReport = new CaseReport(Context.getPatientService().getPatient(2), name);
+		executeDataSet("moduleTestData-initialCaseReports.xml");
+		CaseReport caseReport = new CaseReport(Context.getPatientService().getPatient(7), "HIV Virus Not Suppressed");
 		Errors errors = new BindException(caseReport, "casereport");
 		validator.validate(caseReport, errors);
 		assertFalse(errors.hasErrors());

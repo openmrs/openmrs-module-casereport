@@ -99,6 +99,15 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	}
 	
 	/**
+	 * @See CaseReportService#saveCaseReport(CaseReport)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
+		return dao.saveCaseReport(caseReport);
+	}
+	
+	/**
 	 * @See CaseReportService#submitCaseReport(CaseReport)
 	 */
 	@Override
@@ -106,7 +115,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	public CaseReport submitCaseReport(CaseReport caseReport) throws APIException {
 		//TODO Implement more submission logic here
 		caseReport.setStatus(CaseReport.Status.SUBMITTED);
-		return dao.saveCaseReport(caseReport);
+		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -116,7 +125,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Transactional(readOnly = false)
 	public CaseReport dismissCaseReport(CaseReport caseReport) throws APIException {
 		caseReport.setStatus(CaseReport.Status.DISMISSED);
-		return dao.saveCaseReport(caseReport);
+		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -131,6 +140,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
 			
 			PatientService ps = Context.getPatientService();
+			CaseReportService service = Context.getService(CaseReportService.class);
 			for (Integer patientId : cohort.getMemberIds()) {
 				Patient patient = ps.getPatient(patientId);
 				if (patient == null) {
@@ -142,7 +152,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 				} else {
 					caseReport.addTrigger(new CaseReportTrigger(triggerName));
 				}
-				dao.saveCaseReport(caseReport);
+				
+				service.saveCaseReport(caseReport);
 			}
 		}
 	}

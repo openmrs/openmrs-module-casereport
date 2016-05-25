@@ -60,9 +60,11 @@ public class CaseReportTriggerValidator implements Validator {
 		CaseReport duplicate = service.getCaseReportByPatient(trigger.getCaseReport().getPatient());
 		if (duplicate != null && !duplicate.equals(trigger)) {
 			for (CaseReportTrigger crt : duplicate.getReportTriggers()) {
-				if (trigger.getName().equalsIgnoreCase(crt.getName())) {
-					errors.rejectValue("name", "casereport.error.trigger.duplicate", new Object[] { trigger.getName() },
-					    null);
+				if (!crt.equals(trigger)) {
+					if (trigger.getName().equalsIgnoreCase(crt.getName())) {
+						errors.rejectValue("name", "casereport.error.trigger.duplicate", new Object[] { trigger.getName() },
+						    null);
+					}
 				}
 			}
 		}
