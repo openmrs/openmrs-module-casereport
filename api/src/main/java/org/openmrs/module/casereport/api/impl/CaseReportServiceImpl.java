@@ -125,7 +125,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Transactional(readOnly = false)
 	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
 		if (CaseReport.Status.SUBMITTED != caseReport.getStatus() && CaseReport.Status.DISMISSED != caseReport.getStatus()) {
-			if (StringUtils.isBlank(caseReport.getReport())) {
+			if (StringUtils.isBlank(caseReport.getReportForm())) {
 				if (CaseReport.Status.NEW != caseReport.getStatus()) {
 					setStatus(caseReport, CaseReport.Status.NEW);
 				}

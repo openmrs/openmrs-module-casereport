@@ -32,7 +32,7 @@
             <one-to-many class="${project.parent.groupId}.${project.parent.artifactId}.CaseReportTrigger" />
         </set>
 
-        <property name="report" type="text" length="65535" />
+        <property name="reportForm" column="report_form" type="text" length="65535" />
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
 

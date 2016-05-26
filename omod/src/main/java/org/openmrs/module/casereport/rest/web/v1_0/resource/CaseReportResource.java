@@ -39,6 +39,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			description.addProperty("uuid");
 			description.addProperty("display");
 			description.addProperty("patient", Representation.REF);
+			description.addProperty("status");
 			description.addProperty("reportTriggers", Representation.REF);
 			description.addProperty("voided");
 			description.addSelfLink();
@@ -49,6 +50,8 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			description.addProperty("uuid");
 			description.addProperty("display");
 			description.addProperty("patient", Representation.DEFAULT);
+			description.addProperty("status");
+			description.addProperty("reportForm");
 			description.addProperty("reportTriggers", Representation.DEFAULT);
 			description.addProperty("voided");
 			description.addProperty("auditInfo");
@@ -56,6 +59,16 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			return description;
 		}
 		return null;
+	}
+	
+	@PropertyGetter("reportForm")
+	public String getReportForm(CaseReport delegate) {
+		return delegate.getReportForm();
+	}
+	
+	@PropertyGetter("display")
+	public String getDisplayString(CaseReport delegate) {
+		return delegate.toString();
 	}
 	
 	/**
@@ -73,11 +86,6 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		return new NeedsPaging<CaseReport>(Context.getService(CaseReportService.class).getCaseReports(
 		    context.getIncludeAll(), false, false), context);
-	}
-	
-	@PropertyGetter("display")
-	public String getDisplayString(CaseReport delegate) {
-		return delegate.toString();
 	}
 	
 	/**

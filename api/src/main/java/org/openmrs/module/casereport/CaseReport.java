@@ -36,7 +36,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	private Set<CaseReportTrigger> reportTriggers;
 	
-	private String report;
+	private String reportForm;
 	
 	public CaseReport() {
 	}
@@ -96,12 +96,12 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		getReportTriggers().add(trigger);
 	}
 	
-	public String getReport() {
-		return report;
+	public String getReportForm() {
+		return reportForm;
 	}
 	
-	public void setReport(String report) {
-		this.report = report;
+	public void setReportForm(String reportForm) {
+		this.reportForm = reportForm;
 	}
 	
 	public boolean isSubmitted() {

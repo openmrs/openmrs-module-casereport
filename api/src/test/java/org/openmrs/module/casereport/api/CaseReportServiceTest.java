@@ -182,7 +182,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertNull(caseReport.getDateChanged());
 		assertNull(caseReport.getChangedBy());
 		
-		caseReport.setReport("{}");
+		caseReport.setReportForm("{}");
 		service.saveCaseReport(caseReport);
 		//Flush so that the AuditableInterceptor is invoked to set Auditable fields
 		Context.flushSession();
@@ -198,8 +198,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void saveCaseReport_shouldChangeTheStatusOfAReportFromDraftToNewIfTheReportFormIsBlank() throws Exception {
 		CaseReport caseReport = service.getCaseReport(2);
 		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
-		assertTrue(StringUtils.isNotBlank(caseReport.getReport()));
-		caseReport.setReport(null);
+		assertTrue(StringUtils.isNotBlank(caseReport.getReportForm()));
+		caseReport.setReportForm(null);
 		service.saveCaseReport(caseReport);
 		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
 	}
@@ -212,7 +212,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void saveCaseReport_shouldNotChangeTheStatusOfAReportFromDraftToNewIfTheReportFormIsNotBlank() throws Exception {
 		CaseReport caseReport = service.getCaseReport(2);
 		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
-		assertTrue(StringUtils.isNotBlank(caseReport.getReport()));
+		assertTrue(StringUtils.isNotBlank(caseReport.getReportForm()));
 		service.saveCaseReport(caseReport);
 		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
 	}
@@ -225,8 +225,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void saveCaseReport_shouldChangeTheStatusOfAReportFromNewToDraftIfTheReportFormIsNotBlank() throws Exception {
 		CaseReport caseReport = service.getCaseReport(1);
 		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
-		assertTrue(StringUtils.isBlank(caseReport.getReport()));
-		caseReport.setReport("{}");
+		assertTrue(StringUtils.isBlank(caseReport.getReportForm()));
+		caseReport.setReportForm("{}");
 		service.saveCaseReport(caseReport);
 		assertEquals(CaseReport.Status.DRAFT, caseReport.getStatus());
 	}
@@ -239,7 +239,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void saveCaseReport_shouldNotChangeTheStatusOfAReportFromNewToDraftIfTheReportFormIsBlank() throws Exception {
 		CaseReport caseReport = service.getCaseReport(1);
 		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
-		assertTrue(StringUtils.isBlank(caseReport.getReport()));
+		assertTrue(StringUtils.isBlank(caseReport.getReportForm()));
 		service.saveCaseReport(caseReport);
 		assertEquals(CaseReport.Status.NEW, caseReport.getStatus());
 	}

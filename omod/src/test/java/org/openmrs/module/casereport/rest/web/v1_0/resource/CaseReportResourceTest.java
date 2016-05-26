@@ -46,8 +46,11 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	public void validateDefaultRepresentation() throws Exception {
 		super.validateDefaultRepresentation();
 		assertPropEquals("patient", getObject().getPatient());
+		assertPropEquals("status", getObject().getStatus());
+		assertPropEquals("reportForm", getObject().getReportForm());
 		assertPropEquals("voided", getObject().getVoided());
 		assertPropPresent("reportTriggers");
+		assertPropNotPresent("reportForm");
 		assertPropNotPresent("auditInfo");
 	}
 	
@@ -55,6 +58,8 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	public void validateFullRepresentation() throws Exception {
 		super.validateFullRepresentation();
 		assertPropEquals("patient", getObject().getPatient());
+		assertPropEquals("status", getObject().getStatus());
+		assertPropEquals("reportForm", getObject().getReportForm());
 		assertPropEquals("voided", getObject().getVoided());
 		assertPropPresent("reportTriggers");
 		assertPropPresent("auditInfo");
