@@ -54,18 +54,6 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		return service.getCaseReports().size();
 	}
 	
-	@Override
-	@Test
-	public void shouldGetDefaultByUuid() throws Exception {
-		super.shouldGetDefaultByUuid();
-	}
-	
-	@Override
-	@Test
-	public void shouldGetFullByUuid() throws Exception {
-		super.shouldGetFullByUuid();
-	}
-	
 	@Test
 	public void shouldGetTheCaseReportQueue() throws Exception {
 		SimpleObject result = deserialize(handle(newGetRequest(getURI())));
