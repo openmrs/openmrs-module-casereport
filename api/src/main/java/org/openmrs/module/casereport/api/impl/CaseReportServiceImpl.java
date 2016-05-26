@@ -47,11 +47,20 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	
 	private CaseReportDAO dao;
 	
+	private ObjectMapper mapper = null;
+	
 	/**
 	 * @param dao the dao to set
 	 */
 	public void setDao(CaseReportDAO dao) {
 		this.dao = dao;
+	}
+	
+	private ObjectMapper getObjectMapper() {
+		if (mapper == null) {
+			mapper = new ObjectMapper();
+		}
+		return mapper;
 	}
 	
 	private void setStatus(CaseReport caseReport, CaseReport.Status status) {
@@ -245,7 +254,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		
 		String reportForm;
 		try {
-			reportForm = new ObjectMapper().writeValueAsString(reportFormMap);
+			
+			reportForm = getObjectMapper().writeValueAsString(reportFormMap);
 		}
 		catch (IOException e) {
 			throw new APIException(e);
