@@ -4,7 +4,7 @@
     "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
     "type": "link",
     "label": "casereport.app.label",
-    "url": "casereport/casereport.page",
+    "url": "casereport/casereports.page",
     "icon": "icon-list-alt",
     "requiredPrivilege": "App: casereport.manageCaseReports"
   }
