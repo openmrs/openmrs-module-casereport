@@ -29,6 +29,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * 
 	 * @param caseReportId the id to match against
 	 * @return the case report that matches the specified id
+	 * @throws APIException
 	 * @should return the case report that matches the specified id
 	 */
 	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
@@ -39,6 +40,7 @@ public interface CaseReportService extends OpenmrsService {
 	 *
 	 * @param uuid the uuid to match against
 	 * @return the case report that matches the specified uuid
+	 * @throws APIException
 	 * @should return the case report that matches the specified uuid
 	 */
 	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
@@ -49,15 +51,17 @@ public interface CaseReportService extends OpenmrsService {
 	 *
 	 * @param patient the patient match against
 	 * @return a list of the case reports for the patient
+	 * @throws APIException
 	 * @should get the case report for the patient
 	 */
 	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
-	CaseReport getCaseReportByPatient(Patient patient);
+	CaseReport getCaseReportByPatient(Patient patient) throws APIException;
 	
 	/**
 	 * Gets all non voided case reports from the database that are not yet submitted nor dismissed
 	 * 
 	 * @return all non voided case reports in the database
+	 * @throws APIException
 	 * @should return all non voided case reports in the database
 	 */
 	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
@@ -72,6 +76,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @param includeDismissed specifies whether dismissed reports should be included
 	 * @return the case reports in the database including voided ones if includeVoided is set to
 	 *         true otherwise they will be excluded
+	 * @throws APIException
 	 * @should return all case reports in the database if all arguments are set to true
 	 * @should include voided reports in the database if includeVoided is set to true
 	 * @should include submitted reports in the database if includeSubmitted is set to true
@@ -89,6 +94,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @see #runTrigger(String)
 	 * @param caseReport the case report to save
 	 * @return the saved case report
+	 * @throws APIException
 	 * @should return the saved case report
 	 * @should update an existing case report
 	 * @should change the status of a report from new to draft if the reportForm is not blank
@@ -104,6 +110,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * 
 	 * @param caseReport the case report to submit
 	 * @return the submitted case report
+	 * @throws APIException
 	 * @should submit the specified case report
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
@@ -114,6 +121,7 @@ public interface CaseReportService extends OpenmrsService {
 	 *
 	 * @param caseReport the case report to dismiss
 	 * @return the dismissed case report
+	 * @throws APIException
 	 * @should dismiss the specified case report
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
@@ -147,11 +155,26 @@ public interface CaseReportService extends OpenmrsService {
 	SqlCohortDefinition getSqlCohortDefinition(String triggerName) throws APIException;
 	
 	/**
+	 * Generates and saves the case report form for the CaseReport that matches the specified uuid,
+	 * note that this method should be called for a CaseReport with no report form data otherwise it
+	 * will overwrite the existing report form. In theory this method can be called to reset the
+	 * report form data from its current state.
+	 *
+	 * @param caseReport the CaseReport for which to generate the form
+	 * @return the CaseReport with a generated form
+	 * @throws APIException
+	 * @should generate the report form
+	 */
+	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
+	CaseReport generateReportForm(CaseReport caseReport) throws APIException;
+	
+	/**
 	 * Marks the specified case report as voided
 	 *
 	 * @param caseReport the case report to void
 	 * @param voidReason for voiding
 	 * @return the voided case report
+	 * @throws APIException
 	 * @should void the specified case report
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
@@ -162,6 +185,7 @@ public interface CaseReportService extends OpenmrsService {
 	 *
 	 * @param caseReport the case report to unvoid
 	 * @return the none voided case report
+	 * @throws APIException
 	 * @should unvoid the specified case report
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)

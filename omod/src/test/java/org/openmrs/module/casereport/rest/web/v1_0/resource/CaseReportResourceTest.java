@@ -29,7 +29,7 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	
 	@Override
 	public String getDisplayProperty() {
-		return "Patient#2 Trigger(s): HIV Virus Not Suppressed, Another Trigger";
+		return "CaseReport for Mr. Horatio Test Hornblower Esq., Trigger(s): HIV Virus Not Suppressed, Another Trigger";
 	}
 	
 	@Override
@@ -45,10 +45,10 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	@Override
 	public void validateDefaultRepresentation() throws Exception {
 		super.validateDefaultRepresentation();
-		assertPropEquals("patient", getObject().getPatient());
+		assertPropPresent("patient");
 		assertPropEquals("status", getObject().getStatus());
-		assertPropEquals("reportForm", getObject().getReportForm());
 		assertPropEquals("voided", getObject().getVoided());
+		assertPropPresent("patient");
 		assertPropPresent("reportTriggers");
 		assertPropNotPresent("reportForm");
 		assertPropNotPresent("auditInfo");
@@ -57,10 +57,10 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	@Override
 	public void validateFullRepresentation() throws Exception {
 		super.validateFullRepresentation();
-		assertPropEquals("patient", getObject().getPatient());
 		assertPropEquals("status", getObject().getStatus());
 		assertPropEquals("reportForm", getObject().getReportForm());
 		assertPropEquals("voided", getObject().getVoided());
+		assertPropPresent("patient");
 		assertPropPresent("reportTriggers");
 		assertPropPresent("auditInfo");
 	}

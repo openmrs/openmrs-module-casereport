@@ -9,12 +9,18 @@
  */
 package org.openmrs.module.casereport.api.impl;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Cohort;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
@@ -86,7 +92,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 * @see CaseReportService#getCaseReportByPatient(Patient)
 	 */
 	@Override
-	public CaseReport getCaseReportByPatient(Patient patient) {
+	public CaseReport getCaseReportByPatient(Patient patient) throws APIException {
 		if (patient == null) {
 			throw new APIException("patient is required");
 		}
@@ -213,6 +219,42 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * @see CaseReportService#generateReportForm(CaseReport)
+	 * @param caseReport
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public CaseReport generateReportForm(CaseReport caseReport) throws APIException {
+		CaseReportService service = Context.getService(CaseReportService.class);
+		Map<String, Object> reportFormMap = new HashMap<String, Object>();
+		Patient patient = caseReport.getPatient();
+		reportFormMap.put("givenName", patient.getGivenName());
+		reportFormMap.put("middleName", patient.getMiddleName());
+		reportFormMap.put("familyName", patient.getFamilyName());
+		reportFormMap.put("gender", patient.getGender());
+		reportFormMap.put("birthdate", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(patient.getBirthdate()));
+		reportFormMap.put("address", patient.getPersonAddress().toString());
+		List triggers = new ArrayList(caseReport.getReportTriggers().size());
+		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
+			triggers.add(tr.getName());
+		}
+		reportFormMap.put("reportTriggers", triggers);
+		
+		String reportForm;
+		try {
+			reportForm = new ObjectMapper().writeValueAsString(reportFormMap);
+		}
+		catch (IOException e) {
+			throw new APIException(e);
+		}
+		
+		caseReport.setReportForm(reportForm);
+		service.saveCaseReport(caseReport);
+		
+		return caseReport;
 	}
 	
 	/**

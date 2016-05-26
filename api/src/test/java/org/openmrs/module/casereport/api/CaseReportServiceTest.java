@@ -18,8 +18,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -360,5 +362,24 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		SqlCohortDefinition definition = service.getSqlCohortDefinition("HIV Virus Not Suppressed");
 		assertNotNull(definition);
 		assertEquals("5b4f091e-4f28-4810-944b-4e4ccf9bfbb3", definition.getUuid());
+	}
+	
+	/**
+	 * @see CaseReportService#generateReportForm(CaseReport)
+	 * @verifies generate the report form
+	 */
+	@Test
+	public void generateReportForm_shouldGenerateTheReportForm() throws Exception {
+		CaseReport caseReport = service.getCaseReport(1);
+		assertNull(caseReport.getReportForm());
+		caseReport = service.generateReportForm(caseReport);
+		String reportForm = caseReport.getReportForm();
+		assertNotNull(reportForm);
+		Map<String, Object> reportFormMap = new ObjectMapper().readValue(reportForm, Map.class);
+		assertEquals("Horatio", reportFormMap.get("givenName"));
+		assertEquals("Hornblower", reportFormMap.get("familyName"));
+		assertEquals("M", reportFormMap.get("gender"));
+		assertEquals("Test", reportFormMap.get("middleName"));
+		assertEquals("1975-04-08T00:00:00.000-0500", reportFormMap.get("birthdate"));
 	}
 }
