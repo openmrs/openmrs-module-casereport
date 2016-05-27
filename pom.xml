@@ -42,7 +42,7 @@
         <reportingVersion>0.9.8.1</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
         <serializationXstreamVersion>0.2.10</serializationXstreamVersion>
-        <webservices.restVersion>2.15-SNAPSHOT</webservices.restVersion>
+        <webservices.restVersion>2.14</webservices.restVersion>
         <javaCompilerVersion>1.6</javaCompilerVersion>
 	</properties>
 
