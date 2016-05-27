@@ -3,12 +3,15 @@
 
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
+    ui.includeJavascript("uicommons", "angular-ui/angular-ui-router.min.js")
     ui.includeJavascript("uicommons", "angular-app.js")
     ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "angular-common-error.js")
-    ui.includeJavascript("casereport", "casereport.js")
+    ui.includeJavascript("uicommons", "filters/display.js")
+    ui.includeJavascript("casereport", "caseReportService.js")
+    ui.includeJavascript("casereport", "casereports.js")
 
-    ui.includeCss("casereport", "casereport.css")
+    ui.includeCss("casereport", "casereports.css")
 %>
 
 <script type="text/javascript">
@@ -19,3 +22,11 @@
 </script>
 
 <h2>${ ui.message('casereport.manageCaseReports.label')}</h2>
+
+<div id="manage-casereports">
+    <ui-view/>
+</div>
+
+<script type="text/javascript">
+    angular.bootstrap("#manage-casereports", [ "manageCaseReports" ])
+</script>

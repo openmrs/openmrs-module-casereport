@@ -40,9 +40,9 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("display");
-			description.addProperty("patient", Representation.REF);
+			description.addProperty("patient", Representation.DEFAULT);
 			description.addProperty("status");
-			description.addProperty("reportTriggers", Representation.REF);
+			description.addProperty("reportTriggers", Representation.DEFAULT);
 			description.addProperty("voided");
 			description.addSelfLink();
 			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
@@ -51,7 +51,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
 			description.addProperty("uuid");
 			description.addProperty("display");
-			description.addProperty("patient", Representation.REF);
+			description.addProperty("patient", Representation.DEFAULT);
 			description.addProperty("status");
 			description.addProperty("reportForm");
 			description.addProperty("reportTriggers", Representation.DEFAULT);
