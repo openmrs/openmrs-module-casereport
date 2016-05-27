@@ -10,19 +10,12 @@
 package org.openmrs.module.casereport.rest.web;
 
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceController;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller
-@RequestMapping("/rest/" + RestConstants.VERSION_1 + "/casereport")
-public class CaseReportRestController extends MainResourceController {
+public class CaseReportWebConstants {
 	
-	/**
-	 * @see MainResourceController#getNamespace()
-	 */
-	@Override
-	public String getNamespace() {
-		return RestConstants.VERSION_1 + "/casereport";
-	}
+	public static final String REST_NAMESPACE = RestConstants.VERSION_1 + "/casereport";
+	
+	public static final String REST_ACTION_SUBMIT_REQUEST_PARAM_NAME = "submit";
+	
+	public static final String REST_ACTION_DISMISS_REQUEST_PARAM_NAME = "dismiss";
 }
