@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.rest.web.v1_0.resource;
 
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportTrigger;
+import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -118,5 +119,13 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	@Override
 	public void purge(CaseReportTrigger delegate, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * @see DelegatingSubResource#getResourceVersion()
+	 */
+	@Override
+	public String getResourceVersion() {
+		return CaseReportWebConstants.REST_RESOURCE_VERSION;
 	}
 }

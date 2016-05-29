@@ -14,5 +14,4 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
                 return RestService.getAllResults(CaseReport, params);
             }
         }
-
     });

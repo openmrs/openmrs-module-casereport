@@ -116,4 +116,12 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	public void purge(StatusChange delegate, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
 	}
+	
+	/**
+	 * @see DelegatingSubResource#getResourceVersion()
+	 */
+	@Override
+	public String getResourceVersion() {
+		return CaseReportWebConstants.REST_RESOURCE_VERSION;
+	}
 }

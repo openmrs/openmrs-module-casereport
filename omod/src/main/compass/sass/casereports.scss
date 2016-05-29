@@ -1,0 +1,15 @@
+$orange: #F26522;
+
+.casereport-name-column {
+  width: 250px;
+}
+
+.casereport-draft-lozenge {
+  display: inline-block;
+  vertical-align: text-bottom;
+  font-size: 0.7em;
+  border: 1px solid $orange;
+  color: $orange;
+  padding: 1px 2px;
+  border-radius: 4px;
+}

@@ -18,4 +18,7 @@ public class CaseReportWebConstants {
 	public static final String REST_ACTION_SUBMIT_REQUEST_PARAM_NAME = "submit";
 	
 	public static final String REST_ACTION_DISMISS_REQUEST_PARAM_NAME = "dismiss";
+	
+	public static final String REST_RESOURCE_VERSION = "1.9";
+	
 }

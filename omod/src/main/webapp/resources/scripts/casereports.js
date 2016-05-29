@@ -13,14 +13,14 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
 
     .controller("ViewCaseReportsController", [ "$scope", "$state", "CaseReport", "CaseReportService",
         function($scope, $state, CaseReport, CaseReportService) {
+            var customRep = 'custom:(uuid,status,patient:(patientIdentifier:(identifier),person:(gender,personName:(display))),' +
+                'reportTriggers:(display))';
 
             function loadCaseReports() {
-                CaseReportService.getCaseReports({v: "default"}).then(function(results) {
+                CaseReportService.getCaseReports({v: customRep}).then(function(results) {
                     $scope.caseReports = results;
                 });
             }
 
             loadCaseReports();
-
-        }]
-);
+    }]);
