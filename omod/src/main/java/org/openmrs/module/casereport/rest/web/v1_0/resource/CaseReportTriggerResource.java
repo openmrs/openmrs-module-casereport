@@ -13,7 +13,6 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -39,7 +38,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 			description.addProperty("uuid");
 			description.addProperty("name");
 			description.addProperty("display");
-			description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
+			//description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
 			return description;
 		} else if (representation instanceof FullRepresentation) {
 			DelegatingResourceDescription description = new DelegatingResourceDescription();
