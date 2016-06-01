@@ -112,6 +112,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @return the submitted case report
 	 * @throws APIException
 	 * @should submit the specified case report
+	 * @should fail if the case report is voided
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport submitCaseReport(CaseReport caseReport) throws APIException;
@@ -123,6 +124,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @return the dismissed case report
 	 * @throws APIException
 	 * @should dismiss the specified case report
+	 * @should fail if the case report is voided
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport dismissCaseReport(CaseReport caseReport) throws APIException;

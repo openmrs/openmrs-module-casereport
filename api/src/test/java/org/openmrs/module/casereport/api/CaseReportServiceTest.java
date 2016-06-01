@@ -118,7 +118,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllCaseReportsInTheDatabaseIfAllArgumentsAreSetToTrue() throws Exception {
-		assertEquals(6, service.getCaseReports(true, true, true).size());
+		assertEquals(7, service.getCaseReports(true, true, true).size());
 	}
 	
 	/**
@@ -155,7 +155,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getCaseReports_shouldIncludeVoidedReportsInTheDatabaseIfIncludeVoidedIsSetToTrue() throws Exception {
 		List<CaseReport> reports = service.getCaseReports(true, false, false);
-		assertEquals(4, reports.size());
+		assertEquals(5, reports.size());
 		assertTrue(TestUtil.containsId(reports, 3));
 		assertFalse(TestUtil.containsId(reports, 5));
 		assertFalse(TestUtil.containsId(reports, 6));
@@ -259,6 +259,20 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport)
+	 * @verifies fail if the case report is voided
+	 */
+	@Test
+	public void submitCaseReport_shouldFailIfTheCaseReportIsVoided() throws Exception {
+		CaseReport cr = service.getCaseReport(7);
+		assertFalse(cr.isSubmitted());
+		assertTrue(cr.isVoided());
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Can't submit a voided case report"));
+		service.submitCaseReport(cr);
+	}
+	
+	/**
 	 * @see CaseReportService#dismissCaseReport(CaseReport)
 	 * @verifies dismiss the specified case report
 	 */
@@ -268,6 +282,20 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertFalse(cr.isDismissed());
 		service.dismissCaseReport(cr);
 		assertTrue(cr.isDismissed());
+	}
+	
+	/**
+	 * @see CaseReportService#dismissCaseReport(CaseReport)
+	 * @verifies fail if the case report is voided
+	 */
+	@Test
+	public void dismissCaseReport_shouldFailIfTheCaseReportIsVoided() throws Exception {
+		CaseReport cr = service.getCaseReport(7);
+		assertFalse(cr.isDismissed());
+		assertTrue(cr.isVoided());
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Can't dismiss a voided case report"));
+		service.dismissCaseReport(cr);
 	}
 	
 	/**
@@ -381,5 +409,43 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals("M", reportFormMap.get("gender"));
 		assertEquals("Test", reportFormMap.get("middleName"));
 		assertEquals("1975-04-08T00:00:00.000-0500", reportFormMap.get("birthdate"));
+	}
+	
+	/**
+	 * @see CaseReportService#voidCaseReport(CaseReport,String)
+	 * @verifies void the specified case report
+	 */
+	@Test
+	public void voidCaseReport_shouldVoidTheSpecifiedCaseReport() throws Exception {
+		CaseReport cr = service.getCaseReport(1);
+		assertFalse(cr.isVoided());
+		assertNull(cr.getDateVoided());
+		assertNull(cr.getVoidedBy());
+		assertNull(cr.getDateVoided());
+		
+		service.voidCaseReport(cr, "some reason");
+		assertTrue(cr.isVoided());
+		assertNotNull(cr.getDateVoided());
+		assertNotNull(cr.getVoidedBy());
+		assertNotNull(cr.getDateVoided());
+	}
+	
+	/**
+	 * @see CaseReportService#unvoidCaseReport(CaseReport)
+	 * @verifies unvoid the specified case report
+	 */
+	@Test
+	public void unvoidCaseReport_shouldUnvoidTheSpecifiedCaseReport() throws Exception {
+		CaseReport cr = service.getCaseReport(7);
+		assertTrue(cr.isVoided());
+		assertNotNull(cr.getDateVoided());
+		assertNotNull(cr.getVoidedBy());
+		assertNotNull(cr.getDateVoided());
+		
+		service.unvoidCaseReport(cr);
+		assertFalse(cr.isVoided());
+		assertNull(cr.getDateVoided());
+		assertNull(cr.getVoidedBy());
+		assertNull(cr.getDateVoided());
 	}
 }
