@@ -1,12 +1,12 @@
 <table>
     <thead>
-    <tr>
-        <th class="casereport-name-column">${ui.message('general.name')}</th>
-        <th>${ui.message('Patient.identifier')}</th>
-        <th>${ui.message('Patient.gender')}</th>
-        <th>${ui.message('casereport.triggers')}</th>
-        <th>${ui.message('casereport.actions')}</th>
-    </tr>
+        <tr>
+            <th class="casereport-name-column">${ui.message('general.name')}</th>
+            <th>${ui.message('Patient.identifier')}</th>
+            <th>${ui.message('Patient.gender')}</th>
+            <th>${ui.message('casereport.triggers')}</th>
+            <th>${ui.message('casereport.actions')}</th>
+        </tr>
     </thead>
     <tbody>
     <tr ng-repeat="caseReport in caseReports">
