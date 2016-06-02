@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
     <!--
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
     
     <changeSet id="${project.parent.artifactId}-20160518-1302" author="Wyclif">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${project.parent.artifactId}_case_report"/>
             </not>
@@ -68,7 +69,7 @@
     </changeSet>
 
     <changeSet id="${project.parent.artifactId}-20160520-1503" author="Wyclif">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${project.parent.artifactId}_case_report_trigger" />
             </not>
@@ -103,25 +104,6 @@
                                  referencedTableName="users"
                                  referencedColumnNames="user_id" />
 
-    </changeSet>
-
-    <changeSet id="${project.parent.artifactId}-20160601-0945" author="Wyclif">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM scheduler_task_config
-                WHERE schedulable_class = '${project.parent.groupId}.${project.parent.artifactId}.CaseReportTask'
-                And name = 'Case Reports Task'
-            </sqlCheck>
-        </preConditions>
-        <comment>Inserting Case Reports Task into 'schedule_task_config' table</comment>
-        <insert tableName="scheduler_task_config">
-            <column name="name" value="Case Reports Task" />
-            <column name="description" value="Runs the specified sql cohort query and generates case reports for matching patients" />
-            <column name="schedulable_class" value="${project.parent.groupId}.${project.parent.artifactId}.CaseReportTask" />
-            <column name="date_created" valueDate="CURRENT_TIMESTAMP" />
-            <column name="created_by" value="1" />
-            <column name="uuid" value="70272534-27ff-11e6-929a-972f221f36b1" />
-        </insert>
     </changeSet>
     
 </databaseChangeLog>

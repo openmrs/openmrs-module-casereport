@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
  * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- *
+ * <p/>
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
@@ -20,9 +20,12 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.casereport.api.CaseReportConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.scheduler.SchedulerService;
+import org.openmrs.scheduler.TaskDefinition;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -39,15 +42,20 @@ public class CaseReportActivator extends BaseModuleActivator {
 	}
 	
 	/**
-	 * @see ModuleActivator#contextRefreshed()
 	 * @should fail for a query with no name
 	 * @should fail for a query with no sql
 	 * @should ignore a cohort query with a duplicate name
 	 * @should save a cohort queries with a name that matches a retired duplicate
 	 * @should load queries and register them with the reporting module
+	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
-		
+		loadQueries();
+		addSchedulerTaskIfNecessary();
+		log.info("Case Report Module refreshed");
+	}
+	
+	private void loadQueries() {
 		log.info("Loading queries...");
 		
 		List<SqlCohortQueryLoader> loaders = new ArrayList<SqlCohortQueryLoader>();
@@ -83,8 +91,23 @@ public class CaseReportActivator extends BaseModuleActivator {
 				DefinitionContext.saveDefinition(definition);
 			}
 		}
+	}
+	
+	private void addSchedulerTaskIfNecessary() {
+		log.info("Adding Case Reports Task...");
 		
-		log.info("Case Report Module refreshed");
+		SchedulerService ss = Context.getSchedulerService();
+		String name = "Case Reports Task";
+		String className = CaseReportTask.class.getName();
+		String description = "Runs the specified sql cohort query and generates case reports for the matching patients";
+		TaskDefinition td = ss.getTaskByName(name);
+		if (td == null || !className.equals(className)) {
+			td = new TaskDefinition(null, name, description, className);
+			td.setStartOnStartup(false);
+			td.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, "");
+			td.setRepeatInterval(0L);
+			ss.saveTaskDefinition(td);
+		}
 	}
 	
 	/**
