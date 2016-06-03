@@ -21,9 +21,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.module.reporting.definition.service.DefinitionService;
+import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -145,5 +147,18 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		query = defService.getDefinitions("HIV Virus Not Suppressed", true).get(0);
 		assertEquals("Select patient_id from patient", query.getQuery());
 		assertNull(query.getDescription());
+	}
+	
+	/**
+	 * @see CaseReportActivator#contextRefreshed()
+	 * @verifies add the case reports task if it does not exist
+	 */
+	@Test
+	public void contextRefreshed_shouldAddTheCaseReportsTaskIfItDoesNotExist() throws Exception {
+		String name = "Case Reports Task";
+		SchedulerService ss = Context.getSchedulerService();
+		assertNull(ss.getTaskByName(name));
+		activator.contextRefreshed();
+		assertNotNull(ss.getTaskByName(name));
 	}
 }

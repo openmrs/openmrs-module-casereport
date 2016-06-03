@@ -47,6 +47,7 @@ public class CaseReportActivator extends BaseModuleActivator {
 	 * @should ignore a cohort query with a duplicate name
 	 * @should save a cohort queries with a name that matches a retired duplicate
 	 * @should load queries and register them with the reporting module
+	 * @should add the case reports task if it does not exist
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
