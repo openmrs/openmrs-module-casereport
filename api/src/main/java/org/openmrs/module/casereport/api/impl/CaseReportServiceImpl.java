@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,6 +26,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
@@ -244,30 +243,29 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Transactional(readOnly = false)
 	public CaseReport generateReportForm(CaseReport caseReport) throws APIException {
 		CaseReportService service = Context.getService(CaseReportService.class);
-		Map<String, Object> reportFormMap = new HashMap<String, Object>();
 		Patient patient = caseReport.getPatient();
-		reportFormMap.put("givenName", patient.getGivenName());
-		reportFormMap.put("middleName", patient.getMiddleName());
-		reportFormMap.put("familyName", patient.getFamilyName());
-		reportFormMap.put("gender", patient.getGender());
-		reportFormMap.put("birthdate", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(patient.getBirthdate()));
-		reportFormMap.put("address", patient.getPersonAddress().toString());
-		List triggers = new ArrayList(caseReport.getReportTriggers().size());
+		CaseReportForm form = new CaseReportForm();
+		form.setGivenName(patient.getGivenName());
+		form.setMiddleName(patient.getMiddleName());
+		form.setFamilyName(patient.getFamilyName());
+		form.setGender(patient.getGender());
+		if (patient.getBirthdate() != null) {
+			form.setBirthDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(patient.getBirthdate()));
+		}
+		List<String> triggers = new ArrayList(caseReport.getReportTriggers().size());
 		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
 			triggers.add(tr.getName());
 		}
-		reportFormMap.put("reportTriggers", triggers);
-		
-		String reportForm;
+		String serializedReportForm;
 		try {
 			
-			reportForm = getObjectMapper().writeValueAsString(reportFormMap);
+			serializedReportForm = getObjectMapper().writeValueAsString(form);
 		}
 		catch (IOException e) {
 			throw new APIException(e);
 		}
 		
-		caseReport.setReportForm(reportForm);
+		caseReport.setReportForm(serializedReportForm);
 		service.saveCaseReport(caseReport);
 		
 		return caseReport;

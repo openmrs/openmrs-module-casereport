@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -31,6 +30,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
@@ -401,14 +401,14 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		CaseReport caseReport = service.getCaseReport(1);
 		assertNull(caseReport.getReportForm());
 		caseReport = service.generateReportForm(caseReport);
-		String reportForm = caseReport.getReportForm();
-		assertNotNull(reportForm);
-		Map<String, Object> reportFormMap = new ObjectMapper().readValue(reportForm, Map.class);
-		assertEquals("Horatio", reportFormMap.get("givenName"));
-		assertEquals("Hornblower", reportFormMap.get("familyName"));
-		assertEquals("M", reportFormMap.get("gender"));
-		assertEquals("Test", reportFormMap.get("middleName"));
-		assertEquals("1975-04-08T00:00:00.000-0500", reportFormMap.get("birthdate"));
+		String form = caseReport.getReportForm();
+		assertNotNull(form);
+		CaseReportForm reportForm = new ObjectMapper().readValue(form, CaseReportForm.class);
+		assertEquals("Horatio", reportForm.getGivenName());
+		assertEquals("Test", reportForm.getMiddleName());
+		assertEquals("Hornblower", reportForm.getFamilyName());
+		assertEquals("M", reportForm.getGender());
+		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthDate());
 	}
 	
 	/**
