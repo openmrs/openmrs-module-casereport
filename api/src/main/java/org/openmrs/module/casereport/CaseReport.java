@@ -112,6 +112,15 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		return getStatus() == Status.DISMISSED;
 	}
 	
+	public CaseReportTrigger getCaseReportTriggerByName(String name) {
+		for (CaseReportTrigger crt : getReportTriggers()) {
+			if (crt.getName().equalsIgnoreCase(name)) {
+				return crt;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @see Object#toString()
 	 */

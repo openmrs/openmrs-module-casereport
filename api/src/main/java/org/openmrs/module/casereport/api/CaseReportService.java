@@ -138,6 +138,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @throws EvaluationException
 	 * @should create case reports for the matched patients
 	 * @should add a new trigger to an existing queue item for the patient
+	 * @should not create a duplicate trigger for the same patient
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	void runTrigger(String triggerName) throws APIException, EvaluationException;

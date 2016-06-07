@@ -188,8 +188,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	public void runTrigger(String triggerName) throws APIException, EvaluationException {
 		SqlCohortDefinition definition = getSqlCohortDefinition(triggerName);
 		if (definition != null) {
-			EvaluationContext evaluationContext = new EvaluationContext();
-			Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
+			Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, new EvaluationContext());
 			
 			PatientService ps = Context.getPatientService();
 			CaseReportService service = Context.getService(CaseReportService.class);
@@ -202,6 +201,10 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 				if (caseReport == null) {
 					caseReport = new CaseReport(patient, triggerName);
 				} else {
+					//Don't create a duplicate trigger for the same patient
+					if (caseReport.getCaseReportTriggerByName(triggerName) != null) {
+						continue;
+					}
 					caseReport.addTrigger(new CaseReportTrigger(triggerName));
 				}
 				

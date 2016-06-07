@@ -448,4 +448,26 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertNull(cr.getVoidedBy());
 		assertNull(cr.getDateVoided());
 	}
+	
+	/**
+	 * @see CaseReportService#runTrigger(String)
+	 * @verifies not create a duplicate trigger for the same patient
+	 */
+	@Test
+	public void runTrigger_shouldNotCreateADuplicateTriggerForTheSamePatient() throws Exception {
+		final String name = "HIV Virus Not Suppressed";
+		final Integer patientId = 2;
+		CaseReport caseReport = service.getCaseReport(1);
+		assertEquals(patientId, caseReport.getPatient().getId());
+		assertEquals(2, caseReport.getReportTriggers().size());
+		int originalCaseReportCount = service.getCaseReports().size();
+		assertNotNull(caseReport.getCaseReportTriggerByName(name));
+		SqlCohortDefinition definition = service.getSqlCohortDefinition(name);
+		definition.setQuery("select patient_id from patient where patient_id=" + patientId);
+		DefinitionContext.saveDefinition(definition);
+		
+		service.runTrigger(name);
+		assertEquals(2, caseReport.getReportTriggers().size());
+		assertEquals(originalCaseReportCount, service.getCaseReports().size());
+	}
 }
