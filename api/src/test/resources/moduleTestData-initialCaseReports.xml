@@ -1,4 +1,17 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
 <dataset>
     <casereport_case_report case_report_id="1" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="5f7d57f0-9077-11e1-aaa4-00248140a5ef" />
     <casereport_case_report case_report_id="2" patient_id="999" report_form="{&quot;givenName&quot;:&quot;Horatio&quot;,&quot;familyName&quot;:&quot;Hornblower&quot;}" status="DRAFT" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="6f7d57f0-9077-11e1-aaa4-00248140a5ef" />
