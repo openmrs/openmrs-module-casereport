@@ -135,22 +135,30 @@
                             <include>**/*.java</include>
                             <include>**/*.xml</include>
                             <include>**/*.gsp</include>
+                            <include>**/*.js</include>
+                            <include>**/*.scss</include>
+                            <include>**/*.css</include>
                         </includes>
                         <excludes>
                             <exclude>.rubygems/**</exclude>
                             <exclude>.rubygems-provided/**</exclude>
+                            <exclude>src/main/compass/sass-external/uicommons-scss/**</exclude>
                             <!--
                                 The bamboo stage that releases the module copies the release scripts
                                 into the project root, we need to ignore those files
                              -->
                             <exclude>release-scripts/**</exclude>
                         </excludes>
+                        <mapping>
+                            <scss>SLASHSTAR_STYLE</scss>
+                            <css>SLASHSTAR_STYLE</css>
+                        </mapping>
                     </configuration>
                     <executions>
                         <execution>
                             <goals>
                                 <goal>check</goal>
-                            </goals><phase>prepare-package</phase>
+                            </goals>
                         </execution>
                     </executions>
                 </plugin>
