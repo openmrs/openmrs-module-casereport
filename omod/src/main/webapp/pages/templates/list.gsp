@@ -10,6 +10,8 @@
 
 -->
 
+<h2>${ ui.message('casereport.manageCaseReports.label')}</h2>
+
 <table>
     <thead>
         <tr>
@@ -31,7 +33,7 @@
         <td valign="top">{{caseReport.patient.person.gender}}</td>
         <td valign="top">{{caseReport.reportTriggers | omrs.display}}</td>
         <td valign="top">
-            <a ui-sref="submit({caseReportUuid: caseReport.uuid})">
+            <a ui-sref="reportForm({uuid: caseReport.uuid, status: caseReport.status})">
                 <i class="icon-external-link edit-action" title="${ui.message("casereport.submit")}"></i>
             </a>
             <a ng-click="dismiss(caseReport)">

@@ -259,6 +259,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
 			triggers.add(tr.getName());
 		}
+		form.setReportTriggers(triggers);
+		
 		String serializedReportForm;
 		try {
 			

@@ -9,6 +9,7 @@
  */
 
 $orange: #F26522;
+$white: white;
 
 .casereport-name-column {
   width: 250px;
@@ -22,4 +23,52 @@ $orange: #F26522;
   color: $orange;
   padding: 1px 2px;
   border-radius: 4px;
+}
+.casereport-no-border {
+  border: 1px;
+}
+.casereport-text-left{
+  text-align: left;
+}
+
+.casereport-label{
+  font-weight: bold;
+}
+
+.casereport-shrink-column{
+  white-space: nowrap;
+}
+
+.casereport-expand-column {
+  width: 100%;
+}
+
+.casereport-label-column{
+  @extend .casereport-label, .casereport-text-left, .casereport-shrink-column;
+}
+
+.casereport-form-table {
+  @extend .casereport-no-border;
+}
+
+.casereport-no-bg-color {
+  background-color: $white;
+}
+
+.casereport-no-border-no-bg-color{
+  @extend .casereport-no-border, .casereport-no-bg-color;
+}
+
+.casereport-form-table tr {
+  @extend .casereport-no-border-no-bg-color;
+}
+
+.casereport-form-table td {
+  @extend .casereport-no-border-no-bg-color, .casereport-text-left, .casereport-expand-column;
+}
+
+.casereport-form-table th {
+  @extend .casereport-no-border-no-bg-color, .casereport-label-column;
+  background-color: $white;
+  padding-left: 0;
 }

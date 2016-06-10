@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
+import org.openmrs.module.casereport.rest.web.StatusChange;
 import org.openmrs.module.casereport.rest.web.v1_0.resource.CaseReportResourceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -78,8 +78,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	public void shouldSubmitTheCaseReport() throws Exception {
 		CaseReport cr = service.getCaseReportByUuid(CaseReportResourceTest.CASE_REPORT_UUID);
 		assertFalse(cr.isSubmitted());
-		handle(newPostRequest(getURI(), "{\"action\":\"" + CaseReportWebConstants.REST_ACTION_SUBMIT_REQUEST_PARAM_NAME
-		        + "\"}"));
+		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.SUBMIT + "\"}"));
 		assertTrue(cr.isSubmitted());
 	}
 	
@@ -87,8 +86,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	public void shouldDismissTheCaseReport() throws Exception {
 		CaseReport cr = service.getCaseReportByUuid(CaseReportResourceTest.CASE_REPORT_UUID);
 		assertFalse(cr.isDismissed());
-		handle(newPostRequest(getURI(), "{\"action\":\"" + CaseReportWebConstants.REST_ACTION_DISMISS_REQUEST_PARAM_NAME
-		        + "\"}"));
+		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.DISMISS + "\"}"));
 		assertTrue(cr.isDismissed());
 	}
 }

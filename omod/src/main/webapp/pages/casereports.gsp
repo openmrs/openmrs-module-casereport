@@ -33,8 +33,6 @@
     ];
 </script>
 
-<h2>${ ui.message('casereport.manageCaseReports.label')}</h2>
-
 <div id="manage-casereports">
     <ui-view/>
 </div>

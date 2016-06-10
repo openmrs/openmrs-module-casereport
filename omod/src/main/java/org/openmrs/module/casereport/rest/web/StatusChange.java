@@ -13,9 +13,13 @@ import org.openmrs.module.casereport.CaseReport;
 
 public class StatusChange {
 	
+	public enum Action {
+		SUBMIT, DISMISS
+	}
+	
 	private CaseReport caseReport;
 	
-	private String action;
+	private Action action;
 	
 	public CaseReport getCaseReport() {
 		return caseReport;
@@ -25,11 +29,11 @@ public class StatusChange {
 		this.caseReport = caseReport;
 	}
 	
-	public String getAction() {
+	public Action getAction() {
 		return action;
 	}
 	
-	public void setAction(String action) {
+	public void setAction(Action action) {
 		this.action = action;
 	}
 }

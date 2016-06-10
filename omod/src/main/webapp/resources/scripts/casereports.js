@@ -19,10 +19,29 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
                 templateUrl: "templates/list.page",
                 controller: "ViewCaseReportsController"
             })
+            .state('reportForm', {
+                url: "/reportForm",
+                templateUrl: "templates/reportForm.page",
+                controller: "SubmitCaseReportController",
+                params: {
+                    uuid: null,
+                    status: null
+                },
+                resolve: {
+                    caseReport: function($stateParams, CaseReport) {
+                        var requestParams = { uuid: $stateParams.uuid, v: "full" };
+                        if ($stateParams.status != 'DRAFT') {
+                            requestParams.generateForm = true;
+                        }
+
+                        return CaseReport.get(requestParams);
+                    }
+                }
+            })
     }])
 
-    .controller("ViewCaseReportsController", [ "$scope", "$state", "CaseReport", "CaseReportService",
-        function($scope, $state, CaseReport, CaseReportService) {
+    .controller("ViewCaseReportsController", [ "$scope", "StatusChange", "CaseReportService",
+        function($scope, StatusChange, CaseReportService) {
             var customRep = 'custom:(uuid,status,patient:(patientIdentifier:(identifier),person:(gender,personName:(display))),' +
                 'reportTriggers:(display))';
 
@@ -32,5 +51,30 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
                 });
             }
 
+            $scope.dismiss = function(caseReport){
+                StatusChange.save({
+                    uuid: caseReport.uuid,
+                    action: "DISMISS"
+                }).$promise.then(function() {
+                    loadCaseReports();
+                    emr.successMessage("casereport.dismissed");
+                });
+            }
+
             loadCaseReports();
+    }])
+
+    .controller("SubmitCaseReportController", [ "$scope", "$state", "StatusChange", "caseReport",
+        function($scope, $state, StatusChange, caseReport) {
+            $scope.caseReport = caseReport;
+
+            $scope.submitCaseReport = function() {
+                StatusChange.save({
+                    uuid: caseReport.uuid,
+                    action: "SUBMIT"
+                }).$promise.then(function() {
+                    $state.go("list");
+                    emr.successMessage("casereport.submitted");
+                });
+            }
     }]);

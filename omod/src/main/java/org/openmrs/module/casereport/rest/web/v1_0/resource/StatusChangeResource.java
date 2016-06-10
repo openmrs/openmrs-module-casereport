@@ -51,10 +51,10 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 */
 	@Override
 	public StatusChange save(StatusChange delegate) {
-		if (CaseReportWebConstants.REST_ACTION_SUBMIT_REQUEST_PARAM_NAME.equalsIgnoreCase(delegate.getAction())) {
-			Context.getService(CaseReportService.class).submitCaseReport(delegate.getCaseReport());
-		} else if (CaseReportWebConstants.REST_ACTION_DISMISS_REQUEST_PARAM_NAME.equalsIgnoreCase(delegate.getAction())) {
-			Context.getService(CaseReportService.class).dismissCaseReport(delegate.getCaseReport());
+		if (StatusChange.Action.SUBMIT == delegate.getAction()) {
+			Context.getService(CaseReportService.class).submitCaseReport(getParent(delegate));
+		} else if (StatusChange.Action.DISMISS == delegate.getAction()) {
+			Context.getService(CaseReportService.class).dismissCaseReport(getParent(delegate));
 		} else {
 			throw new GenericRestException("Invalid action value");
 		}
@@ -66,7 +66,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 */
 	@Override
 	public CaseReport getParent(StatusChange instance) {
-		throw new UnsupportedOperationException();
+		return instance.getCaseReport();
 	}
 	
 	/**

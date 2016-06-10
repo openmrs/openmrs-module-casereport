@@ -9,8 +9,13 @@
  */
 package org.openmrs.module.casereport.rest.web.v1_0.resource;
 
+import java.io.IOException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -67,6 +72,19 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	@PropertyGetter("display")
 	public String getDisplayString(CaseReport delegate) {
 		return delegate.toString();
+	}
+	
+	@PropertyGetter("reportForm")
+	public CaseReportForm getReportForm(CaseReport delegate) {
+		if (StringUtils.isNotBlank(delegate.getReportForm())) {
+			try {
+				return new ObjectMapper().readValue(delegate.getReportForm(), CaseReportForm.class);
+			}
+			catch (IOException e) {
+				throw new GenericRestException("Failed to parse report form data", e);
+			}
+		}
+		return null;
 	}
 	
 	/**
