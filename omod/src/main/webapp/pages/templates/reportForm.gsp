@@ -11,10 +11,7 @@
 -->
 
 <script type="text/javascript">
-    emr.loadMessages([
-        "casereport.submitted",
-        "casereport.dismissed"
-    ]);
+    emr.loadMessages(["casereport.submitted"]);
 </script>
 
 <h2>${ ui.message('casereport.report.form.title')}</h2>

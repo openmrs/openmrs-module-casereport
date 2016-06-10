@@ -31,6 +31,8 @@
         { icon: "icon-home", link: "/" + OPENMRS_CONTEXT_PATH + "/index.htm" },
         {label: "${ ui.message("casereport.app.label")}" }
     ];
+
+    emr.loadMessages(["casereport.dismissed"]);
 </script>
 
 <div id="manage-casereports">

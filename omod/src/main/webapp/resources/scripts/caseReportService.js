@@ -31,11 +31,10 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
         //replace :uuid in the url
         var defaultTransformer = $httpProvider.defaults.transformRequest[0];
         $httpProvider.defaults.transformRequest = [];
-        $httpProvider.defaults.transformRequest.push(
-            function (data){
-                if(data){
-                    delete data.uuid;
-                }
+        $httpProvider.defaults.transformRequest.push(function (data){
+            if(data){
+                delete data.uuid;
+            }
             return data;
         });
         $httpProvider.defaults.transformRequest.push(defaultTransformer);
@@ -48,10 +47,3 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
             }
         }
     });
-
-function removeUuid(data){
-    if(data){
-        delete data.uuid;
-    }
-    return data;
-}
