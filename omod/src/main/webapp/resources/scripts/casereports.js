@@ -42,8 +42,8 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
 
     .controller("ViewCaseReportsController", [ "$scope", "StatusChange", "CaseReportService",
         function($scope, StatusChange, CaseReportService) {
-            var customRep = 'custom:(uuid,status,patient:(patientIdentifier:(identifier),person:(gender,personName:(display))),' +
-                'reportTriggers:(display))';
+            var customRep = 'custom:(uuid,status,patient:(patientIdentifier:(identifier),' +
+                'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
 
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {

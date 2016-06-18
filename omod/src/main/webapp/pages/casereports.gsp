@@ -20,6 +20,7 @@
     ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "angular-common-error.js")
     ui.includeJavascript("uicommons", "filters/display.js")
+    ui.includeJavascript("uicommons", "filters/serverDate.js")
     ui.includeJavascript("casereport", "caseReportService.js")
     ui.includeJavascript("casereport", "casereports.js")
 

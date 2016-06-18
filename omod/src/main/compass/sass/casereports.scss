@@ -8,8 +8,10 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
+@import "variables";
+
 $orange: #F26522;
-$white: white;
+$darkGrey: #636363;
 
 .casereport-name-column {
   width: 250px;
@@ -52,7 +54,7 @@ $white: white;
 }
 
 .casereport-no-bg-color {
-  background-color: $white;
+  background-color: white;
 }
 
 .casereport-no-border-no-bg-color{
@@ -69,6 +71,18 @@ $white: white;
 
 .casereport-form-table th {
   @extend .casereport-no-border-no-bg-color, .casereport-label-column;
-  background-color: $white;
   padding-left: 0;
+}
+
+.casereport-border-bottom {
+  border-bottom: 1px solid #F5F5F5 !important;
+}
+
+.casereport-small-faint{
+  font-size: x-small;
+  color: $darkGrey;
+}
+
+td.casereport-focus-element {
+  background-color: $focus;
 }
