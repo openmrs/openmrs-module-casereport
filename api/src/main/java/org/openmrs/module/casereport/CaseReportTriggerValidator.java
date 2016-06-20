@@ -65,7 +65,7 @@ public class CaseReportTriggerValidator implements Validator {
 			}
 		}
 		
-		if (service.getSqlCohortDefinition(trigger.getName()) == null) {
+		if (trigger.getId() == null && service.getSqlCohortDefinition(trigger.getName()) == null) {
 			errors.rejectValue("name", "casereport.error.sqlCohortQuery.notFound", new Object[] { trigger.getName() }, null);
 		}
 	}
