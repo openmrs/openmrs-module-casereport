@@ -12,8 +12,9 @@
 
 <h2>${ ui.message('casereport.manageCaseReports.label')}</h2>
 
-<input ng-model="triggerSearchText" class="right" placeholder="${ui.message('casereport.filterByTriggers')}" />
 <input ng-model="patientSearchText" placeholder="${ui.message('casereport.searchByPatient')}" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input ng-model="triggerSearchText" placeholder="${ui.message('casereport.filterByTriggers')}" />
 <br />
 <br />
 <table id="casereport-reports">
