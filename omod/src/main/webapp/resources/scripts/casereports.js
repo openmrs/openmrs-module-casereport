@@ -77,4 +77,65 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
                     emr.successMessage("casereport.submitted");
                 });
             }
-    }]);
+    }])
+
+    .filter('searchReportsByPatient', function () {
+        return function (caseReports, searchText) {
+            if(!searchText) {
+                return caseReports;
+            }
+
+            var matches = [];
+            var regex = new RegExp(searchText, 'i');
+            for (var i = 0; i < caseReports.length; i++) {
+                var caseReport = caseReports[i];
+                if (regex.test(caseReport.patient.person.personName.display)) {
+                    matches.push(caseReport);
+                }
+            }
+
+            return matches;
+        }
+    })
+
+    .filter('searchReportsByTrigger', function () {
+        return function (caseReports, searchText) {
+            if(!searchText) {
+                return caseReports;
+            }
+
+            var matches = [];
+            var regex = new RegExp(searchText, 'i');
+            for (var i = 0; i < caseReports.length; i++) {
+                var caseReport = caseReports[i];
+                for (var j = 0; j < caseReport.reportTriggers.length; j++) {
+                    var trigger = caseReport.reportTriggers[j];
+                    if (regex.test(trigger.display)) {
+                        matches.push(caseReport);
+                        break;
+                    }
+                }
+            }
+
+            return matches;
+        }
+    })
+
+    .filter('searchTriggers', function () {
+        return function (caseReportTriggers, searchText) {
+            if(!searchText) {
+                return caseReportTriggers;
+            }
+
+            var matches = [];
+            var regex = new RegExp(searchText, 'i');
+            for (var i = 0; i < caseReportTriggers.length; i++) {
+                var trigger = caseReportTriggers[i];
+                if (regex.test(trigger.display)) {
+                    matches.push(trigger);
+                }
+            }
+
+            return matches;
+        }
+    });

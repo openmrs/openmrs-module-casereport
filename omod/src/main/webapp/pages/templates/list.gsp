@@ -12,9 +12,8 @@
 
 <h2>${ ui.message('casereport.manageCaseReports.label')}</h2>
 
-<input class="right" placeholder="${ui.message('casereport.searchByTriggers')}" />
-<input ng-model="search.patient.person.personName.display"
-       placeholder="${ui.message('general.searchByPatient')}" />
+<input ng-model="triggerSearchText" class="right" placeholder="${ui.message('casereport.filterByTriggers')}" />
+<input ng-model="patientSearchText" placeholder="${ui.message('casereport.searchByPatient')}" />
 <br />
 <br />
 <table id="casereport-reports">
@@ -29,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="caseReport in caseReports | filter:search">
+    <tr ng-repeat="caseReport in caseReports | searchReportsByPatient:patientSearchText | searchReportsByTrigger:triggerSearchText">
         <td valign="top">{{caseReport.patient.patientIdentifier.identifier}}</td>
         <td valign="top">{{caseReport.patient.person.personName.display}}
             <span ng-show="{{caseReport.status == 'DRAFT'}}" class="casereport-draft-lozenge">
@@ -41,7 +40,7 @@
         <td valign="top">
             <table class="casereport-form-table" cellpadding="0" cellspacing="0">
                 <tr ng-class="{'casereport-border-bottom' : caseReport.reportTriggers.length > 1 && !\$last}"
-                    ng-repeat="trigger in caseReport.reportTriggers">
+                    ng-repeat="trigger in caseReport.reportTriggers | searchTriggers:triggerSearchText">
                     <td ng-class="{'casereport-focus-element' : \$parent.\$odd}">
                         {{trigger | omrs.display}}
                         <span class="casereport-small-faint">{{trigger.auditInfo.dateCreated | serverDate}}</span>
