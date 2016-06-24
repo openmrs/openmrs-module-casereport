@@ -446,8 +446,21 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals("Horatio", reportForm.getGivenName());
 		assertEquals("Test", reportForm.getMiddleName());
 		assertEquals("Hornblower", reportForm.getFamilyName());
-		assertEquals("M", reportForm.getGender());
-		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthDate());
+		assertEquals("101-6", reportForm.getPatientIdentifier());
+		assertEquals("OpenMRS Identification Number", reportForm.getIdentifierType());
+		Patient patient = caseReport.getPatient();
+		assertEquals(patient.getGender(), reportForm.getGender());
+		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthdate());
+		assertEquals(patient.isDead(), reportForm.getDead());
+		/*assertEquals("", reportForm.getCaseOfDeath());
+		assertNull(reportForm.getTriggerAndDateCreatedMap());
+		assertNotNull(reportForm.getPreviousSubmittedCaseReports());
+		assertNotNull(reportForm.getMostRecentDateAndViralLoadMap());
+		assertNotNull(reportForm.getMostRecentDateAndCd4CountMap());
+		assertNotNull(reportForm.getMostRecentDateAndHivTestMap());
+		assertNotNull(reportForm.getMostRecentHivWhoStage());
+		assertNotNull(reportForm.getMostRecentHivMedications());
+		assertNotNull(reportForm.getMostRecentArvStopReason());*/
 	}
 	
 	/**

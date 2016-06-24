@@ -51,10 +51,10 @@
         </td>
         <td valign="top">
             <a ui-sref="reportForm({uuid: caseReport.uuid, status: caseReport.status})">
-                <i class="icon-external-link edit-action" title="${ui.message("casereport.submit")}"></i>
+                <i class="icon-circle-arrow-right edit-action" title="${ui.message("casereport.submit")}"></i>
             </a>
             <a ng-click="dismiss(caseReport)">
-                <i class="icon-thumbs-down delete-action" title="${ui.message("casereport.dismiss")}"></i>
+                <i class="icon-remove delete-action" title="${ui.message("casereport.dismiss")}"></i>
             </a>
         </td>
     </tr>

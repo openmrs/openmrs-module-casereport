@@ -11,8 +11,6 @@ package org.openmrs.module.casereport.api.impl;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -258,20 +256,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	public CaseReport generateReportForm(CaseReport caseReport) throws APIException {
 		CaseReportService service = Context.getService(CaseReportService.class);
 		Patient patient = caseReport.getPatient();
-		CaseReportForm form = new CaseReportForm();
-		form.setGivenName(patient.getGivenName());
-		form.setMiddleName(patient.getMiddleName());
-		form.setFamilyName(patient.getFamilyName());
-		form.setGender(patient.getGender());
-		if (patient.getBirthdate() != null) {
-			form.setBirthDate(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(patient.getBirthdate()));
-		}
-		List<String> triggers = new ArrayList(caseReport.getReportTriggers().size());
-		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
-			triggers.add(tr.getName());
-		}
-		form.setReportTriggers(triggers);
-		
+		CaseReportForm form = new CaseReportForm(patient, caseReport);
 		String serializedReportForm;
 		try {
 			
