@@ -16,4 +16,6 @@ public class CaseReportConstants {
 	public static final String PRIV_GET_CASE_REPORTS = "Get Case Reports";
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
+	
+	public static final String LAST_EXECUTION_TIME = "lastExecutionTime";
 }

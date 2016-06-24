@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,12 +30,14 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
+import org.openmrs.module.casereport.api.CaseReportConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.scheduler.TaskDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -181,35 +185,42 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	}
 	
 	/**
-	 * @see CaseReportService#runTrigger(String)
+	 * @see CaseReportService#runTrigger(String, TaskDefinition)
 	 */
 	@Override
 	@Transactional(readOnly = false)
-	public void runTrigger(String triggerName) throws APIException, EvaluationException {
+	public void runTrigger(String triggerName, TaskDefinition taskDefinition) throws APIException, EvaluationException {
 		SqlCohortDefinition definition = getSqlCohortDefinition(triggerName);
-		if (definition != null) {
-			Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, new EvaluationContext());
-			
-			PatientService ps = Context.getPatientService();
-			CaseReportService service = Context.getService(CaseReportService.class);
-			for (Integer patientId : cohort.getMemberIds()) {
-				Patient patient = ps.getPatient(patientId);
-				if (patient == null) {
-					throw new APIException("No patient found with patientId:" + patientId);
-				}
-				CaseReport caseReport = getCaseReportByPatient(patient);
-				if (caseReport == null) {
-					caseReport = new CaseReport(patient, triggerName);
-				} else {
-					//Don't create a duplicate trigger for the same patient
-					if (caseReport.getCaseReportTriggerByName(triggerName) != null) {
-						continue;
-					}
-					caseReport.addTrigger(new CaseReportTrigger(triggerName));
-				}
-				
-				service.saveCaseReport(caseReport);
+		if (definition == null) {
+			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
+		}
+		EvaluationContext evaluationContext = new EvaluationContext();
+		if (taskDefinition != null && taskDefinition.getLastExecutionTime() != null) {
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put(CaseReportConstants.LAST_EXECUTION_TIME, taskDefinition.getLastExecutionTime());
+			evaluationContext.setParameterValues(params);
+		}
+		Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
+		
+		PatientService ps = Context.getPatientService();
+		CaseReportService service = Context.getService(CaseReportService.class);
+		for (Integer patientId : cohort.getMemberIds()) {
+			Patient patient = ps.getPatient(patientId);
+			if (patient == null) {
+				throw new APIException("No patient found with patientId:" + patientId);
 			}
+			CaseReport caseReport = getCaseReportByPatient(patient);
+			if (caseReport == null) {
+				caseReport = new CaseReport(patient, triggerName);
+			} else {
+				//Don't create a duplicate trigger for the same patient
+				if (caseReport.getCaseReportTriggerByName(triggerName) != null) {
+					continue;
+				}
+				caseReport.addTrigger(new CaseReportTrigger(triggerName));
+			}
+			
+			service.saveCaseReport(caseReport);
 		}
 	}
 	
