@@ -1,0 +1,87 @@
+{
+  "name": "HIV Treatment Stopped",
+  "description": "HIV patients who have reported treatment stopped or interrupted",
+  "sql": "DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;\nDELIMITER //\nCREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER\nBEGIN\n  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;\n\n  SELECT concept_id INTO LOCAL_CODE\n  FROM concept_reference_map\n  WHERE concept_map_type_id = \n      (\n        SELECT concept_map_type_id\n        FROM concept_map_type\n        WHERE name = 'SAME-AS'\n          AND not retired\n      )\n    AND concept_reference_term_id =\n      (\n        SELECT concept_reference_term_id\n        FROM concept_reference_term\n        WHERE concept_source_id =\n          (\n            SELECT concept_source_id\n            FROM concept_reference_source\n            WHERE name = 'CIEL'\n              AND not retired\n          )\n          AND code = CIEL_CODE\n      );\n\n  IF LOCAL_CODE IS NULl THEN\n    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);\n    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;\n  END IF;\n\n  RETURN LOCAL_CODE;\nEND; //\nDELIMITER ;\n\nSET @LAST_RUN = :lastExecutionTime;\n\n// CIEL:1252 REASON ANTIRETROVIRALS STOPPED\nSET @REASON_ARVS_STOPPED = local_concept_mapped_to_ciel('1252');\n\n// CIEL:983 WEIGHT CHANGE\nSET @WEIGHT_CHANGE = local_concept_mapped_to_ciel('983');\n\n// CIEL:102 Toxicity, drug\nSET @DRUG_TOXICITY = local_concept_mapped_to_ciel('102');\n\n// CIEL:159598 Non-compliance with treatment or therapy\nSET @NONCOMPLIANCE = local_concept_mapped_to_ciel('159598');\n\n// CIEL:160018 PATIENT REFUSED\nSET @PATIENT_REFUSED = local_concept_mapped_to_ciel('160018');\n\n// CIEL:127750 REFUSAL OF TREATMENT BY PATIENT\nSET @REFUSED_TREATMENT = local_concept_mapped_to_ciel('127750');\n\n// CIEL:819 Cannot afford treatment\nSET @CANNOT_AFFORD = local_concept_mapped_to_ciel('819');\n\n// CIEL:1754 Medications unavailable\nSET @MEDS_UNAVAILABLE = local_concept_mapped_to_ciel('1754');\n\nSELECT person_id\nFROM obs\nWHERE\n  obs_datetime > @LAST_RUN\n  AND\n  (\n  	concept_id = @REASON_ARVS_STOPPED\n  	AND value_coded IN\n  	  (\n  	  	@WEIGHT_CHANGE, @DRUG_TOXICITY, @NONCOMPLIANCE,\n  	  	@PATIENT_REFUSED, @REFUSED_TREATMENT, @CANNOT_AFFORD,\n  	  	@MEDS_UNAVAILABLE\n  	  )\n  )\n  AND not voided;"
+}
+
+/*
+DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;
+DELIMITER //
+CREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER
+BEGIN
+  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;
+
+  SELECT concept_id INTO LOCAL_CODE
+  FROM concept_reference_map
+  WHERE concept_map_type_id = 
+      (
+        SELECT concept_map_type_id
+        FROM concept_map_type
+        WHERE name = 'SAME-AS'
+          AND not retired
+      )
+    AND concept_reference_term_id =
+      (
+        SELECT concept_reference_term_id
+        FROM concept_reference_term
+        WHERE concept_source_id =
+          (
+            SELECT concept_source_id
+            FROM concept_reference_source
+            WHERE name = 'CIEL'
+              AND not retired
+          )
+          AND code = CIEL_CODE
+      );
+
+  IF LOCAL_CODE IS NULl THEN
+    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;
+  END IF;
+
+  RETURN LOCAL_CODE;
+END; //
+DELIMITER ;
+
+SET @LAST_RUN = :lastExecutionTime;
+
+// CIEL:1252 REASON ANTIRETROVIRALS STOPPED
+SET @REASON_ARVS_STOPPED = local_concept_mapped_to_ciel('1252');
+
+// CIEL:983 WEIGHT CHANGE
+SET @WEIGHT_CHANGE = local_concept_mapped_to_ciel('983');
+
+// CIEL:102 Toxicity, drug
+SET @DRUG_TOXICITY = local_concept_mapped_to_ciel('102');
+
+// CIEL:159598 Non-compliance with treatment or therapy
+SET @NONCOMPLIANCE = local_concept_mapped_to_ciel('159598');
+
+// CIEL:160018 PATIENT REFUSED
+SET @PATIENT_REFUSED = local_concept_mapped_to_ciel('160018');
+
+// CIEL:127750 REFUSAL OF TREATMENT BY PATIENT
+SET @REFUSED_TREATMENT = local_concept_mapped_to_ciel('127750');
+
+// CIEL:819 Cannot afford treatment
+SET @CANNOT_AFFORD = local_concept_mapped_to_ciel('819');
+
+// CIEL:1754 Medications unavailable
+SET @MEDS_UNAVAILABLE = local_concept_mapped_to_ciel('1754');
+
+SELECT person_id
+FROM obs
+WHERE
+  obs_datetime > @LAST_RUN
+  AND
+  (
+  	concept_id = @REASON_ARVS_STOPPED
+  	AND value_coded IN
+  	  (
+  	  	@WEIGHT_CHANGE, @DRUG_TOXICITY, @NONCOMPLIANCE,
+  	  	@PATIENT_REFUSED, @REFUSED_TREATMENT, @CANNOT_AFFORD,
+  	  	@MEDS_UNAVAILABLE
+  	  )
+  )
+  AND not voided;
+*/

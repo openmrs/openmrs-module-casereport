@@ -29,3 +29,4 @@ omod/.rubygems-provided
 *.iml
 *.sass-cache
 *.DS_Store
+.java-version

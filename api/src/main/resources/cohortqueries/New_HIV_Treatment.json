@@ -1,0 +1,77 @@
+{
+  "name": "New HIV Treatment",
+  "description": "HIV patients for starting treatment",
+  "sql": "DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;\nDELIMITER //\nCREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER\nBEGIN\n  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;\n\n  SELECT concept_id INTO LOCAL_CODE\n  FROM concept_reference_map\n  WHERE concept_map_type_id = \n      (\n        SELECT concept_map_type_id\n        FROM concept_map_type\n        WHERE name = 'SAME-AS'\n          AND not retired\n      )\n    AND concept_reference_term_id =\n      (\n        SELECT concept_reference_term_id\n        FROM concept_reference_term\n        WHERE concept_source_id =\n          (\n            SELECT concept_source_id\n            FROM concept_reference_source\n            WHERE name = 'CIEL'\n              AND not retired\n          )\n          AND code = CIEL_CODE\n      );\n\n  IF LOCAL_CODE IS NULl THEN\n    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);\n    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;\n  END IF;\n\n  RETURN LOCAL_CODE;\nEND; //\nDELIMITER ;\n\nSET @LAST_RUN = :lastExecutionTime;\n\n// CIEL:1225 ARV Plan\nSET @ARV_PLAN = local_concept_mapped_to_ciel('1225');\n\n// CIEL:1256 START DRUGS\nSET @START_DRUGS = local_concept_mapped_to_ciel('1256');\n\n// CIEL:1251 REASON ANTIRETROVIRALS STARTED\nSET @REASON_ARVS_STARTED = local_concept_mapped_to_ciel('1251');\n\n// CIEL:1185 TREATMENT\nSET @TREATMENT = local_concept_mapped_to_ciel('1185');\n\nSELECT person_id\nFROM obs\nWHERE\n  obs_datetime > @LAST_RUN\n  AND\n  (\n    (\n      concept_id = @ARV_PLAN\n      AND value_coded = @START_DRUGS\n    )\n    OR\n    (\n    	concept_id = @REASON_ARVS_STARTED\n    	AND value_coded = @TREATMENT\n    )\n  )\n  AND not voided;"
+}
+
+/*
+DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;
+DELIMITER //
+CREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER
+BEGIN
+  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;
+
+  SELECT concept_id INTO LOCAL_CODE
+  FROM concept_reference_map
+  WHERE concept_map_type_id = 
+      (
+        SELECT concept_map_type_id
+        FROM concept_map_type
+        WHERE name = 'SAME-AS'
+          AND not retired
+      )
+    AND concept_reference_term_id =
+      (
+        SELECT concept_reference_term_id
+        FROM concept_reference_term
+        WHERE concept_source_id =
+          (
+            SELECT concept_source_id
+            FROM concept_reference_source
+            WHERE name = 'CIEL'
+              AND not retired
+          )
+          AND code = CIEL_CODE
+      );
+
+  IF LOCAL_CODE IS NULl THEN
+    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;
+  END IF;
+
+  RETURN LOCAL_CODE;
+END; //
+DELIMITER ;
+
+SET @LAST_RUN = :lastExecutionTime;
+
+// CIEL:1225 ARV Plan
+SET @ARV_PLAN = local_concept_mapped_to_ciel('1225');
+
+// CIEL:1256 START DRUGS
+SET @START_DRUGS = local_concept_mapped_to_ciel('1256');
+
+// CIEL:1251 REASON ANTIRETROVIRALS STARTED
+SET @REASON_ARVS_STARTED = local_concept_mapped_to_ciel('1251');
+
+// CIEL:1185 TREATMENT
+SET @TREATMENT = local_concept_mapped_to_ciel('1185');
+
+SELECT person_id
+FROM obs
+WHERE
+  obs_datetime > @LAST_RUN
+  AND
+  (
+    (
+      concept_id = @ARV_PLAN
+      AND value_coded = @START_DRUGS
+    )
+    OR
+    (
+    	concept_id = @REASON_ARVS_STARTED
+    	AND value_coded = @TREATMENT
+    )
+  )
+  AND not voided;
+*/
