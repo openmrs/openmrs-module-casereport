@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <concept_reference_source concept_source_id="9000" name="CIEL Dictionary" hl7_code="CIEL" description="A made up source" creator="1" date_created="2016-01-11 00:00:00.0" retired="false" uuid="22221827-639f-4cb4-961f-1e025bf82222" />
+
+    <!-- Viral load concept -->
+    <concept concept_id="1000" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-4905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2000" concept_id="1000" name="HIV Viral Load" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7e77e374-18a1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3000" concept_id="1000" description="Measure of HIV Viral in blood" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3677rc71-0580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4000" concept_source_id="9000" code="856" name="HIV Viral Load" description="A person's HIV viral load" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="66fb7f47-u80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5000" concept_id="1000" concept_reference_term_id="4000" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5b309478-49d8-61e0-8fed-18a905e044dc" />
+
+    <!-- Encounters -->
+    <encounter encounter_id="6000" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-13 00:00:00.0" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="6619d653-393b-4118-9y83-a3715b82d4ac" />
+    <encounter encounter_id="6001" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-14 00:00:00.0" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7719d653-393b-4118-9y83-a3715b82d4ac" />
+    <encounter encounter_id="6002" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-12 00:00:00.0" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="8819d653-393b-4118-9y83-a3715b82d4ac" />
+    <encounter encounter_id="6003" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-15 00:00:00.0" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="9919d653-393b-4118-9y83-a3715b82d4ac" />
+    <encounter encounter_id="6004" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-16 00:00:00.0" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="1119e653-393b-4118-9o83-a3715b82d4ac" />
+
+    <!-- Observations -->
+    <obs obs_id="8000" person_id="2" concept_id="1000" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_numeric="70" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="44fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8001" person_id="2" concept_id="1000" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_numeric="60" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="55fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8002" person_id="2" concept_id="1000" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_numeric="55" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="66fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8003" person_id="2" concept_id="1000" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" location_id="1" value_numeric="53" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="77fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8004" person_id="2" concept_id="5089" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="52" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="88fb7f47-u80b-4056-9285-bd798be13c63" />
+    <obs obs_id="8005" person_id="2" concept_id="1000" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="99" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="99fb7f47-u80b-4056-9285-bd798be13c63" />
+    <obs obs_id="8006" person_id="7" concept_id="1000" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="65" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="33fb7f47-u80a-4056-9285-bd798be13c63" />
+</dataset>
