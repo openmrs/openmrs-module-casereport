@@ -1,8 +1,7 @@
 {
   "name": "HIV Patient Died",
-  "interval": "7 days",
   "description": "HIV patients who have died",
-  "sql": "SET @LAST_RUN = :lastExecutionTime;\n\nSELECT person_id\nFROM person\nWHERE\n  (date_created > @LAST_RUN OR date_changed > @LAST_RUN)\n  AND death_date > @LAST_RUN\n  AND not voided;",
+  "sql": "SET @LAST_RUN = :lastExecutionTime;\n\nSELECT person_id\nFROM person\nWHERE\n  (date_created > @LAST_RUN OR date_changed > @LAST_RUN)\n  AND death_date > @LAST_RUN\n  AND not voided;"
 }
 
 /*

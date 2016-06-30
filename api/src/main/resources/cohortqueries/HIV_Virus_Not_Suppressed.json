@@ -3,6 +3,8 @@
   "description": "HIV patients for whom WHO Classification advanced to 3 or 4",
   "sql": "TODO"
 }
+
+/*
 SELECT @CIEL := concept_source_id
 FROM concept_reference_source
 WHERE name = 'CIEL';
@@ -52,3 +54,4 @@ SELECT person_id
 FROM obs
 WHERE
 	(concept_id = )
+*/

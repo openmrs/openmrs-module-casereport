@@ -16,6 +16,7 @@ import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.scheduler.TaskDefinition;

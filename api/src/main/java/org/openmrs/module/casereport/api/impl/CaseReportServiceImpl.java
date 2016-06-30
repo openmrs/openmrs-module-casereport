@@ -28,7 +28,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
-import org.openmrs.module.casereport.api.CaseReportConstants;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;

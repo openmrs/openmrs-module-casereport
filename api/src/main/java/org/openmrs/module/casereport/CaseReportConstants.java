@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.api;
+package org.openmrs.module.casereport;
 
 public class CaseReportConstants {
 	
@@ -18,4 +18,5 @@ public class CaseReportConstants {
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
 	
 	public static final String LAST_EXECUTION_TIME = "lastExecutionTime";
+	
 }

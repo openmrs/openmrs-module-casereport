@@ -31,6 +31,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;

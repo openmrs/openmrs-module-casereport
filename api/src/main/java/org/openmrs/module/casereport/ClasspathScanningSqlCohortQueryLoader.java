@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.APIException;
 import org.springframework.core.io.Resource;
@@ -27,7 +28,16 @@ public abstract class ClasspathScanningSqlCohortQueryLoader implements SqlCohort
 	
 	private PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 	
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper;
+	
+	private ObjectMapper getMapper() {
+		if (mapper == null) {
+			mapper = new ObjectMapper();
+			mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+			mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+		}
+		return mapper;
+	}
 	
 	/**
 	 * Implementation of this method should the portion of the path pattern to be used when scanning
@@ -55,7 +65,7 @@ public abstract class ClasspathScanningSqlCohortQueryLoader implements SqlCohort
 		Resource[] resources = resourceResolver.getResources("classpath*:/" + pattern);
 		List<SqlCohortQuery> sqlCohortQueries = new ArrayList<SqlCohortQuery>();
 		for (Resource resource : resources) {
-			sqlCohortQueries.add(mapper.readValue(resource.getInputStream(), SqlCohortQuery.class));
+			sqlCohortQueries.add(getMapper().readValue(resource.getInputStream(), SqlCohortQuery.class));
 		}
 		
 		return sqlCohortQueries;
