@@ -23,17 +23,51 @@ public class CaseReportUtil {
 	
 	private static final String SOURCE_CIEL_HL7_CODE = "CIEL";
 	
+	private static final int COUNT = 3;
+	
 	private static final String TERM_CODE_VIRAL_LOAD = "856";
 	
+	private static final String TERM_CODE_CD4_COUNT = "5497";
+	
+	private static final String TERM_CODE_HIV_TEST = "1040";
+	
 	/**
-	 * Gets the 3 most recent viral load observations for the specified patient ordersed such that
-	 * the most recent is first and the earliest last
-	 * 
-	 * @should return the most recent 3 Viral load observations
-	 * @return a list of Obs
+	 * Gets the 3 most recent viral load observations for the specified patient, they are ordered in
+	 * a way such that the most recent comes first and the earliest is last. Note that the method
+	 * can return less than 3 items in case the patient has had less than 3 of them in total in the
+	 * past.
+	 *
+	 * @return a list of the most recent viral load observations
+	 * @should return the 3 most recent Viral load observations
 	 */
-	public static List<Obs> getThe3MostRecentViralLoads(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_VIRAL_LOAD, SOURCE_CIEL_HL7_CODE, 3);
+	public static List<Obs> getMostRecentViralLoads(Patient patient) {
+		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_VIRAL_LOAD, SOURCE_CIEL_HL7_CODE, COUNT);
+	}
+	
+	/**
+	 * Gets the 3 most recent cd4 count observations for the specified patient, they are ordered in
+	 * a way such that the most recent comes first and the earliest is last. Note that the method
+	 * can return less than 3 items in case the patient has had less than 3 of them in total in the
+	 * past.
+	 *
+	 * @return a list of the most recent cd4 count observations
+	 * @should return the 3 most recent cd4 count observations
+	 */
+	public static List<Obs> getMostRecentCD4counts(Patient patient) {
+		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_CD4_COUNT, SOURCE_CIEL_HL7_CODE, COUNT);
+	}
+	
+	/**
+	 * Gets the 3 most HIV test result observations for the specified patient, they are ordered in a
+	 * way such that the most recent comes first and the earliest is last. Note that the method can
+	 * return less than 3 items in case the patient has had less than 3 of them in total in the
+	 * past.
+	 *
+	 * @return a list of the most recent HIV test observations
+	 * @should return the 3 most recent HIV test observations
+	 */
+	public static List<Obs> getMostRecentHIVTests(Patient patient) {
+		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_HIV_TEST, SOURCE_CIEL_HL7_CODE, COUNT);
 	}
 	
 	private static List<Obs> getMostRecentObsByPatientAndConceptMapping(Patient patient, String code, String source,
@@ -41,12 +75,11 @@ public class CaseReportUtil {
 		if (patient == null) {
 			throw new APIException("Patient cannot be null");
 		}
+		
 		Concept concept = Context.getConceptService().getConceptByMapping(code, source);
 		if (concept == null) {
-			throw new APIException("Failed to find concept with mapping " + SOURCE_CIEL_HL7_CODE + ":"
-			        + TERM_CODE_VIRAL_LOAD);
+			throw new APIException("Failed to find concept with mapping " + source + ":" + code);
 		}
-		
 		return Context.getObsService().getObservations(Collections.singletonList((Person) patient), null,
 		    Collections.singletonList(concept), null, null, null, Collections.singletonList("obsDatetime"), limit, null,
 		    null, null, false);

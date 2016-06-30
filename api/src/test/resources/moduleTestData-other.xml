@@ -22,6 +22,22 @@
     <concept_reference_term concept_reference_term_id="4000" concept_source_id="9000" code="856" name="HIV Viral Load" description="A person's HIV viral load" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="66fb7f47-u80a-4086-9285-bd798be13c63" />
     <concept_reference_map concept_map_id="5000" concept_id="1000" concept_reference_term_id="4000" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5b309478-49d8-61e0-8fed-18a905e044dc" />
 
+    <!-- CIEL Concept term and mapping for cd4 count concept -->
+    <concept_reference_term concept_reference_term_id="4001" concept_source_id="9000" code="5497" name="CD4 count" description="A person's cd4 count" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="77fb7f47-u80t-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5001" concept_id="5497" concept_reference_term_id="4001" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6y309478-49d8-61e0-8fed-19a905e044dc" />
+
+    <!-- HIV Test, Qualitative concept-->
+    <concept concept_id="1001" retired="false" datatype_id="2" class_id="1" is_set="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a09ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2001" concept_id="1001" name="HIV Test, Qualitative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7e88e374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3001" concept_id="1001" description="HIV Test status, Qualitative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="8777rc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4002" concept_source_id="9000" code="1040" name="HIV Test status, Qualitative" description="A person's HIV status" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="88fb7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5002" concept_id="1001" concept_reference_term_id="4002" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7i309478-49d8-61e0-8fed-18a905e044dc" />
+
+    <!-- Negative concept-->
+    <concept concept_id="1002" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2002" concept_id="1002" name="Negative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3002" concept_id="1002" description="Negative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="9666rc71-9580-4d91-b18f-0a63a1840aa6" />
+
     <!-- Encounters -->
     <encounter encounter_id="6000" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-13 00:00:00.0" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="6619d653-393b-4118-9y83-a3715b82d4ac" />
     <encounter encounter_id="6001" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-14 00:00:00.0" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7719d653-393b-4118-9y83-a3715b82d4ac" />
@@ -29,7 +45,7 @@
     <encounter encounter_id="6003" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-15 00:00:00.0" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="9919d653-393b-4118-9y83-a3715b82d4ac" />
     <encounter encounter_id="6004" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-16 00:00:00.0" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="1119e653-393b-4118-9o83-a3715b82d4ac" />
 
-    <!-- Observations -->
+    <!-- Viral load Observations (With the Weight(5089) exception for test purposes -->
     <obs obs_id="8000" person_id="2" concept_id="1000" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_numeric="70" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="44fb7f47-u80a-4056-9285-bd798be13c63" />
     <obs obs_id="8001" person_id="2" concept_id="1000" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_numeric="60" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="55fb7f47-u80a-4056-9285-bd798be13c63" />
     <obs obs_id="8002" person_id="2" concept_id="1000" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_numeric="55" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="66fb7f47-u80a-4056-9285-bd798be13c63" />
@@ -37,4 +53,18 @@
     <obs obs_id="8004" person_id="2" concept_id="5089" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="52" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="88fb7f47-u80b-4056-9285-bd798be13c63" />
     <obs obs_id="8005" person_id="2" concept_id="1000" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="99" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="99fb7f47-u80b-4056-9285-bd798be13c63" />
     <obs obs_id="8006" person_id="7" concept_id="1000" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="65" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="33fb7f47-u80a-4056-9285-bd798be13c63" />
+    <!-- CD4 Observations -->
+    <obs obs_id="8007" person_id="2" concept_id="5497" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_numeric="1300" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7afb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8008" person_id="2" concept_id="5497" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_numeric="1200" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7bfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8009" person_id="2" concept_id="5497" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_numeric="1150" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="7cfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8010" person_id="2" concept_id="5497" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" location_id="1" value_numeric="1010" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7dfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8011" person_id="2" concept_id="5497" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="1000" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="7efb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8012" person_id="7" concept_id="5497" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="900" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="7ffb7f47-u80a-4056-9285-bd767be13c63" />
+    <!-- HIV Test, Qualitative Observations -->
+    <obs obs_id="8013" person_id="2" concept_id="1001" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7gfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8014" person_id="2" concept_id="1001" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7hfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8015" person_id="2" concept_id="1001" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="7ifb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8016" person_id="2" concept_id="1001" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7jfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8017" person_id="2" concept_id="1001" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="7kfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8018" person_id="7" concept_id="1001" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="7lfb7f47-u80a-4056-9285-bd767be13c63" />
 </dataset>

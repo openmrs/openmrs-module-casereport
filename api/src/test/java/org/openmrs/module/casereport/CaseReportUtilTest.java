@@ -28,17 +28,47 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	PatientService patientService;
 	
 	/**
-	 * @see CaseReportUtil#getThe3MostRecentViralLoads(Patient)
-	 * @verifies return the most recent 3 Viral load observations
+	 * @see CaseReportUtil#getMostRecentViralLoads(Patient)
+	 * @verifies return the 3 most recent Viral load observations
 	 */
 	@Test
-	public void getThe3MostRecentViralLoads_shouldReturnTheMostRecent3ViralLoadObservations() throws Exception {
+	public void getMostRecentViralLoads_shouldReturnThe3MostRecentViralLoadObservations() throws Exception {
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
-		List<Obs> viralLoads = CaseReportUtil.getThe3MostRecentViralLoads(patient);
+		List<Obs> viralLoads = CaseReportUtil.getMostRecentViralLoads(patient);
 		assertEquals(3, viralLoads.size());
 		assertEquals(8003, viralLoads.get(0).getId().intValue());
 		assertEquals(8001, viralLoads.get(1).getId().intValue());
 		assertEquals(8000, viralLoads.get(2).getId().intValue());
+	}
+	
+	/**
+	 * @see CaseReportUtil#getMostRecentCD4counts(Patient)
+	 * @verifies return the 3 most recent cd4 count observations
+	 */
+	@Test
+	public void getMostRecentCD4counts_shouldReturnThe3MostRecentCd4CountObservations() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		Patient patient = patientService.getPatient(2);
+		List<Obs> cd4counts = CaseReportUtil.getMostRecentCD4counts(patient);
+		assertEquals(3, cd4counts.size());
+		assertEquals(8010, cd4counts.get(0).getId().intValue());
+		assertEquals(8008, cd4counts.get(1).getId().intValue());
+		assertEquals(8007, cd4counts.get(2).getId().intValue());
+	}
+	
+	/**
+	 * @see CaseReportUtil#getMostRecentHIVTests(Patient)
+	 * @verifies return the 3 most recent HIV test observations
+	 */
+	@Test
+	public void getMostRecentHIVTests_shouldReturnThe3MostRecentHIVTestObservations() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		Patient patient = patientService.getPatient(2);
+		List<Obs> hivTests = CaseReportUtil.getMostRecentHIVTests(patient);
+		assertEquals(3, hivTests.size());
+		assertEquals(8016, hivTests.get(0).getId().intValue());
+		assertEquals(8014, hivTests.get(1).getId().intValue());
+		assertEquals(8013, hivTests.get(2).getId().intValue());
 	}
 }
