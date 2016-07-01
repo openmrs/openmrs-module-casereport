@@ -11,13 +11,17 @@ package org.openmrs.module.casereport;
 
 import static junit.framework.Assert.assertEquals;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
@@ -70,5 +74,36 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		assertEquals(8016, hivTests.get(0).getId().intValue());
 		assertEquals(8014, hivTests.get(1).getId().intValue());
 		assertEquals(8013, hivTests.get(2).getId().intValue());
+	}
+	
+	/**
+	 * @see CaseReportUtil#getMostRecentWHOStage(Patient)
+	 * @verifies return the most recent WHO stage observation
+	 */
+	@Test
+	public void getMostRecentWHOStage_shouldReturnTheMostRecentWHOStageObservation() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		Patient patient = patientService.getPatient(2);
+		assertEquals(8020, CaseReportUtil.getMostRecentWHOStage(patient).getId().intValue());
+	}
+	
+	/**
+	 * @see CaseReportUtil#getCurrentARVMedications(Patient, java.util.Date)
+	 * @verifies get the current ARV medications for the specified patient
+	 */
+	@Test
+	public void getCurrentARVMedications_shouldGetTheCurrentARVMedicationsForTheSpecifiedPatient() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		Patient patient = patientService.getPatient(2);
+		Date asOfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2016-01-14 00:00:00.0");
+		List<Drug> meds = CaseReportUtil.getCurrentARVMedications(patient, asOfDate);
+		assertEquals(1, meds.size());
+		assertEquals(20000, meds.get(0).getId().intValue());
+		asOfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2016-01-16 00:00:00.0");
+		
+		meds = CaseReportUtil.getCurrentARVMedications(patient, asOfDate);
+		assertEquals(2, meds.size());
+		TestUtil.containsId(meds, 20000);
+		TestUtil.containsId(meds, 20001);
 	}
 }

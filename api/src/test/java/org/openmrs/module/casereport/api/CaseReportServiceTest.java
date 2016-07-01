@@ -351,7 +351,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		final String name = "some cohort query";
 		Integer[] patientIds = { 7, 8 };
 		createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in (" + patientIds[0] + ","
-		        + patientIds[1] + ") and date_changed > :" + CaseReportConstants.LAST_EXECUTION_TIME + "", false);
+		        + patientIds[1] + ") and date_changed > :" + CaseReportConstants.LAST_EXECUTION_TIME, false);
 		int originalCount = service.getCaseReports().size();
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));

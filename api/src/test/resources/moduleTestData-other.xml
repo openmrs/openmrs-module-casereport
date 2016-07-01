@@ -16,7 +16,7 @@
     <concept_reference_source concept_source_id="9000" name="CIEL Dictionary" hl7_code="CIEL" description="A made up source" creator="1" date_created="2016-01-11 00:00:00.0" retired="false" uuid="22221827-639f-4cb4-961f-1e025bf82222" />
 
     <!-- Viral load concept -->
-    <concept concept_id="1000" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-4905-b25d-5784167d0214" />
+    <concept concept_id="1000" datatype_id="1" class_id="1" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-4905-b25d-5784167d0214" />
     <concept_name concept_name_id="2000" concept_id="1000" name="HIV Viral Load" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7e77e374-18a1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3000" concept_id="1000" description="Measure of HIV Viral in blood" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3677rc71-0580-4d91-b18f-0a63a1840aa6" />
     <concept_reference_term concept_reference_term_id="4000" concept_source_id="9000" code="856" name="HIV Viral Load" description="A person's HIV viral load" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="66fb7f47-u80a-4086-9285-bd798be13c63" />
@@ -26,17 +26,81 @@
     <concept_reference_term concept_reference_term_id="4001" concept_source_id="9000" code="5497" name="CD4 count" description="A person's cd4 count" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="77fb7f47-u80t-4086-9285-bd798be13c63" />
     <concept_reference_map concept_map_id="5001" concept_id="5497" concept_reference_term_id="4001" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6y309478-49d8-61e0-8fed-19a905e044dc" />
 
-    <!-- HIV Test, Qualitative concept-->
-    <concept concept_id="1001" retired="false" datatype_id="2" class_id="1" is_set="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a09ab2c5-878e-5905-b25d-5784167d0214" />
+    <!-- HIV Test, Qualitative concept -->
+    <concept concept_id="1001" datatype_id="2" class_id="1" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a09ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2001" concept_id="1001" name="HIV Test, Qualitative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7e88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3001" concept_id="1001" description="HIV Test status, Qualitative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="8777rc71-9580-4d91-b18f-0a63a1840aa6" />
     <concept_reference_term concept_reference_term_id="4002" concept_source_id="9000" code="1040" name="HIV Test status, Qualitative" description="A person's HIV status" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="88fb7f47-i80a-4086-9285-bd798be13c63" />
     <concept_reference_map concept_map_id="5002" concept_id="1001" concept_reference_term_id="4002" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7i309478-49d8-61e0-8fed-18a905e044dc" />
 
-    <!-- Negative concept-->
-    <concept concept_id="1002" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-5905-b25d-5784167d0214" />
+    <!-- Negative concept -->
+    <concept concept_id="1002" datatype_id="4" class_id="11" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2002" concept_id="1002" name="Negative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3002" concept_id="1002" description="Negative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="9666rc71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- Current WHO HIV Stage concept -->
+    <concept concept_id="1003" datatype_id="2" class_id="5" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c09ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2003" concept_id="1003" name="" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="8f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3003" concept_id="1003" description="WHO HIV stage" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="1888rc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4003" concept_source_id="9000" code="5356" name="Current WHO HIV Stage" description="WHO HIV stage" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="98fb7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5003" concept_id="1003" concept_reference_term_id="4003" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="8i309478-49d8-61e0-8fed-18a905e044dc" />
+
+    <!-- WHO Stage 2 Adult concept -->
+    <concept concept_id="1004" datatype_id="4" class_id="10" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d09ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2004" concept_id="1004" name="" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="9f88k374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3004" concept_id="1004" description="WHO HIV stage 2" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="2888rc71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- ARV medset concept -->
+    <concept concept_id="1005" datatype_id="4" class_id="9" is_set="true" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="e09ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2005" concept_id="1005" name="Antiretroviral Drugs" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="9f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3005" concept_id="1005" description="Set which contains all drugs used to treat HIV" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3888tc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4005" concept_source_id="9000" code="1085" name="Antiretroviral Drugs" description="Set which contains all drugs used to treat HIV" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="98ty7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5005" concept_id="1005" concept_reference_term_id="4005" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="8k309478-49d8-61e0-8fed-18a905e044dc" />
+
+    <!-- Lopinavir concept -->
+    <concept concept_id="1006" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="r59ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2006" concept_id="1006" name="Lopinavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="3d55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3006" concept_id="1006" description="Lopinavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7888tc71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- Ritonavir concept -->
+    <concept concept_id="1007" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="s59ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2007" concept_id="1007" name="Ritonavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="4f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3007" concept_id="1007" description="Ritonavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a888tt71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- Abacavir concept -->
+    <concept concept_id="1008" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="z59ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2008" concept_id="1008" name="Abacavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="5f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3008" concept_id="1008" description="Abacavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b888tt71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- Nelfinavir concept -->
+    <concept concept_id="1009" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="y59ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2009" concept_id="1009" name="Nelfinavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="6f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3009" concept_id="1009" description="Nelfinavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c888tt71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- Ataznavir concept -->
+    <concept concept_id="1010" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="x59ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="200" concept_id="1010" name="Ataznavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3010" concept_id="1010" description="Ataznavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d888tt71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- Efavirenz concept -->
+    <concept concept_id="1011" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="w59ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2011" concept_id="1011" name="Efavirenz" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="8f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3011" concept_id="1011" description="Efavirenz drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="e888tt71-9580-4d91-b18f-0a63a1840aa6" />
+
+    <!-- ARV Drugs -->
+    <drug drug_id="20000" concept_id="1006" name="Lopinavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="4yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+    <drug drug_id="20001" concept_id="1007" name="Ritonavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="5yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+    <drug drug_id="20002" concept_id="1008" name="Abacavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="6yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+    <drug drug_id="20003" concept_id="1009" name="Nelfinavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="7yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+    <drug drug_id="20004" concept_id="1010" name="Ataznavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="8yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+    <drug drug_id="20005" concept_id="1011" name="Efavirenz" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="9yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+
+    <!-- Set members for ARV medset concept -->
+    <concept_set concept_set_id="100" concept_id="1006" concept_set="1005" sort_weight="0.0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="2a111827-639f-4cb4-961f-1e025bf88d90"/>
+    <concept_set concept_set_id="101" concept_id="1007" concept_set="1005" sort_weight="0.0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3a111827-639f-4cb4-961f-1e025bf88d90"/>
+    <concept_set concept_set_id="102" concept_id="1009" concept_set="1005" sort_weight="0.0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="4a111827-639f-4cb4-961f-1e025bf88d90"/>
+    <concept_set concept_set_id="103" concept_id="1010" concept_set="1005" sort_weight="0.0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5a111827-639f-4cb4-961f-1e025bf88d90"/>
+    <concept_set concept_set_id="104" concept_id="1011" concept_set="1005" sort_weight="0.0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6a111827-639f-4cb4-961f-1e025bf88d90"/>
 
     <!-- Encounters -->
     <encounter encounter_id="6000" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-13 00:00:00.0" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="6619d653-393b-4118-9y83-a3715b82d4ac" />
@@ -46,25 +110,47 @@
     <encounter encounter_id="6004" encounter_type="6" patient_id="2" location_id="1" encounter_datetime="2016-01-16 00:00:00.0" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="1119e653-393b-4118-9o83-a3715b82d4ac" />
 
     <!-- Viral load Observations (With the Weight(5089) exception for test purposes -->
-    <obs obs_id="8000" person_id="2" concept_id="1000" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_numeric="70" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="44fb7f47-u80a-4056-9285-bd798be13c63" />
-    <obs obs_id="8001" person_id="2" concept_id="1000" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_numeric="60" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="55fb7f47-u80a-4056-9285-bd798be13c63" />
-    <obs obs_id="8002" person_id="2" concept_id="1000" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_numeric="55" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="66fb7f47-u80a-4056-9285-bd798be13c63" />
-    <obs obs_id="8003" person_id="2" concept_id="1000" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" location_id="1" value_numeric="53" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="77fb7f47-u80a-4056-9285-bd798be13c63" />
-    <obs obs_id="8004" person_id="2" concept_id="5089" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="52" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="88fb7f47-u80b-4056-9285-bd798be13c63" />
-    <obs obs_id="8005" person_id="2" concept_id="1000" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="99" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="99fb7f47-u80b-4056-9285-bd798be13c63" />
-    <obs obs_id="8006" person_id="7" concept_id="1000" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="65" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="33fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8000" person_id="2" concept_id="1000" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" value_numeric="70" location_id="1" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="44fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8001" person_id="2" concept_id="1000" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" value_numeric="60" location_id="1" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="55fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8002" person_id="2" concept_id="1000" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" value_numeric="55" location_id="1" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="66fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8003" person_id="2" concept_id="1000" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" value_numeric="53" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="77fb7f47-u80a-4056-9285-bd798be13c63" />
+    <obs obs_id="8004" person_id="2" concept_id="5089" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" value_numeric="52" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="88fb7f47-u80b-4056-9285-bd798be13c63" />
+    <obs obs_id="8005" person_id="2" concept_id="1000" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" value_numeric="99" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="99fb7f47-u80b-4056-9285-bd798be13c63" />
+    <obs obs_id="8006" person_id="7" concept_id="1000" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" value_numeric="65" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="33fb7f47-u80a-4056-9285-bd798be13c63" />
     <!-- CD4 Observations -->
-    <obs obs_id="8007" person_id="2" concept_id="5497" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_numeric="1300" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7afb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8008" person_id="2" concept_id="5497" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_numeric="1200" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7bfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8009" person_id="2" concept_id="5497" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_numeric="1150" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="7cfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8010" person_id="2" concept_id="5497" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" location_id="1" value_numeric="1010" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7dfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8011" person_id="2" concept_id="5497" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="1000" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="7efb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8012" person_id="7" concept_id="5497" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_numeric="900" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="7ffb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8007" person_id="2" concept_id="5497" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" value_numeric="1300" location_id="1" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7afb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8008" person_id="2" concept_id="5497" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" value_numeric="1200" location_id="1" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7bfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8009" person_id="2" concept_id="5497" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" value_numeric="1150" location_id="1" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="7cfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8010" person_id="2" concept_id="5497" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" value_numeric="1010" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7dfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8011" person_id="2" concept_id="5497" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" value_numeric="1000" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="7efb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8012" person_id="7" concept_id="5497" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" value_numeric="900" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="7ffb7f47-u80a-4056-9285-bd767be13c63" />
     <!-- HIV Test, Qualitative Observations -->
-    <obs obs_id="8013" person_id="2" concept_id="1001" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7gfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8014" person_id="2" concept_id="1001" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7hfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8015" person_id="2" concept_id="1001" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="7ifb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8016" person_id="2" concept_id="1001" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7jfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8017" person_id="2" concept_id="1001" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="7kfb7f47-u80a-4056-9285-bd767be13c63" />
-    <obs obs_id="8018" person_id="7" concept_id="1001" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" location_id="1" value_coded="1002" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="7lfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8013" person_id="2" concept_id="1001" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" value_coded="1002" location_id="1" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7gfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8014" person_id="2" concept_id="1001" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" value_coded="1002" location_id="1" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7hfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8015" person_id="2" concept_id="1001" encounter_id="6002" obs_datetime="2016-01-12 00:00:00.0" value_coded="1002" location_id="1" creator="1" date_created="2016-01-12 00:00:00.0" voided="false" uuid="7ifb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8016" person_id="2" concept_id="1001" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" value_coded="1002" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7jfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8017" person_id="2" concept_id="1001" encounter_id="6004" obs_datetime="2016-01-16 00:00:00.0" value_coded="1002" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="true" uuid="7kfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8018" person_id="7" concept_id="1001" encounter_id="3" obs_datetime="2016-01-16 00:00:00.0" value_coded="1002" location_id="1" creator="1" date_created="2016-01-16 00:00:00.0" voided="false" uuid="7lfb7f47-u80a-4056-9285-bd767be13c63" />
+    <!-- Current HIV WHO Stage Observations -->
+    <obs obs_id="8019" person_id="2" concept_id="1003" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7mfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8020" person_id="2" concept_id="1003" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7nfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8021" person_id="2" concept_id="1003" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="true" uuid="7ofb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8022" person_id="7" concept_id="1003" encounter_id="3" obs_datetime="2016-01-15 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7pfb7f47-u80a-4056-9285-bd767be13c63" />
+
+    <!-- ARV Drug orders -->
+    <orders order_id="10000" order_type_id="1" patient_id="2" concept_id="1006" date_activated="2016-01-13 00:00:00.0" order_number="1000" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="6000" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-13 00:00:00.0" voided="0" uuid="111de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <orders order_id="10001" order_type_id="1" patient_id="2" concept_id="1007" date_activated="2016-01-15 00:00:00.0" order_number="1001" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="6003" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-15 00:00:00.0" voided="0" uuid="221de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <orders order_id="10002" order_type_id="1" patient_id="2" concept_id="1008" date_activated="2016-01-13 00:00:00.0" order_number="1002" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="6000" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-13 00:00:00.0" voided="0" uuid="321de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <orders order_id="10003" order_type_id="1" patient_id="2" concept_id="1009" date_activated="2016-01-12 00:00:00.0" order_number="1003" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="6002" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-12 00:00:00.0" date_stopped="2016-01-13 00:00:00.0" voided="0" uuid="431de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <orders order_id="10004" order_type_id="1" patient_id="2" concept_id="1009" date_activated="2016-01-13 00:00:00.0" order_number="1004" urgency="ROUTINE" order_action="DISCONTINUE" previous_order_id="10003" care_setting="1" encounter_id="6000" orderer="1" creator="1" date_created="2016-01-13 00:00:00.0" voided="0" uuid="531de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <orders order_id="10005" order_type_id="1" patient_id="2" concept_id="1010" date_activated="2016-01-12 00:00:00.0" order_number="1005" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="6002" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-12 00:00:00.0" auto_expire_date="2016-01-13 00:00:00.0" voided="0" uuid="631de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <orders order_id="10006" order_type_id="1" patient_id="7" concept_id="1011" date_activated="2016-01-13 00:00:00.0" order_number="1006" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="3" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-13 00:00:00.0" voided="0" uuid="731de0a3-05c4-444a-be03-e01b4c4b9142" />
+    <drug_order order_id="10000" drug_inventory_id="20000" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+    <drug_order order_id="10001" drug_inventory_id="20001" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+    <drug_order order_id="10002" drug_inventory_id="20002" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+    <drug_order order_id="10003" drug_inventory_id="20003" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+    <drug_order order_id="10004" drug_inventory_id="20003" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+    <drug_order order_id="10005" drug_inventory_id="20004" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+    <drug_order order_id="10006" drug_inventory_id="20005" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+
 </dataset>
