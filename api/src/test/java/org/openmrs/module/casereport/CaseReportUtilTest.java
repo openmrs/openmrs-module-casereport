@@ -106,4 +106,16 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		TestUtil.containsId(meds, 20000);
 		TestUtil.containsId(meds, 20001);
 	}
+	
+	/**
+	 * @see CaseReportUtil#getMostRecentReasonARVsStopped(Patient)
+	 * @verifies return the most recent obs for the reason why the patient stopped taking ARVs
+	 */
+	@Test
+	public void getMostRecentReasonARVsStopped_shouldReturnTheMostRecentObsForTheReasonWhyThePatientStoppedTakingARVs()
+	    throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		Patient patient = patientService.getPatient(2);
+		assertEquals(8024, CaseReportUtil.getMostRecentReasonARVsStopped(patient).getId().intValue());
+	}
 }

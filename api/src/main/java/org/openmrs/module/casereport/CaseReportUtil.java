@@ -40,6 +40,29 @@ public class CaseReportUtil {
 	
 	private static final String TERM_CODE_ARV_MED_SET = "1085";
 	
+	private static final String TERM_CODE_REASON_FOR_STOPPING_ARVS = "1252";
+	
+	private static Concept getConceptByMapping(String code) {
+		Concept concept = Context.getConceptService().getConceptByMapping(code, SOURCE_CIEL_HL7_CODE);
+		if (concept == null) {
+			throw new APIException("Failed to find concept with mapping " + SOURCE_CIEL_HL7_CODE + ":" + code);
+		}
+		return concept;
+	}
+	
+	private static List<Obs> getMostRecentObsByPatientAndConceptMapping(Patient patient, String code, String source,
+	                                                                    Integer limit) {
+		if (patient == null) {
+			throw new APIException("Patient cannot be null");
+		}
+		
+		List<Person> patients = Collections.singletonList((Person) patient);
+		List<Concept> concepts = Collections.singletonList(getConceptByMapping(code));
+		
+		return Context.getObsService().getObservations(patients, null, concepts, null, null, null,
+		    Collections.singletonList("obsDatetime"), limit, null, null, null, false);
+	}
+	
 	/**
 	 * Gets the 3 most recent viral load observations for the specified patient, they are ordered in
 	 * a way such that the most recent comes first and the earliest is last. Note that the method
@@ -108,7 +131,7 @@ public class CaseReportUtil {
 	 */
 	public static List<Drug> getCurrentARVMedications(Patient patient, Date asOfDate) {
 		List<Drug> arvs = new ArrayList<Drug>();
-		Concept arvMedset = getConceptByMapping(TERM_CODE_ARV_MED_SET, SOURCE_CIEL_HL7_CODE);
+		Concept arvMedset = getConceptByMapping(TERM_CODE_ARV_MED_SET);
 		OrderService os = Context.getOrderService();
 		OrderType orderType = os.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
 		List<Order> orders = os.getActiveOrders(patient, orderType, null, asOfDate);
@@ -121,24 +144,20 @@ public class CaseReportUtil {
 		return arvs;
 	}
 	
-	private static Concept getConceptByMapping(String code, String source) {
-		Concept concept = Context.getConceptService().getConceptByMapping(code, source);
-		if (concept == null) {
-			throw new APIException("Failed to find concept with mapping " + source + ":" + code);
+	/**
+	 * Gets the most recent observation for the reason why the specified patient stopped taking
+	 * ARVs.
+	 *
+	 * @param patient the patient to match against
+	 * @return the most recent observation for the reason why the patient stopped taking ARVs
+	 * @should return the most recent obs for the reason why the patient stopped taking ARVs
+	 */
+	public static Obs getMostRecentReasonARVsStopped(Patient patient) {
+		List<Obs> reasons = getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_REASON_FOR_STOPPING_ARVS,
+		    SOURCE_CIEL_HL7_CODE, 1);
+		if (reasons.isEmpty()) {
+			return null;
 		}
-		return concept;
-	}
-	
-	private static List<Obs> getMostRecentObsByPatientAndConceptMapping(Patient patient, String code, String source,
-	                                                                    Integer limit) {
-		if (patient == null) {
-			throw new APIException("Patient cannot be null");
-		}
-		
-		List<Person> patients = Collections.singletonList((Person) patient);
-		List<Concept> concepts = Collections.singletonList(getConceptByMapping(code, source));
-		
-		return Context.getObsService().getObservations(patients, null, concepts, null, null, null,
-		    Collections.singletonList("obsDatetime"), limit, null, null, null, false);
+		return reasons.get(0);
 	}
 }

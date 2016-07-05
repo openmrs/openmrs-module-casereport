@@ -77,22 +77,34 @@
     <concept_name concept_name_id="2009" concept_id="1009" name="Nelfinavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="6f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3009" concept_id="1009" description="Nelfinavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c888tt71-9580-4d91-b18f-0a63a1840aa6" />
 
-    <!-- Ataznavir concept -->
+    <!-- Atazanavir concept -->
     <concept concept_id="1010" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="x59ab2c5-878e-5905-b25d-5784167d0214" />
-    <concept_name concept_name_id="200" concept_id="1010" name="Ataznavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
-    <concept_description concept_description_id="3010" concept_id="1010" description="Ataznavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d888tt71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_name concept_name_id="200" concept_id="1010" name="Atazanavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3010" concept_id="1010" description="Atazanavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d888tt71-9580-4d91-b18f-0a63a1840aa6" />
 
     <!-- Efavirenz concept -->
     <concept concept_id="1011" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="w59ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2011" concept_id="1011" name="Efavirenz" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="8f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3011" concept_id="1011" description="Efavirenz drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="e888tt71-9580-4d91-b18f-0a63a1840aa6" />
 
+    <!-- Reason Antiretrovirals stopped concept -->
+    <concept concept_id="1012" datatype_id="2" class_id="7" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d09ab2c5-878f-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2012" concept_id="1012" name="Reason Antiretrovirals stopped" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="9f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3012" concept_id="1012" description="" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a888rc71-9580-4e91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4006" concept_source_id="9000" code="1252" name="Reason Antiretrovirals stopped" description="WHO HIV stage" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="67fa7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5006" concept_id="1012" concept_reference_term_id="4006" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7p309478-49d8-61e0-8fed-18a905e044dc" />
+
+    <!-- Regimen failure concept -->
+    <concept concept_id="1013" datatype_id="4" class_id="5" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="t69ab2c5-878e-5905-b25d-5784167d0214" />
+    <concept_name concept_name_id="2013" concept_id="1013" name="Regimen failure" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="4i88e374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="3013" concept_id="1013" description="Regimen failure" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3488rc71-9580-4d91-b18f-0a63a1840aa6" />
+
     <!-- ARV Drugs -->
     <drug drug_id="20000" concept_id="1006" name="Lopinavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="4yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
     <drug drug_id="20001" concept_id="1007" name="Ritonavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="5yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
     <drug drug_id="20002" concept_id="1008" name="Abacavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="6yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
     <drug drug_id="20003" concept_id="1009" name="Nelfinavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="7yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
-    <drug drug_id="20004" concept_id="1010" name="Ataznavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="8yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
+    <drug drug_id="20004" concept_id="1010" name="Atazanavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="8yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
     <drug drug_id="20005" concept_id="1011" name="Efavirenz" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="9yfcf118-931c-46f7-8ff6-7b876f0d4202"/>
 
     <!-- Set members for ARV medset concept -->
@@ -136,6 +148,11 @@
     <obs obs_id="8020" person_id="2" concept_id="1003" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7nfb7f47-u80a-4056-9285-bd767be13c63" />
     <obs obs_id="8021" person_id="2" concept_id="1003" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="true" uuid="7ofb7f47-u80a-4056-9285-bd767be13c63" />
     <obs obs_id="8022" person_id="7" concept_id="1003" encounter_id="3" obs_datetime="2016-01-15 00:00:00.0" value_coded="1004" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7pfb7f47-u80a-4056-9285-bd767be13c63" />
+    <!-- Most recent value for Reason ARVs stopped Observations -->
+    <obs obs_id="8023" person_id="2" concept_id="1012" encounter_id="6000" obs_datetime="2016-01-13 00:00:00.0" value_coded="1013" location_id="1" creator="1" date_created="2016-01-13 00:00:00.0" voided="false" uuid="7qfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8024" person_id="2" concept_id="1012" encounter_id="6001" obs_datetime="2016-01-14 00:00:00.0" value_coded="1013" location_id="1" creator="1" date_created="2016-01-14 00:00:00.0" voided="false" uuid="7rfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8025" person_id="2" concept_id="1012" encounter_id="6003" obs_datetime="2016-01-15 00:00:00.0" value_coded="1013" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="true" uuid="7sfb7f47-u80a-4056-9285-bd767be13c63" />
+    <obs obs_id="8026" person_id="7" concept_id="1012" encounter_id="3" obs_datetime="2016-01-15 00:00:00.0" value_coded="1013" location_id="1" creator="1" date_created="2016-01-15 00:00:00.0" voided="false" uuid="7tfb7f47-u80a-4056-9285-bd767be13c63" />
 
     <!-- ARV Drug orders -->
     <orders order_id="10000" order_type_id="1" patient_id="2" concept_id="1006" date_activated="2016-01-13 00:00:00.0" order_number="1000" urgency="ROUTINE" order_action="NEW" care_setting="1" encounter_id="6000" orderer="1" instructions="2x daily" creator="1" date_created="2016-01-13 00:00:00.0" voided="0" uuid="111de0a3-05c4-444a-be03-e01b4c4b9142" />
