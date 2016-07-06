@@ -42,7 +42,7 @@ public class CaseReportUtil {
 	
 	private static final String TERM_CODE_REASON_FOR_STOPPING_ARVS = "1252";
 	
-	private static Concept getConceptByMapping(String code) {
+	private static Concept getCeilConceptByCode(String code) {
 		Concept concept = Context.getConceptService().getConceptByMapping(code, SOURCE_CIEL_HL7_CODE);
 		if (concept == null) {
 			throw new APIException("Failed to find concept with mapping " + SOURCE_CIEL_HL7_CODE + ":" + code);
@@ -50,14 +50,13 @@ public class CaseReportUtil {
 		return concept;
 	}
 	
-	private static List<Obs> getMostRecentObsByPatientAndConceptMapping(Patient patient, String code, String source,
-	                                                                    Integer limit) {
+	private static List<Obs> getMostRecentObsByPatientAndConceptMapping(Patient patient, String code, Integer limit) {
 		if (patient == null) {
 			throw new APIException("Patient cannot be null");
 		}
 		
 		List<Person> patients = Collections.singletonList((Person) patient);
-		List<Concept> concepts = Collections.singletonList(getConceptByMapping(code));
+		List<Concept> concepts = Collections.singletonList(getCeilConceptByCode(code));
 		
 		return Context.getObsService().getObservations(patients, null, concepts, null, null, null,
 		    Collections.singletonList("obsDatetime"), limit, null, null, null, false);
@@ -74,7 +73,7 @@ public class CaseReportUtil {
 	 * @should return the 3 most recent Viral load observations
 	 */
 	public static List<Obs> getMostRecentViralLoads(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_VIRAL_LOAD, SOURCE_CIEL_HL7_CODE, 3);
+		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_VIRAL_LOAD, 3);
 	}
 	
 	/**
@@ -88,7 +87,7 @@ public class CaseReportUtil {
 	 * @should return the 3 most recent cd4 count observations
 	 */
 	public static List<Obs> getMostRecentCD4counts(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_CD4_COUNT, SOURCE_CIEL_HL7_CODE, 3);
+		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_CD4_COUNT, 3);
 	}
 	
 	/**
@@ -102,7 +101,7 @@ public class CaseReportUtil {
 	 * @should return the 3 most recent HIV test observations
 	 */
 	public static List<Obs> getMostRecentHIVTests(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_HIV_TEST, SOURCE_CIEL_HL7_CODE, 3);
+		return getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_HIV_TEST, 3);
 	}
 	
 	/**
@@ -113,8 +112,7 @@ public class CaseReportUtil {
 	 * @should return the most recent WHO stage observation
 	 */
 	public static Obs getMostRecentWHOStage(Patient patient) {
-		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_WHO_STAGE, SOURCE_CIEL_HL7_CODE,
-		    1);
+		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_WHO_STAGE, 1);
 		if (whoStages.isEmpty()) {
 			return null;
 		}
@@ -131,7 +129,7 @@ public class CaseReportUtil {
 	 */
 	public static List<Drug> getCurrentARVMedications(Patient patient, Date asOfDate) {
 		List<Drug> arvs = new ArrayList<Drug>();
-		Concept arvMedset = getConceptByMapping(TERM_CODE_ARV_MED_SET);
+		Concept arvMedset = getCeilConceptByCode(TERM_CODE_ARV_MED_SET);
 		OrderService os = Context.getOrderService();
 		OrderType orderType = os.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
 		List<Order> orders = os.getActiveOrders(patient, orderType, null, asOfDate);
@@ -153,8 +151,7 @@ public class CaseReportUtil {
 	 * @should return the most recent obs for the reason why the patient stopped taking ARVs
 	 */
 	public static Obs getMostRecentReasonARVsStopped(Patient patient) {
-		List<Obs> reasons = getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_REASON_FOR_STOPPING_ARVS,
-		    SOURCE_CIEL_HL7_CODE, 1);
+		List<Obs> reasons = getMostRecentObsByPatientAndConceptMapping(patient, TERM_CODE_REASON_FOR_STOPPING_ARVS, 1);
 		if (reasons.isEmpty()) {
 			return null;
 		}

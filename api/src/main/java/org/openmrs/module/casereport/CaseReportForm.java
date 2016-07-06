@@ -11,21 +11,24 @@ package org.openmrs.module.casereport;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openmrs.Drug;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
 
 /**
  * An instance of this class encapsulates the report form data
  */
 public class CaseReportForm {
 	
-	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	private String givenName;
 	
@@ -49,15 +52,15 @@ public class CaseReportForm {
 	
 	private List<String> previousSubmittedCaseReports;
 	
-	private Map<Date, Integer> mostRecentDateAndViralLoadMap;
+	private Map<String, Double> mostRecentDateAndViralLoadMap;
 	
-	private Map<Date, Integer> mostRecentDateAndCd4CountMap;
+	private Map<String, Double> mostRecentDateAndCd4CountMap;
 	
-	private Map<Date, String> mostRecentDateAndHivTestMap;
+	private Map<String, String> mostRecentDateAndHivTestMap;
 	
-	private Integer mostRecentHivWhoStage;
+	private String mostRecentHivWhoStage;
 	
-	private List<String> mostRecentHivMedications;
+	private List<String> currentHivMedications;
 	
 	private String mostRecentArvStopReason;
 	
@@ -80,11 +83,49 @@ public class CaseReportForm {
 			setPatientIdentifier(id.getIdentifier());
 			setIdentifierType(id.getIdentifierType().getName());
 		}
-		Map<String, String> triggers = new HashMap<String, String>(caseReport.getReportTriggers().size());
+		
+		Map<String, String> triggers = new LinkedHashMap<String, String>(caseReport.getReportTriggers().size());
 		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
 			triggers.put(tr.getName(), DATE_FORMATTER.format(tr.getDateCreated()));
 		}
 		setTriggerAndDateCreatedMap(triggers);
+		
+		List<Obs> mostRecentViralLoads = CaseReportUtil.getMostRecentViralLoads(patient);
+		Map<String, Double> dateViralLoadMap = new LinkedHashMap<String, Double>(3);
+		for (Obs o : mostRecentViralLoads) {
+			dateViralLoadMap.put(DATE_FORMATTER.format(o.getObsDatetime()), o.getValueNumeric());
+		}
+		setMostRecentDateAndViralLoadMap(dateViralLoadMap);
+		
+		List<Obs> mostRecentCd4Counts = CaseReportUtil.getMostRecentCD4counts(patient);
+		Map<String, Double> dateCD4CountMap = new LinkedHashMap<String, Double>(3);
+		for (Obs o : mostRecentCd4Counts) {
+			dateCD4CountMap.put(DATE_FORMATTER.format(o.getObsDatetime()), o.getValueNumeric());
+		}
+		setMostRecentDateAndCd4CountMap(dateCD4CountMap);
+		
+		List<Obs> mostRecentHivTests = CaseReportUtil.getMostRecentHIVTests(patient);
+		Map<String, String> dateHivTestMap = new LinkedHashMap<String, String>(3);
+		for (Obs o : mostRecentHivTests) {
+			dateHivTestMap.put(DATE_FORMATTER.format(o.getObsDatetime()), o.getValueAsString(Context.getLocale()));
+		}
+		setMostRecentDateAndHivTestMap(dateHivTestMap);
+		
+		List<Drug> arvMeds = CaseReportUtil.getCurrentARVMedications(patient, null);
+		List<String> currentArvs = new ArrayList<String>(3);
+		for (Drug d : arvMeds) {
+			currentArvs.add(d.getName());
+		}
+		setCurrentHivMedications(currentArvs);
+		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
+		if (mostRecentWHOStageObs != null) {
+			setMostRecentHivWhoStage(mostRecentWHOStageObs.getValueAsString(Context.getLocale()));
+		}
+		Obs mostRecentArvStopReasonObs = CaseReportUtil.getMostRecentReasonARVsStopped(patient);
+		if (mostRecentArvStopReasonObs != null) {
+			setMostRecentArvStopReason(mostRecentArvStopReasonObs.getValueAsString(Context.getLocale()));
+		}
+		//List<CaseReport> previousSubmittedResports = Context.getService(CaseReportService.class).get
 	}
 	
 	public String getBirthdate() {
@@ -167,36 +208,36 @@ public class CaseReportForm {
 		this.identifierType = identifierType;
 	}
 	
-	public Map<Date, String> getMostRecentDateAndHivTestMap() {
+	public Map<String, String> getMostRecentDateAndHivTestMap() {
 		return mostRecentDateAndHivTestMap;
 	}
 	
-	public void setMostRecentDateAndHivTestMap(Map<Date, String> mostRecentDateAndHivTestMap) {
+	public void setMostRecentDateAndHivTestMap(Map<String, String> mostRecentDateAndHivTestMap) {
 		this.mostRecentDateAndHivTestMap = mostRecentDateAndHivTestMap;
 	}
 	
-	public Map<Date, Integer> getMostRecentDateAndCd4CountMap() {
+	public Map<String, Double> getMostRecentDateAndCd4CountMap() {
 		return mostRecentDateAndCd4CountMap;
 	}
 	
-	public void setMostRecentDateAndCd4CountMap(Map<Date, Integer> mostRecentDateAndCd4CountMap) {
+	public void setMostRecentDateAndCd4CountMap(Map<String, Double> mostRecentDateAndCd4CountMap) {
 		this.mostRecentDateAndCd4CountMap = mostRecentDateAndCd4CountMap;
 	}
 	
-	public Map<Date, Integer> getMostRecentDateAndViralLoadMap() {
+	public Map<String, Double> getMostRecentDateAndViralLoadMap() {
 		return mostRecentDateAndViralLoadMap;
 	}
 	
-	public void setMostRecentDateAndViralLoadMap(Map<Date, Integer> mostRecentDateAndViralLoadMap) {
+	public void setMostRecentDateAndViralLoadMap(Map<String, Double> mostRecentDateAndViralLoadMap) {
 		this.mostRecentDateAndViralLoadMap = mostRecentDateAndViralLoadMap;
 	}
 	
-	public List<String> getMostRecentHivMedications() {
-		return mostRecentHivMedications;
+	public List<String> getCurrentHivMedications() {
+		return currentHivMedications;
 	}
 	
-	public void setMostRecentHivMedications(List<String> mostRecentHivMedications) {
-		this.mostRecentHivMedications = mostRecentHivMedications;
+	public void setCurrentHivMedications(List<String> currentHivMedications) {
+		this.currentHivMedications = currentHivMedications;
 	}
 	
 	public String getMostRecentArvStopReason() {
@@ -207,11 +248,11 @@ public class CaseReportForm {
 		this.mostRecentArvStopReason = mostRecentArvStopReason;
 	}
 	
-	public Integer getMostRecentHivWhoStage() {
+	public String getMostRecentHivWhoStage() {
 		return mostRecentHivWhoStage;
 	}
 	
-	public void setMostRecentHivWhoStage(Integer mostRecentHivWhoStage) {
+	public void setMostRecentHivWhoStage(String mostRecentHivWhoStage) {
 		this.mostRecentHivWhoStage = mostRecentHivWhoStage;
 	}
 	

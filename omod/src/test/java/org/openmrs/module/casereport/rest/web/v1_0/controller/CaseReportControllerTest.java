@@ -37,6 +37,7 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-other.xml");
 	}
 	
 	@Override

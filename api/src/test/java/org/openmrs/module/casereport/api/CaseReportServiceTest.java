@@ -48,6 +48,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String XML_DATASET = "moduleTestData-initialCaseReports.xml";
 	
+	private static final String XML_OTHER_DATASET = "moduleTestData-other.xml";
+	
 	@Autowired
 	private CaseReportService service;
 	
@@ -438,6 +440,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void generateReportForm_shouldGenerateTheReportForm() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
 		CaseReport caseReport = service.getCaseReport(1);
 		assertNull(caseReport.getReportForm());
 		caseReport = service.generateReportForm(caseReport);
@@ -453,15 +456,15 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(patient.getGender(), reportForm.getGender());
 		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthdate());
 		assertEquals(patient.isDead(), reportForm.getDead());
-		/*assertEquals("", reportForm.getCaseOfDeath());
-		assertNull(reportForm.getTriggerAndDateCreatedMap());
-		assertNotNull(reportForm.getPreviousSubmittedCaseReports());
-		assertNotNull(reportForm.getMostRecentDateAndViralLoadMap());
-		assertNotNull(reportForm.getMostRecentDateAndCd4CountMap());
-		assertNotNull(reportForm.getMostRecentDateAndHivTestMap());
-		assertNotNull(reportForm.getMostRecentHivWhoStage());
-		assertNotNull(reportForm.getMostRecentHivMedications());
-		assertNotNull(reportForm.getMostRecentArvStopReason());*/
+		assertNotNull(reportForm.getTriggerAndDateCreatedMap());
+		assertEquals(3, reportForm.getMostRecentDateAndViralLoadMap().size());
+		assertEquals(3, reportForm.getMostRecentDateAndCd4CountMap().size());
+		assertEquals(3, reportForm.getMostRecentDateAndHivTestMap().size());
+		assertEquals(2, reportForm.getCurrentHivMedications().size());
+		assertEquals("WHO HIV stage 2", reportForm.getMostRecentHivWhoStage());
+		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason());
+		//assertEquals(1, reportForm.getPreviousSubmittedCaseReports().size());
+		//assertEquals("", reportForm.getCaseOfDeath());
 	}
 	
 	/**
