@@ -265,7 +265,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		catch (IOException e) {
 			throw new APIException(e);
 		}
-		
+        System.out.println(serializedReportForm);
 		caseReport.setReportForm(serializedReportForm);
 		service.saveCaseReport(caseReport);
 		

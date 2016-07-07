@@ -64,9 +64,28 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
             loadCaseReports();
     }])
 
-    .controller("SubmitCaseReportController", [ "$scope", "$state", "StatusChange", "caseReport",
-        function($scope, $state, StatusChange, caseReport) {
+    .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "StatusChange", "caseReport",
+        function($scope, $state, $filter, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
+
+            $scope.updateFormTitle = function(personName){
+                jq("#casereport-reportTitle").text(emr.message('casereport.report.form.title').replace("{0}", personName));
+            }
+
+            $scope.formatDate = function(date){
+                return $filter('serverDate')(date, 'dd-MMM-yyyy');
+            }
+
+            $scope.getObjectKeys = function(obj){
+                if(obj) {
+                    return Object.keys(obj);
+                }
+                return [];
+            }
+
+            $scope.getMapSize = function(obj){
+                return $scope.getObjectKeys(obj).length;
+            }
 
             $scope.submitCaseReport = function() {
                 StatusChange.save({

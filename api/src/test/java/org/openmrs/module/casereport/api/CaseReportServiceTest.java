@@ -463,6 +463,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, reportForm.getCurrentHivMedications().size());
 		assertEquals("WHO HIV stage 2", reportForm.getMostRecentHivWhoStage());
 		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason());
+		//assertEquals("2016-04-01T00:00:00.000-0500", reportForm.getDateOfLastVisit());
 		//assertEquals(1, reportForm.getPreviousSubmittedCaseReports().size());
 		//assertEquals("", reportForm.getCaseOfDeath());
 	}
