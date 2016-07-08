@@ -199,4 +199,16 @@ public interface CaseReportService extends OpenmrsService {
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException;
+	
+	/**
+	 * Gets all the previously submitted case reports for the specified patient
+	 *
+	 * @param patient the patient match against
+	 * @return a list of previous submitted case reports for the patient
+	 * @throws APIException
+	 * @should fail if patient is null
+	 * @should return all the previously submitted case reports for the specified patient
+	 */
+	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
+	List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException;
 }

@@ -104,7 +104,7 @@
         </tr>
         <tr>
             <th valign="top">${ui.message("casereport.signature")}</th>
-            <td valign="top">${ui.format(context.authenticatedUser.person)}</td>
+            <td valign="top">${ui.format(context.authenticatedUser)}</td>
         </tr>
     </table>
 

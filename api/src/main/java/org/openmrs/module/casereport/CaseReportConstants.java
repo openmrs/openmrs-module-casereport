@@ -19,6 +19,8 @@ public class CaseReportConstants {
 	
 	public static final String LAST_EXECUTION_TIME = "lastExecutionTime";
 	
+	public static final String SOURCE_CIEL_HL7_CODE = "CIEL";
+	
 	public static final String CONCEPT_MAPPING_SEPARATOR = "_";
 	
 }

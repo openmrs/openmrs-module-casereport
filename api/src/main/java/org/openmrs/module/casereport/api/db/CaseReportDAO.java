@@ -28,14 +28,12 @@ public interface CaseReportDAO {
 	 * Gets case reports from the database that match the specified arguments.
 	 * 
 	 * @param patient the patient to match against
+	 * @param statusesToExclude specifies the list statuses of the reports to exclude
 	 * @param includeVoided specifies whether voided reports should be included
-	 * @param includeSubmitted specifies whether submitted reports should be included
-	 * @param includeDismissed specifies whether dismissed reports should be included
 	 * @return the case reports in the database including voided ones if includeVoided is set to
 	 *         true otherwise they will be excluded
 	 */
-	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, boolean includeSubmitted,
-	                                boolean includeDismissed);
+	List<CaseReport> getCaseReports(Patient patient, List<CaseReport.Status> statusesToExclude, boolean includeVoided);
 	
 	CaseReport saveCaseReport(CaseReport caseReport);
 }

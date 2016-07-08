@@ -169,9 +169,17 @@
     <drug_order order_id="10004" drug_inventory_id="20003" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
     <drug_order order_id="10005" drug_inventory_id="20004" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
     <drug_order order_id="10006" drug_inventory_id="20005" dose="325.0" dose_units="50" as_needed="0" frequency="1" dosing_type="org.openmrs.SimpleDosingInstructions" route="22" quantity="1.0" quantity_units="51" num_refills="10" dispense_as_written="0" />
+
     <!-- Visits -->
     <visit visit_id="100" patient_id="2" visit_type_id="1" date_started="2016-06-14 00:00:00.0" location_id="1" creator="1" date_created="2016-06-14 00:00:00.0" voided="0" uuid="2e5d5d48-6b78-11e0-93c3-18a905e044dc" />
     <visit visit_id="101" patient_id="2" visit_type_id="1" date_started="2016-06-15 00:00:00.0" location_id="1" creator="1" date_created="2016-06-15 00:00:00.0" voided="0" uuid="3e5d5d48-6b78-11e0-93c3-18a905e044dc" />
     <visit visit_id="102" patient_id="2" visit_type_id="1" date_started="2016-06-13 00:00:00.0" date_stopped="2016-06-16 23:00:00.0" location_id="1" creator="1" date_created="2016-06-13 00:00:00.0" voided="0" uuid="4e5d5d48-6b78-11e0-93c3-18a905e044dc" />
     <visit visit_id="103" patient_id="2" visit_type_id="1" date_started="2016-06-16 00:00:00.0" location_id="1" creator="1" date_created="2016-06-16 00:00:00.0" voided="1" date_voided="2016-06-16 00:01:00.0" void_reason="no reason" uuid="5e5d5d48-6b78-11e0-93c3-18a905e044dc" />
+
+    <!-- Previously submitted caserports reports -->
+    <casereport_case_report case_report_id="200" patient_id="2" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="er7d57f0-9088-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="201" patient_id="2" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="ui7d57f0-9188-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report_trigger case_report_trigger_id="200" name="Some weird trigger" case_report_id="200" creator="1" date_created="2016-04-01 00:01:00.0" uuid="b995d09a-1ef5-11e6-8963-ce3fd0574140" />
+    <casereport_case_report_trigger case_report_trigger_id="201" name="Some Unique Trigger" case_report_id="200" creator="1" date_created="2016-04-01 00:01:00.0" uuid="c115d09a-1ef5-11e6-8963-ce3fd0574140" />
+    <casereport_case_report_trigger case_report_trigger_id="202" name="Some weird trigger" case_report_id="201" creator="1" date_created="2016-04-01 00:01:00.0" uuid="d925d09a-1ef5-11e6-8963-ce3fd0574140" />
 </dataset>

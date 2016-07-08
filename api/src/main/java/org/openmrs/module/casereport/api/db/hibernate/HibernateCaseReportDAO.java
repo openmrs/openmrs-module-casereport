@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.api.db.hibernate;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -66,24 +67,20 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 	}
 	
 	/**
-	 * @see CaseReportDAO#getCaseReports(Patient, boolean, boolean, boolean)
+	 * @see CaseReportDAO#getCaseReports(Patient, List, boolean)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, boolean includeSubmitted,
-	                                       boolean includeDismissed) {
+	public List<CaseReport> getCaseReports(Patient patient, List<CaseReport.Status> statusesToExclude, boolean includeVoided) {
 		
 		Criteria criteria = getCurrentSession().createCriteria(CaseReport.class);
 		if (patient != null) {
 			criteria.add(Restrictions.eq("patient", patient));
 		}
+		if (CollectionUtils.isNotEmpty(statusesToExclude)) {
+			criteria.add(Restrictions.not(Restrictions.in("status", statusesToExclude)));
+		}
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
-		}
-		if (!includeSubmitted) {
-			criteria.add(Restrictions.ne("status", CaseReport.Status.SUBMITTED));
-		}
-		if (!includeDismissed) {
-			criteria.add(Restrictions.ne("status", CaseReport.Status.DISMISSED));
 		}
 		
 		return criteria.list();

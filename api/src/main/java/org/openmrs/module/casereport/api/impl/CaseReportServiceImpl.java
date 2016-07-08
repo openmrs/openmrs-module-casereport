@@ -9,8 +9,12 @@
  */
 package org.openmrs.module.casereport.api.impl;
 
+import static org.openmrs.module.casereport.CaseReport.Status;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +71,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		return mapper;
 	}
 	
-	private void setStatus(CaseReport caseReport, CaseReport.Status status) {
+	private void setStatus(CaseReport caseReport, Status status) {
+		
 		Boolean isAccessible = null;
 		Field field = null;
 		try {
@@ -109,7 +114,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (patient == null) {
 			throw new APIException("patient is required");
 		}
-		List<CaseReport> caseReports = dao.getCaseReports(patient, false, false, false);
+		List<Status> statusesToExclude = Arrays.asList(Status.SUBMITTED, Status.DISMISSED);
+		List<CaseReport> caseReports = dao.getCaseReports(patient, statusesToExclude, false);
 		if (caseReports.size() == 0) {
 			return null;
 		} else if (caseReports.size() > 1) {
@@ -125,7 +131,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getCaseReports() throws APIException {
-		return dao.getCaseReports(null, false, false, false);
+		List<Status> statusesToExclude = Arrays.asList(Status.SUBMITTED, Status.DISMISSED);
+		return dao.getCaseReports(null, statusesToExclude, false);
 	}
 	
 	/**
@@ -134,7 +141,18 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	public List<CaseReport> getCaseReports(boolean includeVoided, boolean includeSubmitted, boolean includeDismissed)
 	    throws APIException {
-		return dao.getCaseReports(null, includeVoided, includeSubmitted, includeDismissed);
+		List<Status> statusesToExclude = null;
+		if (!includeSubmitted || !includeDismissed) {
+			statusesToExclude = new ArrayList<Status>();
+			if (!includeSubmitted) {
+				statusesToExclude.add(Status.SUBMITTED);
+			}
+			if (!includeDismissed) {
+				statusesToExclude.add(Status.DISMISSED);
+			}
+		}
+		
+		return dao.getCaseReports(null, statusesToExclude, includeVoided);
 	}
 	
 	/**
@@ -143,14 +161,14 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
-		if (CaseReport.Status.SUBMITTED != caseReport.getStatus() && CaseReport.Status.DISMISSED != caseReport.getStatus()) {
+		if (Status.SUBMITTED != caseReport.getStatus() && Status.DISMISSED != caseReport.getStatus()) {
 			if (StringUtils.isBlank(caseReport.getReportForm())) {
-				if (CaseReport.Status.NEW != caseReport.getStatus()) {
-					setStatus(caseReport, CaseReport.Status.NEW);
+				if (Status.NEW != caseReport.getStatus()) {
+					setStatus(caseReport, Status.NEW);
 				}
 			} else {
-				if (CaseReport.Status.DRAFT != caseReport.getStatus()) {
-					setStatus(caseReport, CaseReport.Status.DRAFT);
+				if (Status.DRAFT != caseReport.getStatus()) {
+					setStatus(caseReport, Status.DRAFT);
 				}
 			}
 		}
@@ -168,7 +186,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Can't submit a voided case report");
 		}
 		//TODO Implement more submission logic here
-		setStatus(caseReport, CaseReport.Status.SUBMITTED);
+		setStatus(caseReport, Status.SUBMITTED);
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
@@ -181,7 +199,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (caseReport.isVoided()) {
 			throw new APIException("Can't dismiss a voided case report");
 		}
-		setStatus(caseReport, CaseReport.Status.DISMISSED);
+		setStatus(caseReport, Status.DISMISSED);
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
@@ -202,15 +220,19 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		if (definition.getParameters() != null) {
 			ConceptService cs = Context.getConceptService();
+			final String cielMappingPrefix = CaseReportConstants.SOURCE_CIEL_HL7_CODE
+			        + CaseReportConstants.CONCEPT_MAPPING_SEPARATOR;
 			for (Parameter p : definition.getParameters()) {
-				String[] sourceAndCode = StringUtils.split(p.getName(), CaseReportConstants.CONCEPT_MAPPING_SEPARATOR);
-				String source = sourceAndCode[0];
-				String code = sourceAndCode[1];
-				Concept concept = cs.getConceptByMapping(code, source);
-				if (concept == null) {
-					throw new APIException("Failed to find concept with mapping " + source + ":" + code);
+				if (p.getName().startsWith(cielMappingPrefix)) {
+					String[] sourceAndCode = StringUtils.split(p.getName(), CaseReportConstants.CONCEPT_MAPPING_SEPARATOR);
+					String source = sourceAndCode[0];
+					String code = sourceAndCode[1];
+					Concept concept = cs.getConceptByMapping(code, source);
+					if (concept == null) {
+						throw new APIException("Failed to find concept with mapping " + source + ":" + code);
+					}
+					params.put(p.getName(), concept.getConceptId());
 				}
-				params.put(p.getName(), concept.getConceptId());
 			}
 		}
 		
@@ -305,5 +327,23 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Transactional(readOnly = false)
 	public CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException {
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
+	}
+	
+	/**
+	 * @see CaseReportService#getSubmittedCaseReports(Patient)
+	 */
+	@Override
+	public List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException {
+		if (patient == null) {
+			throw new APIException("patient is required");
+		}
+		List<Status> statusesToExclude = new ArrayList<Status>(Status.values().length);
+		for (Status status : Status.values()) {
+			if (status != Status.SUBMITTED) {
+				statusesToExclude.add(status);
+			}
+		}
+		
+		return dao.getCaseReports(patient, statusesToExclude, false);
 	}
 }

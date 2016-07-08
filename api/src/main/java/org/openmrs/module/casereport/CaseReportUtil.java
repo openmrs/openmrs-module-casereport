@@ -31,8 +31,6 @@ import org.openmrs.util.OpenmrsUtil;
 
 public class CaseReportUtil {
 	
-	private static final String SOURCE_CIEL_HL7_CODE = "CIEL";
-	
 	private static final String TERM_CODE_VIRAL_LOAD = "856";
 	
 	private static final String TERM_CODE_CD4_COUNT = "5497";
@@ -46,9 +44,10 @@ public class CaseReportUtil {
 	private static final String TERM_CODE_REASON_FOR_STOPPING_ARVS = "1252";
 	
 	private static Concept getCeilConceptByCode(String code) {
-		Concept concept = Context.getConceptService().getConceptByMapping(code, SOURCE_CIEL_HL7_CODE);
+		Concept concept = Context.getConceptService().getConceptByMapping(code, CaseReportConstants.SOURCE_CIEL_HL7_CODE);
 		if (concept == null) {
-			throw new APIException("Failed to find concept with mapping " + SOURCE_CIEL_HL7_CODE + ":" + code);
+			throw new APIException("Failed to find concept with mapping " + CaseReportConstants.SOURCE_CIEL_HL7_CODE + ":"
+			        + code);
 		}
 		return concept;
 	}

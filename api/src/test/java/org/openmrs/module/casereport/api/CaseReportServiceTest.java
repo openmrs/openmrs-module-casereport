@@ -128,7 +128,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllCaseReportsInTheDatabaseIfAllArgumentsAreSetToTrue() throws Exception {
-		assertEquals(7, service.getCaseReports(true, true, true).size());
+		assertEquals(9, service.getCaseReports(true, true, true).size());
 	}
 	
 	/**
@@ -139,9 +139,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void getCaseReports_shouldIncludeDismissedReportsInTheDatabaseIfIncludeDismissedIsSetToTrue() throws Exception {
 		List<CaseReport> reports = service.getCaseReports(false, false, true);
 		assertEquals(4, reports.size());
+		assertTrue(TestUtil.containsId(reports, 1));
+		assertTrue(TestUtil.containsId(reports, 2));
+		assertTrue(TestUtil.containsId(reports, 4));
 		assertTrue(TestUtil.containsId(reports, 6));
-		assertFalse(TestUtil.containsId(reports, 3));
-		assertFalse(TestUtil.containsId(reports, 5));
 		
 	}
 	
@@ -152,10 +153,12 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getCaseReports_shouldIncludeSubmittedReportsInTheDatabaseIfIncludeSubmittedIsSetToTrue() throws Exception {
 		List<CaseReport> reports = service.getCaseReports(false, true, false);
-		assertEquals(4, reports.size());
+		assertEquals(5, reports.size());
+		assertTrue(TestUtil.containsId(reports, 1));
+		assertTrue(TestUtil.containsId(reports, 2));
+		assertTrue(TestUtil.containsId(reports, 4));
 		assertTrue(TestUtil.containsId(reports, 5));
-		assertFalse(TestUtil.containsId(reports, 3));
-		assertFalse(TestUtil.containsId(reports, 6));
+		assertTrue(TestUtil.containsId(reports, 8));
 	}
 	
 	/**
@@ -166,9 +169,11 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void getCaseReports_shouldIncludeVoidedReportsInTheDatabaseIfIncludeVoidedIsSetToTrue() throws Exception {
 		List<CaseReport> reports = service.getCaseReports(true, false, false);
 		assertEquals(5, reports.size());
+		assertTrue(TestUtil.containsId(reports, 1));
+		assertTrue(TestUtil.containsId(reports, 2));
+		assertTrue(TestUtil.containsId(reports, 4));
 		assertTrue(TestUtil.containsId(reports, 3));
-		assertFalse(TestUtil.containsId(reports, 5));
-		assertFalse(TestUtil.containsId(reports, 6));
+		assertTrue(TestUtil.containsId(reports, 7));
 	}
 	
 	/**
@@ -477,7 +482,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason());
 		assertEquals("2016-06-15T00:00:00.000-0400", reportForm.getLastVisitDate());
 		assertEquals("UNKNOWN", reportForm.getCauseOfDeath());
-		//assertEquals(1, reportForm.getPreviousSubmittedCaseReports().size());
+		assertEquals(2, reportForm.getPreviousSubmittedCaseReports().size());
+		assertTrue(reportForm.getPreviousSubmittedCaseReports().contains("Some weird trigger"));
+		assertTrue(reportForm.getPreviousSubmittedCaseReports().contains("Some Unique Trigger"));
 	}
 	
 	/**
@@ -566,5 +573,29 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(++originalTriggerCount, service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
 		        .getReportTriggers().size());
 		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+	}
+	
+	/**
+	 * @see CaseReportService#getSubmittedCaseReports(Patient)
+	 * @verifies fail if patient is null
+	 */
+	@Test
+	public void getSubmittedCaseReports_shouldFailIfPatientIsNull() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("patient is required"));
+		service.getSubmittedCaseReports(null);
+	}
+	
+	/**
+	 * @see CaseReportService#getSubmittedCaseReports(Patient)
+	 * @verifies return all the previously submitted case reports for the specified patient
+	 */
+	@Test
+	public void getSubmittedCaseReports_shouldReturnAllThePreviouslySubmittedCaseReportsForTheSpecifiedPatient()
+	    throws Exception {
+		List<CaseReport> caseReports = service.getSubmittedCaseReports(patientService.getPatient(7));
+		assertEquals(2, caseReports.size());
+		assertTrue(TestUtil.containsId(caseReports, 5));
+		assertTrue(TestUtil.containsId(caseReports, 8));
 	}
 }

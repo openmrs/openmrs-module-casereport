@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -23,6 +24,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportService;
 
 /**
  * An instance of this class encapsulates the report form data
@@ -130,19 +132,34 @@ public class CaseReportForm {
 			currentArvs.add(d.getName());
 		}
 		setCurrentHivMedications(currentArvs);
+		
 		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
 		if (mostRecentWHOStageObs != null) {
 			setMostRecentHivWhoStage(mostRecentWHOStageObs.getValueAsString(Context.getLocale()));
 		}
+		
 		Obs mostRecentArvStopReasonObs = CaseReportUtil.getMostRecentReasonARVsStopped(patient);
 		if (mostRecentArvStopReasonObs != null) {
 			setMostRecentArvStopReason(mostRecentArvStopReasonObs.getValueAsString(Context.getLocale()));
 		}
+		
 		Visit visit = CaseReportUtil.getLastVisit(patient);
 		if (visit != null) {
 			setLastVisitDate(DATE_FORMATTER.format(visit.getStartDatetime()));
 		}
-		//List<CaseReport> previousSubmittedReports = Context.getService(CaseReportService.class).get
+		
+		List<CaseReport> submittedReports = Context.getService(CaseReportService.class).getSubmittedCaseReports(patient);
+		if (CollectionUtils.isNotEmpty(submittedReports)) {
+			List<String> prevSubmittedReports = new ArrayList<String>(submittedReports.size());
+			for (CaseReport cr : submittedReports) {
+				for (CaseReportTrigger t : cr.getReportTriggers()) {
+					if (!prevSubmittedReports.contains(t.getName())) {
+						prevSubmittedReports.add(t.getName());
+					}
+				}
+			}
+			setPreviousSubmittedCaseReports(prevSubmittedReports);
+		}
 	}
 	
 	public String getBirthdate() {
