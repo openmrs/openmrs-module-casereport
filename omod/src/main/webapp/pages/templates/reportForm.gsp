@@ -34,11 +34,15 @@
         </tr>
         <tr>
             <th valign="top">${ui.message("casereport.birthdate")}</th>
-            <td valign="top">
-                <span ng-show="caseReport.reportForm.dead" class="right">${ui.message("casereport.deathdate")}:
-                {{ formatDate(caseReport.reportForm.deathdate) }}
-                </span> {{ formatDate(caseReport.reportForm.birthdate) }}
-            </td>
+            <td valign="top">{{ formatDate(caseReport.reportForm.birthdate) }}</td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.dead">
+            <th valign="top">${ui.message("Person.dead")}</th>
+            <td valign="top">${ui.message("general.yes")}</td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.dead && caseReport.reportForm.deathdate">
+            <th valign="top">${ui.message("casereport.deathdate")}</th>
+            <td valign="top">{{ formatDate(caseReport.reportForm.deathdate) }}</td>
         </tr>
         <tr ng-show="caseReport.reportForm.dead && caseReport.reportForm.causeOfDeath">
             <th valign="top">${ui.message("casereport.causeOfDeath")}</th>
