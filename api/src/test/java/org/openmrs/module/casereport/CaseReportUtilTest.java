@@ -118,4 +118,15 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		Patient patient = patientService.getPatient(2);
 		assertEquals(8024, CaseReportUtil.getMostRecentReasonARVsStopped(patient).getId().intValue());
 	}
+	
+	/**
+	 * @see CaseReportUtil#getLastVisit(Patient)
+	 * @verifies return the last visit for the specified patient
+	 */
+	@Test
+	public void getLastVisit_shouldReturnTheLastVisitForTheSpecifiedPatient() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		Patient patient = patientService.getPatient(2);
+		assertEquals(101, CaseReportUtil.getLastVisit(patient).getId().intValue());
+	}
 }

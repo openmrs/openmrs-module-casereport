@@ -21,6 +21,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
+import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 
 /**
@@ -40,13 +41,15 @@ public class CaseReportForm {
 	
 	private String birthdate;
 	
+	private String deathdate;
+	
 	private Boolean dead;
 	
 	private String patientIdentifier;
 	
 	private String identifierType;
 	
-	private String CaseOfDeath;
+	private String causeOfDeath;
 	
 	private Map<String, String> triggerAndDateCreatedMap;
 	
@@ -64,6 +67,8 @@ public class CaseReportForm {
 	
 	private String mostRecentArvStopReason;
 	
+	private String lastVisitDate;
+	
 	public CaseReportForm() {
 		
 	}
@@ -71,12 +76,20 @@ public class CaseReportForm {
 	public CaseReportForm(Patient patient, CaseReport caseReport) {
 		setGender(patient.getGender());
 		setBirthdate(DATE_FORMATTER.format(patient.getBirthdate()));
-		setDead(patient.getDead());
 		PersonName name = patient.getPersonName();
 		if (name != null) {
 			setGivenName(name.getGivenName());
 			setMiddleName(name.getMiddleName());
 			setFamilyName(name.getFamilyName());
+		}
+		setDead(patient.getDead());
+		if (patient.getDead()) {
+			if (patient.getCauseOfDeath() != null) {
+				setCauseOfDeath(patient.getCauseOfDeath().getName().getName());
+			}
+			if (patient.getDeathDate() != null) {
+				setDeathdate(DATE_FORMATTER.format(patient.getDeathDate()));
+			}
 		}
 		PatientIdentifier id = patient.getPatientIdentifier();
 		if (id != null) {
@@ -125,7 +138,11 @@ public class CaseReportForm {
 		if (mostRecentArvStopReasonObs != null) {
 			setMostRecentArvStopReason(mostRecentArvStopReasonObs.getValueAsString(Context.getLocale()));
 		}
-		//List<CaseReport> previousSubmittedResports = Context.getService(CaseReportService.class).get
+		Visit visit = CaseReportUtil.getLastVisit(patient);
+		if (visit != null) {
+			setLastVisitDate(DATE_FORMATTER.format(visit.getStartDatetime()));
+		}
+		//List<CaseReport> previousSubmittedReports = Context.getService(CaseReportService.class).get
 	}
 	
 	public String getBirthdate() {
@@ -136,12 +153,20 @@ public class CaseReportForm {
 		this.birthdate = birthdate;
 	}
 	
-	public String getCaseOfDeath() {
-		return CaseOfDeath;
+	public String getDeathdate() {
+		return deathdate;
 	}
 	
-	public void setCaseOfDeath(String caseOfDeath) {
-		CaseOfDeath = caseOfDeath;
+	public void setDeathdate(String deathdate) {
+		this.deathdate = deathdate;
+	}
+	
+	public String getCauseOfDeath() {
+		return causeOfDeath;
+	}
+	
+	public void setCauseOfDeath(String causeOfDeath) {
+		this.causeOfDeath = causeOfDeath;
 	}
 	
 	public Boolean getDead() {
@@ -262,5 +287,13 @@ public class CaseReportForm {
 	
 	public void setPreviousSubmittedCaseReports(List<String> previousSubmittedCaseReports) {
 		this.previousSubmittedCaseReports = previousSubmittedCaseReports;
+	}
+	
+	public String getLastVisitDate() {
+		return lastVisitDate;
+	}
+	
+	public void setLastVisitDate(String lastVisitDate) {
+		this.lastVisitDate = lastVisitDate;
 	}
 }

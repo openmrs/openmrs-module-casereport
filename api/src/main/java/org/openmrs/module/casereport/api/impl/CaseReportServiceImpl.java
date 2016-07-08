@@ -20,21 +20,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Cohort;
+import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
-import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.TaskDefinition;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -193,11 +196,25 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
 		}
 		EvaluationContext evaluationContext = new EvaluationContext();
+		Map<String, Object> params = new HashMap<String, Object>();
 		if (taskDefinition != null && taskDefinition.getLastExecutionTime() != null) {
-			Map<String, Object> params = new HashMap<String, Object>();
 			params.put(CaseReportConstants.LAST_EXECUTION_TIME, taskDefinition.getLastExecutionTime());
-			evaluationContext.setParameterValues(params);
 		}
+		if (definition.getParameters() != null) {
+			ConceptService cs = Context.getConceptService();
+			for (Parameter p : definition.getParameters()) {
+				String[] sourceAndCode = StringUtils.split(p.getName(), CaseReportConstants.CONCEPT_MAPPING_SEPARATOR);
+				String source = sourceAndCode[0];
+				String code = sourceAndCode[1];
+				Concept concept = cs.getConceptByMapping(code, source);
+				if (concept == null) {
+					throw new APIException("Failed to find concept with mapping " + source + ":" + code);
+				}
+				params.put(p.getName(), concept.getConceptId());
+			}
+		}
+		
+		evaluationContext.setParameterValues(params);
 		Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
 		
 		PatientService ps = Context.getPatientService();
@@ -265,7 +282,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		catch (IOException e) {
 			throw new APIException(e);
 		}
-        System.out.println(serializedReportForm);
+		
 		caseReport.setReportForm(serializedReportForm);
 		service.saveCaseReport(caseReport);
 		

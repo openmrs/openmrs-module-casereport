@@ -35,15 +35,22 @@
         <tr>
             <th valign="top">${ui.message("casereport.birthdate")}</th>
             <td valign="top">
-                <span ng-show="caseReport.reportForm.dead" class="right">${ui.message("casereport.deathdate")} {{ formatDate(caseReport.reportForm.deathdate) }}</span>
-                {{ formatDate(caseReport.reportForm.birthdate) }}
+                <span ng-show="caseReport.reportForm.dead" class="right">${ui.message("casereport.deathdate")}:
+                {{ formatDate(caseReport.reportForm.deathdate) }}
+                </span> {{ formatDate(caseReport.reportForm.birthdate) }}
             </td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.dead && caseReport.reportForm.causeOfDeath">
+            <th valign="top">${ui.message("casereport.causeOfDeath")}</th>
+            <td valign="top">{{ formatDate(caseReport.reportForm.causeOfDeath) }}</td>
         </tr>
         <tr>
             <th valign="top">${ui.message("casereport.triggers")}</th>
             <td valign="top">{{ getObjectKeys(caseReport.reportForm.triggerAndDateCreatedMap) | omrs.display }}</td>
         </tr>
-        <tr>
+        <tr ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) > 0
+                    || getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) > 0
+                    || getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) > 0">
             <th valign="top">${ui.message("casereport.data")}</th>
             <td valign="top">
                 <br />
@@ -74,6 +81,26 @@
                     </tr>
                 </table>
             </td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.mostRecentHivWhoStage">
+            <th valign="top">${ui.message("casereport.whoClassification")}</th>
+            <td valign="top">{{ caseReport.reportForm.mostRecentHivWhoStage }}</td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.currentHivMedications.length > 0">
+            <th valign="top">${ui.message("casereport.arvs")}</th>
+            <td valign="top">{{ caseReport.reportForm.currentHivMedications | omrs.display }}</td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.mostRecentArvStopReason">
+            <th valign="top">${ui.message("casereport.reasonArvsStopped")}</th>
+            <td valign="top">{{ caseReport.reportForm.mostRecentArvStopReason }}</td>
+        </tr>
+        <tr ng-show="caseReport.reportForm.lastVisitDate">
+            <th valign="top">${ui.message("casereport.lastVisit")}</th>
+            <td valign="top">{{ caseReport.reportForm.lastVisitDate | serverDate}}</td>
+        </tr>
+        <tr>
+            <th valign="top">${ui.message("casereport.signature")}</th>
+            <td valign="top">${ui.format(context.authenticatedUser.person)}</td>
         </tr>
     </table>
 

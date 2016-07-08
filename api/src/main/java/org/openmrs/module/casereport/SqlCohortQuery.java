@@ -9,13 +9,19 @@
  */
 package org.openmrs.module.casereport;
 
+import java.util.List;
+
 public class SqlCohortQuery {
 	
 	private String name;
 	
 	private String sql;
 	
+	private Long repeatInterval;
+	
 	private String description;
+	
+	private List<String> conceptMappings;
 	
 	public String getName() {
 		return name;
@@ -29,6 +35,14 @@ public class SqlCohortQuery {
 		return sql;
 	}
 	
+	public Long getRepeatInterval() {
+		return repeatInterval;
+	}
+	
+	public void setRepeatInterval(Long repeatInterval) {
+		this.repeatInterval = repeatInterval;
+	}
+	
 	public void setSql(String sql) {
 		this.sql = sql;
 	}
@@ -39,5 +53,13 @@ public class SqlCohortQuery {
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public List<String> getConceptMappings() {
+		return conceptMappings;
+	}
+	
+	public void setConceptMappings(List<String> conceptMappings) {
+		this.conceptMappings = conceptMappings;
 	}
 }

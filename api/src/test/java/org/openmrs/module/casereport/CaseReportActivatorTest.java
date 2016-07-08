@@ -13,8 +13,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Rule;
@@ -25,7 +28,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.module.reporting.definition.service.DefinitionService;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.SchedulerService;
+import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -132,8 +137,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void contextRefreshed_shouldLoadQueriesAndRegisterThemWithTheReportingModule() throws Exception {
-		List<SqlCohortDefinition> duplicates = DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, false);
-		int originalCount = duplicates.size();
+		int originalCount = DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, false).size();
 		
 		activator.contextRefreshed();
 		assertEquals(originalCount + 2, DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, false).size());
@@ -143,22 +147,40 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		assertEquals("Select patient_id from patient pa, person p where pa.patient_id=p.person_id and dead = 1",
 		    query.getQuery());
 		assertEquals("HIV patients that have died", query.getDescription());
+		assertEquals(2, query.getParameters().size());
+		assertTrue(query.getParameters().contains(new Parameter("CIEL_1990", null, null)));
+		assertTrue(query.getParameters().contains(new Parameter("CIEL_1991", null, null)));
 		
 		query = defService.getDefinitions("HIV Virus Not Suppressed", true).get(0);
 		assertEquals("Select patient_id from patient", query.getQuery());
 		assertNull(query.getDescription());
+		assertTrue(query.getParameters().contains(new Parameter("CIEL_1050", null, null)));
+		
 	}
 	
 	/**
 	 * @see CaseReportActivator#contextRefreshed()
-	 * @verifies add the case reports task if it does not exist
+	 * @verifies add the case report tasks if they do not exist
 	 */
 	@Test
-	public void contextRefreshed_shouldAddTheCaseReportsTaskIfItDoesNotExist() throws Exception {
-		String name = "Case Reports Task";
+	public void contextRefreshed_shouldAddTheCaseReportTasksIfTheyDoNotExist() throws Exception {
+		Map<String, Long> nameRepeatIntervalMap = new HashMap<String, Long>();
+		nameRepeatIntervalMap.put("HIV Patient Died", 60L);
+		nameRepeatIntervalMap.put("HIV Virus Not Suppressed", 120L);
 		SchedulerService ss = Context.getSchedulerService();
-		assertNull(ss.getTaskByName(name));
+		for (String name : nameRepeatIntervalMap.keySet()) {
+			assertNull(ss.getTaskByName(name));
+		}
+		
 		activator.contextRefreshed();
-		assertNotNull(ss.getTaskByName(name));
+		for (Map.Entry<String, Long> entry : nameRepeatIntervalMap.entrySet()) {
+			activator.contextRefreshed();
+			TaskDefinition td = ss.getTaskByName(entry.getKey());
+			assertNotNull(td);
+			assertEquals("casereport.description.schedulerTaskFor", td.getDescription());
+			assertEquals(entry.getKey(), td.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY));
+			assertEquals(entry.getValue(), td.getRepeatInterval());
+		}
+		
 	}
 }

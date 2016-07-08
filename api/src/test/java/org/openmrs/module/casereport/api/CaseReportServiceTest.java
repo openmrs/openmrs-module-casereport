@@ -36,6 +36,7 @@ import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
@@ -64,10 +65,14 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_DATASET);
 	}
 	
-	private SqlCohortDefinition createTestSqlCohortDefinition(String name, String sql, boolean retired) {
+	private SqlCohortDefinition createTestSqlCohortDefinition(String name, String sql, boolean retired,
+	                                                          Parameter... parameters) {
 		SqlCohortDefinition definition = new SqlCohortDefinition(sql);
 		definition.setName(name);
 		definition.setRetired(retired);
+		for (Parameter param : parameters) {
+			definition.addParameter(param);
+		}
 		return DefinitionContext.saveDefinition(definition);
 	}
 	
@@ -441,7 +446,14 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void generateReportForm_shouldGenerateTheReportForm() throws Exception {
 		executeDataSet(XML_OTHER_DATASET);
+		PatientService ps = Context.getPatientService();
+		Patient patient = ps.getPatient(2);
+		patient.setDead(true);
+		patient.setCauseOfDeath(Context.getConceptService().getConcept(22));
+		patient.setDeathDate(CaseReportForm.DATE_FORMATTER.parse("2016-07-07T00:00:00.000-0400"));
+		ps.savePatient(patient);
 		CaseReport caseReport = service.getCaseReport(1);
+		assertEquals(patient, caseReport.getPatient());
 		assertNull(caseReport.getReportForm());
 		caseReport = service.generateReportForm(caseReport);
 		String form = caseReport.getReportForm();
@@ -452,9 +464,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals("Hornblower", reportForm.getFamilyName());
 		assertEquals("101-6", reportForm.getPatientIdentifier());
 		assertEquals("OpenMRS Identification Number", reportForm.getIdentifierType());
-		Patient patient = caseReport.getPatient();
 		assertEquals(patient.getGender(), reportForm.getGender());
 		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthdate());
+		assertEquals("2016-07-07T00:00:00.000-0400", reportForm.getDeathdate());
 		assertEquals(patient.isDead(), reportForm.getDead());
 		assertNotNull(reportForm.getTriggerAndDateCreatedMap());
 		assertEquals(3, reportForm.getMostRecentDateAndViralLoadMap().size());
@@ -463,9 +475,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, reportForm.getCurrentHivMedications().size());
 		assertEquals("WHO HIV stage 2", reportForm.getMostRecentHivWhoStage());
 		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason());
-		//assertEquals("2016-04-01T00:00:00.000-0500", reportForm.getDateOfLastVisit());
+		assertEquals("2016-06-15T00:00:00.000-0400", reportForm.getLastVisitDate());
+		assertEquals("UNKNOWN", reportForm.getCauseOfDeath());
 		//assertEquals(1, reportForm.getPreviousSubmittedCaseReports().size());
-		//assertEquals("", reportForm.getCaseOfDeath());
 	}
 	
 	/**
@@ -526,5 +538,33 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		service.runTrigger(name, null);
 		assertEquals(2, caseReport.getReportTriggers().size());
 		assertEquals(originalCaseReportCount, service.getCaseReports().size());
+	}
+	
+	/**
+	 * @see CaseReportService#runTrigger(String,TaskDefinition)
+	 * @verifies set the concept mappings in the evaluation context
+	 */
+	@Test
+	public void runTrigger_shouldSetTheConceptMappingsInTheEvaluationContext() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		final String name = "some cohort query";
+		Integer[] patientIds = { 2, 7 };
+		String[] params = { "CIEL_856", "CIEL_1040" };
+		createTestSqlCohortDefinition(name, "select distinct person_id from obs where concept_id = :" + params[0]
+		        + " or concept_id = :" + params[0], false, new Parameter(params[0], null, Integer.class), new Parameter(
+		        params[1], null, Integer.class));
+		int originalCount = service.getCaseReports().size();
+		int originalTriggerCount = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
+		        .getReportTriggers().size();
+		assertEquals(2, originalTriggerCount);
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+		
+		service.runTrigger(name, null);
+		List<CaseReport> reports = service.getCaseReports();
+		int newCount = reports.size();
+		assertEquals(++originalCount, newCount);
+		assertEquals(++originalTriggerCount, service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
+		        .getReportTriggers().size());
+		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 	}
 }

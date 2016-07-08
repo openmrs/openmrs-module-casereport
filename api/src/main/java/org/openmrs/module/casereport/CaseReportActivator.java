@@ -23,6 +23,7 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 
@@ -46,12 +47,11 @@ public class CaseReportActivator extends BaseModuleActivator {
 	 * @should ignore a cohort query with a duplicate name
 	 * @should save a cohort queries with a name that matches a retired duplicate
 	 * @should load queries and register them with the reporting module
-	 * @should add the case reports task if it does not exist
+	 * @should add the case report tasks if they do not exist
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
 		loadQueries();
-		addSchedulerTaskIfNecessary();
 		log.info("Case Report Module refreshed");
 	}
 	
@@ -88,24 +88,34 @@ public class CaseReportActivator extends BaseModuleActivator {
 				CohortDefinition definition = new SqlCohortDefinition(cohortQuery.getSql());
 				definition.setName(cohortQuery.getName());
 				definition.setDescription(cohortQuery.getDescription());
+				if (cohortQuery.getConceptMappings() != null) {
+					for (String mapping : cohortQuery.getConceptMappings()) {
+						definition.addParameter(new Parameter(mapping, mapping.replaceFirst(
+						    CaseReportConstants.CONCEPT_MAPPING_SEPARATOR, ":"), Integer.class));
+					}
+				}
 				DefinitionContext.saveDefinition(definition);
+				addSchedulerTaskIfNecessary(cohortQuery.getName(), cohortQuery.getRepeatInterval());
 			}
 		}
 	}
 	
-	private void addSchedulerTaskIfNecessary() {
-		log.info("Adding Case Reports Task...");
+	private void addSchedulerTaskIfNecessary(String name, Long repeatInterval) {
+		log.info("Creating Case Reports Task for: " + name);
 		
 		SchedulerService ss = Context.getSchedulerService();
-		String name = "Case Reports Task";
 		String className = CaseReportTask.class.getName();
-		String description = "Runs the specified sql cohort query and generates case reports for the matching patients";
+		String description = Context.getMessageSourceService().getMessage("casereport.description.schedulerTaskFor",
+		    new Object[] { name }, null, null);
 		TaskDefinition td = ss.getTaskByName(name);
 		if (td == null || !className.equals(className)) {
 			td = new TaskDefinition(null, name, description, className);
 			td.setStartOnStartup(false);
-			td.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, "");
-			td.setRepeatInterval(0L);
+			td.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
+			td.setRepeatInterval(repeatInterval);
+			if (td.getRepeatInterval() == null) {
+				td.setRepeatInterval(0L);
+			}
 			ss.saveTaskDefinition(td);
 		}
 	}

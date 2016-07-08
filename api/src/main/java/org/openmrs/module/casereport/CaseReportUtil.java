@@ -11,6 +11,7 @@ package org.openmrs.module.casereport;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -22,9 +23,11 @@ import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.OpenmrsUtil;
 
 public class CaseReportUtil {
 	
@@ -157,4 +160,28 @@ public class CaseReportUtil {
 		}
 		return reasons.get(0);
 	}
+	
+	/**
+	 * Gets the last visit made by the specified patient
+	 *
+	 * @param patient the patient to match against
+	 * @return the last visit for the specified patient
+	 * @should return the last visit for the specified patient
+	 */
+	public static Visit getLastVisit(Patient patient) {
+		final List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient, true, false);
+		Collections.sort(visits, Collections.reverseOrder(new Comparator<Visit>() {
+			
+			@Override
+			public int compare(Visit v1, Visit v2) {
+				return OpenmrsUtil.compare(v1.getStartDatetime(), v2.getStartDatetime());
+			}
+		}));
+		
+		if (visits.isEmpty()) {
+			return null;
+		}
+		return visits.get(0);
+	}
+	
 }
