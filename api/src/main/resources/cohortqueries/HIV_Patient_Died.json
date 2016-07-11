@@ -1,8 +1,8 @@
 {
   "name": "HIV Patient Died",
   "description": "HIV patients who have died",
-  "interval": "7 days",
-  "mappings": [],
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [],
   "sql": "
 SELECT person_id
 FROM person

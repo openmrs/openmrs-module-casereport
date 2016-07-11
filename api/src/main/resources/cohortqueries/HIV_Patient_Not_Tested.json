@@ -1,8 +1,8 @@
 {
   "name": "HIV Patient Not Tested",
   "description": "HIV patients for whom a viral load has not been done for at least 12 months",
-  "interval": "7 days",
-  "mappings": [
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [
     "CIEL_1040", /* HIV RAPID TEST 1, QUALITATIVE */
     "CIEL_703",  /* POSITIVE */
     "CIEL_856"   /* VIRAL LOAD */

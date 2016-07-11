@@ -1,8 +1,8 @@
 {
   "name": "HIV Switched To Second Line",
   "description": "HIV patients who have been switched to a second line regimen",
-  "interval": "7 days",
-  "mappings": [
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [
     "CIEL_160568" /* Reason antiretrovirals changed to second line therapy */
   ],
   "sql": "

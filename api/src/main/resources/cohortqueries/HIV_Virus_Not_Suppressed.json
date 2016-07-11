@@ -1,8 +1,8 @@
 {
   "name": "HIV Virus Not Suppressed",
   "description": "HIV patients for whom WHO Classification advanced to 3 or 4",
-  "interval": "7 days",
-  "mappings": [
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [
     "CIEL_1252", /* REASON ANTIRETROVIRALS STOPPED */
     "CIEL_843",  /* Regimen failure */
     "CIEL_856"   /* HIV VIRAL LOAD */

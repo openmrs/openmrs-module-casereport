@@ -1,8 +1,8 @@
 {
   "name": "HIV Treatment Stopped",
   "description": "HIV patients who have reported treatment stopped or interrupted",
-  "interval": "7 days",
-  "mappings": [
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [
     "CIEL_1252",   /* REASON ANTIRETROVIRALS STOPPED */
     "CIEL_983",    /* WEIGHT CHANGE */
     "CIEL_102",    /* Toxicity, drug */
