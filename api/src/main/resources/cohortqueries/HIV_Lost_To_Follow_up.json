@@ -1,58 +1,16 @@
 {
   "name": "HIV Lost To Follow Up",
   "description": "HIV patients who have not been seen for at least 18 months",
-  "sql": "DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;\nDELIMITER //\nCREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER\nBEGIN\n  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;\n\n  SELECT concept_id INTO LOCAL_CODE\n  FROM concept_reference_map\n  WHERE concept_map_type_id = \n      (\n        SELECT concept_map_type_id\n        FROM concept_map_type\n        WHERE name = 'SAME-AS'\n          AND not retired\n      )\n    AND concept_reference_term_id =\n      (\n        SELECT concept_reference_term_id\n        FROM concept_reference_term\n        WHERE concept_source_id =\n          (\n            SELECT concept_source_id\n            FROM concept_reference_source\n            WHERE name = 'CIEL'\n              AND not retired\n          )\n          AND code = CIEL_CODE\n      );\n\n  IF LOCAL_CODE IS NULl THEN\n    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);\n    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;\n  END IF;\n\n  RETURN LOCAL_CODE;\nEND; //\nDELIMITER ;\n\nSET @LAST_RUN = :lastExecutionTime;\n\n// CIEL:1040 = HIV RAPID TEST 1, QUALITATIVE\nSET @HIV_TEST = local_concept_mapped_to_ciel('1040');\n\n// CIEL:703 = POSITIVE\nSET @POSITIVE = local_concept_mapped_to_ciel('703');\n\n// TODO: Limit to HIV positive patients\n// TODO: Refactor to avoid repeatedly triggering for same patients\nSELECT person_id\nFROM\n  person p,\n  (\n  	SELECT max(encounter_datetime) as latest_encounter\n  	FROM encounter e\n  	WHERE e.person_id = p.person_id\n  	GROUP BY e.person_id\n  )\nWHERE latest_encounter < DATE_SUB(@LAST_RUN, INTERVAL 12 MONTH)\n  AND not p.voided;"
-}
-
+  "interval": "7 days",
+  "mappings": [
+    "CIEL_1040", /* HIV RAPID TEST 1, QUALITATIVE */
+    "CIEL_703"   /* POSITIVE */
+  ],
+  "sql": "
 /*
-DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;
-DELIMITER //
-CREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER
-BEGIN
-  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;
-
-  SELECT concept_id INTO LOCAL_CODE
-  FROM concept_reference_map
-  WHERE concept_map_type_id = 
-      (
-        SELECT concept_map_type_id
-        FROM concept_map_type
-        WHERE name = 'SAME-AS'
-          AND not retired
-      )
-    AND concept_reference_term_id =
-      (
-        SELECT concept_reference_term_id
-        FROM concept_reference_term
-        WHERE concept_source_id =
-          (
-            SELECT concept_source_id
-            FROM concept_reference_source
-            WHERE name = 'CIEL'
-              AND not retired
-          )
-          AND code = CIEL_CODE
-      );
-
-  IF LOCAL_CODE IS NULl THEN
-    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;
-  END IF;
-
-  RETURN LOCAL_CODE;
-END; //
-DELIMITER ;
-
-SET @LAST_RUN = :lastExecutionTime;
-
-// CIEL:1040 = HIV RAPID TEST 1, QUALITATIVE
-SET @HIV_TEST = local_concept_mapped_to_ciel('1040');
-
-// CIEL:703 = POSITIVE
-SET @POSITIVE = local_concept_mapped_to_ciel('703');
-
-// TODO: Limit to HIV positive patients
-// TODO: Refactor to avoid repeatedly triggering for same patients
+ * TODO: Limit to HIV positive patients
+ * TODO: Refactor to avoid repeatedly triggering for same patients
+ */
 SELECT person_id
 FROM
   person p,
@@ -62,6 +20,7 @@ FROM
   	WHERE e.person_id = p.person_id
   	GROUP BY e.person_id
   )
-WHERE latest_encounter < DATE_SUB(@LAST_RUN, INTERVAL 12 MONTH)
+WHERE latest_encounter < DATE_SUB(:lastExecutionTime, INTERVAL 12 MONTH)
   AND not p.voided;
-*/
+"
+}

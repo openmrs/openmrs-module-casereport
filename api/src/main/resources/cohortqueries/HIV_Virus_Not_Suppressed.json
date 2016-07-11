@@ -1,57 +1,13 @@
 {
   "name": "HIV Virus Not Suppressed",
   "description": "HIV patients for whom WHO Classification advanced to 3 or 4",
-  "sql": "TODO"
+  "interval": "7 days",
+  "mappings": [
+    "CIEL_1252", /* REASON ANTIRETROVIRALS STOPPED */
+    "CIEL_843",  /* Regimen failure */
+    "CIEL_856"   /* HIV VIRAL LOAD */
+  ],
+  "sql": "
+/* TODO */
+"
 }
-
-/*
-SELECT @CIEL := concept_source_id
-FROM concept_reference_source
-WHERE name = 'CIEL';
-
-SELECT @SAME_AS := concept_map_type_id
-FROM concept_map_type
-WHERE name = 'SAME-AS'
-  AND not retired;
-
-// CIEL:1252 = REASON ANTIRETROVIRALS STOPPED
-SELECT @CIEL_REASON_ARVS_STOPPED = concept_reference_term_id
-FROM concept_reference_term
-WHERE concept_source_id = @CIEL
-  AND code = '1252';
-
-SELECT @REASON_ARVS_STOPPED := concept_id
-FROM concept_reference_map
-WHERE concept_map_type_id = @SAME_AS
-  AND concept_reference_term_id = @CIEL_REASON_ARVS_STOPPED;
-
-// CIEL:843 = Regimen failure
-SELECT @CIEL_REGIMEN_FAILURE = concept_reference_term_id
-FROM concept_reference_term
-WHERE concept_source_id = @CIEL
-  AND code = '843';
-
-SELECT @REGIMEN_FAILURE := concept_id
-FROM concept_reference_map
-WHERE concept_map_type_id = @SAME_AS
-  AND concept_reference_term_id = @CIEL_REGIMEN_FAILURE;
-
-// CIEL 856 = HIV VIRAL LOAD
-SELECT @VIRAL_LOAD := concept_reference_term_id
-FROM concept_reference_term
-WHERE code = @CIEL
-  AND name = '856';
-
-"CIEL: REASON ANTIRETROVIRALS STOPPED (1252) = 
-Regimen failure (843) OR VL > 5000"
-
-SELECT concept_id
-FROM concept_reference_term crt, concept_reference_term_map crtm
-WHERE
-  crt.name = 
-
-SELECT person_id
-FROM obs
-WHERE
-	(concept_id = )
-*/

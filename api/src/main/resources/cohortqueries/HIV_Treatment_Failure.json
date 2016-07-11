@@ -1,72 +1,23 @@
 {
   "name": "HIV Treatment Failure",
   "description": "HIV patients who have reported treatment failure or have viral load > 5000",
-  "sql": "DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;\nDELIMITER //\nCREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER\nBEGIN\n  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;\n\n  SELECT concept_id INTO LOCAL_CODE\n  FROM concept_reference_map\n  WHERE concept_map_type_id = \n      (\n        SELECT concept_map_type_id\n        FROM concept_map_type\n        WHERE name = 'SAME-AS'\n          AND not retired\n      )\n    AND concept_reference_term_id =\n      (\n        SELECT concept_reference_term_id\n        FROM concept_reference_term\n        WHERE concept_source_id =\n          (\n            SELECT concept_source_id\n            FROM concept_reference_source\n            WHERE name = 'CIEL'\n              AND not retired\n          )\n          AND code = CIEL_CODE\n      );\n\n  IF LOCAL_CODE IS NULl THEN\n    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);\n    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;\n  END IF;\n\n  RETURN LOCAL_CODE;\nEND; //\nDELIMITER ;\n\nSET @LAST_RUN = :lastExecutionTime;\n\n// CIEL:1252 = REASON ANTIRETROVIRALS STOPPED\nSET @REASON_ARVS_STOPPED = local_concept_mapped_to_ciel('1252');\n\n// CIEL:843 = Regimen failure\nSET @REGIMEN_FAILURE = local_concept_mapped_to_ciel('843');\n\n// CIEL 856 = HIV VIRAL LOAD\nSET @VIRAL_LOAD = local_concept_mapped_to_ciel('856');\n\n// CIEL:1252 (REASON ANTIRETROVIRALS STOPPED =\n// CIEL:843 (Regimen failure) OR \n// CIEL:856 (Viral Load) > 5000\n\nSELECT person_id\nFROM obs\nWHERE\n  UNIX_TIMESTAMP(obs_datetime) > @LAST_RUN\n  AND\n  ((concept_id = @REASON_ARVS_STOPPED\n   AND value_coded = @REGIMEN_FAILURE)\n  OR\n  (concept_id = @VIRAL_LOAD\n   AND value_numeric > 5000))\n  AND not voided;"
-}
-
-/*
-DROP FUNCTION IF EXISTS local_concept_mapped_to_ciel;
-DELIMITER //
-CREATE FUNCTION local_concept_mapped_to_ciel(CIEL_CODE VARCHAR(255)) RETURNS INTEGER
-BEGIN
-  DECLARE LOCAL_CODE INTEGER DEFAULT NULL;
-
-  SELECT concept_id INTO LOCAL_CODE
-  FROM concept_reference_map
-  WHERE concept_map_type_id = 
-      (
-        SELECT concept_map_type_id
-        FROM concept_map_type
-        WHERE name = 'SAME-AS'
-          AND not retired
-      )
-    AND concept_reference_term_id =
-      (
-        SELECT concept_reference_term_id
-        FROM concept_reference_term
-        WHERE concept_source_id =
-          (
-            SELECT concept_source_id
-            FROM concept_reference_source
-            WHERE name = 'CIEL'
-              AND not retired
-          )
-          AND code = CIEL_CODE
-      );
-
-  IF LOCAL_CODE IS NULl THEN
-    SET @ERR_MSG = concat('Failed to find local concept mapped to CIEL:',CIEL_CODE);
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @ERR_MSG;
-  END IF;
-
-  RETURN LOCAL_CODE;
-END; //
-DELIMITER ;
-
-SET @LAST_RUN = :lastExecutionTime;
-
-// CIEL:1252 = REASON ANTIRETROVIRALS STOPPED
-SET @REASON_ARVS_STOPPED = local_concept_mapped_to_ciel('1252');
-
-// CIEL:843 = Regimen failure
-SET @REGIMEN_FAILURE = local_concept_mapped_to_ciel('843');
-
-// CIEL 856 = HIV VIRAL LOAD
-SET @VIRAL_LOAD = local_concept_mapped_to_ciel('856');
-
-// CIEL:1252 (REASON ANTIRETROVIRALS STOPPED =
-// CIEL:843 (Regimen failure) OR 
-// CIEL:856 (Viral Load) > 5000
-
+  "interval": "7 days",
+  "mappings": [
+    "CIEL_1252", /* REASON ANTIRETROVIRALS STOPPED */
+    "CIEL_843",  /* Regimen failure */
+    "CIEL_856"   /* HIV VIRAL LOAD */
+  ],
+  "sql": "
 SELECT person_id
 FROM obs
 WHERE
-  UNIX_TIMESTAMP(obs_datetime) > @LAST_RUN
+  UNIX_TIMESTAMP(obs_datetime) > :lastExecutionTime
   AND
-  ((concept_id = @REASON_ARVS_STOPPED
-   AND value_coded = @REGIMEN_FAILURE)
+  ((concept_id = :CIEL_1252
+   AND value_coded = :CIEL_843)
   OR
-  (concept_id = @VIRAL_LOAD
+  (concept_id = :CIEL_856
    AND value_numeric > 5000))
   AND not voided;
-*/
+"
+}
