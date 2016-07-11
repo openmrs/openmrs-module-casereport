@@ -30,7 +30,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudR
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
-import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + "/casereport/queue", supportedClass = CaseReport.class, supportedOpenmrsVersions = {
@@ -76,15 +75,18 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	
 	@PropertyGetter("reportForm")
 	public CaseReportForm getReportForm(CaseReport delegate) {
-		if (StringUtils.isNotBlank(delegate.getReportForm())) {
+		CaseReportForm form;
+		if (StringUtils.isBlank(delegate.getReportForm())) {
+			form = new CaseReportForm(delegate);
+		} else {
 			try {
-				return new ObjectMapper().readValue(delegate.getReportForm(), CaseReportForm.class);
+				form = new ObjectMapper().readValue(delegate.getReportForm(), CaseReportForm.class);
 			}
 			catch (IOException e) {
 				throw new GenericRestException("Failed to parse report form data", e);
 			}
 		}
-		return null;
+		return form;
 	}
 	
 	/**
@@ -93,27 +95,6 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	@Override
 	public CaseReport getByUniqueId(String uniqueId) {
 		return Context.getService(CaseReportService.class).getCaseReportByUuid(uniqueId);
-	}
-	
-	/**
-	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource
-	 */
-	@Override
-	public Object retrieve(String uuid, RequestContext context) throws ResponseException {
-		if ("true".equals(context.getParameter("generateForm"))) {
-			if (context.getRepresentation() instanceof FullRepresentation) {
-				CaseReport delegate = getByUniqueId(uuid);
-				if (delegate == null) {
-					throw new ObjectNotFoundException();
-				}
-				Context.getService(CaseReportService.class).generateReportForm(delegate);
-			} else {
-				throw new GenericRestException(
-				        "generateForm request parameter can only specified for the full representation");
-			}
-		}
-		
-		return super.retrieve(uuid, context);
 	}
 	
 	/**

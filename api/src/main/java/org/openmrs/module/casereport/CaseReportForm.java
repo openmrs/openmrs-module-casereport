@@ -75,7 +75,8 @@ public class CaseReportForm {
 		
 	}
 	
-	public CaseReportForm(Patient patient, CaseReport caseReport) {
+	public CaseReportForm(CaseReport caseReport) {
+		Patient patient = caseReport.getPatient();
 		setGender(patient.getGender());
 		setBirthdate(DATE_FORMATTER.format(patient.getBirthdate()));
 		PersonName name = patient.getPersonName();

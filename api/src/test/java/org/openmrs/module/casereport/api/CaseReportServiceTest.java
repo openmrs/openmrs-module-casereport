@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +31,6 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
-import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
@@ -442,49 +440,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		SqlCohortDefinition definition = service.getSqlCohortDefinition("HIV Virus Not Suppressed");
 		assertNotNull(definition);
 		assertEquals("5b4f091e-4f28-4810-944b-4e4ccf9bfbb3", definition.getUuid());
-	}
-	
-	/**
-	 * @see CaseReportService#generateReportForm(CaseReport)
-	 * @verifies generate the report form
-	 */
-	@Test
-	public void generateReportForm_shouldGenerateTheReportForm() throws Exception {
-		executeDataSet(XML_OTHER_DATASET);
-		PatientService ps = Context.getPatientService();
-		Patient patient = ps.getPatient(2);
-		patient.setDead(true);
-		patient.setCauseOfDeath(Context.getConceptService().getConcept(22));
-		patient.setDeathDate(CaseReportForm.DATE_FORMATTER.parse("2016-07-07T00:00:00.000-0400"));
-		ps.savePatient(patient);
-		CaseReport caseReport = service.getCaseReport(1);
-		assertEquals(patient, caseReport.getPatient());
-		assertNull(caseReport.getReportForm());
-		caseReport = service.generateReportForm(caseReport);
-		String form = caseReport.getReportForm();
-		assertNotNull(form);
-		CaseReportForm reportForm = new ObjectMapper().readValue(form, CaseReportForm.class);
-		assertEquals("Horatio", reportForm.getGivenName());
-		assertEquals("Test", reportForm.getMiddleName());
-		assertEquals("Hornblower", reportForm.getFamilyName());
-		assertEquals("101-6", reportForm.getPatientIdentifier());
-		assertEquals("OpenMRS Identification Number", reportForm.getIdentifierType());
-		assertEquals(patient.getGender(), reportForm.getGender());
-		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthdate());
-		assertEquals("2016-07-07T00:00:00.000-0400", reportForm.getDeathdate());
-		assertEquals(patient.isDead(), reportForm.getDead());
-		assertNotNull(reportForm.getTriggerAndDateCreatedMap());
-		assertEquals(3, reportForm.getMostRecentDateAndViralLoadMap().size());
-		assertEquals(3, reportForm.getMostRecentDateAndCd4CountMap().size());
-		assertEquals(3, reportForm.getMostRecentDateAndHivTestMap().size());
-		assertEquals(2, reportForm.getCurrentHivMedications().size());
-		assertEquals("WHO HIV stage 2", reportForm.getMostRecentHivWhoStage());
-		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason());
-		assertEquals("2016-06-15T00:00:00.000-0400", reportForm.getLastVisitDate());
-		assertEquals("UNKNOWN", reportForm.getCauseOfDeath());
-		assertEquals(2, reportForm.getPreviousSubmittedCaseReports().size());
-		assertTrue(reportForm.getPreviousSubmittedCaseReports().contains("Some weird trigger"));
-		assertTrue(reportForm.getPreviousSubmittedCaseReports().contains("Some Unique Trigger"));
 	}
 	
 	/**

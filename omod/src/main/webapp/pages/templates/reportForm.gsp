@@ -107,15 +107,19 @@
             <td valign="top">{{ caseReport.reportForm.lastVisitDate | serverDate}}</td>
         </tr>
         <tr>
+            <th class="casereport-row-separator"></th>
+            <td class="casereport-row-separator"></td>
+        </tr>
+        <tr>
             <th valign="top">${ui.message("casereport.signature")}</th>
-            <td valign="top">${ui.format(context.authenticatedUser)}</td>
+            <td valign="top">
+                ${ui.format(context.authenticatedUser)}
+                <span class="right">
+                    <button type="button" class="cancel" ui-sref="list">${ui.message('general.cancel')}</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="submit" class="right">${ui.message('general.submit')}</button>
+                </span>
+            </td>
         </tr>
     </table>
-
-    <br />
-    <br />
-    <p>
-        <button type="submit" class="confirm right">${ui.message('general.submit')}</button>
-        <button type="button" class="cancel" ui-sref="list">${ui.message('general.cancel')}</button>
-    </p>
 </form>

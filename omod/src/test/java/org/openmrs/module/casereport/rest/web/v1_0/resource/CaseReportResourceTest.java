@@ -40,6 +40,7 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-other.xml");
 	}
 	
 	@Override
@@ -58,8 +59,8 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	public void validateFullRepresentation() throws Exception {
 		super.validateFullRepresentation();
 		assertPropEquals("status", getObject().getStatus());
-		assertPropEquals("reportForm", getObject().getReportForm());
 		assertPropEquals("voided", getObject().getVoided());
+		assertPropPresent("reportForm");
 		assertPropPresent("patient");
 		assertPropPresent("reportTriggers");
 		assertPropPresent("auditInfo");

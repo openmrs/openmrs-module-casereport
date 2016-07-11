@@ -164,20 +164,6 @@ public interface CaseReportService extends OpenmrsService {
 	SqlCohortDefinition getSqlCohortDefinition(String triggerName) throws APIException;
 	
 	/**
-	 * Generates and saves the case report form for the CaseReport that matches the specified uuid,
-	 * note that this method should be called for a CaseReport with no report form data otherwise it
-	 * will overwrite the existing report form. In theory this method can be called to reset the
-	 * report form data from its current state.
-	 *
-	 * @param caseReport the CaseReport for which to generate the form
-	 * @return the CaseReport with a generated form
-	 * @throws APIException
-	 * @should generate the report form
-	 */
-	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	CaseReport generateReportForm(CaseReport caseReport) throws APIException;
-	
-	/**
 	 * Marks the specified case report as voided
 	 *
 	 * @param caseReport the case report to void

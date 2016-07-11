@@ -11,7 +11,6 @@ package org.openmrs.module.casereport.api.impl;
 
 import static org.openmrs.module.casereport.CaseReport.Status;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +32,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
-import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
@@ -284,31 +282,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		return ret;
-	}
-	
-	/**
-	 * @see CaseReportService#generateReportForm(CaseReport)
-	 * @param caseReport
-	 */
-	@Override
-	@Transactional(readOnly = false)
-	public CaseReport generateReportForm(CaseReport caseReport) throws APIException {
-		CaseReportService service = Context.getService(CaseReportService.class);
-		Patient patient = caseReport.getPatient();
-		CaseReportForm form = new CaseReportForm(patient, caseReport);
-		String serializedReportForm;
-		try {
-			
-			serializedReportForm = getObjectMapper().writeValueAsString(form);
-		}
-		catch (IOException e) {
-			throw new APIException(e);
-		}
-		
-		caseReport.setReportForm(serializedReportForm);
-		service.saveCaseReport(caseReport);
-		
-		return caseReport;
 	}
 	
 	/**
