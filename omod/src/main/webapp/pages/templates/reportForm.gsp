@@ -98,6 +98,10 @@
             <th valign="top">${ui.message("casereport.reasonArvsStopped")}</th>
             <td valign="top">{{ caseReport.reportForm.mostRecentArvStopReason }}</td>
         </tr>
+        <tr ng-show="caseReport.reportForm.previousSubmittedCaseReports.length > 0">
+            <th valign="top">${ui.message("casereport.previousCaseReports")}</th>
+            <td valign="top">{{ caseReport.reportForm.previousSubmittedCaseReports | omrs.display }}</td>
+        </tr>
         <tr ng-show="caseReport.reportForm.lastVisitDate">
             <th valign="top">${ui.message("casereport.lastVisit")}</th>
             <td valign="top">{{ caseReport.reportForm.lastVisitDate | serverDate}}</td>
