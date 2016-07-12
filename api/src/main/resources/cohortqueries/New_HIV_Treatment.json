@@ -6,7 +6,7 @@
     "CIEL_1225", /* ARV Plan */
     "CIEL_1256", /* START DRUGS */
     "CIEL_1251", /* REASON ANTIRETROVIRALS STARTED */
-    "CIEL_1185", /* TREATMENT */
+    "CIEL_1185" /* TREATMENT */
   ],
   "sql": "
 SELECT person_id

@@ -10,7 +10,7 @@
     "CIEL_160018", /* PATIENT REFUSED */
     "CIEL_127750", /* REFUSAL OF TREATMENT BY PATIENT */
     "CIEL_819",    /* Cannot afford treatment */
-    "CIEL_1754",   /* Medications unavailable */
+    "CIEL_1754"   /* Medications unavailable */
   ],
   "sql": "
 SELECT person_id
