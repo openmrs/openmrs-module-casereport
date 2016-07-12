@@ -13,15 +13,15 @@
 -->
 
 <dataset>
-    <casereport_case_report case_report_id="1" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="5f7d57f0-9077-11e1-aaa4-00248140a5ef" />
+    <casereport_case_report case_report_id="1" patient_id="2" status="NEW" creator="1" date_created="2016-03-30 00:00:00.0" voided="0" uuid="5f7d57f0-9077-11e1-aaa4-00248140a5ef" />
     <casereport_case_report case_report_id="2" patient_id="999" status="DRAFT" report_form="{&quot;givenName&quot;:&quot;Horatio&quot;,&quot;familyName&quot;:&quot;Hornblower&quot;}" creator="1" date_created="2016-04-01 00:00:00.0" voided="0" uuid="6f7d57f0-9077-11e1-aaa4-00248140a5ef" />
     <casereport_case_report case_report_id="3" patient_id="2" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="1" voided_by="1" void_reason="Patient was already dead" date_voided="2016-04-02 00:01:00.0" changed_by="1" date_changed="2016-04-02 00:01:00.0" uuid="4f7d57f0-9077-11e1-aaa4-00248140a5ec" />
-    <casereport_case_report case_report_id="4" patient_id="6" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="7u7d57f0-9077-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="4" patient_id="6" status="NEW" creator="1" date_created="2016-03-31 00:01:00.0" voided="0" uuid="7u7d57f0-9077-11e1-aaa4-00248140a5ec" />
     <casereport_case_report case_report_id="5" patient_id="7" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="5e7d57f0-9077-11e1-aaa4-00248140a5ec" />
     <casereport_case_report case_report_id="6" patient_id="8" status="DISMISSED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="6y7d57f0-9077-11e1-aaa4-00248140a5ec" />
     <casereport_case_report case_report_id="7" patient_id="8" status="NEW" creator="1" date_created="2016-04-01 00:01:00.0" voided="1" voided_by="1" void_reason="Some void reason" date_voided="2016-04-02 00:01:00.0" changed_by="1" date_changed="2016-04-02 00:01:00.0"  uuid="7u7d57f0-9066-11e1-aaa4-00248140a6gy" />
     <casereport_case_report case_report_id="8" patient_id="7" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="0" uuid="917d57f0-9088-11e1-aaa4-00248140a5ec" />
-    <casereport_case_report case_report_id="9" patient_id="7" status="SUBMITTED" creator="1" date_created="2016-04-01 00:01:00.0" voided="1" voided_by="1" void_reason="Some void reason" uuid="687d57f0-9188-11e1-aaa4-00248140a5ec" />
+    <casereport_case_report case_report_id="9" patient_id="7" status="SUBMITTED" creator="1" date_created="2016-04-03 00:01:00.0" voided="1" voided_by="1" void_reason="Some void reason" uuid="687d57f0-9188-11e1-aaa4-00248140a5ec" />
 
     <casereport_case_report_trigger case_report_trigger_id="1" name="HIV Virus Not Suppressed" case_report_id="1" creator="1" date_created="2016-04-01 00:01:00.0" uuid="a595d09a-1ef5-11e6-8963-ce3fd0574140" />
     <casereport_case_report_trigger case_report_trigger_id="101" name="Another Trigger" case_report_id="1" creator="1" date_created="2016-04-01 00:01:00.0" uuid="a695d09a-1ed5-11e6-8963-ce3fd0523110" />

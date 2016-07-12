@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
 import org.openmrs.module.casereport.CaseReport;
@@ -82,6 +83,7 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
 		}
+		criteria.addOrder(Order.desc("dateCreated"));
 		
 		return criteria.list();
 	}

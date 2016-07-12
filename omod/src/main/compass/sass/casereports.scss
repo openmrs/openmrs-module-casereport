@@ -14,8 +14,16 @@ $orange: #F26522;
 $darkGrey: #636363;
 $lighterGrey: #f0f0f0;
 
+#casereport-reports {
+   font-size: 85%;
+}
+
+#casereport-reports a:hover {
+  text-decoration: none;
+}
+
 .casereport-name-column {
-  width: 250px;
+  width: 200px;
 }
 
 .casereport-row-separator {

@@ -24,31 +24,33 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
                 templateUrl: "templates/reportForm.page",
                 controller: "SubmitCaseReportController",
                 params: {
-                    uuid: null,
-                    status: null
+                    uuid: null
                 },
                 resolve: {
                     caseReport: function($stateParams, CaseReport) {
-                        var requestParams = { uuid: $stateParams.uuid, v: "full" };
-                        if ($stateParams.status != 'DRAFT') {
-                            requestParams.generateForm = true;
-                        }
-
-                        return CaseReport.get(requestParams);
+                        return CaseReport.get({ uuid: $stateParams.uuid, v: "full" });
                     }
                 }
             })
     }])
 
-    .controller("ViewCaseReportsController", [ "$scope", "StatusChange", "CaseReportService",
-        function($scope, StatusChange, CaseReportService) {
-            var customRep = 'custom:(uuid,status,patient:(patientIdentifier:(identifier),' +
+    .controller("ViewCaseReportsController", [ "$scope", 'orderByFilter', "StatusChange", "CaseReportService",
+        function($scope, orderBy, StatusChange, CaseReportService) {
+            $scope.propertyName = 'dateCreated';
+            $scope.reverse = true;
+            var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +
                 'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
 
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {
                     $scope.caseReports = results;
                 });
+            }
+
+            $scope.sort = function(propertyName){
+                $scope.reverse = ($scope.propertyName == propertyName) ? !$scope.reverse : false;
+                $scope.propertyName = propertyName;
+                $scope.caseReports = orderBy($scope.caseReports, $scope.propertyName, $scope.reverse);
             }
 
             $scope.dismiss = function(caseReport){

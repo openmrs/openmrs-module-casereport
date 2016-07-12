@@ -126,7 +126,12 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllCaseReportsInTheDatabaseIfAllArgumentsAreSetToTrue() throws Exception {
-		assertEquals(9, service.getCaseReports(true, true, true).size());
+		List<CaseReport> reports = service.getCaseReports(true, true, true);
+		assertEquals(9, reports.size());
+		//Should be ordered by date created with latest first
+		assertEquals(9, reports.get(0).getId().intValue());
+		assertEquals(4, reports.get(7).getId().intValue());
+		assertEquals(1, reports.get(8).getId().intValue());
 	}
 	
 	/**

@@ -20,8 +20,18 @@
 <table id="casereport-reports">
     <thead>
         <tr>
-            <th>${ui.message('Patient.identifier')}</th>
-            <th class="casereport-name-column">${ui.message('general.name')}</th>
+            <th>
+                ${ui.message('casereport.dateAdded')}
+                <a ng-click="sort('dateCreated')"><i class="icon-sort edit-action" /></a>
+            </th>
+            <th>
+                ${ui.message('Patient.identifier')}
+                <a ng-click="sort('patient.patientIdentifier.identifier')"><i class="icon-sort edit-action" /></a>
+            </th>
+            <th class="casereport-name-column">
+                ${ui.message('general.name')}
+                <a ng-click="sort('patient.person.personName.display')"><i class="icon-sort edit-action" /></a>
+            </th>
             <th>${ui.message('Patient.gender')}</th>
             <th>${ui.message('Person.age')}</th>
             <th>${ui.message('casereport.triggers')}</th>
@@ -30,6 +40,7 @@
     </thead>
     <tbody>
     <tr ng-repeat="caseReport in caseReports | searchReportsByPatient:patientSearchText | searchReportsByTrigger:triggerSearchText">
+        <td valign="top">{{caseReport.dateCreated | serverDate}}</td>
         <td valign="top">{{caseReport.patient.patientIdentifier.identifier}}</td>
         <td valign="top">{{caseReport.patient.person.personName.display}}
             <span ng-show="{{caseReport.status == 'DRAFT'}}" class="casereport-draft-lozenge">
