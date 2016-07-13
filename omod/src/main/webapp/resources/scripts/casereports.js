@@ -69,6 +69,22 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
     .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "StatusChange", "caseReport",
         function($scope, $state, $filter, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
+            $scope.areTriggersSet = false;
+            $scope.triggers;
+
+            function getKeys(obj){
+                if(obj) {
+                    return Object.keys(obj);
+                }
+                return [];
+            }
+
+            $scope.setTriggers = function(triggerDateMap){
+                if(triggerDateMap && !$scope.areTriggersSet) {
+                    $scope.triggers = getKeys(triggerDateMap);
+                    $scope.areTriggersSet = true;
+                }
+            }
 
             $scope.updateFormTitle = function(personName){
                 jq("#casereport-reportTitle").text(emr.message('casereport.report.form.title').replace("{0}", personName));
@@ -80,13 +96,17 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
 
             $scope.getObjectKeys = function(obj){
                 if(obj) {
-                    return Object.keys(obj);
+                    return getKeys(obj);
                 }
                 return [];
             }
 
             $scope.getMapSize = function(obj){
-                return $scope.getObjectKeys(obj).length;
+                return getKeys(obj).length;
+            }
+
+            $scope.remove = function(index){
+                $scope.triggers.splice(index, 1);
             }
 
             $scope.submitCaseReport = function() {

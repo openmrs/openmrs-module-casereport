@@ -18,8 +18,13 @@ $lighterGrey: #f0f0f0;
    font-size: 85%;
 }
 
+a.casereport-no-underline:hover {
+  text-decoration: none;
+}
+
 #casereport-reports a:hover {
-  text-decoration: none; cursor: pointer;
+  @extend .casereport-no-underline;
+  cursor: pointer;
 }
 
 .casereport-name-column {
@@ -30,18 +35,29 @@ $lighterGrey: #f0f0f0;
   height: 30px;
 }
 
-.casereport-draft-lozenge {
+@mixin casereport-lozenge($textColor, $borderColor, $fontSize) {
   display: inline-block;
   vertical-align: text-bottom;
-  font-size: 0.7em;
-  border: 1px solid $orange;
-  color: $orange;
+  font-size: $fontSize;
+  border: 1px solid $borderColor;
+  color: $textColor;
   padding: 1px 2px;
   border-radius: 4px;
 }
+
+.casereport-draft-lozenge {
+  @include casereport-lozenge($orange, $orange, 0.7em);
+}
+
+.casereport-trigger-lozenge {
+  @include casereport-lozenge(inherit, darken($lighterGrey, 12%), 0.9em);
+  background-color: lighten($lighterGrey, 2%);
+}
+
 .casereport-no-border {
   border: 1px;
 }
+
 .casereport-text-left{
   text-align: left;
 }

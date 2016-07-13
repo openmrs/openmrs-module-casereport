@@ -19,6 +19,7 @@
 
 <form class="simple-form-ui" name="caseReportForm" novalidate ng-submit="submitCaseReport()">
     {{ updateFormTitle(caseReport.patient.person.display) }}
+    {{ setTriggers(caseReport.reportForm.triggerAndDateCreatedMap) }}
     <table class="casereport-form-table" cellpadding="0" cellspacing="0">
         <tr>
             <th valign="top">${ui.message("general.name")}</th>
@@ -50,7 +51,19 @@
         </tr>
         <tr>
             <th valign="top">${ui.message("casereport.triggers")}</th>
-            <td valign="top">{{ getObjectKeys(caseReport.reportForm.triggerAndDateCreatedMap) | omrs.display }}</td>
+            <td valign="top">
+                <span>
+                    <span ng-repeat="trigger in triggers track by \$index">
+                        <span class="casereport-trigger-lozenge">
+                            {{ trigger }}
+                            <a class="casereport-no-underline" ng-show="triggers.length > 1">
+                                <i class="icon-remove delete-action" title="${ui.message("general.remove")}"
+                                   ng-click="remove(\$index)" />
+                            </a>
+                        </span>
+                    </span>
+                 </span>
+            </td>
         </tr>
         <tr ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) > 0
                     || getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) > 0
