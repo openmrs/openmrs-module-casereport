@@ -9,17 +9,27 @@
  */
 package org.openmrs.module.casereport.rest.web.v1_0.controller;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.GlobalProperty;
+import org.openmrs.User;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.web.StatusChange;
 import org.openmrs.module.casereport.rest.web.v1_0.resource.CaseReportResourceTest;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest {
@@ -37,12 +47,12 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Override
 	public String getURI() {
-		return "queue/" + CaseReportResourceTest.CASE_REPORT_UUID + "/statuschange";
+		return "queue/" + getUuid() + "/statuschange";
 	}
 	
 	@Override
 	public String getUuid() {
-		return null;
+		return CaseReportResourceTest.CASE_REPORT_UUID;
 	}
 	
 	@Override
@@ -76,15 +86,47 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Test
 	public void shouldSubmitTheCaseReport() throws Exception {
-		CaseReport cr = service.getCaseReportByUuid(CaseReportResourceTest.CASE_REPORT_UUID);
+		final String implId = "Test_Impl";
+		//set the implementation id for test purposes
+		AdministrationService adminService = Context.getAdministrationService();
+		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">\n"
+		        + "   <passphrase id=\"2\">Some passphrase</passphrase>\n"
+		        + "   <description id=\"3\">Some descr</description>\n" + "   <name id=\"4\">Some name</name>\n"
+		        + "</implementationId>";
+		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
+		adminService.saveGlobalProperty(gp);
+		
+		executeDataSet("moduleTestData-other.xml");
+		final String hivNotSuppressed = "HIV Virus Not Suppressed";
+		final String anotherTrigger = "Another Trigger";
+		ObjectMapper mapper = new ObjectMapper();
+		User submitter = Context.getUserService().getUserByUuid("c98a1558-e131-11de-babe-001e378eb67e");
+		CaseReport cr = service.getCaseReportByUuid(getUuid());
+		assertTrue(StringUtils.isBlank(cr.getReportForm()));
+		CaseReportForm form = new CaseReportForm(cr);
+		assertNull(form.getSubmitterName());
+		assertNull(form.getSubmitterSystemId());
+		assertEquals(2, form.getTriggerAndDateCreatedMap().size());
+		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(hivNotSuppressed));
+		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(anotherTrigger));
 		assertFalse(cr.isSubmitted());
-		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.SUBMIT + "\"}"));
+		
+		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"triggersToExclude\":[\""
+		        + anotherTrigger + "\"],\"submitter\":\"" + submitter.getUuid() + "\"}"));
+		
 		assertTrue(cr.isSubmitted());
+		cr = service.getCaseReportByUuid(getUuid());
+		form = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
+		assertEquals(submitter.getPersonName().getFullName(), form.getSubmitterName());
+		assertEquals(submitter.getSystemId(), form.getSubmitterSystemId());
+		assertEquals(1, form.getTriggerAndDateCreatedMap().size());
+		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(hivNotSuppressed));
+		assertFalse(form.getTriggerAndDateCreatedMap().keySet().contains(anotherTrigger));
 	}
 	
 	@Test
 	public void shouldDismissTheCaseReport() throws Exception {
-		CaseReport cr = service.getCaseReportByUuid(CaseReportResourceTest.CASE_REPORT_UUID);
+		CaseReport cr = service.getCaseReportByUuid(getUuid());
 		assertFalse(cr.isDismissed());
 		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.DISMISS + "\"}"));
 		assertTrue(cr.isDismissed());

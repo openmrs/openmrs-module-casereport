@@ -9,6 +9,10 @@
  */
 package org.openmrs.module.casereport.rest.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openmrs.User;
 import org.openmrs.module.casereport.CaseReport;
 
 public class StatusChange {
@@ -20,6 +24,10 @@ public class StatusChange {
 	private CaseReport caseReport;
 	
 	private Action action;
+	
+	private List<String> triggersToExclude;
+	
+	private User submitter;
 	
 	public CaseReport getCaseReport() {
 		return caseReport;
@@ -35,5 +43,24 @@ public class StatusChange {
 	
 	public void setAction(Action action) {
 		this.action = action;
+	}
+	
+	public User getSubmitter() {
+		return submitter;
+	}
+	
+	public void setSubmitter(User submitter) {
+		this.submitter = submitter;
+	}
+	
+	public List<String> getTriggersToExclude() {
+		if (triggersToExclude == null) {
+			triggersToExclude = new ArrayList<String>();
+		}
+		return triggersToExclude;
+	}
+	
+	public void setTriggersToExclude(List<String> triggersToExclude) {
+		this.triggersToExclude = triggersToExclude;
 	}
 }

@@ -35,6 +35,8 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addRequiredProperty("action");
+		description.addProperty("submitter");
+		description.addProperty("triggersToExclude");
 		return description;
 	}
 	
@@ -52,7 +54,9 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	@Override
 	public StatusChange save(StatusChange delegate) {
 		if (StatusChange.Action.SUBMIT == delegate.getAction()) {
-			Context.getService(CaseReportService.class).submitCaseReport(getParent(delegate));
+			CaseReport caseReport = getParent(delegate);
+			Context.getService(CaseReportService.class).submitCaseReport(caseReport, delegate.getTriggersToExclude(),
+			    delegate.getSubmitter());
 		} else if (StatusChange.Action.DISMISS == delegate.getAction()) {
 			Context.getService(CaseReportService.class).dismissCaseReport(getParent(delegate));
 		} else {

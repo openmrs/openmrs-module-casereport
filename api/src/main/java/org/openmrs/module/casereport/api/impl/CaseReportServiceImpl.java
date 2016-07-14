@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.api.impl;
 
 import static org.openmrs.module.casereport.CaseReport.Status;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,13 +19,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Cohort;
 import org.openmrs.Concept;
+import org.openmrs.ImplementationId;
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
@@ -32,7 +36,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
+import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
+import org.openmrs.module.casereport.CaseReportValidator;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
@@ -41,6 +47,8 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.TaskDefinition;
+import org.openmrs.validator.ValidateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -54,6 +62,9 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	private CaseReportDAO dao;
 	
 	private ObjectMapper mapper = null;
+	
+	@Autowired
+	private CaseReportValidator validator;
 	
 	/**
 	 * @param dao the dao to set
@@ -69,17 +80,17 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		return mapper;
 	}
 	
-	private void setStatus(CaseReport caseReport, Status status) {
+	private void setProperty(CaseReport caseReport, String propertyName, Object value) {
 		
 		Boolean isAccessible = null;
 		Field field = null;
 		try {
-			field = CaseReport.class.getDeclaredField("status");
+			field = CaseReport.class.getDeclaredField(propertyName);
 			field.setAccessible(true);
-			field.set(caseReport, status);
+			field.set(caseReport, value);
 		}
 		catch (Exception e) {
-			throw new APIException("Failed to set status for CaseReport:" + caseReport, e);
+			throw new APIException("Failed to set " + propertyName + " for CaseReport:" + caseReport, e);
 		}
 		finally {
 			if (field != null && isAccessible != null) {
@@ -159,33 +170,72 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
-		if (Status.SUBMITTED != caseReport.getStatus() && Status.DISMISSED != caseReport.getStatus()) {
-			if (StringUtils.isBlank(caseReport.getReportForm())) {
-				if (Status.NEW != caseReport.getStatus()) {
-					setStatus(caseReport, Status.NEW);
-				}
-			} else {
-				if (Status.DRAFT != caseReport.getStatus()) {
-					setStatus(caseReport, Status.DRAFT);
-				}
-			}
+		if (caseReport.getCaseReportId() != null) {
+			throw new APIException("Cannot edit a case report, call another appropriate method in CaseReportService");
 		}
 		
 		return dao.saveCaseReport(caseReport);
 	}
 	
 	/**
-	 * @See CaseReportService#submitCaseReport(CaseReport)
+	 * @See CaseReportService#submitCaseReport(CaseReport,List, User)
 	 */
 	@Override
 	@Transactional(readOnly = false)
-	public CaseReport submitCaseReport(CaseReport caseReport) throws APIException {
+	public CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter)
+	    throws APIException {
+		
 		if (caseReport.isVoided()) {
 			throw new APIException("Can't submit a voided case report");
 		}
+		
+		CaseReportForm form;
+		if (StringUtils.isBlank(caseReport.getReportForm())) {
+			form = new CaseReportForm(caseReport);
+		} else {
+			try {
+				form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
+			}
+			catch (IOException e) {
+				throw new APIException("Failed to parse case report form data", e);
+			}
+		}
+		
+		ImplementationId implId = Context.getAdministrationService().getImplementationId();
+		if (implId == null || StringUtils.isBlank(implId.getImplementationId())) {
+			throw new APIException("Implementation id must be set to submit case reports");
+		}
+		
+		if (StringUtils.isBlank(form.getAssigningAuthority())) {
+			form.setAssigningAuthority(implId.getImplementationId());
+		}
+		User user = submitter;
+		if (user == null) {
+			user = Context.getAuthenticatedUser();
+		}
+		if (StringUtils.isBlank(form.getSubmitterName())) {
+			form.setSubmitterName(user.getPersonName().getFullName());
+		}
+		if (StringUtils.isBlank(form.getSubmitterSystemId())) {
+			form.setSubmitterSystemId(user.getSystemId());
+		}
+		if (CollectionUtils.isNotEmpty(triggersToExclude)) {
+			for (String t : triggersToExclude) {
+				form.getTriggerAndDateCreatedMap().remove(t);
+			}
+		}
+		
+		try {
+			setProperty(caseReport, "reportForm", getObjectMapper().writeValueAsString(form));
+		}
+		catch (IOException e) {
+			throw new APIException("Failed to serialize case report form data", e);
+		}
+		
 		//TODO Implement more submission logic here
-		setStatus(caseReport, Status.SUBMITTED);
-		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
+		
+		setProperty(caseReport, "status", Status.SUBMITTED);
+		return dao.saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -197,8 +247,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (caseReport.isVoided()) {
 			throw new APIException("Can't dismiss a voided case report");
 		}
-		setStatus(caseReport, Status.DISMISSED);
-		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
+		setProperty(caseReport, "status", Status.DISMISSED);
+		return dao.saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -255,8 +305,13 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 				caseReport.addTrigger(new CaseReportTrigger(triggerName));
 			}
 			
-			service.saveCaseReport(caseReport);
+			saveCaseReportAfterValidation(caseReport);
 		}
+	}
+	
+	private CaseReport saveCaseReportAfterValidation(CaseReport caseReport) {
+		ValidateUtil.validate(caseReport);
+		return dao.saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -299,7 +354,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException {
-		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
+		return saveCaseReportAfterValidation(caseReport);
 	}
 	
 	/**

@@ -12,6 +12,7 @@ package org.openmrs.module.casereport.api;
 import java.util.List;
 
 import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
@@ -98,26 +99,27 @@ public interface CaseReportService extends OpenmrsService {
 	 * @return the saved case report
 	 * @throws APIException
 	 * @should return the saved case report
-	 * @should update an existing case report
-	 * @should change the status of a report from new to draft if the reportForm is not blank
-	 * @should not change the status of a report from new to draft if the reportForm is blank
-	 * @should change the status of a report from draft to new if the reportForm is blank
-	 * @should not change the status of a report from draft to new if the reportForm is not blank
+	 * @should fail when updating existing case report
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport saveCaseReport(CaseReport caseReport) throws APIException;
 	
 	/**
-	 * Marks the specified case report as submitted in the database
+	 * Marks the specified case report as submitted in the database. If the submitter details are
+	 * not set in the report form, they will default to the logged in user
 	 * 
 	 * @param caseReport the case report to submit
+	 * @param triggersToExclude the triggers to exclude from the submitted report
+	 * @param submitter the user submitting the report, defaults to logged in user
 	 * @return the submitted case report
 	 * @throws APIException
 	 * @should submit the specified case report
 	 * @should fail if the case report is voided
+	 * @should fail if the implementation id is not set
+	 * @should set the specified submitter and exclude the specified triggers
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	CaseReport submitCaseReport(CaseReport caseReport) throws APIException;
+	CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter) throws APIException;
 	
 	/**
 	 * Marks the specified case report as dismissed in the database

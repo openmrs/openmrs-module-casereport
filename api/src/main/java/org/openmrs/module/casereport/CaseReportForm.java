@@ -71,6 +71,12 @@ public class CaseReportForm {
 	
 	private String lastVisitDate;
 	
+	private String submitterName;
+	
+	private String submitterSystemId;
+	
+	private String assigningAuthority;
+	
 	public CaseReportForm() {
 		
 	}
@@ -78,7 +84,9 @@ public class CaseReportForm {
 	public CaseReportForm(CaseReport caseReport) {
 		Patient patient = caseReport.getPatient();
 		setGender(patient.getGender());
-		setBirthdate(DATE_FORMATTER.format(patient.getBirthdate()));
+		if (patient.getBirthdate() != null) {
+			setBirthdate(DATE_FORMATTER.format(patient.getBirthdate()));
+		}
 		PersonName name = patient.getPersonName();
 		if (name != null) {
 			setGivenName(name.getGivenName());
@@ -313,5 +321,29 @@ public class CaseReportForm {
 	
 	public void setLastVisitDate(String lastVisitDate) {
 		this.lastVisitDate = lastVisitDate;
+	}
+	
+	public String getAssigningAuthority() {
+		return assigningAuthority;
+	}
+	
+	public void setAssigningAuthority(String assigningAuthority) {
+		this.assigningAuthority = assigningAuthority;
+	}
+	
+	public String getSubmitterName() {
+		return submitterName;
+	}
+	
+	public void setSubmitterName(String submitterName) {
+		this.submitterName = submitterName;
+	}
+	
+	public String getSubmitterSystemId() {
+		return submitterSystemId;
+	}
+	
+	public void setSubmitterSystemId(String submitterSystemId) {
+		this.submitterSystemId = submitterSystemId;
 	}
 }

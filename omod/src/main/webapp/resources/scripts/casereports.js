@@ -71,6 +71,7 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
             $scope.caseReport = caseReport;
             $scope.areTriggersSet = false;
             $scope.triggers;
+            $scope.triggersToExclude = [];
 
             function getKeys(obj){
                 if(obj) {
@@ -106,13 +107,15 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
             }
 
             $scope.remove = function(index){
+                $scope.triggersToExclude.push($scope.triggers[index]);
                 $scope.triggers.splice(index, 1);
             }
 
             $scope.submitCaseReport = function() {
                 StatusChange.save({
                     uuid: caseReport.uuid,
-                    action: "SUBMIT"
+                    action: "SUBMIT",
+                    triggersToExclude: $scope.triggersToExclude,
                 }).$promise.then(function() {
                     $state.go("list");
                     emr.successMessage("casereport.submitted");

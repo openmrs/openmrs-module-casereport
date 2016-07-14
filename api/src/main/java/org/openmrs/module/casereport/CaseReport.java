@@ -100,7 +100,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		return reportForm;
 	}
 	
-	public void setReportForm(String reportForm) {
+	protected void setReportForm(String reportForm) {
 		this.reportForm = reportForm;
 	}
 	
