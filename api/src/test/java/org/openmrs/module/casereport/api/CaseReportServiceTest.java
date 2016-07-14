@@ -286,7 +286,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertFalse(cr.isSubmitted());
 		assertTrue(cr.isVoided());
 		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Can't submit a voided case report"));
+		expectedException.expectMessage(equalTo("Cannot submit a voided case report"));
 		service.submitCaseReport(cr, null, null, null);
 	}
 	
@@ -317,6 +317,32 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport,List,User,String)
+	 * @verifies fail if the case report is already dismissed
+	 */
+	@Test
+	public void submitCaseReport_shouldFailIfTheCaseReportIsAlreadyDismissed() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Cannot submit a dismissed case report"));
+		CaseReport cr = service.getCaseReport(6);
+		assertTrue(cr.isDismissed());
+		service.submitCaseReport(cr, null, Context.getAuthenticatedUser(), "Test_Impl");
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport,List,User,String)
+	 * @verifies fail if the case report is already submitted
+	 */
+	@Test
+	public void submitCaseReport_shouldFailIfTheCaseReportIsAlreadySubmitted() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Cannot submit a submitted case report"));
+		CaseReport cr = service.getCaseReport(5);
+		assertTrue(cr.isSubmitted());
+		service.submitCaseReport(cr, null, Context.getAuthenticatedUser(), "Test_Impl");
+	}
+	
+	/**
 	 * @see CaseReportService#dismissCaseReport(CaseReport)
 	 * @verifies dismiss the specified case report
 	 */
@@ -338,7 +364,33 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertFalse(cr.isDismissed());
 		assertTrue(cr.isVoided());
 		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Can't dismiss a voided case report"));
+		expectedException.expectMessage(equalTo("Cannot dismiss a voided case report"));
+		service.dismissCaseReport(cr);
+	}
+	
+	/**
+	 * @see CaseReportService#dismissCaseReport(CaseReport)
+	 * @verifies fail if the case report is already dismissed
+	 */
+	@Test
+	public void dismissCaseReport_shouldFailIfTheCaseReportIsAlreadyDismissed() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Cannot dismiss a dismissed case report"));
+		CaseReport cr = service.getCaseReport(6);
+		assertTrue(cr.isDismissed());
+		service.dismissCaseReport(cr);
+	}
+	
+	/**
+	 * @see CaseReportService#dismissCaseReport(CaseReport)
+	 * @verifies fail if the case report is already submitted
+	 */
+	@Test
+	public void dismissCaseReport_shouldFailIfTheCaseReportIsAlreadySubmitted() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Cannot dismiss a submitted case report"));
+		CaseReport cr = service.getCaseReport(5);
+		assertTrue(cr.isSubmitted());
 		service.dismissCaseReport(cr);
 	}
 	

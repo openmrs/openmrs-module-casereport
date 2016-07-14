@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.casereport;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,12 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 
@@ -160,11 +163,20 @@ public class CaseReportForm {
 		List<CaseReport> submittedReports = Context.getService(CaseReportService.class).getSubmittedCaseReports(patient);
 		if (CollectionUtils.isNotEmpty(submittedReports)) {
 			List<String> prevSubmittedReports = new ArrayList<String>(submittedReports.size());
+			ObjectMapper mapper = new ObjectMapper();
 			for (CaseReport cr : submittedReports) {
-				for (CaseReportTrigger t : cr.getReportTriggers()) {
-					if (!prevSubmittedReports.contains(t.getName())) {
-						prevSubmittedReports.add(t.getName());
+				//We need to get the triggers that were actually submitted in the final report
+				//instead of the the report triggers that were directly set on the queue item
+				try {
+					CaseReportForm prevForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
+					for (String t : prevForm.getTriggerAndDateCreatedMap().keySet()) {
+						if (!prevSubmittedReports.contains(t)) {
+							prevSubmittedReports.add(t);
+						}
 					}
+				}
+				catch (IOException e) {
+					throw new APIException("Failed to parse previous report form data for:" + cr, e);
 				}
 			}
 			setPreviousSubmittedCaseReports(prevSubmittedReports);

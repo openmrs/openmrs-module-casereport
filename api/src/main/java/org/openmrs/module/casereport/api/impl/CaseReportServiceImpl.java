@@ -186,8 +186,13 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	                                   String assigningAuthority) throws APIException {
 		
 		if (caseReport.isVoided()) {
-			throw new APIException("Can't submit a voided case report");
+			throw new APIException("Cannot submit a voided case report");
+		} else if (caseReport.isDismissed()) {
+			throw new APIException("Cannot submit a dismissed case report");
+		} else if (caseReport.isSubmitted()) {
+			throw new APIException("Cannot submit a submitted case report");
 		}
+		
 		if (submitter != null && StringUtils.isBlank(assigningAuthority)) {
 			throw new APIException("Assigning authority is required when a submitter is specified");
 		}
@@ -241,8 +246,13 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Transactional(readOnly = false)
 	public CaseReport dismissCaseReport(CaseReport caseReport) throws APIException {
 		if (caseReport.isVoided()) {
-			throw new APIException("Can't dismiss a voided case report");
+			throw new APIException("Cannot dismiss a voided case report");
+		} else if (caseReport.isDismissed()) {
+			throw new APIException("Cannot dismiss a dismissed case report");
+		} else if (caseReport.isSubmitted()) {
+			throw new APIException("Cannot dismiss a submitted case report");
 		}
+		
 		setProperty(caseReport, "status", Status.DISMISSED);
 		return dao.saveCaseReport(caseReport);
 	}

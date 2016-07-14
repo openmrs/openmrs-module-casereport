@@ -117,6 +117,8 @@ public interface CaseReportService extends OpenmrsService {
 	 * @throws APIException
 	 * @should submit the specified case report
 	 * @should fail if the case report is voided
+	 * @should fail if the case report is already submitted
+	 * @should fail if the case report is already dismissed
 	 * @should fail if both the implementation id and submitter are not set
 	 * @should set the specified submitter and exclude the specified triggers
 	 * @should fail if the submitter is specified and the the implementation id is not
@@ -133,6 +135,8 @@ public interface CaseReportService extends OpenmrsService {
 	 * @throws APIException
 	 * @should dismiss the specified case report
 	 * @should fail if the case report is voided
+	 * @should fail if the case report is already dismissed
+	 * @should fail if the case report is already submitted
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport dismissCaseReport(CaseReport caseReport) throws APIException;
