@@ -29,6 +29,8 @@ public class StatusChange {
 	
 	private User submitter;
 	
+	private String assigningAuthority;
+	
 	public CaseReport getCaseReport() {
 		return caseReport;
 	}
@@ -45,14 +47,6 @@ public class StatusChange {
 		this.action = action;
 	}
 	
-	public User getSubmitter() {
-		return submitter;
-	}
-	
-	public void setSubmitter(User submitter) {
-		this.submitter = submitter;
-	}
-	
 	public List<String> getTriggersToExclude() {
 		if (triggersToExclude == null) {
 			triggersToExclude = new ArrayList<String>();
@@ -62,5 +56,21 @@ public class StatusChange {
 	
 	public void setTriggersToExclude(List<String> triggersToExclude) {
 		this.triggersToExclude = triggersToExclude;
+	}
+	
+	public User getSubmitter() {
+		return submitter;
+	}
+	
+	public void setSubmitter(User submitter) {
+		this.submitter = submitter;
+	}
+	
+	public String getAssigningAuthority() {
+		return assigningAuthority;
+	}
+	
+	public void setAssigningAuthority(String assigningAuthority) {
+		this.assigningAuthority = assigningAuthority;
 	}
 }

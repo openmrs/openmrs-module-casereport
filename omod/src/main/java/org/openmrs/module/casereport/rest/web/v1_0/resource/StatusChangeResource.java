@@ -37,6 +37,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 		description.addRequiredProperty("action");
 		description.addProperty("submitter");
 		description.addProperty("triggersToExclude");
+		description.addProperty("assigningAuthority");
 		return description;
 	}
 	
@@ -56,7 +57,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 		if (StatusChange.Action.SUBMIT == delegate.getAction()) {
 			CaseReport caseReport = getParent(delegate);
 			Context.getService(CaseReportService.class).submitCaseReport(caseReport, delegate.getTriggersToExclude(),
-			    delegate.getSubmitter());
+			    delegate.getSubmitter(), delegate.getAssigningAuthority());
 		} else if (StatusChange.Action.DISMISS == delegate.getAction()) {
 			Context.getService(CaseReportService.class).dismissCaseReport(getParent(delegate));
 		} else {

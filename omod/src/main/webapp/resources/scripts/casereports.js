@@ -115,7 +115,7 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
                 StatusChange.save({
                     uuid: caseReport.uuid,
                     action: "SUBMIT",
-                    triggersToExclude: $scope.triggersToExclude,
+                    triggersToExclude: $scope.triggersToExclude
                 }).$promise.then(function() {
                     $state.go("list");
                     emr.successMessage("casereport.submitted");

@@ -215,7 +215,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport, List, User)
+	 * @see CaseReportService#submitCaseReport(CaseReport, List, User, String)
 	 * @verifies submit the specified case report
 	 */
 	@Test
@@ -237,7 +237,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertNull(null, form.getAssigningAuthority());
 		assertFalse(cr.isSubmitted());
 		
-		service.submitCaseReport(cr, null, null);
+		service.submitCaseReport(cr, null, null, null);
 		assertTrue(cr.isSubmitted());
 		form = new ObjectMapper().readValue(cr.getReportForm(), CaseReportForm.class);
 		assertEquals("Super User", form.getSubmitterName());
@@ -246,22 +246,15 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport,List,User)
+	 * @see CaseReportService#submitCaseReport(CaseReport, List, User, String)
 	 * @verifies set the specified submitter and exclude the specified triggers
 	 */
 	@Test
 	public void submitCaseReport_shouldSetTheSpecifiedSubmitterAndExcludeTheSpecifiedTriggers() throws Exception {
 		executeDataSet(XML_OTHER_DATASET);
-		//set the implementation id for test purposes
-		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"Test_Impl\">\n"
-		        + "   <passphrase id=\"2\">Some passphrase</passphrase>\n"
-		        + "   <description id=\"3\">Some descr</description>\n" + "   <name id=\"4\">Some name</name>\n"
-		        + "</implementationId>";
-		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
-		adminService.saveGlobalProperty(gp);
 		final String hivNotSuppressed = "HIV Virus Not Suppressed";
 		final String anotherTrigger = "Another Trigger";
+		final String assigningAuthority = "Test_Impl";
 		ObjectMapper mapper = new ObjectMapper();
 		CaseReport cr = service.getCaseReport(1);
 		assertFalse(cr.isSubmitted());
@@ -272,18 +265,19 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(hivNotSuppressed));
 		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(anotherTrigger));
 		
-		cr = service.submitCaseReport(cr, Arrays.asList(anotherTrigger), submitter);
+		cr = service.submitCaseReport(cr, Arrays.asList(anotherTrigger), submitter, assigningAuthority);
 		assertTrue(cr.isSubmitted());
 		form = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
 		assertEquals(submitter.getPersonName().getFullName(), form.getSubmitterName());
 		assertEquals(submitter.getSystemId(), form.getSubmitterSystemId());
+		assertEquals(assigningAuthority, form.getAssigningAuthority());
 		assertEquals(1, form.getTriggerAndDateCreatedMap().size());
 		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(hivNotSuppressed));
 		assertFalse(form.getTriggerAndDateCreatedMap().keySet().contains(anotherTrigger));
 	}
 	
 	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport, List, User)
+	 * @see CaseReportService#submitCaseReport(CaseReport, List, User, String)
 	 * @verifies fail if the case report is voided
 	 */
 	@Test
@@ -293,20 +287,33 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertTrue(cr.isVoided());
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("Can't submit a voided case report"));
-		service.submitCaseReport(cr, null, null);
+		service.submitCaseReport(cr, null, null, null);
 	}
 	
 	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport, List, User)
-	 * @verifies fail if the implementation id is not set
+	 * @see CaseReportService#submitCaseReport(CaseReport,List,User,String)
+	 * @verifies fail if both the implementation id and submitter are not set
 	 */
 	@Test
-	public void submitCaseReport_shouldFailIfTheImplementationIdIsNotSet() throws Exception {
+	public void submitCaseReport_shouldFailIfBothTheImplementationIdAndSubmitterAreNotSet() throws Exception {
 		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Implementation id must be set to submit case reports"));
+		expectedException.expectMessage(equalTo("Implementation id must be set if submitter is not specified"));
 		CaseReport cr = service.getCaseReport(2);
 		assertFalse(cr.isSubmitted());
-		service.submitCaseReport(cr, null, null);
+		service.submitCaseReport(cr, null, null, null);
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport,List,User,String)
+	 * @verifies fail if the submitter is specified and the the implementation id is not
+	 */
+	@Test
+	public void submitCaseReport_shouldFailIfTheSubmitterIsSpecifiedAndTheTheImplementationIdIsNot() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Assigning authority is required when a submitter is specified"));
+		CaseReport cr = service.getCaseReport(2);
+		assertFalse(cr.isSubmitted());
+		service.submitCaseReport(cr, null, Context.getAuthenticatedUser(), null);
 	}
 	
 	/**

@@ -182,11 +182,14 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	@Transactional(readOnly = false)
-	public CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter)
-	    throws APIException {
+	public CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter,
+	                                   String assigningAuthority) throws APIException {
 		
 		if (caseReport.isVoided()) {
 			throw new APIException("Can't submit a voided case report");
+		}
+		if (submitter != null && StringUtils.isBlank(assigningAuthority)) {
+			throw new APIException("Assigning authority is required when a submitter is specified");
 		}
 		
 		CaseReportForm form;
@@ -201,24 +204,17 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			}
 		}
 		
-		ImplementationId implId = Context.getAdministrationService().getImplementationId();
-		if (implId == null || StringUtils.isBlank(implId.getImplementationId())) {
-			throw new APIException("Implementation id must be set to submit case reports");
+		if (submitter == null) {
+			ImplementationId implId = Context.getAdministrationService().getImplementationId();
+			if (implId == null || StringUtils.isBlank(implId.getImplementationId())) {
+				throw new APIException("Implementation id must be set if submitter is not specified");
+			}
+			submitter = Context.getAuthenticatedUser();
+			assigningAuthority = implId.getImplementationId();
 		}
-		
-		if (StringUtils.isBlank(form.getAssigningAuthority())) {
-			form.setAssigningAuthority(implId.getImplementationId());
-		}
-		User user = submitter;
-		if (user == null) {
-			user = Context.getAuthenticatedUser();
-		}
-		if (StringUtils.isBlank(form.getSubmitterName())) {
-			form.setSubmitterName(user.getPersonName().getFullName());
-		}
-		if (StringUtils.isBlank(form.getSubmitterSystemId())) {
-			form.setSubmitterSystemId(user.getSystemId());
-		}
+		form.setSubmitterName(submitter.getPersonName().getFullName());
+		form.setSubmitterSystemId(submitter.getSystemId());
+		form.setAssigningAuthority(assigningAuthority);
 		if (CollectionUtils.isNotEmpty(triggersToExclude)) {
 			for (String t : triggersToExclude) {
 				form.getTriggerAndDateCreatedMap().remove(t);
@@ -288,7 +284,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
 		
 		PatientService ps = Context.getPatientService();
-		CaseReportService service = Context.getService(CaseReportService.class);
 		for (Integer patientId : cohort.getMemberIds()) {
 			Patient patient = ps.getPatient(patientId);
 			if (patient == null) {
