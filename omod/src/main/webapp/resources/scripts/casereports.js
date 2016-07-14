@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommons.filters", "uicommons.common.error"])
+angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise("/list");
@@ -34,12 +34,12 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
             })
     }])
 
-    .controller("ViewCaseReportsController", [ "$scope", 'orderByFilter', "StatusChange", "CaseReportService",
-        function($scope, orderBy, StatusChange, CaseReportService) {
+    .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
+        function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
             $scope.propertyName = 'dateCreated';
             $scope.reverse = true;
             var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +
-                'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
+                'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo),display)';
 
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {
@@ -54,12 +54,22 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "uicommo
             }
 
             $scope.dismiss = function(caseReport){
-                StatusChange.save({
-                    uuid: caseReport.uuid,
-                    action: "DISMISS"
-                }).$promise.then(function() {
-                    loadCaseReports();
-                    emr.successMessage("casereport.dismissed");
+                ngDialog.openConfirm({
+                    showClose: false,
+                    closeByEscape: true,
+                    closeByDocument: true,
+                    template:"templates/dismissCaseReportDialog.page",
+                    controller: function($scope) {
+                        $scope.caseReport = caseReport;
+                    }
+                }).then(function() {
+                    StatusChange.save({
+                        uuid: caseReport.uuid,
+                        action: "DISMISS"
+                    }).$promise.then(function() {
+                        loadCaseReports();
+                        emr.successMessage("casereport.dismissed");
+                    });
                 });
             }
 
