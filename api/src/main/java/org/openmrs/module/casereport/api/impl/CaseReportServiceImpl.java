@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -262,11 +264,26 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (definition == null) {
 			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
 		}
+		
 		EvaluationContext evaluationContext = new EvaluationContext();
 		Map<String, Object> params = new HashMap<String, Object>();
-		if (taskDefinition != null && taskDefinition.getLastExecutionTime() != null) {
-			params.put(CaseReportConstants.LAST_EXECUTION_TIME, taskDefinition.getLastExecutionTime());
+		if (definition.getParameter(CaseReportConstants.LAST_EXECUTION_TIME) != null) {
+			Date lastExecutionTime = null;
+			if (taskDefinition != null) {
+				lastExecutionTime = taskDefinition.getLastExecutionTime();
+				if (lastExecutionTime == null && taskDefinition.getRepeatInterval() != null
+				        && taskDefinition.getRepeatInterval() > 0) {
+					//TODO add a unit test for this
+					//default to now minus repeat interval
+					lastExecutionTime = DateUtils.addSeconds(new Date(), -taskDefinition.getRepeatInterval().intValue());
+				}
+			}
+			if (lastExecutionTime == null) {
+				throw new APIException("Failed to resolve the value for the last execution time");
+			}
+			params.put(CaseReportConstants.LAST_EXECUTION_TIME, lastExecutionTime);
 		}
+		
 		if (definition.getParameters() != null) {
 			ConceptService cs = Context.getConceptService();
 			final String cielMappingPrefix = CaseReportConstants.SOURCE_CIEL_HL7_CODE

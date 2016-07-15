@@ -23,10 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -410,6 +408,24 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
+	 * @see CaseReportService#runTrigger(String,TaskDefinition)
+	 * @verifies fail for a task where the last execution time cannot be resolved
+	 */
+	@Test
+	public void runTrigger_shouldFailForATaskWhereTheLastExecutionTimeCannotBeResolved() throws Exception {
+		final String name = "some cohort query";
+		createTestSqlCohortDefinition(name, "select patient_id from patient where date_changed > :"
+		        + CaseReportConstants.LAST_EXECUTION_TIME, false, new Parameter(CaseReportConstants.LAST_EXECUTION_TIME,
+		        null, Date.class));
+		
+		TaskDefinition taskDefinition = new TaskDefinition();
+		taskDefinition.setRepeatInterval(0L);
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Failed to resolve the value for the last execution time"));
+		service.runTrigger(name, taskDefinition);
+	}
+	
+	/**
 	 * @see CaseReportService#runTrigger(String, TaskDefinition)
 	 * @verifies create case reports for the matched patients
 	 */
@@ -447,7 +463,8 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		final String name = "some cohort query";
 		Integer[] patientIds = { 7, 8 };
 		createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in (" + patientIds[0] + ","
-		        + patientIds[1] + ") and date_changed > :" + CaseReportConstants.LAST_EXECUTION_TIME, false);
+		        + patientIds[1] + ") and date_changed > :" + CaseReportConstants.LAST_EXECUTION_TIME, false, new Parameter(
+		        CaseReportConstants.LAST_EXECUTION_TIME, null, Date.class));
 		int originalCount = service.getCaseReports().size();
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
@@ -461,38 +478,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34"));
 		service.runTrigger(name, taskDefinition);
 		reports = service.getCaseReports();
-		int newCount = reports.size();
-		assertEquals(++originalCount, newCount);
-		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
-		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
-	}
-	
-	/**
-	 * @see CaseReportService#runTrigger(String,TaskDefinition)
-	 * @verifies use now minus repeatInterval as last execution time for the first run
-	 */
-	@Test
-	@Ignore
-	public void runTrigger_shouldUseNowMinusRepeatIntervalAsLastExecutionTimeForTheFirstRun() throws Exception {
-		final String name = "some cohort query";
-		Integer[] patientIds = { 7, 8 };
-		createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in (" + patientIds[0] + ","
-		        + patientIds[1] + ") and date_changed > :" + CaseReportConstants.LAST_EXECUTION_TIME, false);
-		int originalCount = service.getCaseReports().size();
-		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
-		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
-		
-		TaskDefinition taskDefinition = new TaskDefinition();
-		taskDefinition.setRepeatInterval(86400L);
-		Date effectiveLastExecTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34");
-		Date mockCurrentTime = DateUtils.addSeconds(effectiveLastExecTime, taskDefinition.getRepeatInterval().intValue());
-		/*PowerMockito.mockStatic(Calendar.class);
-		Calendar calendar = Mockito.mock(Calendar.class);
-		Mockito.when(Calendar.getInstance()).thenReturn(calendar);
-		Mockito.when(calendar.getTime()).thenReturn(mockCurrentTime);*/
-		
-		service.runTrigger(name, taskDefinition);
-		List<CaseReport> reports = service.getCaseReports();
 		int newCount = reports.size();
 		assertEquals(++originalCount, newCount);
 		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));

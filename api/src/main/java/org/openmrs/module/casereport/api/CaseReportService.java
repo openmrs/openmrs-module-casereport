@@ -155,7 +155,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should add a new trigger to an existing queue item for the patient
 	 * @should not create a duplicate trigger for the same patient
 	 * @should set the concept mappings in the evaluation context
-	 * @should use now minus repeatInterval as last execution time for the first run
+	 * @should fail for a task where the last execution time cannot be resolved
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	void runTrigger(String triggerName, TaskDefinition taskDefinition) throws APIException, EvaluationException;
