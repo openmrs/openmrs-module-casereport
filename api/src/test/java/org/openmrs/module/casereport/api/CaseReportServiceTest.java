@@ -453,9 +453,14 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 		
 		TaskDefinition taskDefinition = new TaskDefinition();
-		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34"));
+		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:25:57"));
 		service.runTrigger(name, taskDefinition);
 		List<CaseReport> reports = service.getCaseReports();
+		assertEquals(originalCount, reports.size());
+		
+		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34"));
+		service.runTrigger(name, taskDefinition);
+		reports = service.getCaseReports();
 		int newCount = reports.size();
 		assertEquals(++originalCount, newCount);
 		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));

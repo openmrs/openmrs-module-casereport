@@ -38,7 +38,6 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
-import org.openmrs.module.casereport.CaseReportValidator;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
@@ -48,7 +47,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.validator.ValidateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -62,9 +60,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	private CaseReportDAO dao;
 	
 	private ObjectMapper mapper = null;
-	
-	@Autowired
-	private CaseReportValidator validator;
 	
 	/**
 	 * @param dao the dao to set
