@@ -11,6 +11,7 @@ package org.openmrs.module.casereport;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +89,10 @@ public class CaseReportActivator extends BaseModuleActivator {
 				CohortDefinition definition = new SqlCohortDefinition(cohortQuery.getSql());
 				definition.setName(cohortQuery.getName());
 				definition.setDescription(cohortQuery.getDescription());
+				if (cohortQuery.getSql().indexOf(":" + CaseReportConstants.LAST_EXECUTION_TIME) > -1) {
+					String label = Context.getMessageSourceService().getMessage("casereport.lastExecutionTime");
+					definition.addParameter(new Parameter(CaseReportConstants.LAST_EXECUTION_TIME, label, Date.class));
+				}
 				if (cohortQuery.getConceptMappings() != null) {
 					for (String mapping : cohortQuery.getConceptMappings()) {
 						definition.addParameter(new Parameter(mapping, mapping.replaceFirst(

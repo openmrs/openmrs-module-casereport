@@ -1,6 +1,6 @@
 {
   "name": "HIV Virus Not Suppressed",
-  "sql": "Select patient_id from patient",
+  "sql": "Select patient_id from patient where date_created > :lastExecutionTime",
   "repeatInterval": 120,
   "conceptMappings": ["CIEL_1050"]
 }

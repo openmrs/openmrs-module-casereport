@@ -15,6 +15,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,10 +153,17 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		assertTrue(query.getParameters().contains(new Parameter("CIEL_1991", null, null)));
 		
 		query = defService.getDefinitions("HIV Virus Not Suppressed", true).get(0);
-		assertEquals("Select patient_id from patient", query.getQuery());
+		assertEquals("Select patient_id from patient where date_created > :lastExecutionTime", query.getQuery());
 		assertNull(query.getDescription());
-		assertTrue(query.getParameters().contains(new Parameter("CIEL_1050", null, null)));
-		
+		Parameter p = query.getParameter("CIEL_1050");
+		assertEquals("CIEL_1050", p.getName());
+		assertEquals("CIEL:1050", p.getLabel());
+		assertEquals(Integer.class, p.getType());
+		p = query.getParameter(CaseReportConstants.LAST_EXECUTION_TIME);
+		assertNotNull(p);
+		assertEquals("lastExecutionTime", p.getName());
+		assertEquals("casereport.lastExecutionTime", p.getLabel());
+		assertEquals(Date.class, p.getType());
 	}
 	
 	/**
