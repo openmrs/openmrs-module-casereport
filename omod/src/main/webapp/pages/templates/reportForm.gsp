@@ -72,29 +72,44 @@
             <td valign="top">
                 <br />
                 <table id="casereport-data-table" cellpadding="0" cellspacing="0">
-                    <tr ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) > 0">
+                    <tr>
                         <th valign="top">${ui.message("casereport.viralLoad")}</th>
                         <td valign="top" ng-repeat="key in getObjectKeys(caseReport.reportForm.mostRecentDateAndViralLoadMap)">
                             {{ caseReport.reportForm.mostRecentDateAndViralLoadMap[key] }} <span class="casereport-small-faint">({{ key | serverDate}})</span>
                         </td>
-                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) < 3"></td>
-                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) == 1"></td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) < 3">
+                            <span ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) == 0">
+                                ${ui.message("casereport.none.found")}
+                            </span>
+                        </td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) < 2"></td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndViralLoadMap) < 1"></td>
                     </tr>
-                    <tr ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) > 0">
+                    <tr>
                         <th valign="top">${ui.message("casereport.cd4Count")}</th>
                         <td valign="top" ng-repeat="key in getObjectKeys(caseReport.reportForm.mostRecentDateAndCd4CountMap)">
                             {{ caseReport.reportForm.mostRecentDateAndCd4CountMap[key] }} <span class="casereport-small-faint">({{ key | serverDate}})</span>
                         </td>
-                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) < 3"></td>
-                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) == 1"></td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) < 3">
+                            <span ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) == 0">
+                                ${ui.message("casereport.none.found")}
+                            </span>
+                        </td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) < 2"></td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndCd4CountMap) < 1"></td>
                     </tr>
-                    <tr ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) > 0">
+                    <tr>
                         <th valign="top">${ui.message("casereport.hivTest")}</th>
                         <td valign="top" ng-repeat="key in getObjectKeys(caseReport.reportForm.mostRecentDateAndHivTestMap)">
                             {{ caseReport.reportForm.mostRecentDateAndHivTestMap[key] }} <span class="casereport-small-faint">({{ key | serverDate}})</span>
                         </td>
-                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) < 3"></td>
-                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) == 1"></td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) < 3">
+                            <span ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) == 0">
+                                ${ui.message("casereport.none.found")}
+                            </span>
+                        </td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) < 2"></td>
+                        <td ng-show="getMapSize(caseReport.reportForm.mostRecentDateAndHivTestMap) < 1"></td>
                     </tr>
                 </table>
             </td>
