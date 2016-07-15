@@ -166,7 +166,7 @@ public class CaseReportForm {
 			ObjectMapper mapper = new ObjectMapper();
 			for (CaseReport cr : submittedReports) {
 				//We need to get the triggers that were actually submitted in the final report
-				//instead of the the report triggers that were directly set on the queue item
+				//instead of the report triggers that were directly set on the queue item
 				try {
 					CaseReportForm prevForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
 					for (String t : prevForm.getTriggerAndDateCreatedMap().keySet()) {
@@ -176,7 +176,7 @@ public class CaseReportForm {
 					}
 				}
 				catch (IOException e) {
-					throw new APIException("Failed to parse previous report form data for:" + cr, e);
+					throw new APIException("Failed to parse report form data for previous case report:" + cr, e);
 				}
 			}
 			setPreviousSubmittedCaseReports(prevSubmittedReports);

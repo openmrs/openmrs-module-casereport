@@ -39,7 +39,7 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
             $scope.propertyName = 'dateCreated';
             $scope.reverse = true;
             var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +
-                'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo),display)';
+                'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
 
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {
