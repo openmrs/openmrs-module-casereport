@@ -58,7 +58,7 @@
                                 'icon-sort-down' : propertyName == 'patient.person.age' && reverse}" />
                 </a>
             </th>
-            <th>${ui.message('casereport.triggers')}</th>
+            <th class="casereport-trigger-column">${ui.message('casereport.triggers')}</th>
             <th>${ui.message('casereport.actions')}</th>
         </tr>
     </thead>
