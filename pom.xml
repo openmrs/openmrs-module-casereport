@@ -52,6 +52,7 @@
         <appframeworkVersion>2.0</appframeworkVersion>
         <uicommonsVersion>1.7</uicommonsVersion>
         <appuiVersion>1.4</appuiVersion>
+        <hapiPhirVersion>1.6</hapiPhirVersion>
         <reportingVersion>0.9.8.1</reportingVersion>
         <calculationVersion>1.1</calculationVersion>
         <serializationXstreamVersion>0.2.10</serializationXstreamVersion>
@@ -98,6 +99,38 @@
 				<type>pom</type>
 				<scope>test</scope>
 			</dependency>
+
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-base</artifactId>
+                <version>${hapiPhirVersion}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-structures-dstu2</artifactId>
+                <version>${hapiPhirVersion}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
@@ -215,6 +248,12 @@
 			<name>OpenMRS Nexus Repository</name>
 			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
 		</repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
 	</repositories>
 
 	<pluginRepositories>

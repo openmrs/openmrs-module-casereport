@@ -129,4 +129,13 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		Patient patient = patientService.getPatient(2);
 		assertEquals(101, CaseReportUtil.getLastVisit(patient).getId().intValue());
 	}
+	
+	/**
+	 * @see CaseReportUtil#convertToCdaDocument(CaseReportForm)
+	 * @verifies return the generated json
+	 */
+	@Test
+	public void convertToCdaDocument_shouldReturnTheGeneratedJson() throws Exception {
+		//System.out.println(CaseReportUtil.convertToCdaDocument(null));
+	}
 }
