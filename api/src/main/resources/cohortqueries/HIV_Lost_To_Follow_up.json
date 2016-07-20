@@ -7,20 +7,20 @@
     "CIEL_703"   /* POSITIVE */
   ],
   "sql": "
+
 /*
- * TODO: Limit to HIV positive patients
- * TODO: Refactor to avoid repeatedly triggering for same patients
+ * Name:HIV Lost To Follow Up
+ * Query Type: SQL Cohort Query
+ * Description: HIV patients who have not been seen for at least 18 months
+ * Currently assuming database is only HIV patients
+ * HIV Case Reporting Module already excludes patients previously added to the list
  */
-SELECT person_id
+
+SELECT e2.patient_id
 FROM
-  person p,
-  (
-  	SELECT max(encounter_datetime) as latest_encounter
-  	FROM encounter e
-  	WHERE e.person_id = p.person_id
-  	GROUP BY e.person_id
-  )
-WHERE latest_encounter < DATE_SUB(:lastExecutionTime, INTERVAL 12 MONTH)
-  AND not p.voided;
-"
-}
+  (SELECT e1.patient_id, max(date(e1.encounter_datetime)) as latest_encounter_date
+   FROM encounter e1
+   WHERE not e1.voided
+   GROUP BY e1.patient_id) as e2
+WHERE 
+e2.latest_encounter_date <= DATE_SUB(:lastExecutionTime, INTERVAL 18 MONTH);
