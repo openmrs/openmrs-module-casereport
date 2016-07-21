@@ -111,8 +111,8 @@ public interface CaseReportService extends OpenmrsService {
 	 * @param caseReport the case report to submit
 	 * @param triggersToExclude the triggers to exclude from the submitted report
 	 * @param submitter the user submitting the report, defaults to logged in user
-	 * @param assigningAuthority the authority the submitter is registered with, typically it is
-	 *            implementation id of the OpenMRS installation
+	 * @param implementationId The id of the authorizing organisation or implementation
+	 * @param implementationName The name of the authorizing organisation or implementation
 	 * @return the submitted case report
 	 * @throws APIException
 	 * @should submit the specified case report
@@ -125,7 +125,7 @@ public interface CaseReportService extends OpenmrsService {
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter,
-	                            String assigningAuthority) throws APIException;
+	                            String implementationId, String implementationName) throws APIException;
 	
 	/**
 	 * Marks the specified case report as dismissed in the database

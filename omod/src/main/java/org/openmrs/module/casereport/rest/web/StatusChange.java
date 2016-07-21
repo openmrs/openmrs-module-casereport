@@ -29,7 +29,9 @@ public class StatusChange {
 	
 	private User submitter;
 	
-	private String assigningAuthority;
+	private String implementationId;
+	
+	private String implementationName;
 	
 	public CaseReport getCaseReport() {
 		return caseReport;
@@ -66,11 +68,19 @@ public class StatusChange {
 		this.submitter = submitter;
 	}
 	
-	public String getAssigningAuthority() {
-		return assigningAuthority;
+	public String getImplementationId() {
+		return implementationId;
 	}
 	
-	public void setAssigningAuthority(String assigningAuthority) {
-		this.assigningAuthority = assigningAuthority;
+	public void setImplementationId(String implementationId) {
+		this.implementationId = implementationId;
+	}
+	
+	public String getImplementationName() {
+		return implementationName;
+	}
+	
+	public void setImplementationName(String implementationName) {
+		this.implementationName = implementationName;
 	}
 }

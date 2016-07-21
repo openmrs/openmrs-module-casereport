@@ -24,6 +24,7 @@ import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.web.StatusChange;
 import org.openmrs.module.casereport.rest.web.v1_0.resource.CaseReportResourceTest;
@@ -86,32 +87,35 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		executeDataSet("moduleTestData-other.xml");
 		final String hivNotSuppressed = "HIV Virus Not Suppressed";
 		final String anotherTrigger = "Another Trigger";
-		final String assigningAuthority = "Test_Impl";
+		final String implementationId = "Test_Impl";
+		final String implementationName = "Test_Name";
 		ObjectMapper mapper = new ObjectMapper();
 		User submitter = Context.getUserService().getUserByUuid("c98a1558-e131-11de-babe-001e378eb67e");
 		CaseReport cr = service.getCaseReportByUuid(getUuid());
 		assertTrue(StringUtils.isBlank(cr.getReportForm()));
 		CaseReportForm form = new CaseReportForm(cr);
-		assertNull(form.getSubmitterName());
-		assertNull(form.getSubmitterSystemId());
-		assertEquals(2, form.getTriggerAndDateCreatedMap().size());
-		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(hivNotSuppressed));
-		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(anotherTrigger));
+		assertNull(form.getSubmitter());
+		assertNull(form.getImplementationId());
+		assertNull(form.getImplementationName());
+		assertEquals(2, form.getTriggers().size());
+		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), hivNotSuppressed));
+		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), anotherTrigger));
 		assertFalse(cr.isSubmitted());
 		
 		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"triggersToExclude\":[\""
-		        + anotherTrigger + "\"],\"submitter\":\"" + submitter.getUuid() + "\",\"assigningAuthority\":\""
-		        + assigningAuthority + "\"}"));
+		        + anotherTrigger + "\"],\"submitter\":\"" + submitter.getUuid() + "\",\"implementationId\":\""
+		        + implementationId + "\",\"implementationName\":\"" + implementationName + "\"}"));
 		
 		assertTrue(cr.isSubmitted());
 		cr = service.getCaseReportByUuid(getUuid());
 		form = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-		assertEquals(submitter.getPersonName().getFullName(), form.getSubmitterName());
-		assertEquals(submitter.getSystemId(), form.getSubmitterSystemId());
-		assertEquals(assigningAuthority, form.getAssigningAuthority());
-		assertEquals(1, form.getTriggerAndDateCreatedMap().size());
-		assertTrue(form.getTriggerAndDateCreatedMap().keySet().contains(hivNotSuppressed));
-		assertFalse(form.getTriggerAndDateCreatedMap().keySet().contains(anotherTrigger));
+		assertEquals(submitter.getUuid(), form.getSubmitter().getUuid());
+		assertEquals(submitter.getSystemId(), form.getSubmitter().getValue());
+		assertEquals(implementationId, form.getImplementationId());
+		assertEquals(implementationName, form.getImplementationName());
+		assertEquals(1, form.getTriggers().size());
+		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), hivNotSuppressed));
+		assertFalse(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), anotherTrigger));
 	}
 	
 	@Test

@@ -11,6 +11,7 @@ package org.openmrs.module.casereport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -222,15 +223,24 @@ public class CaseReportUtil {
 		return FhirContext.forDstu2().newJsonParser().setPrettyPrint(true).encodeResourceToString(composition);
 	}
 	
-	private static final CodeableConceptDt createCoding(String system, String code) {
+	private static CodeableConceptDt createCoding(String system, String code) {
 		return new CodeableConceptDt(system, code);
 	}
 	
-	private static final CodeableConceptDt createLoincCoding(String code) {
+	private static CodeableConceptDt createLoincCoding(String code) {
 		return createCoding(SYSTEM_URL_LOINC, code);
 	}
 	
-	private static final ResourceReferenceDt createReference(String uri, String name) {
+	private static ResourceReferenceDt createReference(String uri, String name) {
 		return new ResourceReferenceDt().setReference(uri).setDisplay(name);
+	}
+	
+	public static boolean collContainsItemWithValue(Collection<? extends UuidAndValue> coll, String value) {
+		for (UuidAndValue uv : coll) {
+			if (value.equals(uv.getValue())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

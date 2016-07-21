@@ -40,6 +40,8 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
+import org.openmrs.module.casereport.DatedUuidAndValue;
+import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
@@ -180,7 +182,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter,
-	                                   String assigningAuthority) throws APIException {
+	                                   String implementationId, String implementationName) throws APIException {
 		
 		if (caseReport.isVoided()) {
 			throw new APIException("Cannot submit a voided case report");
@@ -190,7 +192,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Cannot submit a submitted case report");
 		}
 		
-		if (submitter != null && StringUtils.isBlank(assigningAuthority)) {
+		if (submitter != null && StringUtils.isBlank(implementationId)) {
 			throw new APIException("Assigning authority is required when a submitter is specified");
 		}
 		
@@ -212,14 +214,19 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 				throw new APIException("Implementation id must be set if submitter is not specified");
 			}
 			submitter = Context.getAuthenticatedUser();
-			assigningAuthority = implId.getImplementationId();
+			implementationId = implId.getImplementationId();
+			implementationName = implId.getName();
 		}
-		form.setSubmitterName(submitter.getPersonName().getFullName());
-		form.setSubmitterSystemId(submitter.getSystemId());
-		form.setAssigningAuthority(assigningAuthority);
+		form.setSubmitter(new UuidAndValue(submitter.getUuid(), submitter.getSystemId()));
+		form.setImplementationId(implementationId);
+		form.setImplementationName(implementationName);
+		
 		if (CollectionUtils.isNotEmpty(triggersToExclude)) {
 			for (String t : triggersToExclude) {
-				form.getTriggerAndDateCreatedMap().remove(t);
+				DatedUuidAndValue toRemove = form.getTriggerByName(t);
+				if (toRemove != null) {
+					form.getTriggers().remove(toRemove);
+				}
 			}
 		}
 		

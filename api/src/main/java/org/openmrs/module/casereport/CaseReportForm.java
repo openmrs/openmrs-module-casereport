@@ -13,11 +13,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
@@ -30,7 +31,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 
 /**
- * An instance of this class encapsulates the report form data
+ * An instance of this class encapsulates the serialized report form data
  */
 public class CaseReportForm {
 	
@@ -50,35 +51,35 @@ public class CaseReportForm {
 	
 	private Boolean dead;
 	
-	private String patientIdentifier;
+	private UuidAndValue patientIdentifier;
 	
-	private String identifierType;
+	private UuidAndValue identifierType;
 	
-	private String causeOfDeath;
+	private UuidAndValue causeOfDeath;
 	
-	private Map<String, String> triggerAndDateCreatedMap;
+	private List<DatedUuidAndValue> triggers;
 	
-	private List<String> previousSubmittedCaseReports;
+	private Map<String, List<DatedUuidAndValue>> previousReportUuidTriggersMap;
 	
-	private Map<String, Double> mostRecentDateAndViralLoadMap;
+	private List<DatedUuidAndValue> mostRecentViralLoads;
 	
-	private Map<String, Double> mostRecentDateAndCd4CountMap;
+	private List<DatedUuidAndValue> mostRecentCd4Counts;
 	
-	private Map<String, String> mostRecentDateAndHivTestMap;
+	private List<DatedUuidAndValue> mostRecentHivTests;
 	
-	private String mostRecentHivWhoStage;
+	private UuidAndValue mostRecentHivWhoStage;
 	
-	private List<String> currentHivMedications;
+	private List<UuidAndValue> currentHivMedications;
 	
-	private String mostRecentArvStopReason;
+	private UuidAndValue mostRecentArvStopReason;
 	
-	private String lastVisitDate;
+	private UuidAndValue lastVisitDate;
 	
-	private String submitterName;
+	private UuidAndValue submitter;
 	
-	private String submitterSystemId;
+	private String implementationId;
 	
-	private String assigningAuthority;
+	private String implementationName;
 	
 	public CaseReportForm() {
 		
@@ -99,7 +100,8 @@ public class CaseReportForm {
 		setDead(patient.getDead());
 		if (patient.getDead()) {
 			if (patient.getCauseOfDeath() != null) {
-				setCauseOfDeath(patient.getCauseOfDeath().getName().getName());
+				setCauseOfDeath(new UuidAndValue(patient.getCauseOfDeath().getUuid(), patient.getCauseOfDeath().getName()
+				        .getName()));
 			}
 			if (patient.getDeathDate() != null) {
 				setDeathdate(DATE_FORMATTER.format(patient.getDeathDate()));
@@ -107,79 +109,72 @@ public class CaseReportForm {
 		}
 		PatientIdentifier id = patient.getPatientIdentifier();
 		if (id != null) {
-			setPatientIdentifier(id.getIdentifier());
-			setIdentifierType(id.getIdentifierType().getName());
+			setPatientIdentifier(new UuidAndValue(id.getUuid(), id.getIdentifier()));
+			setIdentifierType(new UuidAndValue(id.getIdentifierType().getUuid(), id.getIdentifierType().getName()));
 		}
 		
-		Map<String, String> triggers = new LinkedHashMap<String, String>(caseReport.getReportTriggers().size());
 		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
-			triggers.put(tr.getName(), DATE_FORMATTER.format(tr.getDateCreated()));
+			getTriggers().add(new DatedUuidAndValue(tr.getUuid(), tr.getName(), DATE_FORMATTER.format(tr.getDateCreated())));
 		}
-		setTriggerAndDateCreatedMap(triggers);
 		
 		List<Obs> mostRecentViralLoads = CaseReportUtil.getMostRecentViralLoads(patient);
-		Map<String, Double> dateViralLoadMap = new LinkedHashMap<String, Double>(3);
 		for (Obs o : mostRecentViralLoads) {
-			dateViralLoadMap.put(DATE_FORMATTER.format(o.getObsDatetime()), o.getValueNumeric());
+			getMostRecentViralLoads().add(
+			    new DatedUuidAndValue(o.getUuid(), o.getValueNumeric(), DATE_FORMATTER.format(o.getObsDatetime())));
 		}
-		setMostRecentDateAndViralLoadMap(dateViralLoadMap);
 		
 		List<Obs> mostRecentCd4Counts = CaseReportUtil.getMostRecentCD4counts(patient);
-		Map<String, Double> dateCD4CountMap = new LinkedHashMap<String, Double>(3);
 		for (Obs o : mostRecentCd4Counts) {
-			dateCD4CountMap.put(DATE_FORMATTER.format(o.getObsDatetime()), o.getValueNumeric());
+			getMostRecentCd4Counts().add(
+			    new DatedUuidAndValue(o.getUuid(), o.getValueNumeric(), DATE_FORMATTER.format(o.getObsDatetime())));
 		}
-		setMostRecentDateAndCd4CountMap(dateCD4CountMap);
 		
 		List<Obs> mostRecentHivTests = CaseReportUtil.getMostRecentHIVTests(patient);
-		Map<String, String> dateHivTestMap = new LinkedHashMap<String, String>(3);
 		for (Obs o : mostRecentHivTests) {
-			dateHivTestMap.put(DATE_FORMATTER.format(o.getObsDatetime()), o.getValueAsString(Context.getLocale()));
+			getMostRecentHivTests().add(
+			    new DatedUuidAndValue(o.getUuid(), o.getValueAsString(Context.getLocale()), DATE_FORMATTER.format(o
+			            .getObsDatetime())));
 		}
-		setMostRecentDateAndHivTestMap(dateHivTestMap);
 		
 		List<Drug> arvMeds = CaseReportUtil.getCurrentARVMedications(patient, null);
-		List<String> currentArvs = new ArrayList<String>(3);
 		for (Drug d : arvMeds) {
-			currentArvs.add(d.getName());
+			getCurrentHivMedications().add(new UuidAndValue(d.getUuid(), d.getName()));
 		}
-		setCurrentHivMedications(currentArvs);
 		
 		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
 		if (mostRecentWHOStageObs != null) {
-			setMostRecentHivWhoStage(mostRecentWHOStageObs.getValueAsString(Context.getLocale()));
+			setMostRecentHivWhoStage(new UuidAndValue(mostRecentWHOStageObs.getUuid(),
+			        mostRecentWHOStageObs.getValueAsString(Context.getLocale())));
 		}
 		
 		Obs mostRecentArvStopReasonObs = CaseReportUtil.getMostRecentReasonARVsStopped(patient);
 		if (mostRecentArvStopReasonObs != null) {
-			setMostRecentArvStopReason(mostRecentArvStopReasonObs.getValueAsString(Context.getLocale()));
+			setMostRecentArvStopReason(new UuidAndValue(mostRecentArvStopReasonObs.getUuid(),
+			        mostRecentArvStopReasonObs.getValueAsString(Context.getLocale())));
 		}
 		
 		Visit visit = CaseReportUtil.getLastVisit(patient);
 		if (visit != null) {
-			setLastVisitDate(DATE_FORMATTER.format(visit.getStartDatetime()));
+			setLastVisitDate(new UuidAndValue(visit.getUuid(), DATE_FORMATTER.format(visit.getStartDatetime())));
 		}
 		
 		List<CaseReport> submittedReports = Context.getService(CaseReportService.class).getSubmittedCaseReports(patient);
 		if (CollectionUtils.isNotEmpty(submittedReports)) {
-			List<String> prevSubmittedReports = new ArrayList<String>(submittedReports.size());
 			ObjectMapper mapper = new ObjectMapper();
 			for (CaseReport cr : submittedReports) {
 				//We need to get the triggers that were actually submitted in the final report
 				//instead of the report triggers that were directly set on the queue item
-				try {
-					CaseReportForm prevForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-					for (String t : prevForm.getTriggerAndDateCreatedMap().keySet()) {
-						if (!prevSubmittedReports.contains(t)) {
-							prevSubmittedReports.add(t);
-						}
+				CaseReportForm prevForm;
+				if (StringUtils.isNotBlank(cr.getReportForm())) {
+					try {
+						prevForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
 					}
-				}
-				catch (IOException e) {
-					throw new APIException("Failed to parse report form data for previous case report:" + cr, e);
+					catch (IOException e) {
+						throw new APIException("Failed to parse report form data for previous case report:" + cr, e);
+					}
+					getPreviousReportUuidTriggersMap().put(cr.getUuid(), prevForm.getTriggers());
 				}
 			}
-			setPreviousSubmittedCaseReports(prevSubmittedReports);
 		}
 	}
 	
@@ -199,11 +194,11 @@ public class CaseReportForm {
 		this.deathdate = deathdate;
 	}
 	
-	public String getCauseOfDeath() {
+	public UuidAndValue getCauseOfDeath() {
 		return causeOfDeath;
 	}
 	
-	public void setCauseOfDeath(String causeOfDeath) {
+	public void setCauseOfDeath(UuidAndValue causeOfDeath) {
 		this.causeOfDeath = causeOfDeath;
 	}
 	
@@ -215,11 +210,11 @@ public class CaseReportForm {
 		this.dead = dead;
 	}
 	
-	public String getPatientIdentifier() {
+	public UuidAndValue getPatientIdentifier() {
 		return patientIdentifier;
 	}
 	
-	public void setPatientIdentifier(String patientIdentifier) {
+	public void setPatientIdentifier(UuidAndValue patientIdentifier) {
 		this.patientIdentifier = patientIdentifier;
 	}
 	
@@ -255,107 +250,134 @@ public class CaseReportForm {
 		this.familyName = familyName;
 	}
 	
-	public Map<String, String> getTriggerAndDateCreatedMap() {
-		return triggerAndDateCreatedMap;
+	public List<DatedUuidAndValue> getTriggers() {
+		if (triggers == null) {
+			triggers = new ArrayList<DatedUuidAndValue>();
+		}
+		return triggers;
 	}
 	
-	public void setTriggerAndDateCreatedMap(Map<String, String> triggerAndDateCreatedMap) {
-		this.triggerAndDateCreatedMap = triggerAndDateCreatedMap;
+	public void setTriggers(List<DatedUuidAndValue> triggers) {
+		this.triggers = triggers;
 	}
 	
-	public String getIdentifierType() {
+	public UuidAndValue getIdentifierType() {
 		return identifierType;
 	}
 	
-	public void setIdentifierType(String identifierType) {
+	public void setIdentifierType(UuidAndValue identifierType) {
 		this.identifierType = identifierType;
 	}
 	
-	public Map<String, String> getMostRecentDateAndHivTestMap() {
-		return mostRecentDateAndHivTestMap;
+	public List<DatedUuidAndValue> getMostRecentHivTests() {
+		if (mostRecentHivTests == null) {
+			mostRecentHivTests = new ArrayList<DatedUuidAndValue>(3);
+		}
+		return mostRecentHivTests;
 	}
 	
-	public void setMostRecentDateAndHivTestMap(Map<String, String> mostRecentDateAndHivTestMap) {
-		this.mostRecentDateAndHivTestMap = mostRecentDateAndHivTestMap;
+	public void setMostRecentHivTests(List<DatedUuidAndValue> mostRecentHivTests) {
+		this.mostRecentHivTests = mostRecentHivTests;
 	}
 	
-	public Map<String, Double> getMostRecentDateAndCd4CountMap() {
-		return mostRecentDateAndCd4CountMap;
+	public List<DatedUuidAndValue> getMostRecentCd4Counts() {
+		if (mostRecentCd4Counts == null) {
+			mostRecentCd4Counts = new ArrayList<DatedUuidAndValue>(3);
+		}
+		return mostRecentCd4Counts;
 	}
 	
-	public void setMostRecentDateAndCd4CountMap(Map<String, Double> mostRecentDateAndCd4CountMap) {
-		this.mostRecentDateAndCd4CountMap = mostRecentDateAndCd4CountMap;
+	public void setMostRecentCd4Counts(List<DatedUuidAndValue> mostRecentCd4Counts) {
+		this.mostRecentCd4Counts = mostRecentCd4Counts;
 	}
 	
-	public Map<String, Double> getMostRecentDateAndViralLoadMap() {
-		return mostRecentDateAndViralLoadMap;
+	public List<DatedUuidAndValue> getMostRecentViralLoads() {
+		if (mostRecentViralLoads == null) {
+			mostRecentViralLoads = new ArrayList<DatedUuidAndValue>(3);
+		}
+		return mostRecentViralLoads;
 	}
 	
-	public void setMostRecentDateAndViralLoadMap(Map<String, Double> mostRecentDateAndViralLoadMap) {
-		this.mostRecentDateAndViralLoadMap = mostRecentDateAndViralLoadMap;
+	public void setMostRecentViralLoads(List<DatedUuidAndValue> mostRecentViralLoads) {
+		this.mostRecentViralLoads = mostRecentViralLoads;
 	}
 	
-	public List<String> getCurrentHivMedications() {
+	public List<UuidAndValue> getCurrentHivMedications() {
+		if (currentHivMedications == null) {
+			currentHivMedications = new ArrayList<UuidAndValue>();
+		}
 		return currentHivMedications;
 	}
 	
-	public void setCurrentHivMedications(List<String> currentHivMedications) {
+	public void setCurrentHivMedications(List<UuidAndValue> currentHivMedications) {
 		this.currentHivMedications = currentHivMedications;
 	}
 	
-	public String getMostRecentArvStopReason() {
+	public UuidAndValue getMostRecentArvStopReason() {
 		return mostRecentArvStopReason;
 	}
 	
-	public void setMostRecentArvStopReason(String mostRecentArvStopReason) {
+	public void setMostRecentArvStopReason(UuidAndValue mostRecentArvStopReason) {
 		this.mostRecentArvStopReason = mostRecentArvStopReason;
 	}
 	
-	public String getMostRecentHivWhoStage() {
+	public UuidAndValue getMostRecentHivWhoStage() {
 		return mostRecentHivWhoStage;
 	}
 	
-	public void setMostRecentHivWhoStage(String mostRecentHivWhoStage) {
+	public void setMostRecentHivWhoStage(UuidAndValue mostRecentHivWhoStage) {
 		this.mostRecentHivWhoStage = mostRecentHivWhoStage;
 	}
 	
-	public List<String> getPreviousSubmittedCaseReports() {
-		return previousSubmittedCaseReports;
+	public Map<String, List<DatedUuidAndValue>> getPreviousReportUuidTriggersMap() {
+		if (previousReportUuidTriggersMap == null) {
+			previousReportUuidTriggersMap = new HashMap<String, List<DatedUuidAndValue>>();
+		}
+		return previousReportUuidTriggersMap;
 	}
 	
-	public void setPreviousSubmittedCaseReports(List<String> previousSubmittedCaseReports) {
-		this.previousSubmittedCaseReports = previousSubmittedCaseReports;
+	public void setPreviousReportUuidTriggersMap(Map<String, List<DatedUuidAndValue>> previousReportUuidTriggersMap) {
+		this.previousReportUuidTriggersMap = previousReportUuidTriggersMap;
 	}
 	
-	public String getLastVisitDate() {
+	public UuidAndValue getLastVisitDate() {
 		return lastVisitDate;
 	}
 	
-	public void setLastVisitDate(String lastVisitDate) {
+	public void setLastVisitDate(UuidAndValue lastVisitDate) {
 		this.lastVisitDate = lastVisitDate;
 	}
 	
-	public String getAssigningAuthority() {
-		return assigningAuthority;
+	public UuidAndValue getSubmitter() {
+		return submitter;
 	}
 	
-	public void setAssigningAuthority(String assigningAuthority) {
-		this.assigningAuthority = assigningAuthority;
+	public void setSubmitter(UuidAndValue submitter) {
+		this.submitter = submitter;
 	}
 	
-	public String getSubmitterName() {
-		return submitterName;
+	public String getImplementationId() {
+		return implementationId;
 	}
 	
-	public void setSubmitterName(String submitterName) {
-		this.submitterName = submitterName;
+	public void setImplementationId(String implementationId) {
+		this.implementationId = implementationId;
 	}
 	
-	public String getSubmitterSystemId() {
-		return submitterSystemId;
+	public String getImplementationName() {
+		return implementationName;
 	}
 	
-	public void setSubmitterSystemId(String submitterSystemId) {
-		this.submitterSystemId = submitterSystemId;
+	public void setImplementationName(String implementationName) {
+		this.implementationName = implementationName;
+	}
+	
+	public DatedUuidAndValue getTriggerByName(String trigger) {
+		for (DatedUuidAndValue uuidAndValue : getTriggers()) {
+			if (trigger.equalsIgnoreCase(uuidAndValue.getValue().toString())) {
+				return uuidAndValue;
+			}
+		}
+		return null;
 	}
 }
