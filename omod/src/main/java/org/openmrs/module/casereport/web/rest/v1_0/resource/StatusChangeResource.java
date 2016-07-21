@@ -7,13 +7,12 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web.v1_0.resource;
+package org.openmrs.module.casereport.web.rest.v1_0.resource;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
-import org.openmrs.module.casereport.rest.web.StatusChange;
+import org.openmrs.module.casereport.web.rest.StatusChange;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
@@ -122,13 +121,5 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	@Override
 	public void purge(StatusChange delegate, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * @see DelegatingSubResource#getResourceVersion()
-	 */
-	@Override
-	public String getResourceVersion() {
-		return CaseReportWebConstants.REST_RESOURCE_VERSION;
 	}
 }

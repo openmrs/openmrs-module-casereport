@@ -7,10 +7,12 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport;
+package org.openmrs.module.casereport.web;
 
 import java.io.File;
 
+import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.PostSubmitListener;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +21,10 @@ import org.springframework.stereotype.Component;
  * report form and writes the to a file in the casereport directory in the application data
  * directory
  */
-@Component(DefaultPostSubmitListener.BEAN_ID)
-public class DefaultPostSubmitListener implements PostSubmitListener {
+@Component(CdaDocumentGeneratorListener.BEAN_ID)
+public class CdaDocumentGeneratorListener implements PostSubmitListener {
 	
-	public final static String BEAN_ID = "defaultPostSubmissionListener";
+	public final static String BEAN_ID = "cdaDocumentGeneratorListener";
 	
 	private File outputDirectory;
 	

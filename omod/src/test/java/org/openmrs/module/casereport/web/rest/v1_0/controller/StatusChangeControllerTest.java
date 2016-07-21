@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web.v1_0.controller;
+package org.openmrs.module.casereport.web.rest.v1_0.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,8 +26,8 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.rest.web.StatusChange;
-import org.openmrs.module.casereport.rest.web.v1_0.resource.CaseReportResourceTest;
+import org.openmrs.module.casereport.web.rest.StatusChange;
+import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest {

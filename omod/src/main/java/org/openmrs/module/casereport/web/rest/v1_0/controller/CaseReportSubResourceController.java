@@ -7,14 +7,15 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web;
+package org.openmrs.module.casereport.web.rest.v1_0.controller;
 
+import org.openmrs.module.casereport.web.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainSubResourceController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/rest/" + CaseReportWebConstants.REST_NAMESPACE)
+@RequestMapping("/rest/" + CaseReportRestConstants.REST_NAMESPACE)
 public class CaseReportSubResourceController extends MainSubResourceController {
 	
 	/**
@@ -22,6 +23,6 @@ public class CaseReportSubResourceController extends MainSubResourceController {
 	 */
 	@Override
 	public String getNamespace() {
-		return CaseReportWebConstants.REST_NAMESPACE;
+		return CaseReportRestConstants.REST_NAMESPACE;
 	}
 }

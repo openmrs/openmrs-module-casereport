@@ -7,14 +7,12 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web;
+package org.openmrs.module.casereport.web.rest;
 
 import org.openmrs.module.webservices.rest.web.RestConstants;
 
-public class CaseReportWebConstants {
+public class CaseReportRestConstants {
 	
 	public static final String REST_NAMESPACE = RestConstants.VERSION_1 + "/casereport";
-	
-	public static final String REST_RESOURCE_VERSION = "1.9";
 	
 }

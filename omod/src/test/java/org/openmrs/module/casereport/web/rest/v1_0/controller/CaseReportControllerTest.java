@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web.v1_0.controller;
+package org.openmrs.module.casereport.web.rest.v1_0.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,7 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.rest.web.v1_0.resource.CaseReportResourceTest;
+import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
 import org.springframework.beans.factory.annotation.Autowired;

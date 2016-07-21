@@ -7,9 +7,9 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web.v1_0.controller;
+package org.openmrs.module.casereport.web.rest.v1_0.controller;
 
-import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
+import org.openmrs.module.casereport.web.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 
 public abstract class BaseCaseReportRestControllerTest extends MainResourceControllerTest {
@@ -19,6 +19,6 @@ public abstract class BaseCaseReportRestControllerTest extends MainResourceContr
 	 */
 	@Override
 	public String getNamespace() {
-		return CaseReportWebConstants.REST_NAMESPACE;
+		return CaseReportRestConstants.REST_NAMESPACE;
 	}
 }

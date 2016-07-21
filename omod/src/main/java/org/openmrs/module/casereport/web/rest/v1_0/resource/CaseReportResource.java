@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.rest.web.v1_0.resource;
+package org.openmrs.module.casereport.web.rest.v1_0.resource;
 
 import java.io.IOException;
 
@@ -17,7 +17,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.rest.web.CaseReportWebConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -138,13 +137,4 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	public void purge(CaseReport caseReport, RequestContext requestContext) throws ResponseException {
 		throw new UnsupportedOperationException();
 	}
-	
-	/**
-	 * @see DataDelegatingCrudResource#getResourceVersion()
-	 */
-	@Override
-	public String getResourceVersion() {
-		return CaseReportWebConstants.REST_RESOURCE_VERSION;
-	}
-	
 }
