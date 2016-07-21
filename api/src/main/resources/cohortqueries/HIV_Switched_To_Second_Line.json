@@ -10,8 +10,8 @@
   * Name:HIV Switched To Second Line
   * Query Type: SQL Cohort Query
   * Description: HIV patients who have been switched to a second line regimen
-  * Currently assuming database is only HIV patients
-  * HIV Case Reporting Module already excludes patients previously added to the list
+  * Assumption: Database has only HIV patients
+  * HIV Case Reporting Module has already excluded patients previously added to the list.
   */
   SELECT person_id
   FROM obs

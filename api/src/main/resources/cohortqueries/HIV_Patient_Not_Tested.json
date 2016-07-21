@@ -12,8 +12,8 @@
   * Name:HIV Patient Not Tested
   * Query Type: SQL Cohort Query
   * Description: HIV patients for whom a viral load has not been done for at least 12 months
-  * Currently assuming database is only HIV patients
-  * HIV Case Reporting Module already excludes patients previously added to the list
+  * Assumption: Database has only HIV patients
+  * HIV Case Reporting Module has already excluded patients previously added to the list.
   */
   SELECT o2.person_id
   FROM
