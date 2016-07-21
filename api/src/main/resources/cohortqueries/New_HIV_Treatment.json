@@ -9,21 +9,29 @@
     "CIEL_1185" /* TREATMENT */
   ],
   "sql": "
-SELECT person_id
-FROM obs
-WHERE
-  obs_datetime > :lastExecutionTime
+  /*
+  * Name:New HIV Treatment
+  * Query Type: SQL Cohort Query
+  * Description: HIV patients for starting treatment
+  * Currently assuming database is only HIV patients
+  * HIV Case Reporting Module already excludes patients previously added to the list
+  */
+
+  SELECT person_id
+  FROM obs
+  WHERE
+  date(date_created) >= date(:lastExecutionTime)
   AND
   (
-    (
-      concept_id = :CIEL_1225
-      AND value_coded = :CIEL_1256
-    )
-    OR
-    (
-      concept_id = :CIEL_1251
-      AND value_coded = :CIEL_1185
-    )
+  (
+  concept_id = :CIEL_1255
+  AND value_coded = :CIEL_1256
+  )
+  OR
+  (
+  concept_id = :CIEL_1251
+  AND value_coded = :CIEL_1185
+  )
   )
   AND not voided;
 "

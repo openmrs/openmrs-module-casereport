@@ -4,12 +4,21 @@
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [],
   "sql": "
-SELECT person_id
-FROM person
-WHERE
+
+  /**
+  * Name:HIV Patient Died
+  * Query Type: SQL Cohort Query
+  * Description: HIV patients who have died
+  * Currently assuming database is only HIV patients
+  * HIV Case Reporting Module already excludes patients previously added to the list
+  **/
+
+  SELECT person_id
+  FROM person
+  WHERE
   (
-    date_created > :lastExecutionTime
-    OR date_changed > :lastExecutionTime
+  date_created >= date(:lastExecutionTime)
+  OR date_changed >= date(:lastExecutionTime)
   )
   AND not voided;
 "

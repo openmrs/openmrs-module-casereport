@@ -24,3 +24,5 @@ FROM
    GROUP BY e1.patient_id) as e2
 WHERE 
 e2.latest_encounter_date <= DATE_SUB(:lastExecutionTime, INTERVAL 18 MONTH);
+  "
+}

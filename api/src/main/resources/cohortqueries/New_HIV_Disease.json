@@ -10,20 +10,28 @@
     "CIEL_1223"  /* WHO STAGE 4 PEDS */
   ],
   "sql": "
-SELECT person_id
-FROM obs
-WHERE
-  UNIX_TIMESTAMP(obs_datetime) > :lastExecutionTime
+  /**
+  * Name:New HIV Disease
+  * Query Type: SQL Cohort Query
+  * Description: HIV patients for whom WHO Classification advanced to 3 or 4
+  * Currently assuming database is only HIV patients
+  * HIV Case Reporting Module already excludes patients previously added to the list
+  **/
+  SELECT person_id
+  FROM obs
+  WHERE
+  date(date_created) >= date(:lastExecutionTime)
   AND
   (
-    concept_id = :CIEL_5356
-    AND value_coded in
-      (
-        :CIEL_1206,
-        :CIEL_1207,
-        :CIEL_1222,
-        :CIEL_1223
-      )
+  concept_id = :CIEL_5356
+  AND value_coded in
+  (
+  :CIEL_1206,
+  :CIEL_1207,
+  :CIEL_1222,
+  :CIEL_1223
+  )
+  )
   AND not voided;
 "
 }
