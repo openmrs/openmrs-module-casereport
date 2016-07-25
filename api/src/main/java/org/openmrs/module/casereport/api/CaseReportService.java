@@ -122,6 +122,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should fail if both the implementation id and submitter are not set
 	 * @should set the specified submitter and exclude the specified triggers
 	 * @should fail if the submitter is specified and the the implementation id is not
+	 * @should call the registered post submit listeners
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter,

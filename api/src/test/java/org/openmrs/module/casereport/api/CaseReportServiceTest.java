@@ -40,6 +40,7 @@ import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.CaseReportUtil;
+import org.openmrs.module.casereport.DemoListener;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -249,6 +250,33 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(Context.getAuthenticatedUser().getSystemId(), form.getSubmitter().getValue());
 		assertEquals(implId, form.getImplementationId());
 		assertEquals(implName, form.getImplementationName());
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport,List,User,String,String)
+	 * @verifies call the registered post submit listeners
+	 */
+	@Test
+	public void submitCaseReport_shouldCallTheRegisteredPostSubmitListeners() throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		final String implId = "Test_Impl";
+		final String implName = "Some name";
+		//set the implementation id for test purposes
+		AdministrationService adminService = Context.getAdministrationService();
+		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">\n"
+		        + "   <passphrase id=\"2\"><![CDATA[Some passphrase]]></passphrase>\n"
+		        + "   <description id=\"3\"><![CDATA[Some descr]]></description>\n" + "   <name id=\"4\"><![CDATA["
+		        + implName + "]]></name>\n" + "</implementationId>";
+		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
+		adminService.saveGlobalProperty(gp);
+		
+		CaseReport cr = service.getCaseReport(1);
+		DemoListener listener = Context.getRegisteredComponent("demoListener", DemoListener.class);
+		//Reset
+		listener.setReportUuid(null);
+		assertNull(listener.getReportUuid());
+		service.submitCaseReport(cr, null, null, null, null);
+		assertTrue(StringUtils.isNotBlank(listener.getReportUuid()));
 	}
 	
 	/**

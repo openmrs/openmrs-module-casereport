@@ -41,6 +41,7 @@ import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.DatedUuidAndValue;
+import org.openmrs.module.casereport.PostSubmitListener;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
@@ -237,7 +238,20 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Failed to serialize case report form data", e);
 		}
 		
-		//TODO Implement more submission logic here, first set reportForm and date
+		//uuid and report date are not stored as part of the report data since we already have
+		//them on the case report object, so we need to set them here for usage in the listeners
+		//in case this form was a draft loaded from the DB
+		form.setReportUuid(caseReport.getUuid());
+		form.setReportDate(caseReport.getDateCreated());
+		List<PostSubmitListener> listeners = Context.getRegisteredComponents(PostSubmitListener.class);
+		for (PostSubmitListener listener : listeners) {
+			try {
+				listener.afterSubmit(form);
+			}
+			catch (Throwable t) {
+				log.warn("An error occurred while calling the post submit listener:" + listener.getClass(), t);
+			}
+		}
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);
 		return dao.saveCaseReport(caseReport);

@@ -11,6 +11,8 @@ package org.openmrs.module.casereport.web;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+import org.openmrs.api.APIException;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.PostSubmitListener;
 import org.openmrs.util.OpenmrsUtil;
@@ -37,9 +39,18 @@ public class FhirDocumentGeneratorListener implements PostSubmitListener {
 	
 	/**
 	 * @see PostSubmitListener#afterSubmit(CaseReportForm)
+	 * @should generate a fhir message message and write it to the output directory
 	 */
 	@Override
 	public void afterSubmit(CaseReportForm caseReportForm) {
+		try {
+			String fhirTemplate = FhirUtil.createCdaDocument(caseReportForm);
+			File file = new File(getOutputDirectory(), caseReportForm.getReportUuid() + ".txt");
+			FileUtils.writeStringToFile(file, fhirTemplate, "UTF-8");
+		}
+		catch (Exception e) {
+			throw new APIException("failed to generate FHIR message for the submitted report", e);
+		}
 	}
 	
 }
