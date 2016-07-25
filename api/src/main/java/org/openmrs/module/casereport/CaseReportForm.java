@@ -9,16 +9,18 @@
  */
 package org.openmrs.module.casereport;
 
+import static org.openmrs.module.casereport.CaseReportConstants.DATE_FORMATTER;
+
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
@@ -35,13 +37,17 @@ import org.openmrs.module.casereport.api.CaseReportService;
  */
 public class CaseReportForm {
 	
-	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	private String reportUuid;
+	
+	private Date reportDate;
 	
 	private String givenName;
 	
 	private String middleName;
 	
 	private String familyName;
+	
+	private String fullName;
 	
 	private String gender;
 	
@@ -67,7 +73,7 @@ public class CaseReportForm {
 	
 	private List<DatedUuidAndValue> mostRecentHivTests;
 	
-	private UuidAndValue mostRecentHivWhoStage;
+	private UuidAndValue currentHivWhoStage;
 	
 	private List<UuidAndValue> currentHivMedications;
 	
@@ -82,10 +88,11 @@ public class CaseReportForm {
 	private String implementationName;
 	
 	public CaseReportForm() {
-		
 	}
 	
 	public CaseReportForm(CaseReport caseReport) {
+		setReportUuid(caseReport.getUuid());
+		setReportDate(caseReport.getDateCreated());
 		Patient patient = caseReport.getPatient();
 		setGender(patient.getGender());
 		if (patient.getBirthdate() != null) {
@@ -96,6 +103,7 @@ public class CaseReportForm {
 			setGivenName(name.getGivenName());
 			setMiddleName(name.getMiddleName());
 			setFamilyName(name.getFamilyName());
+			setFullName(name.getFullName());
 		}
 		setDead(patient.getDead());
 		if (patient.getDead()) {
@@ -143,7 +151,7 @@ public class CaseReportForm {
 		
 		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
 		if (mostRecentWHOStageObs != null) {
-			setMostRecentHivWhoStage(new UuidAndValue(mostRecentWHOStageObs.getUuid(),
+			setCurrentHivWhoStage(new UuidAndValue(mostRecentWHOStageObs.getUuid(),
 			        mostRecentWHOStageObs.getValueAsString(Context.getLocale())));
 		}
 		
@@ -176,6 +184,66 @@ public class CaseReportForm {
 				}
 			}
 		}
+	}
+	
+	@JsonIgnore
+	public Date getReportDate() {
+		return reportDate;
+	}
+	
+	@JsonIgnore
+	public void setReportDate(Date reportDate) {
+		this.reportDate = reportDate;
+	}
+	
+	@JsonIgnore
+	public String getReportUuid() {
+		return reportUuid;
+	}
+	
+	@JsonIgnore
+	public void setReportUuid(String reportUuid) {
+		this.reportUuid = reportUuid;
+	}
+	
+	public String getFamilyName() {
+		return familyName;
+	}
+	
+	public void setFamilyName(String familyName) {
+		this.familyName = familyName;
+	}
+	
+	public String getGivenName() {
+		return givenName;
+	}
+	
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
+	}
+	
+	public String getMiddleName() {
+		return middleName;
+	}
+	
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+	
+	public String getFullName() {
+		return fullName;
+	}
+	
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+	
+	public String getGender() {
+		return gender;
+	}
+	
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 	
 	public String getBirthdate() {
@@ -216,38 +284,6 @@ public class CaseReportForm {
 	
 	public void setPatientIdentifier(UuidAndValue patientIdentifier) {
 		this.patientIdentifier = patientIdentifier;
-	}
-	
-	public String getGender() {
-		return gender;
-	}
-	
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-	
-	public String getGivenName() {
-		return givenName;
-	}
-	
-	public void setGivenName(String givenName) {
-		this.givenName = givenName;
-	}
-	
-	public String getMiddleName() {
-		return middleName;
-	}
-	
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
-	
-	public String getFamilyName() {
-		return familyName;
-	}
-	
-	public void setFamilyName(String familyName) {
-		this.familyName = familyName;
 	}
 	
 	public List<DatedUuidAndValue> getTriggers() {
@@ -321,12 +357,12 @@ public class CaseReportForm {
 		this.mostRecentArvStopReason = mostRecentArvStopReason;
 	}
 	
-	public UuidAndValue getMostRecentHivWhoStage() {
-		return mostRecentHivWhoStage;
+	public UuidAndValue getCurrentHivWhoStage() {
+		return currentHivWhoStage;
 	}
 	
-	public void setMostRecentHivWhoStage(UuidAndValue mostRecentHivWhoStage) {
-		this.mostRecentHivWhoStage = mostRecentHivWhoStage;
+	public void setCurrentHivWhoStage(UuidAndValue currentHivWhoStage) {
+		this.currentHivWhoStage = currentHivWhoStage;
 	}
 	
 	public Map<String, List<DatedUuidAndValue>> getPreviousReportUuidTriggersMap() {

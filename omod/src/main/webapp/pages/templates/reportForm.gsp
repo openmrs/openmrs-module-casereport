@@ -18,12 +18,12 @@
 <h2 id="casereport-reportTitle" />
 
 <form class="simple-form-ui" name="caseReportForm" novalidate ng-submit="submitCaseReport()">
-    {{ updateFormTitle(caseReport.patient.person.display) }}
+    {{ updateFormTitle(caseReport.reportForm.patientName) }}
     {{ setTriggers(caseReport.reportForm.triggerAndDateCreatedMap) }}
     <table class="casereport-form-table" cellpadding="0" cellspacing="0">
         <tr>
             <th valign="top">${ui.message("general.name")}</th>
-            <td valign="top">{{ caseReport.patient.person.display }}</td>
+            <td valign="top">{{ caseReport.reportForm.patientName }}</td>
         </tr>
         <tr>
             <th valign="top">${ui.message("Patient.identifier")}</th>

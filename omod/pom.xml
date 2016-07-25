@@ -99,8 +99,22 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>webservices.rest-omod-1.8</artifactId>
+            <scope>provided</scope>
             <version>${webservices.restVersion}</version>
-            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>webservices.rest-omod-1.11</artifactId>
+            <scope>provided</scope>
+            <version>${webservices.restVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>reportingrest-omod</artifactId>
+            <scope>provided</scope>
+            <version>${reportingRestVersion}</version>
         </dependency>
 
         <dependency>

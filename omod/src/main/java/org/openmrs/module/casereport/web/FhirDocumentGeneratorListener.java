@@ -19,10 +19,10 @@ import org.springframework.stereotype.Component;
 /**
  * And instance of this class generates a CDA document containing details in the specified case
  * report form and writes the to a file in the casereport directory in the application data
- * directory
+ * directory.
  */
-@Component(CdaDocumentGeneratorListener.BEAN_ID)
-public class CdaDocumentGeneratorListener implements PostSubmitListener {
+@Component(FhirDocumentGeneratorListener.BEAN_ID)
+public class FhirDocumentGeneratorListener implements PostSubmitListener {
 	
 	public final static String BEAN_ID = "cdaDocumentGeneratorListener";
 	
@@ -40,6 +40,6 @@ public class CdaDocumentGeneratorListener implements PostSubmitListener {
 	 */
 	@Override
 	public void afterSubmit(CaseReportForm caseReportForm) {
-		
 	}
+	
 }

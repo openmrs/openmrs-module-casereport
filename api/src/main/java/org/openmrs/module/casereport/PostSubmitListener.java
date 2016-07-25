@@ -17,9 +17,9 @@ package org.openmrs.module.casereport;
 public interface PostSubmitListener {
 	
 	/**
-	 * This method is called after a case report has been submitted
-	 * 
-	 * @param caseReportForm the case report details
+	 * This method is called after a case report has been submitted.
+	 *
+	 * @param caseReportForm the case report form that contains the final data that was submitted
 	 */
 	void afterSubmit(CaseReportForm caseReportForm);
 }

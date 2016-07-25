@@ -9,7 +9,12 @@
  */
 package org.openmrs.module.casereport;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class CaseReportConstants {
+	
+	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	public static final String TRIGGER_NAME_TASK_PROPERTY = "Trigger Name";
 	
@@ -22,5 +27,21 @@ public class CaseReportConstants {
 	public static final String SOURCE_CIEL_HL7_CODE = "CIEL";
 	
 	public static final String CONCEPT_MAPPING_SEPARATOR = "_";
+	
+	public static final String TERM_CODE_VIRAL_LOAD = "856";
+	
+	public static final String TERM_CODE_CD4_COUNT = "5497";
+	
+	public static final String TERM_CODE_HIV_TEST = "1040";
+	
+	public static final String TERM_CODE_WHO_STAGE = "5356";
+	
+	public static final String TERM_CODE_ARV_MED_SET = "1085";
+	
+	public static final String TERM_CODE_CURRENT_ARVS = "1088";
+	
+	public static final String TERM_CODE_REASON_FOR_STOPPING_ARVS = "1252";
+	
+	public static final String TERM_CODE_DATE_OF_LAST_VISIT = "160753";
 	
 }

@@ -237,7 +237,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Failed to serialize case report form data", e);
 		}
 		
-		//TODO Implement more submission logic here
+		//TODO Implement more submission logic here, first set reportForm and date
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);
 		return dao.saveCaseReport(caseReport);

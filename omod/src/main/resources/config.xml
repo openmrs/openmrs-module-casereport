@@ -33,6 +33,8 @@
         <require_module version="${uicommonsVersion}">org.openmrs.module.uicommons</require_module>
         <require_module version="${appuiVersion}">org.openmrs.module.appui</require_module>
         <require_module version="${reportingVersion}">org.openmrs.module.reporting</require_module>
+        <require_module version="${reportingRestVersion}">org.openmrs.module.reportingrest</require_module>
+        <require_module version="${webservices.restVersion}">org.openmrs.module.webservices.rest</require_module>
 	</require_modules>
 	<!-- / Required Modules -->
 	
