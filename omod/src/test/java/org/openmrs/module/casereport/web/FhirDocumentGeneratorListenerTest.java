@@ -50,7 +50,8 @@ public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensi
 		CaseReport caseReport = service.getCaseReport(1);
 		FhirDocumentGeneratorListener listener = Context.getRegisteredComponent(FhirDocumentGeneratorListener.BEAN_ID,
 		    FhirDocumentGeneratorListener.class);
-		File expectedFile = new File(listener.getOutputDirectory(), caseReport.getUuid() + ".txt");
+		File expectedFile = new File(listener.getOutputDirectory(), caseReport.getUuid()
+		        + FhirDocumentGeneratorListener.FILE_EXT_TXT);
 		Assert.assertFalse(expectedFile.exists());
 		service.submitCaseReport(caseReport, null, null, null, null);
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
@@ -58,7 +59,8 @@ public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensi
 		form.setReportDate(caseReport.getDateCreated());
 		listener.afterSubmit(form);
 		Assert.assertTrue(expectedFile.exists());
-		Assert.assertFalse(StringUtils.isBlank(FileUtils.readFileToString(expectedFile)));
+		Assert.assertFalse(StringUtils.isBlank(FileUtils.readFileToString(expectedFile,
+		    FhirDocumentGeneratorListener.ENCODING_UTF8)));
 		//TODO Add assertion for the file contents
 	}
 }

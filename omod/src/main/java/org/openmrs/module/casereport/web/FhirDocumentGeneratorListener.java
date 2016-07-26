@@ -19,14 +19,18 @@ import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Component;
 
 /**
- * And instance of this class generates a CDA document containing details in the specified case
+ * And instance of this class generates a FHIR document containing details in the specified case
  * report form and writes the to a file in the casereport directory in the application data
  * directory.
  */
 @Component(FhirDocumentGeneratorListener.BEAN_ID)
 public class FhirDocumentGeneratorListener implements PostSubmitListener {
 	
-	public final static String BEAN_ID = "cdaDocumentGeneratorListener";
+	public final static String BEAN_ID = "fhirDocumentGeneratorListener";
+	
+	public static final String ENCODING_UTF8 = "UTF-8";
+	
+	public static final String FILE_EXT_TXT = ".txt";
 	
 	private File outputDirectory;
 	
@@ -45,11 +49,11 @@ public class FhirDocumentGeneratorListener implements PostSubmitListener {
 	public void afterSubmit(CaseReportForm caseReportForm) {
 		try {
 			String fhirTemplate = FhirUtil.createCdaDocument(caseReportForm);
-			File file = new File(getOutputDirectory(), caseReportForm.getReportUuid() + ".txt");
-			FileUtils.writeStringToFile(file, fhirTemplate, "UTF-8");
+			File file = new File(getOutputDirectory(), caseReportForm.getReportUuid() + FILE_EXT_TXT);
+			FileUtils.writeStringToFile(file, fhirTemplate, ENCODING_UTF8);
 		}
 		catch (Exception e) {
-			throw new APIException("failed to generate FHIR message for the submitted report", e);
+			throw new APIException("Failed to save the fhir message for the submitted report", e);
 		}
 	}
 	

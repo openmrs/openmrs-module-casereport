@@ -79,8 +79,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
     .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "StatusChange", "caseReport",
         function($scope, $state, $filter, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
-            $scope.areTriggersSet = false;
-            $scope.triggers;
             $scope.triggersToExclude = [];
 
             function getKeys(obj){
@@ -88,13 +86,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                     return Object.keys(obj);
                 }
                 return [];
-            }
-
-            $scope.setTriggers = function(triggerDateMap){
-                if(triggerDateMap && !$scope.areTriggersSet) {
-                    $scope.triggers = getKeys(triggerDateMap);
-                    $scope.areTriggersSet = true;
-                }
             }
 
             $scope.updateFormTitle = function(personName){
@@ -116,9 +107,26 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 return getKeys(obj).length;
             }
 
+            $scope.getValues = function(list){
+                var values = [];
+                for(var i in list){
+                    values.push(list[i].value);
+                }
+                return values;
+            }
+
+            $scope.getTriggerNames = function(map){
+                var allTriggers = [];
+                var triggerLists = _.values(map);
+                for(var i in triggerLists){
+                    allTriggers.push($scope.getValues(triggerLists[i]));
+                }
+                return allTriggers;
+            }
+
             $scope.remove = function(index){
-                $scope.triggersToExclude.push($scope.triggers[index]);
-                $scope.triggers.splice(index, 1);
+                $scope.triggersToExclude.push($scope.caseReport.reportForm.triggers[index].value);
+                $scope.caseReport.reportForm.triggers.splice(index, 1);
             }
 
             $scope.submitCaseReport = function() {
