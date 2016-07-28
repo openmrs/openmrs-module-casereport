@@ -15,8 +15,18 @@ $darkGrey: #636363;
 $lighterGrey: #f0f0f0;
 
 #casereport-reports {
-   font-size: 85%;
+  font-size: 85%;
 }
+
+#casereport-submitted tr:hover{
+  cursor: pointer;
+}
+.ngdialog-content {
+  width: 1000px !important;
+  height: 550px !important;
+  overflow: scroll !important;
+}
+
 
 a.casereport-no-underline:hover {
   text-decoration: none;

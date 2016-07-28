@@ -10,7 +10,7 @@
 
 -->
 
-<h2>${ ui.message('casereport.manageCaseReports.label')}</h2>
+<h2>${ ui.message('casereport.caseReportQueue.label')}</h2>
 
 <input ng-model="patientSearchText" placeholder="${ui.message('casereport.searchByPatient')}" />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

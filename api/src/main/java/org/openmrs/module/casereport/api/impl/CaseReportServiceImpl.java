@@ -400,9 +400,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException {
-		if (patient == null) {
-			throw new APIException("patient is required");
-		}
 		List<Status> statusesToExclude = new ArrayList<Status>(Status.values().length);
 		for (Status status : Status.values()) {
 			if (status != Status.SUBMITTED) {

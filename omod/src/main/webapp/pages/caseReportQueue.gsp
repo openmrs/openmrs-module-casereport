@@ -11,7 +11,7 @@
 -->
 
 <%
-    ui.decorateWith("appui", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("casereport.caseReportQueue.label") ])
 
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("uicommons", "angular-resource.min.js")
@@ -32,7 +32,8 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: "/" + OPENMRS_CONTEXT_PATH + "/index.htm" },
-        {label: "${ ui.message("casereport.app.label")}" }
+        { label: "${ ui.message('casereport.manageCaseReports.label')}" , link: '${ui.pageLink("casereport", "manageCaseReports")}'},
+        {label: "${ ui.message("casereport.caseReportQueue.label")}" }
     ];
 
     emr.loadMessages(["casereport.dismissed"]);

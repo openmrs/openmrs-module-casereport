@@ -676,17 +676,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#getSubmittedCaseReports(Patient)
-	 * @verifies fail if patient is null
-	 */
-	@Test
-	public void getSubmittedCaseReports_shouldFailIfPatientIsNull() throws Exception {
-		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("patient is required"));
-		service.getSubmittedCaseReports(null);
-	}
-	
-	/**
-	 * @see CaseReportService#getSubmittedCaseReports(Patient)
 	 * @verifies return all the previously submitted case reports for the specified patient
 	 */
 	@Test
@@ -696,5 +685,21 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, caseReports.size());
 		assertTrue(TestUtil.containsId(caseReports, 5));
 		assertTrue(TestUtil.containsId(caseReports, 8));
+	}
+	
+	/**
+	 * @see CaseReportService#getSubmittedCaseReports(Patient)
+	 * @verifies return all the previously submitted case reports if no patient is specified
+	 */
+	@Test
+	public void getSubmittedCaseReports_shouldReturnAllThePreviouslySubmittedCaseReportsIfNoPatientIsSpecified()
+	    throws Exception {
+		executeDataSet(XML_OTHER_DATASET);
+		List<CaseReport> submittedReports = service.getSubmittedCaseReports(null);
+		assertEquals(4, submittedReports.size());
+		assertTrue(TestUtil.containsId(submittedReports, 5));
+		assertTrue(TestUtil.containsId(submittedReports, 8));
+		assertTrue(TestUtil.containsId(submittedReports, 200));
+		assertTrue(TestUtil.containsId(submittedReports, 201));
 	}
 }
