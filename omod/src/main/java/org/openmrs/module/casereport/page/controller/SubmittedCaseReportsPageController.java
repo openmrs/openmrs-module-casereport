@@ -22,8 +22,8 @@ import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.web.FhirDocumentGeneratorListener;
 import org.openmrs.module.webservices.rest.SimpleObject;
-import org.openmrs.ui.framework.annotation.SpringBean;
-import org.openmrs.ui.framework.page.PageModel;
+//import org.openmrs.ui.framework.annotation.SpringBean;
+//import org.openmrs.ui.framework.page.PageModel;
 
 public class SubmittedCaseReportsPageController {
 	
@@ -36,7 +36,7 @@ public class SubmittedCaseReportsPageController {
 		return mapper;
 	}
 	
-	public void get(PageModel model, @SpringBean CaseReportService service,
+	/*public void get(PageModel model, @SpringBean CaseReportService service,
 	                @SpringBean(FhirDocumentGeneratorListener.BEAN_ID) FhirDocumentGeneratorListener listener)
 	    throws Exception {
 		
@@ -59,5 +59,5 @@ public class SubmittedCaseReportsPageController {
 		
 		model.put("reportUuidSubmittedTriggersMap", reportUuidSubmittedTriggersMap);
 		model.put("reportUuidDocumentMap", getObjectMapper().writeValueAsString(reportUuidDocumentMap));
-	}
+	} */
 }
