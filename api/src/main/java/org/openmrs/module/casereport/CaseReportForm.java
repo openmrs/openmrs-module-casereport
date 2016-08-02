@@ -83,9 +83,9 @@ public class CaseReportForm {
 	
 	private UuidAndValue submitter;
 	
-	private String implementationId;
+	private String assigningAuthorityId;
 	
-	private String implementationName;
+	private String assigningAuthorityName;
 	
 	public CaseReportForm() {
 	}
@@ -392,20 +392,20 @@ public class CaseReportForm {
 		this.submitter = submitter;
 	}
 	
-	public String getImplementationId() {
-		return implementationId;
+	public String getAssigningAuthorityId() {
+		return assigningAuthorityId;
 	}
 	
-	public void setImplementationId(String implementationId) {
-		this.implementationId = implementationId;
+	public void setAssigningAuthorityId(String assigningAuthorityId) {
+		this.assigningAuthorityId = assigningAuthorityId;
 	}
 	
-	public String getImplementationName() {
-		return implementationName;
+	public String getAssigningAuthorityName() {
+		return assigningAuthorityName;
 	}
 	
-	public void setImplementationName(String implementationName) {
-		this.implementationName = implementationName;
+	public void setAssigningAuthorityName(String assigningAuthorityName) {
+		this.assigningAuthorityName = assigningAuthorityName;
 	}
 	
 	public DatedUuidAndValue getTriggerByName(String trigger) {

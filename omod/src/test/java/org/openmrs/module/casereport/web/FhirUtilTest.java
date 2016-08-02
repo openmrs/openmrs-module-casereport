@@ -43,7 +43,8 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
-		service.submitCaseReport(caseReport, null, null, null, null);
+		caseReport.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(caseReport)));
+		service.submitCaseReport(caseReport);
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());

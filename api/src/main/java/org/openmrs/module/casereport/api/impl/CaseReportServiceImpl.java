@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
@@ -40,7 +39,6 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
-import org.openmrs.module.casereport.DatedUuidAndValue;
 import org.openmrs.module.casereport.PostSubmitListener;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -182,8 +180,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	@Transactional(readOnly = false)
-	public CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter,
-	                                   String implementationId, String implementationName) throws APIException {
+	public CaseReport submitCaseReport(CaseReport caseReport) throws APIException {
 		
 		if (caseReport.isVoided()) {
 			throw new APIException("Cannot submit a voided case report");
@@ -191,43 +188,35 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Cannot submit a dismissed case report");
 		} else if (caseReport.isSubmitted()) {
 			throw new APIException("Cannot submit a submitted case report");
-		}
-		
-		if (submitter != null && StringUtils.isBlank(implementationId)) {
-			throw new APIException("Assigning authority is required when a submitter is specified");
+		} else if (StringUtils.isBlank(caseReport.getReportForm())) {
+			throw new APIException("Case report form cannot be blank");
 		}
 		
 		CaseReportForm form;
-		if (StringUtils.isBlank(caseReport.getReportForm())) {
-			form = new CaseReportForm(caseReport);
-		} else {
-			try {
-				form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
-			}
-			catch (IOException e) {
-				throw new APIException("Failed to parse case report form data", e);
-			}
+		try {
+			form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
+		}
+		catch (IOException e) {
+			throw new APIException("Failed to parse case report form data", e);
 		}
 		
-		if (submitter == null) {
+		boolean requireImplementationId = false;
+		if (form.getSubmitter() == null || form.getSubmitter().getValue() == null
+		        || StringUtils.isBlank(form.getSubmitter().getValue().toString())) {
+			User user = Context.getAuthenticatedUser();
+			form.setSubmitter(new UuidAndValue(user.getUuid(), user.getSystemId()));
+			requireImplementationId = true;
+		}
+		
+		if (requireImplementationId || StringUtils.isBlank(form.getAssigningAuthorityId())) {
 			ImplementationId implId = Context.getAdministrationService().getImplementationId();
 			if (implId == null || StringUtils.isBlank(implId.getImplementationId())) {
-				throw new APIException("Implementation id must be set if submitter is not specified");
+				throw new APIException("Implementation id must be set to submit case reports if the submitter and "
+				        + "assigning authority id are not set");
 			}
-			submitter = Context.getAuthenticatedUser();
-			implementationId = implId.getImplementationId();
-			implementationName = implId.getName();
-		}
-		form.setSubmitter(new UuidAndValue(submitter.getUuid(), submitter.getSystemId()));
-		form.setImplementationId(implementationId);
-		form.setImplementationName(implementationName);
-		
-		if (CollectionUtils.isNotEmpty(triggersToExclude)) {
-			for (String t : triggersToExclude) {
-				DatedUuidAndValue toRemove = form.getTriggerByName(t);
-				if (toRemove != null) {
-					form.getTriggers().remove(toRemove);
-				}
+			form.setAssigningAuthorityId(implId.getImplementationId());
+			if (requireImplementationId || StringUtils.isBlank(form.getAssigningAuthorityName())) {
+				form.setAssigningAuthorityName(implId.getName());
 			}
 		}
 		

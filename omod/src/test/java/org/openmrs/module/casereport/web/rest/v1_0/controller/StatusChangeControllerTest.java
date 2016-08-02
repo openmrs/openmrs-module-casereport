@@ -11,7 +11,6 @@ package org.openmrs.module.casereport.web.rest.v1_0.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +24,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportUtil;
+import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.web.rest.StatusChange;
 import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
@@ -87,35 +87,33 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		executeDataSet("moduleTestData-other.xml");
 		final String hivNotSuppressed = "HIV Virus Not Suppressed";
 		final String anotherTrigger = "Another Trigger";
-		final String implementationId = "Test_Impl";
-		final String implementationName = "Test_Name";
 		ObjectMapper mapper = new ObjectMapper();
 		User submitter = Context.getUserService().getUserByUuid("c98a1558-e131-11de-babe-001e378eb67e");
 		CaseReport cr = service.getCaseReportByUuid(getUuid());
 		assertTrue(StringUtils.isBlank(cr.getReportForm()));
 		CaseReportForm form = new CaseReportForm(cr);
-		assertNull(form.getSubmitter());
-		assertNull(form.getImplementationId());
-		assertNull(form.getImplementationName());
 		assertEquals(2, form.getTriggers().size());
 		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), hivNotSuppressed));
 		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), anotherTrigger));
 		assertFalse(cr.isSubmitted());
 		
-		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"triggersToExclude\":[\""
-		        + anotherTrigger + "\"],\"submitter\":\"" + submitter.getUuid() + "\",\"implementationId\":\""
-		        + implementationId + "\",\"implementationName\":\"" + implementationName + "\"}"));
+		form.setSubmitter(new UuidAndValue(submitter.getUuid(), submitter.getSystemId()));
+		form.getTriggers().remove(form.getTriggerByName(anotherTrigger));
+		final String implementationId = "Test_Impl";
+		form.setAssigningAuthorityId(implementationId);
+		
+		handle(newPostRequest(getURI(),
+		    "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"reportForm\":" + mapper.writeValueAsString(form) + "}"));
 		
 		assertTrue(cr.isSubmitted());
 		cr = service.getCaseReportByUuid(getUuid());
-		form = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-		assertEquals(submitter.getUuid(), form.getSubmitter().getUuid());
-		assertEquals(submitter.getSystemId(), form.getSubmitter().getValue());
-		assertEquals(implementationId, form.getImplementationId());
-		assertEquals(implementationName, form.getImplementationName());
-		assertEquals(1, form.getTriggers().size());
-		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), hivNotSuppressed));
-		assertFalse(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), anotherTrigger));
+		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
+		assertEquals(submitter.getUuid(), savedForm.getSubmitter().getUuid());
+		assertEquals(submitter.getSystemId(), savedForm.getSubmitter().getValue());
+		assertEquals(implementationId, savedForm.getAssigningAuthorityId());
+		assertEquals(1, savedForm.getTriggers().size());
+		assertTrue(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), hivNotSuppressed));
+		assertFalse(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), anotherTrigger));
 	}
 	
 	@Test

@@ -9,27 +9,20 @@
  */
 package org.openmrs.module.casereport.web.rest.v1_0.resource;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.web.rest.StatusChange;
+import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingSubResource;
-import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@SubResource(parent = CaseReportResource.class, path = "statuschange", supportedClass = StatusChange.class, supportedOpenmrsVersions = {
+@SubResource(parent = CaseReportResource.class, path = "reportform", supportedClass = CaseReportForm.class, supportedOpenmrsVersions = {
         "1.10.*", "1.11.*,1.12.*" })
-public class StatusChangeResource extends DelegatingSubResource<StatusChange, CaseReport, CaseReportResource> {
+public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm, CaseReport, CaseReportResource> {
 	
 	/**
 	 * @see DelegatingSubResource#getRepresentationDescription(Representation)
@@ -37,9 +30,31 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	@Override
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
-		description.addRequiredProperty("action");
+		description.addRequiredProperty("reportUuid");
+		description.addRequiredProperty("reportDate");
+		description.addProperty("givenName");
+		description.addProperty("middleName");
+		description.addProperty("familyName");
+		description.addProperty("fullName");
+		description.addProperty("gender");
+		description.addProperty("birthdate");
+		description.addProperty("deathdate");
+		description.addProperty("dead");
+		description.addProperty("patientIdentifier");
+		description.addProperty("identifierType");
+		description.addProperty("causeOfDeath");
+		description.addProperty("triggers");
+		description.addProperty("previousReportUuidTriggersMap");
+		description.addProperty("mostRecentViralLoads");
+		description.addProperty("mostRecentCd4Counts");
+		description.addProperty("mostRecentHivTests");
+		description.addProperty("currentHivWhoStage");
+		description.addProperty("currentHivMedications");
+		description.addProperty("mostRecentArvStopReason");
+		description.addProperty("lastVisitDate");
 		description.addProperty("submitter");
-		description.addProperty("reportForm");
+		description.addProperty("assigningAuthorityId");
+		description.addProperty("assigningAuthorityName");
 		return description;
 	}
 	
@@ -52,41 +67,35 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	}
 	
 	/**
+	 * @see DelegatingSubResource#newDelegate()
+	 */
+	@Override
+	public CaseReportForm newDelegate() {
+		return new CaseReportForm();
+	}
+	
+	/**
 	 * @see DelegatingSubResource#save(Object)
 	 */
 	@Override
-	public StatusChange save(StatusChange delegate) {
-		if (StatusChange.Action.SUBMIT == delegate.getAction()) {
-			CaseReport caseReport = getParent(delegate);
-			try {
-				caseReport.setReportForm(new ObjectMapper().writeValueAsString(delegate.getReportForm()));
-			}
-			catch (IOException e) {
-				throw new APIException("Failed to serialize case report form data", e);
-			}
-			Context.getService(CaseReportService.class).submitCaseReport(caseReport);
-		} else if (StatusChange.Action.DISMISS == delegate.getAction()) {
-			Context.getService(CaseReportService.class).dismissCaseReport(getParent(delegate));
-		} else {
-			throw new GenericRestException("Invalid action value");
-		}
-		return null;
+	public CaseReportForm save(CaseReportForm delegate) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
 	 * @see DelegatingSubResource#getParent(Object)
 	 */
 	@Override
-	public CaseReport getParent(StatusChange instance) {
-		return instance.getCaseReport();
+	public CaseReport getParent(CaseReportForm instance) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
 	 * @see DelegatingSubResource#setParent(Object, Object)
 	 */
 	@Override
-	public void setParent(StatusChange instance, CaseReport parent) {
-		instance.setCaseReport(parent);
+	public void setParent(CaseReportForm instance, CaseReport parent) {
+		throw new UnsupportedOperationException();
 	}
 	
 	/**
@@ -101,7 +110,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 * @see DelegatingSubResource#getByUniqueId(String)
 	 */
 	@Override
-	public StatusChange getByUniqueId(String uniqueId) {
+	public CaseReportForm getByUniqueId(String uniqueId) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -109,23 +118,15 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 * @see DelegatingSubResource#delete(Object, String, RequestContext)
 	 */
 	@Override
-	protected void delete(StatusChange delegate, String reason, RequestContext context) throws ResponseException {
+	protected void delete(CaseReportForm delegate, String reason, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * @see DelegatingSubResource#newDelegate()
-	 */
-	@Override
-	public StatusChange newDelegate() {
-		return new StatusChange();
 	}
 	
 	/**
 	 * @see DelegatingSubResource#purge(Object, RequestContext)
 	 */
 	@Override
-	public void purge(StatusChange delegate, RequestContext context) throws ResponseException {
+	public void purge(CaseReportForm delegate, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
 	}
 }

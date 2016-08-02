@@ -33,7 +33,6 @@
 <h2>${ ui.message('casereport.submittedCaseReports.label')}</h2>
 
 <div ng-app="submittedCaseReports" ng-controller="SubmittedCaseReportsController">
-
     <table id="casereport-submitted">
     <thead>
         <tr>
@@ -55,19 +54,4 @@
     </tbody>
     </table>
 </div>
-
-<script type="text/ng-template" id="templateId">
-<div id="casereport-document-dialog" class="dialog" style="display: none">
-    <div class="dialog-header">
-        <h3>${ui.message('casereport.submitted.document')}</h3>
-    </div>
-    <div class="dialog-content">
-        <div id="casereport-submitted-document"></div>
-        <br />
-        <div>
-            <button class="confirm">${ ui.message("casereport.close") }</button>
-        </div>
-    </div>
-</div>
-</script>
 

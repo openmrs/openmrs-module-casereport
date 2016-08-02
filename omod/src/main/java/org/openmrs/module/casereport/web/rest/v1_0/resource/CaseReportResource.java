@@ -32,7 +32,7 @@ import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + "/casereport/queue", supportedClass = CaseReport.class, supportedOpenmrsVersions = {
-        "1.8.*", "1.9.*", "1.10.*", "1.11.*" })
+        "1.10.*", "1.11.*,1.12.*" })
 public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	
 	/**

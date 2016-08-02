@@ -27,4 +27,4 @@ angular.module("submittedCaseReports", ["ngDialog"])
                     }
             });
         }
-     }]);
+    }]);

@@ -53,7 +53,8 @@ public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensi
 		File expectedFile = new File(listener.getOutputDirectory(), caseReport.getUuid()
 		        + FhirDocumentGeneratorListener.FILE_EXT_TXT);
 		Assert.assertFalse(expectedFile.exists());
-		service.submitCaseReport(caseReport, null, null, null, null);
+		caseReport.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(caseReport)));
+		service.submitCaseReport(caseReport);
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());

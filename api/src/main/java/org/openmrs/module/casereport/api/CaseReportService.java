@@ -12,7 +12,6 @@ package org.openmrs.module.casereport.api;
 import java.util.List;
 
 import org.openmrs.Patient;
-import org.openmrs.User;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
@@ -109,24 +108,23 @@ public interface CaseReportService extends OpenmrsService {
 	 * not set in the report form, they will default to the logged in user
 	 * 
 	 * @param caseReport the case report to submit
-	 * @param triggersToExclude the triggers to exclude from the submitted report
-	 * @param submitter the user submitting the report, defaults to logged in user
-	 * @param implementationId The id of the authorizing organisation or implementation
-	 * @param implementationName The name of the authorizing organisation or implementation
 	 * @return the submitted case report
 	 * @throws APIException
-	 * @should submit the specified case report
+	 * @should fail if the case report is null
+	 * @should fail if the case report is blank
+	 * @should fail if the case report is a white space character
 	 * @should fail if the case report is voided
 	 * @should fail if the case report is already submitted
 	 * @should fail if the case report is already dismissed
-	 * @should fail if both the implementation id and submitter are not set
-	 * @should set the specified submitter and exclude the specified triggers
-	 * @should fail if the submitter is specified and the the implementation id is not
+	 * @should fail if submitter and openmrs impl id GP are not set
+	 * @should fail if assigningAuthorityId and openmrs impl id GP are not set
+	 * @should overwrite the assigning authority id if submitter is set to authenticated user
+	 * @should pass if submitter and authorityId are set and impl id GP is not set
+	 * @should submit the specified case report
 	 * @should call the registered post submit listeners
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	CaseReport submitCaseReport(CaseReport caseReport, List<String> triggersToExclude, User submitter,
-	                            String implementationId, String implementationName) throws APIException;
+	CaseReport submitCaseReport(CaseReport caseReport) throws APIException;
 	
 	/**
 	 * Marks the specified case report as dismissed in the database

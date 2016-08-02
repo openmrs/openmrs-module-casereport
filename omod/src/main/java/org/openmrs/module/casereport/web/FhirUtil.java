@@ -104,7 +104,7 @@ public class FhirUtil {
 		Composition composition = new Composition();
 		composition.setId(caseReportForm.getReportUuid());
 		String text = CASE_REPORT_FOR + " " + caseReportForm.getFullName() + ", " + MANAGED_BY + " "
-		        + caseReportForm.getImplementationName();
+		        + caseReportForm.getAssigningAuthorityName();
 		composition.setText(new NarrativeDt(new XhtmlDt(text), NarrativeStatusEnum.GENERATED));
 		composition.setIdentifier(new IdentifierDt("urn:ietf:rfc:3986", caseReportForm.getReportUuid()));
 		composition.setDate(new DateTimeDt(caseReportForm.getReportDate()));
@@ -118,8 +118,8 @@ public class FhirUtil {
 		User user = Context.getUserService().getUserByUuid(caseReportForm.getSubmitter().getUuid());
 		Resource r = Context.getService(RestService.class).getResourceBySupportedClass(UserAndPassword1_8.class);
 		composition.setAuthor(Arrays.asList(createReference(r.getUri(new UserAndPassword1_8(user)), user.getUsername())));
-		composition.setCustodian(createReference(caseReportForm.getImplementationId(),
-		    caseReportForm.getImplementationName()));
+		composition.setCustodian(createReference(caseReportForm.getAssigningAuthorityId(),
+		    caseReportForm.getAssigningAuthorityName()));
 		addEvent(composition, caseReportForm);
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentViralLoads())) {
