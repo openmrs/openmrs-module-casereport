@@ -19,7 +19,7 @@ import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOp
 
 @Resource(name = RestConstants.VERSION_1 + "/casereport/dateduuidandvalue", supportedClass = DatedUuidAndValue.class, supportedOpenmrsVersions = {
         "1.10.*", "1.11.*,1.12.*" })
-public class DatedUuidAndValueResource extends UuidAndValueResource<DatedUuidAndValue> {
+public class DatedUuidAndValueResource extends UuidAndValueResource {
 	
 	/**
 	 * @see UuidAndValueResource#getRepresentationDescription(Representation)

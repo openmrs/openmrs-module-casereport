@@ -79,7 +79,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
     .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "StatusChange", "caseReport",
         function($scope, $state, $filter, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
-            $scope.triggersToExclude = [];
 
             function getKeys(obj){
                 if(obj) {
@@ -125,7 +124,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
             }
 
             $scope.remove = function(index){
-                $scope.triggersToExclude.push($scope.caseReport.reportForm.triggers[index].value);
                 $scope.caseReport.reportForm.triggers.splice(index, 1);
             }
 
@@ -133,7 +131,7 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 StatusChange.save({
                     uuid: caseReport.uuid,
                     action: "SUBMIT",
-                    triggersToExclude: $scope.triggersToExclude
+                    reportForm: $scope.caseReport.reportForm
                 }).$promise.then(function() {
                     $state.go("list");
                     emr.successMessage("casereport.submitted");

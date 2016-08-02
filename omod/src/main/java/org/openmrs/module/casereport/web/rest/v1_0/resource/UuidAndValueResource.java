@@ -21,7 +21,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + "/casereport/uuidandvalue", supportedClass = UuidAndValue.class, supportedOpenmrsVersions = {
         "1.10.*", "1.11.*,1.12.*" })
-public class UuidAndValueResource<T extends UuidAndValue> extends DelegatingCrudResource<T> {
+public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 	
 	/**
 	 * @see DelegatingCrudResource#getRepresentationDescription(Representation)
@@ -46,15 +46,15 @@ public class UuidAndValueResource<T extends UuidAndValue> extends DelegatingCrud
 	 * @see DelegatingCrudResource#newDelegate()
 	 */
 	@Override
-	public T newDelegate() {
-		return (T) new UuidAndValue();
+	public UuidAndValue newDelegate() {
+		return new UuidAndValue();
 	}
 	
 	/**
 	 * @see DelegatingCrudResource#save(Object)
 	 */
 	@Override
-	public T save(T delegate) {
+	public UuidAndValue save(UuidAndValue delegate) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -62,15 +62,15 @@ public class UuidAndValueResource<T extends UuidAndValue> extends DelegatingCrud
 	 * @see DelegatingCrudResource#getByUniqueId(String)
 	 */
 	@Override
-	public T getByUniqueId(String uniqueId) {
-		return (T) new UuidAndValue(uniqueId, null);
+	public UuidAndValue getByUniqueId(String uniqueId) {
+		return new UuidAndValue(uniqueId, null);
 	}
 	
 	/**
 	 * @see DelegatingCrudResource#delete(Object, String, RequestContext)
 	 */
 	@Override
-	protected void delete(T delegate, String reason, RequestContext context) throws ResponseException {
+	protected void delete(UuidAndValue delegate, String reason, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -78,7 +78,7 @@ public class UuidAndValueResource<T extends UuidAndValue> extends DelegatingCrud
 	 * @see DelegatingCrudResource#purge(Object, RequestContext)
 	 */
 	@Override
-	public void purge(T delegate, RequestContext context) throws ResponseException {
+	public void purge(UuidAndValue delegate, RequestContext context) throws ResponseException {
 		throw new UnsupportedOperationException();
 	}
 }
