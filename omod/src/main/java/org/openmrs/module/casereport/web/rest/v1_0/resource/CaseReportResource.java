@@ -110,8 +110,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	 */
 	@Override
 	protected void delete(CaseReport caseReport, String reason, RequestContext requestContext) throws ResponseException {
-		//TODO Implement
-		throw new UnsupportedOperationException();
+		Context.getService(CaseReportService.class).voidCaseReport(caseReport, reason);
 	}
 	
 	/**
