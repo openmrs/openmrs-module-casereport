@@ -20,7 +20,7 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 controller: "ViewCaseReportsController"
             })
             .state('reportForm', {
-                url: "/reportForm",
+                url: "/reportForm/:uuid",
                 templateUrl: "templates/reportForm.page",
                 controller: "SubmitCaseReportController",
                 params: {
@@ -34,8 +34,8 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
             })
     }])
 
-    .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
-        function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
+    .controller("ViewCaseReportsController", [ "$scope", "$state", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
+        function($scope, $state, orderBy, ngDialog, StatusChange, CaseReportService) {
             $scope.propertyName = 'dateCreated';
             $scope.reverse = true;
             var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +

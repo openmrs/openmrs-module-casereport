@@ -1,10 +1,10 @@
 [
   {
-    "id": "casereport.manageCaseReports",
+    "id": "casereport.app",
     "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
     "type": "link",
-    "label": "casereport.app.label",
-    "url": "casereport/manageCaseReports.page",
+    "label": "casereport.label",
+    "url": "casereport/caseReports.page",
     "icon": "icon-list-alt",
     "requiredPrivilege": "App: casereport.manageCaseReports"
   }

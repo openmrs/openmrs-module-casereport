@@ -32,7 +32,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: "/" + OPENMRS_CONTEXT_PATH + "/index.htm" },
-        { label: "${ ui.message('casereport.manageCaseReports.label')}" , link: '${ui.pageLink("casereport", "manageCaseReports")}'},
+        { label: "${ ui.message('casereport.label')}" , link: '${ui.pageLink("casereport", "caseReports")}'},
         {label: "${ ui.message("casereport.caseReportQueue.label")}" }
     ];
 

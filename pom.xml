@@ -49,7 +49,6 @@
 		<openMRSVersion>1.10.0</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uiframeworkVersion>3.4</uiframeworkVersion>
-        <appframeworkVersion>2.0</appframeworkVersion>
         <uicommonsVersion>1.7</uicommonsVersion>
         <appuiVersion>1.4</appuiVersion>
         <hapiPhirVersion>1.6</hapiPhirVersion>
