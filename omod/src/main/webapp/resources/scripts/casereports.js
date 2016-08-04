@@ -94,7 +94,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
             }
 
             $scope.formatDate = function(date){
-                console.log(date);
                 return $filter('serverDate')(date, 'dd-MMM-yyyy');
             }
 
