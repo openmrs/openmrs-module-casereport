@@ -19,6 +19,27 @@
 
 <form class="simple-form-ui" name="caseReportForm" novalidate ng-submit="submitCaseReport()">
     {{ updateFormTitle(caseReport.reportForm.fullName) }}
+    <div ng-show="getMapSize(caseReport.reportForm.previousReportUuidTriggersMap) > 0">
+        <a ng-click="togglePreviousReports()" class="casereport-pointer casereport-no-underline">
+            <span ng-show="!showPreviousReports">
+                <i class="icon-angle-down" /> ${ui.message("casereport.showPreviousReports")}
+            </span>
+            <span ng-show="showPreviousReports">
+                <i class="icon-angle-up" /> ${ui.message("casereport.hidePreviousReports")}
+            </span>
+        </a>
+        <div ng-show="showPreviousReports">
+            <br>
+            <div id="casereport-prev-reports">
+                <ul>
+                    <li ng-repeat="prevReport in previousReportDetails">
+                        {{ prevReport.datechanged | serverDate }} - {{ getValues(prevReport.triggers) | omrs.display }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br>
     <table class="casereport-form-table" cellpadding="0" cellspacing="0">
         <tr>
             <th valign="top">${ui.message("general.name")}</th>
@@ -124,10 +145,6 @@
         <tr ng-show="caseReport.reportForm.mostRecentArvStopReason">
             <th valign="top">${ui.message("casereport.reasonArvsStopped")}</th>
             <td valign="top">{{ caseReport.reportForm.mostRecentArvStopReason.value }}</td>
-        </tr>
-        <tr ng-show="getMapSize(caseReport.reportForm.previousReportUuidTriggersMap) > 0">
-            <th valign="top">${ui.message("casereport.previousCaseReports")}</th>
-            <td valign="top">{{ getTriggerNames(caseReport.reportForm.previousReportUuidTriggersMap) | omrs.display }}</td>
         </tr>
         <tr ng-show="caseReport.reportForm.lastVisitDate">
             <th valign="top">${ui.message("casereport.lastVisit")}</th>

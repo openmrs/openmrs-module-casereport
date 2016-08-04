@@ -34,8 +34,8 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
             })
     }])
 
-    .controller("ViewCaseReportsController", [ "$scope", "$state", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
-        function($scope, $state, orderBy, ngDialog, StatusChange, CaseReportService) {
+    .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
+        function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
             $scope.propertyName = 'dateCreated';
             $scope.reverse = true;
             var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +
@@ -76,9 +76,11 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
             loadCaseReports();
     }])
 
-    .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "StatusChange", "caseReport",
-        function($scope, $state, $filter, StatusChange, caseReport) {
+    .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "orderByFilter", "CaseReport", "StatusChange", "caseReport",
+        function($scope, $state, $filter, orderBy, CaseReport, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
+            $scope.previousReportDetails = [];
+            $scope.showPreviousReports = false;
 
             function getKeys(obj){
                 if(obj) {
@@ -114,15 +116,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 return values;
             }
 
-            $scope.getTriggerNames = function(map){
-                var allTriggers = [];
-                var triggerLists = _.values(map);
-                for(var i in triggerLists){
-                    allTriggers.push($scope.getValues(triggerLists[i]));
-                }
-                return allTriggers;
-            }
-
             $scope.remove = function(index){
                 $scope.caseReport.reportForm.triggers.splice(index, 1);
             }
@@ -136,6 +129,28 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                     $state.go("list");
                     emr.successMessage("casereport.submitted");
                 });
+            }
+
+            $scope.togglePreviousReports = function(){
+                if($scope.getMapSize($scope.previousReportDetails) == 0) {
+                    var prevReportCount = $scope.getMapSize($scope.caseReport.reportForm.previousReportUuidTriggersMap);
+                    _.map($scope.caseReport.reportForm.previousReportUuidTriggersMap, function (triggers, reportUuid) {
+                        CaseReport.get({uuid: reportUuid, v: "full"}).$promise.then(function (cr) {
+                            var item = {};
+                            //We're using dateChanged as the date the report was submitted
+                            item.datechanged = cr.auditInfo.dateChanged;
+                            item.triggers = triggers;
+                            $scope.previousReportDetails.push(item);
+                            //When all the previous report details are fetched
+                            if ($scope.previousReportDetails.length == prevReportCount) {
+                                $scope.previousReportDetails = orderBy($scope.previousReportDetails, 'datechanged', true);
+                                $scope.showPreviousReports = true;
+                            }
+                        });
+                    });
+                } else{
+                    $scope.showPreviousReports = !$scope.showPreviousReports;
+                }
             }
     }])
 

@@ -18,8 +18,12 @@ $lighterGrey: #f0f0f0;
   font-size: 85%;
 }
 
-#casereport-submitted tr:hover{
+.casereport-pointer {
   cursor: pointer;
+}
+
+#casereport-submitted tr:hover{
+  @extend .casereport-pointer;
 }
 
 .ngdialog-content {
@@ -160,4 +164,20 @@ td.casereport-focus-element {
 
 #casereport-data-table tr:nth-child(odd) th {
   background-color: $lighterGrey;
+}
+
+#casereport-prev-reports {
+  background-color: $lighterGrey;
+  border: 1px solid darken($lighterGrey,10%);
+}
+
+#casereport-prev-reports li {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+#casereport-prev-reports ul li:nth-child(even) {
+  background-color: lighten($lighterGrey, 4%);
 }
