@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.Concept;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
@@ -158,7 +159,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		Parameter p = query.getParameter("CIEL_1050");
 		assertEquals("CIEL_1050", p.getName());
 		assertEquals("CIEL:1050", p.getLabel());
-		assertEquals(Integer.class, p.getType());
+		assertEquals(Concept.class, p.getType());
 		p = query.getParameter(CaseReportConstants.LAST_EXECUTION_TIME);
 		assertNotNull(p);
 		assertEquals("lastExecutionTime", p.getName());

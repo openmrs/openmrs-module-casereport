@@ -17,6 +17,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
@@ -96,7 +97,7 @@ public class CaseReportActivator extends BaseModuleActivator {
 				if (cohortQuery.getConceptMappings() != null) {
 					for (String mapping : cohortQuery.getConceptMappings()) {
 						definition.addParameter(new Parameter(mapping, mapping.replaceFirst(
-						    CaseReportConstants.CONCEPT_MAPPING_SEPARATOR, ":"), Integer.class));
+						    CaseReportConstants.CONCEPT_MAPPING_SEPARATOR, ":"), Concept.class));
 					}
 				}
 				DefinitionContext.saveDefinition(definition);
