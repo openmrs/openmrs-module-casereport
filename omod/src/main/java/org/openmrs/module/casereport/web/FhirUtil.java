@@ -100,7 +100,7 @@ public class FhirUtil {
 	 * @return the generated json text
 	 * @should return the generated json
 	 */
-	public static String createCdaDocument(CaseReportForm caseReportForm) throws Exception {
+	public static String createFhirDocument(CaseReportForm caseReportForm) throws Exception {
 		Composition composition = new Composition();
 		composition.setId(caseReportForm.getReportUuid());
 		String text = CASE_REPORT_FOR + " " + caseReportForm.getFullName() + ", " + MANAGED_BY + " "

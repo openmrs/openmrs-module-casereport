@@ -48,7 +48,7 @@ public class FhirDocumentGeneratorListener implements PostSubmitListener {
 	@Override
 	public void afterSubmit(CaseReportForm caseReportForm) {
 		try {
-			String fhirTemplate = FhirUtil.createCdaDocument(caseReportForm);
+			String fhirTemplate = FhirUtil.createFhirDocument(caseReportForm);
 			File file = new File(getOutputDirectory(), caseReportForm.getReportUuid() + FILE_EXT_TXT);
 			FileUtils.writeStringToFile(file, fhirTemplate, ENCODING_UTF8);
 		}
