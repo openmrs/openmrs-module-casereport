@@ -11,6 +11,8 @@ package org.openmrs.module.casereport.page.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -24,6 +26,7 @@ import org.openmrs.module.casereport.web.FhirDocumentGeneratorListener;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.util.OpenmrsUtil;
 
 public class SubmittedCaseReportsPageController {
 	
@@ -44,6 +47,15 @@ public class SubmittedCaseReportsPageController {
 		model.put("caseReports", caseReports);
 		SimpleObject reportUuidDocumentMap = new SimpleObject();
 		SimpleObject reportUuidSubmittedTriggersMap = new SimpleObject();
+		//Sort by date changed(date submitted) with most recent first
+		Collections.sort(caseReports, Collections.reverseOrder(new Comparator<CaseReport>() {
+			
+			@Override
+			public int compare(CaseReport cr1, CaseReport cr2) {
+				return OpenmrsUtil.compare(cr1.getDateChanged(), cr2.getDateChanged());
+			}
+		}));
+		
 		for (CaseReport caseReport : caseReports) {
 			String uuid = caseReport.getUuid();
 			String document = FileUtils.readFileToString(new File(listener.getOutputDirectory(), uuid

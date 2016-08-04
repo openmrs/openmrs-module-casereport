@@ -36,6 +36,7 @@
     <table id="casereport-submitted">
     <thead>
         <tr>
+            <th>${ui.message('casereport.date')}</th>
             <th>${ui.message('Patient.identifier')}</th>
             <th>${ui.message('general.name')}</th>
             <th>${ui.message('Patient.gender')}</th>
@@ -45,6 +46,7 @@
     <tbody>
         <% caseReports.each {  %>
         <tr ng-click="displayDocument('${it.uuid}')" title="${ui.message("casereport.clickToViewFhirDocument")}">
+            <td valign="top">${ui.formatDatePretty(it.dateChanged)}</td>
             <td valign="top">${it.patient.patientIdentifier.identifier}</td>
             <td valign="top">${ui.format(it.patient)}</td>
             <td valign="top">${it.patient.person.gender}</td>
