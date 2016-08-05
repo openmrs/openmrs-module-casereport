@@ -16,6 +16,8 @@
   SELECT person_id
   FROM person
   WHERE
+  dead = 1
+  AND
   (
   date_created >= date(:lastExecutionTime)
   OR date_changed >= date(:lastExecutionTime)
