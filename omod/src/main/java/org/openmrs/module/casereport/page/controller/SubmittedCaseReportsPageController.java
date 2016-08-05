@@ -9,24 +9,7 @@
  */
 package org.openmrs.module.casereport.page.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.UuidAndValue;
-import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.web.FhirDocumentGeneratorListener;
-import org.openmrs.module.webservices.rest.SimpleObject;
-import org.openmrs.ui.framework.annotation.SpringBean;
-import org.openmrs.ui.framework.page.PageModel;
-import org.openmrs.util.OpenmrsUtil;
 
 public class SubmittedCaseReportsPageController {
 	
@@ -39,7 +22,7 @@ public class SubmittedCaseReportsPageController {
 		return mapper;
 	}
 	
-	public void get(PageModel model, @SpringBean CaseReportService service,
+	/*public void get(PageModel model, @SpringBean CaseReportService service,
 	                @SpringBean(FhirDocumentGeneratorListener.BEAN_ID) FhirDocumentGeneratorListener listener)
 	    throws Exception {
 		
@@ -71,5 +54,5 @@ public class SubmittedCaseReportsPageController {
 		
 		model.put("reportUuidSubmittedTriggersMap", reportUuidSubmittedTriggersMap);
 		model.put("reportUuidDocumentMap", getObjectMapper().writeValueAsString(reportUuidDocumentMap));
-	}
+	}*/
 }
