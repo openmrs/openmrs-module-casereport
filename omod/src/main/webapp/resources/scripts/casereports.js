@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error"])
+angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise("/list");
@@ -36,14 +36,23 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
 
     .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
         function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
+            $scope.caseReports = [];
+            $scope.patientSearchText = null;
+            $scope.triggerSearchText = null;
             $scope.propertyName = 'dateCreated';
             $scope.reverse = true;
+            $scope.currentPage = 1;
+            $scope.itemsPerPage = 10;
+            $scope.start = 0;
+            $scope.end = 0;
+
             var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +
                 'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
 
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {
                     $scope.caseReports = results;
+                    $scope.effectiveCaseReportCount = $scope.caseReports.length;
                 });
             }
 
@@ -153,6 +162,38 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 }
             }
     }])
+
+    .filter('mainFilter', function ($filter) {
+        return function (caseReports, $scope) {
+
+            var matches = [];
+            if(!$scope.patientSearchText && !$scope.triggerSearchText){
+                matches = caseReports;
+            }else {
+                if (!$scope.triggerSearchText) {
+                    matches = $filter('searchReportsByPatient')(caseReports, $scope.patientSearchText);
+                } else {
+                    matches = $filter('searchReportsByTrigger')(caseReports, $scope.triggerSearchText);
+                }
+            }
+
+            $scope.effectiveCaseReportCount = matches.length;
+            //apply paging so that we only see a single page of results
+            return $filter('pagination')(matches, $scope);
+        }
+    })
+
+    .filter('pagination', function () {
+        return function (caseReports, $scope) {
+            $scope.start = ($scope.currentPage - 1) * $scope.itemsPerPage;
+            $scope.end = $scope.start + $scope.itemsPerPage;
+            if($scope.end > $scope.effectiveCaseReportCount){
+                $scope.end = $scope.effectiveCaseReportCount;
+            }
+
+            return caseReports.slice($scope.start, $scope.end);
+        }
+    })
 
     .filter('searchReportsByPatient', function () {
         return function (caseReports, searchText) {

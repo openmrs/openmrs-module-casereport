@@ -19,6 +19,7 @@
 ### Sass ###
 omod/src/main/compass/sass-external/
 *.css
+!omod/src/main/webapp/resources/styles/lib/**/*.css
 #############
 
 # Rubygems build directories #

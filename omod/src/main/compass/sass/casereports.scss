@@ -181,3 +181,21 @@ td.casereport-focus-element {
 #casereport-prev-reports ul li:nth-child(even) {
   background-color: lighten($lighterGrey, 4%);
 }
+
+#casereport-showing{
+  margin-top: 25px;
+}
+
+/*
+ * Apparently the bootstrap.css file duplicates some CSS classes in the RA
+ * which can mess up the rendering of a page when we include it, we need override
+ * the css properties for the element below for it to render correctly since it has
+ * a the container class that's duplicated by bootstrap
+ */
+div#content {
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 980px;
+}

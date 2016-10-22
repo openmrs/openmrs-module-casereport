@@ -22,10 +22,12 @@
     ui.includeJavascript("uicommons", "angular-common-error.js")
     ui.includeJavascript("uicommons", "filters/display.js")
     ui.includeJavascript("uicommons", "filters/serverDate.js")
+    ui.includeJavascript("casereport", "lib/bootstrap/ui-bootstrap-tpls-2.2.0.min.js")
     ui.includeJavascript("casereport", "caseReportService.js")
     ui.includeJavascript("casereport", "casereports.js")
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
+    ui.includeCss("casereport", "lib/bootstrap/bootstrap.min.css")
     ui.includeCss("casereport", "casereports.css")
 %>
 

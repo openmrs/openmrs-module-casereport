@@ -63,7 +63,7 @@
         </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="caseReport in caseReports | searchReportsByPatient:patientSearchText | searchReportsByTrigger:triggerSearchText">
+    <tr ng-repeat="caseReport in caseReports | mainFilter:this">
         <td valign="top">{{caseReport.dateCreated | serverDate}}</td>
         <td valign="top">{{caseReport.patient.patientIdentifier.identifier}}</td>
         <td valign="top">{{caseReport.patient.person.personName.display}}
@@ -95,3 +95,20 @@
     </tr>
     </tbody>
 </table>
+<br>
+<div id="casereport-pagination">
+    <ul class="right" uib-pagination
+        total-items="effectiveCaseReportCount"
+        ng-model="currentPage"
+        items-per-page="itemsPerPage"
+        max-size="10"
+        boundary-link-numbers="true"
+        previous-text="${ui.message('casereport.previous')}"
+        next-text="${ui.message('casereport.next')}"
+        force-ellipses="true"
+        rotate="true" />
+    <span id="casereport-showing" class="left">
+        ${ui.message("casereport.showingLabel").replace('{0}', '{{start + 1}}')
+                .replace('{1}', '{{end}}').replace('{2}', '{{effectiveCaseReportCount}}')}
+    </span>
+</div>
