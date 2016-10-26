@@ -28,6 +28,7 @@ import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.web.rest.StatusChange;
 import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
+import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest {
@@ -60,25 +61,25 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Override
 	public void shouldGetAll() throws Exception {
-		expectedException.expect(UnsupportedOperationException.class);
+		expectedException.expect(ResourceDoesNotSupportOperationException.class);
 		super.shouldGetRefByUuid();
 	}
 	
 	@Override
 	public void shouldGetDefaultByUuid() throws Exception {
-		expectedException.expect(UnsupportedOperationException.class);
+		expectedException.expect(ResourceDoesNotSupportOperationException.class);
 		super.shouldGetRefByUuid();
 	}
 	
 	@Override
 	public void shouldGetFullByUuid() throws Exception {
-		expectedException.expect(UnsupportedOperationException.class);
+		expectedException.expect(ResourceDoesNotSupportOperationException.class);
 		super.shouldGetRefByUuid();
 	}
 	
 	@Override
 	public void shouldGetRefByUuid() throws Exception {
-		expectedException.expect(UnsupportedOperationException.class);
+		expectedException.expect(ResourceDoesNotSupportOperationException.class);
 		super.shouldGetRefByUuid();
 	}
 	

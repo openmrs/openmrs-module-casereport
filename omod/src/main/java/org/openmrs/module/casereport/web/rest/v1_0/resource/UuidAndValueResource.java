@@ -55,7 +55,7 @@ public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 	 */
 	@Override
 	public UuidAndValue save(UuidAndValue delegate) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 	 */
 	@Override
 	protected void delete(UuidAndValue delegate, String reason, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -79,6 +79,6 @@ public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 	 */
 	@Override
 	public void purge(UuidAndValue delegate, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 }

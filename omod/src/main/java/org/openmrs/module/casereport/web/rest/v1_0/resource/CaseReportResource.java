@@ -29,6 +29,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudR
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
+import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + "/casereport/queue", supportedClass = CaseReport.class, supportedOpenmrsVersions = {
@@ -118,7 +119,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	 */
 	@Override
 	public CaseReport newDelegate() {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -126,7 +127,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	 */
 	@Override
 	public CaseReport save(CaseReport caseReport) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -134,6 +135,6 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	 */
 	@Override
 	public void purge(CaseReport caseReport, RequestContext requestContext) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 }

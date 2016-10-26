@@ -21,6 +21,7 @@ import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingSubResource;
+import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @SubResource(parent = CaseReportResource.class, path = "trigger", supportedClass = CaseReportTrigger.class, supportedOpenmrsVersions = {
@@ -76,7 +77,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public PageableResult doGetAll(CaseReport parent, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -84,7 +85,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public CaseReportTrigger getByUniqueId(String uniqueId) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -92,7 +93,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	protected void delete(CaseReportTrigger delegate, String reason, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -100,7 +101,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public CaseReportTrigger newDelegate() {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -108,7 +109,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public CaseReportTrigger save(CaseReportTrigger delegate) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -116,6 +117,6 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public void purge(CaseReportTrigger delegate, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 }

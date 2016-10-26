@@ -74,6 +74,14 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	}
 	
 	/**
+	 * @see DelegatingSubResource#newDelegate()
+	 */
+	@Override
+	public StatusChange newDelegate() {
+		return new StatusChange();
+	}
+	
+	/**
 	 * @see DelegatingSubResource#getParent(Object)
 	 */
 	@Override
@@ -94,7 +102,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 */
 	@Override
 	public PageableResult doGetAll(CaseReport parent, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -102,7 +110,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 */
 	@Override
 	public StatusChange getByUniqueId(String uniqueId) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -110,15 +118,7 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 */
 	@Override
 	protected void delete(StatusChange delegate, String reason, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * @see DelegatingSubResource#newDelegate()
-	 */
-	@Override
-	public StatusChange newDelegate() {
-		return new StatusChange();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -126,6 +126,6 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	 */
 	@Override
 	public void purge(StatusChange delegate, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 }

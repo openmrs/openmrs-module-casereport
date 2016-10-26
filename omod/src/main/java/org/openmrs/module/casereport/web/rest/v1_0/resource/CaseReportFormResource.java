@@ -79,7 +79,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	public CaseReportForm save(CaseReportForm delegate) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	public CaseReport getParent(CaseReportForm instance) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	public void setParent(CaseReportForm instance, CaseReport parent) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	public PageableResult doGetAll(CaseReport parent, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	public CaseReportForm getByUniqueId(String uniqueId) {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	protected void delete(CaseReportForm delegate, String reason, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 	
 	/**
@@ -127,6 +127,6 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 	 */
 	@Override
 	public void purge(CaseReportForm delegate, RequestContext context) throws ResponseException {
-		throw new UnsupportedOperationException();
+		throw new ResourceDoesNotSupportOperationException("read-only resource");
 	}
 }
