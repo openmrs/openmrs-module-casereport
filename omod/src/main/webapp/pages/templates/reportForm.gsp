@@ -151,6 +151,10 @@
             <td valign="top">{{ caseReport.reportForm.lastVisitDate.value | serverDate}}</td>
         </tr>
         <tr>
+            <th valign="top">${ui.message("casereport.comments")}</th>
+            <td valign="top"><textarea ng-model="caseReport.reportForm.comments" cols="54"></textarea></td>
+        </tr>
+        <tr>
             <th class="casereport-row-separator"></th>
             <td class="casereport-row-separator"></td>
         </tr>

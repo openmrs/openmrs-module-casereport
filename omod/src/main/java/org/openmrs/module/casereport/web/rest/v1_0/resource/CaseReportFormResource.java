@@ -55,6 +55,7 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 		description.addProperty("submitter");
 		description.addProperty("assigningAuthorityId");
 		description.addProperty("assigningAuthorityName");
+		description.addProperty("comments");
 		return description;
 	}
 	

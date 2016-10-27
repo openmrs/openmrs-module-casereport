@@ -87,6 +87,8 @@ public class CaseReportForm {
 	
 	private String assigningAuthorityName;
 	
+	private String comments;
+	
 	public CaseReportForm() {
 	}
 	
@@ -406,6 +408,14 @@ public class CaseReportForm {
 	
 	public void setAssigningAuthorityName(String assigningAuthorityName) {
 		this.assigningAuthorityName = assigningAuthorityName;
+	}
+	
+	public String getComments() {
+		return comments;
+	}
+	
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 	
 	public DatedUuidAndValue getTriggerByName(String trigger) {
