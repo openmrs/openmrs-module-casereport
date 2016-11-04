@@ -12,10 +12,14 @@ package org.openmrs.module.casereport.web;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.APIException;
+import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.PostSubmitListener;
+import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +28,7 @@ import org.springframework.stereotype.Component;
  * directory.
  */
 @Component(FhirDocumentGeneratorListener.BEAN_ID)
-public class FhirDocumentGeneratorListener implements PostSubmitListener {
+public class FhirDocumentGeneratorListener implements ApplicationListener<CaseReportSubmittedEvent> {
 	
 	public final static String BEAN_ID = "fhirDocumentGeneratorListener";
 	
@@ -42,19 +46,21 @@ public class FhirDocumentGeneratorListener implements PostSubmitListener {
 	}
 	
 	/**
-	 * @see PostSubmitListener#afterSubmit(CaseReportForm)
-	 * @should generate a fhir message message and write it to the output directory
+	 * @see ApplicationListener#onApplicationEvent(ApplicationEvent)
 	 */
 	@Override
-	public void afterSubmit(CaseReportForm caseReportForm) {
+	public void onApplicationEvent(CaseReportSubmittedEvent event) {
 		try {
-			String fhirTemplate = FhirUtil.createFhirDocument(caseReportForm);
-			File file = new File(getOutputDirectory(), caseReportForm.getReportUuid() + FILE_EXT_TXT);
+			CaseReport caseReport = (CaseReport) event.getSource();
+			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
+			form.setReportUuid(caseReport.getUuid());
+			form.setReportDate(caseReport.getDateCreated());
+			String fhirTemplate = FhirUtil.createFhirDocument(form);
+			File file = new File(getOutputDirectory(), caseReport.getUuid() + FILE_EXT_TXT);
 			FileUtils.writeStringToFile(file, fhirTemplate, ENCODING_UTF8);
 		}
 		catch (Exception e) {
 			throw new APIException("Failed to save the fhir message for the submitted report", e);
 		}
 	}
-	
 }

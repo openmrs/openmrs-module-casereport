@@ -11,9 +11,13 @@ package org.openmrs.module.casereport.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.APIException;
+import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.PostSubmitListener;
+import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 /***
@@ -21,17 +25,19 @@ import org.springframework.stereotype.Component;
  * generate and submit a CDA message to the HIE
  */
 @Component
-public class HealthInfoExchangeListener implements PostSubmitListener {
+public class HealthInfoExchangeListener implements ApplicationListener<CaseReportSubmittedEvent> {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	/**
-	 * @see PostSubmitListener#afterSubmit(CaseReportForm)
+	 * @see ApplicationListener#onApplicationEvent(ApplicationEvent)
 	 */
 	@Override
-	public void afterSubmit(CaseReportForm caseReportForm) {
+	public void onApplicationEvent(CaseReportSubmittedEvent event) {
 		try {
-			String cdaDocument = CdaDocumentGenerator.getInstance().generate(caseReportForm);
+			CaseReport caseReport = (CaseReport) event.getSource();
+			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
+			String cdaDocument = CdaDocumentGenerator.getInstance().generate(form);
 			//TODO send the cda message
 		}
 		catch (Exception e) {

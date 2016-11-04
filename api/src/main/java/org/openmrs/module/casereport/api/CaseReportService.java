@@ -121,7 +121,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should overwrite the assigning authority id if submitter is set to authenticated user
 	 * @should pass if submitter and authorityId are set and impl id GP is not set
 	 * @should submit the specified case report
-	 * @should call the registered post submit listeners
+	 * @should call the registered submit event listeners
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport submitCaseReport(CaseReport caseReport) throws APIException;

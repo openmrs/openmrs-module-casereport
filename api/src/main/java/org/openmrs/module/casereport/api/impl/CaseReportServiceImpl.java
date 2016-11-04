@@ -39,9 +39,9 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
-import org.openmrs.module.casereport.PostSubmitListener;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
@@ -50,6 +50,8 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.validator.ValidateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -63,6 +65,9 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	private CaseReportDAO dao;
 	
 	private ObjectMapper mapper = null;
+	
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 	
 	/**
 	 * @param dao the dao to set
@@ -227,19 +232,13 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Failed to serialize case report form data", e);
 		}
 		
-		//uuid and report date are not stored as part of the report data since we already have
-		//them on the case report object, so we need to set them here for usage in the listeners
-		//in case this form was a draft loaded from the DB
-		form.setReportUuid(caseReport.getUuid());
-		form.setReportDate(caseReport.getDateCreated());
-		List<PostSubmitListener> listeners = Context.getRegisteredComponents(PostSubmitListener.class);
-		for (PostSubmitListener listener : listeners) {
-			try {
-				listener.afterSubmit(form);
-			}
-			catch (Throwable t) {
-				log.warn("An error occurred while calling the post submit listener:" + listener.getClass(), t);
-			}
+		//We use a publisher consumer approach to keep the CDA generation logic out of the api
+		//It also provides a hook for others to register custom listeners to take other actions
+		try {
+			eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
+		}
+		catch (Throwable t) {
+			log.warn("An error occurred while publishing events to the listeners");
 		}
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);

@@ -380,10 +380,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
-	 * @verifies call the registered post submit listeners
+	 * @verifies call the registered submit event listeners
 	 */
 	@Test
-	public void submitCaseReport_shouldCallTheRegisteredPostSubmitListeners() throws Exception {
+	public void submitCaseReport_shouldCallTheRegisteredSubmitEventListeners() throws Exception {
 		executeDataSet(XML_OTHER_DATASET);
 		final String implId = "Test_Impl";
 		final String implName = "Some name";
@@ -402,8 +402,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		//Reset
 		listener.setReportUuid(null);
 		assertNull(listener.getReportUuid());
+		final String expectedUuid = cr.getUuid();
 		service.submitCaseReport(cr);
 		assertTrue(StringUtils.isNotBlank(listener.getReportUuid()));
+		assertEquals(expectedUuid, listener.getReportUuid());
 	}
 	
 	/**

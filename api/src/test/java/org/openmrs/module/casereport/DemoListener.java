@@ -9,10 +9,12 @@
  */
 package org.openmrs.module.casereport;
 
+import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component("demoListener")
-public class DemoListener implements PostSubmitListener {
+public class DemoListener implements ApplicationListener<CaseReportSubmittedEvent> {
 	
 	private String reportUuid;
 	
@@ -25,7 +27,7 @@ public class DemoListener implements PostSubmitListener {
 	}
 	
 	@Override
-	public void afterSubmit(CaseReportForm caseReportForm) {
-		setReportUuid(caseReportForm.getReportUuid());
+	public void onApplicationEvent(CaseReportSubmittedEvent event) {
+		setReportUuid(((CaseReport) event.getSource()).getUuid());
 	}
 }

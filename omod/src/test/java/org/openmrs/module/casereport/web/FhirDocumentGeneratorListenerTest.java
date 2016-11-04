@@ -22,17 +22,18 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
 public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
-	 * @see FhirDocumentGeneratorListener#afterSubmit(CaseReportForm)
+	 * @see FhirDocumentGeneratorListener#onApplicationEvent(CaseReportSubmittedEvent)
 	 * @verifies generate a fhir message message and write it to the output directory
 	 */
 	@Test
-	public void afterSubmit_shouldGenerateAFhirMessageMessageAndWriteItToTheOutputDirectory() throws Exception {
+	public void onApplicationEvent_shouldGenerateAFhirMessageMessageAndWriteItToTheOutputDirectory() throws Exception {
 		executeDataSet("moduleTestData-initialCaseReports.xml");
 		executeDataSet("moduleTestData-other.xml");
 		final String implId = "Test_Impl";
@@ -55,10 +56,7 @@ public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensi
 		Assert.assertFalse(expectedFile.exists());
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(caseReport)));
 		service.submitCaseReport(caseReport);
-		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
-		form.setReportUuid(caseReport.getUuid());
-		form.setReportDate(caseReport.getDateCreated());
-		listener.afterSubmit(form);
+		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
 		Assert.assertTrue(expectedFile.exists());
 		Assert.assertFalse(StringUtils.isBlank(FileUtils.readFileToString(expectedFile,
 		    FhirDocumentGeneratorListener.ENCODING_UTF8)));
