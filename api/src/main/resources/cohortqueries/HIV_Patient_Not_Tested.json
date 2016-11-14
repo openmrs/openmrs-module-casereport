@@ -22,7 +22,7 @@
   o1.person_id,
   max(o1.obs_datetime) as latest_viral_load_date
   FROM obs o1
-  WHERE o1.concept_id = 856
+  WHERE o1.concept_id = :CIEL_856
   AND not o1.voided
   GROUP BY o1.person_id
   ) as o2
