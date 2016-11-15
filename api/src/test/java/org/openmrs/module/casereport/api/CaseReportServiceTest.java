@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -770,5 +771,17 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		assertTrue(TestUtil.containsId(submittedReports, 8));
 		assertTrue(TestUtil.containsId(submittedReports, 200));
 		assertTrue(TestUtil.containsId(submittedReports, 201));
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport)
+	 * @verifies fail if no concept is linked to the trigger
+	 */
+	@Test
+	public void submitCaseReport_shouldFailIfNoConceptIsLinkedToTheTrigger() throws Exception {
+		CaseReport cr = service.getCaseReport(2);
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(CoreMatchers.equalTo("No concept was found that is linked to the trigger"));
+		service.submitCaseReport(cr);
 	}
 }

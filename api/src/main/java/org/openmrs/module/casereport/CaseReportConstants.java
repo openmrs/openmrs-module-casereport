@@ -18,6 +18,8 @@ public class CaseReportConstants {
 	
 	public static final String TRIGGER_NAME_TASK_PROPERTY = "Trigger Name";
 	
+	public static final String CONCEPT_TASK_PROPERTY = "Concept";
+	
 	public static final String PRIV_GET_CASE_REPORTS = "Get Case Reports";
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
@@ -27,6 +29,9 @@ public class CaseReportConstants {
 	public static final String SOURCE_CIEL_HL7_CODE = "CIEL";
 	
 	public static final String CONCEPT_MAPPING_SEPARATOR = "_";
+	
+	public static final String CIEL_MAPPING_PREFIX = CaseReportConstants.SOURCE_CIEL_HL7_CODE
+	        + CaseReportConstants.CONCEPT_MAPPING_SEPARATOR;
 	
 	public static final String TERM_CODE_VIRAL_LOAD = "856";
 	

@@ -12,6 +12,7 @@ package org.openmrs.module.casereport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -19,12 +20,27 @@ import org.openmrs.scheduler.tasks.AbstractTask;
 
 /**
  * An instance of this task runs a specified SQL cohort query and creates case reports for an
- * patients that get returned from the query, the name of the sql cohort query must be specified as
- * a task property with the name CaseReportTask.TRIGGER_NAME_TASK_PROPERTY
+ * patients that get returned from the query, the name of the sql cohort query and the associated
+ * concept must be specified as task properties with the property names as
+ * CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY and CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY
+ * respectively.
  */
 public class CaseReportTask extends AbstractTask {
 	
 	protected Log log = LogFactory.getLog(getClass());
+	
+	public String getTriggerName() {
+		return getTaskDefinition().getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY);
+	}
+	
+	public Concept getConcept() {
+		String mapping = getTaskDefinition().getProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY);
+		if (mapping.startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
+			return CaseReportUtil.getConceptByMappingString(mapping, true);
+		} else {
+			throw new APIException("Only CIEL concept mappings are currently allowed");
+		}
+	}
 	
 	/**
 	 * @see AbstractTask#execute()

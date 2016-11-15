@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
@@ -180,5 +181,24 @@ public class CaseReportUtil {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Gets the concept that matches the specified mapping string, the mapping is expected to be of
+	 * the form SOURCE_IDENTIFIER e.g CIEL_856
+	 * 
+	 * @param mappingString the string to match against
+	 * @param failIfNotFound specifies if an exception should be thrown if no match is found
+	 * @return the matched concept
+	 */
+	public static Concept getConceptByMappingString(String mappingString, boolean failIfNotFound) {
+		String[] sourceAndCode = StringUtils.split(mappingString, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR);
+		String source = sourceAndCode[0];
+		String code = sourceAndCode[1];
+		Concept concept = Context.getConceptService().getConceptByMapping(code, source);
+		if (concept == null && failIfNotFound) {
+			throw new APIException("Failed to find concept with mapping " + source + ":" + code);
+		}
+		return concept;
 	}
 }

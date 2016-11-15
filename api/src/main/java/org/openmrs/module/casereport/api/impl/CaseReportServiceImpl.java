@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,14 +32,15 @@ import org.openmrs.ImplementationId;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.CaseReportTask;
 import org.openmrs.module.casereport.CaseReportTrigger;
+import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
@@ -197,6 +199,24 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Case report form cannot be blank");
 		}
 		
+		//We need to find the task associated to the queue item so we can get the triggers concept
+		Collection<TaskDefinition> taskDefinitions = Context.getSchedulerService().getRegisteredTasks();
+		for (CaseReportTrigger crt : caseReport.getReportTriggers()) {
+			Concept triggerConcept = null;
+			for (TaskDefinition taskDef : taskDefinitions) {
+				if (CaseReportTask.class.isAssignableFrom(taskDef.getTaskInstance().getClass())) {
+					CaseReportTask crTask = (CaseReportTask) taskDef.getTaskInstance();
+					if (crt.getName().equalsIgnoreCase(crTask.getTriggerName())) {
+						triggerConcept = crTask.getConcept();
+						break;
+					}
+				}
+			}
+			if (triggerConcept == null) {
+				throw new APIException("No concept was found that is linked to the trigger");
+			}
+		}
+		
 		CaseReportForm form;
 		try {
 			form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
@@ -294,18 +314,9 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		if (definition.getParameters() != null) {
-			ConceptService cs = Context.getConceptService();
-			final String cielMappingPrefix = CaseReportConstants.SOURCE_CIEL_HL7_CODE
-			        + CaseReportConstants.CONCEPT_MAPPING_SEPARATOR;
 			for (Parameter p : definition.getParameters()) {
-				if (p.getName().startsWith(cielMappingPrefix)) {
-					String[] sourceAndCode = StringUtils.split(p.getName(), CaseReportConstants.CONCEPT_MAPPING_SEPARATOR);
-					String source = sourceAndCode[0];
-					String code = sourceAndCode[1];
-					Concept concept = cs.getConceptByMapping(code, source);
-					if (concept == null) {
-						throw new APIException("Failed to find concept with mapping " + source + ":" + code);
-					}
+				if (p.getName().startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
+					Concept concept = CaseReportUtil.getConceptByMappingString(p.getName(), true);
 					params.put(p.getName(), concept.getConceptId());
 				}
 			}
