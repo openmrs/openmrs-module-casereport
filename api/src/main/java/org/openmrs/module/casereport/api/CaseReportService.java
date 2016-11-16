@@ -17,9 +17,6 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.scheduler.TaskDefinition;
 
 /**
  * Contains methods for processing CRUD operations related to case reports
@@ -93,12 +90,10 @@ public interface CaseReportService extends OpenmrsService {
 	 * will create case reports if necessary and only call this method to update an existing case
 	 * report.
 	 * 
-	 * @see #runTrigger(String, TaskDefinition)
 	 * @param caseReport the case report to save
 	 * @return the saved case report
 	 * @throws APIException
 	 * @should return the saved case report
-	 * @should fail when updating existing case report
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport saveCaseReport(CaseReport caseReport) throws APIException;
@@ -122,7 +117,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should pass if submitter and authorityId are set and impl id GP is not set
 	 * @should submit the specified case report
 	 * @should call the registered submit event listeners
-     * @should fail if no concept is linked to the trigger
+	 * @should fail if no concept is linked to the trigger
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport submitCaseReport(CaseReport caseReport) throws APIException;
@@ -140,39 +135,6 @@ public interface CaseReportService extends OpenmrsService {
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport dismissCaseReport(CaseReport caseReport) throws APIException;
-	
-	/**
-	 * Runs the SQL cohort query with the specified name and creates a case report for each matched
-	 * patient of none exists
-	 *
-	 * @param triggerName the name of the sql cohort query to be run
-	 * @param taskDefinition the scheduler taskDefinition inside which the trigger is being run
-	 * @throws APIException
-	 * @throws EvaluationException
-	 * @should fail if no sql cohort query matches the specified trigger name
-	 * @should create case reports for the matched patients
-	 * @should set the last execution time in the evaluation context
-	 * @should add a new trigger to an existing queue item for the patient
-	 * @should not create a duplicate trigger for the same patient
-	 * @should set the concept mappings in the evaluation context
-	 * @should fail for a task where the last execution time cannot be resolved
-	 */
-	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
-	void runTrigger(String triggerName, TaskDefinition taskDefinition) throws APIException, EvaluationException;
-	
-	/**
-	 * Gets the SqlCohortDefinition that matches the specified trigger name, will throw an
-	 * APIException if multiple cohort queries are found that match the trigger name
-	 * 
-	 * @param triggerName the name to match against
-	 * @return the sql cohort query that matches the name
-	 * @throws APIException
-	 * @should return null if no cohort query is found that matches the trigger name
-	 * @should fail if multiple cohort queries are found that match the trigger name
-	 * @should not return a retired cohort query
-	 * @should return the matched cohort query
-	 */
-	SqlCohortDefinition getSqlCohortDefinition(String triggerName) throws APIException;
 	
 	/**
 	 * Marks the specified case report as voided

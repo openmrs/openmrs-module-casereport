@@ -22,6 +22,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.DatedUuidAndValue;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -216,7 +217,7 @@ public class FhirUtil {
 			detectedIssue.setDate(new DateTimeDt(CaseReportConstants.DATE_FORMATTER.parse(trigger.getDate())));
 			SqlCohortDefinition sqlDef = null;
 			try {
-				sqlDef = service.getSqlCohortDefinition(t);
+				sqlDef = CaseReportUtil.getSqlCohortDefinition(t);
 			}
 			catch (APIException e) {
 				//ignore

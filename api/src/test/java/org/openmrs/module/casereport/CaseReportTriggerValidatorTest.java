@@ -110,7 +110,7 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 	@Test
 	public void validate_shouldFailIfACaseReportWithTheSameTriggerAlreadyExistsForThePatient() throws Exception {
 		executeDataSet("moduleTestData-initialCaseReports.xml");
-		final String name = "HIV Virus Not Suppressed";
+		final String name = "HIV Switched To Second Line";
 		final Patient patient = Context.getPatientService().getPatient(2);
 		CaseReportTrigger existingTrigger = null;
 		CaseReport existingCaseReport = Context.getService(CaseReportService.class).getCaseReportByPatient(patient);
@@ -162,7 +162,7 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 	@Test
 	public void validate_shouldFailIfNoSqlCohortQueryMatchesTheTriggerName() throws Exception {
 		final String name = "some non existent trigger";
-		assertNull(Context.getService(CaseReportService.class).getSqlCohortDefinition(name));
+		assertNull(CaseReportUtil.getSqlCohortDefinition(name));
 		
 		CaseReportTrigger trigger = new CaseReportTrigger(name);
 		CaseReport caseReport = new CaseReport();

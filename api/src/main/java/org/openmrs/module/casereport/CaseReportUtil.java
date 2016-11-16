@@ -14,9 +14,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Cohort;
 import org.openmrs.Concept;
 import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
@@ -28,10 +34,20 @@ import org.openmrs.Person;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OrderService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.util.OpenmrsUtil;
 
 public class CaseReportUtil {
+	
+	protected static final Log log = LogFactory.getLog(CaseReportUtil.class);
 	
 	private static Concept getCeilConceptByCode(String code) {
 		Concept concept = Context.getConceptService().getConceptByMapping(code, CaseReportConstants.SOURCE_CIEL_HL7_CODE);
@@ -200,5 +216,114 @@ public class CaseReportUtil {
 			throw new APIException("Failed to find concept with mapping " + source + ":" + code);
 		}
 		return concept;
+	}
+	
+	/**
+	 * Gets the SqlCohortDefinition that matches the specified trigger name, will throw an
+	 * APIException if multiple cohort queries are found that match the trigger name
+	 *
+	 * @param triggerName the name to match against
+	 * @return the sql cohort query that matches the name
+	 * @throws APIException
+	 * @should return null if no cohort query is found that matches the trigger name
+	 * @should fail if multiple cohort queries are found that match the trigger name
+	 * @should not return a retired cohort query
+	 * @should return the matched cohort query
+	 */
+	public static SqlCohortDefinition getSqlCohortDefinition(String triggerName) throws APIException {
+		SqlCohortDefinition ret = null;
+		List<SqlCohortDefinition> matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
+		        .getDefinitions(triggerName, true);
+		if (matches.size() > 1) {
+			throw new APIException("Found multiple Sql Cohort Queries with name:" + triggerName);
+		} else if (matches.size() == 0 || matches.get(0).isRetired()) {
+			String msg;
+			if (matches.size() == 0) {
+				msg = "Cannot find a Sql Cohort Query with name:" + triggerName;
+			} else {
+				msg = triggerName + " is a retired Sql Cohort Query";
+			}
+			log.warn(msg);
+		} else {
+			ret = matches.get(0);
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Runs the SQL cohort query with the specified name and creates a case report for each matched
+	 * patient of none exists
+	 *
+	 * @param triggerName the name of the sql cohort query to be run
+	 * @param taskDefinition the scheduler taskDefinition inside which the trigger is being run
+	 * @throws APIException
+	 * @throws EvaluationException
+	 * @should fail if no sql cohort query matches the specified trigger name
+	 * @should create case reports for the matched patients
+	 * @should set the last execution time in the evaluation context
+	 * @should add a new trigger to an existing queue item for the patient
+	 * @should not create a duplicate trigger for the same patient
+	 * @should set the concept mappings in the evaluation context
+	 * @should fail for a task where the last execution time cannot be resolved
+	 */
+	public static void runTrigger(String triggerName, TaskDefinition taskDefinition) throws APIException,
+	    EvaluationException {
+		SqlCohortDefinition definition = getSqlCohortDefinition(triggerName);
+		if (definition == null) {
+			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
+		}
+		
+		EvaluationContext evaluationContext = new EvaluationContext();
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (definition.getParameter(CaseReportConstants.LAST_EXECUTION_TIME) != null) {
+			Date lastExecutionTime = null;
+			if (taskDefinition != null) {
+				lastExecutionTime = taskDefinition.getLastExecutionTime();
+				if (lastExecutionTime == null && taskDefinition.getRepeatInterval() != null
+				        && taskDefinition.getRepeatInterval() > 0) {
+					//TODO add a unit test for this
+					//default to now minus repeat interval
+					lastExecutionTime = DateUtils.addSeconds(new Date(), -taskDefinition.getRepeatInterval().intValue());
+				}
+			}
+			if (lastExecutionTime == null) {
+				throw new APIException("Failed to resolve the value for the last execution time");
+			}
+			params.put(CaseReportConstants.LAST_EXECUTION_TIME, lastExecutionTime);
+		}
+		
+		if (definition.getParameters() != null) {
+			for (Parameter p : definition.getParameters()) {
+				if (p.getName().startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
+					Concept concept = CaseReportUtil.getConceptByMappingString(p.getName(), true);
+					params.put(p.getName(), concept.getConceptId());
+				}
+			}
+		}
+		
+		evaluationContext.setParameterValues(params);
+		Cohort cohort = (Cohort) DefinitionContext.evaluate(definition, evaluationContext);
+		
+		PatientService ps = Context.getPatientService();
+		CaseReportService caseReportService = Context.getService(CaseReportService.class);
+		for (Integer patientId : cohort.getMemberIds()) {
+			Patient patient = ps.getPatient(patientId);
+			if (patient == null) {
+				throw new APIException("No patient found with patientId:" + patientId);
+			}
+			CaseReport caseReport = caseReportService.getCaseReportByPatient(patient);
+			if (caseReport == null) {
+				caseReport = new CaseReport(patient, triggerName);
+			} else {
+				//Don't create a duplicate trigger for the same patient
+				if (caseReport.getCaseReportTriggerByName(triggerName) != null) {
+					continue;
+				}
+				caseReport.addTrigger(new CaseReportTrigger(triggerName));
+			}
+			
+			caseReportService.saveCaseReport(caseReport);
+		}
 	}
 }

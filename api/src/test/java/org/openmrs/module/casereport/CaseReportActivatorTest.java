@@ -86,7 +86,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void contextRefreshed_shouldIgnoreACohortQueryWithADuplicateName() throws Exception {
-		final String name = "HIV Virus Not Suppressed";
+		final String name = "HIV Switched To Second Line";
 		List<SqlCohortDefinition> matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
 		        .getDefinitions(name, true);
 		assertEquals(0, matches.size());
@@ -113,7 +113,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void contextRefreshed_shouldSaveACohortQueriesWithANameThatMatchesARetiredDuplicate() throws Exception {
-		final String name = "HIV Virus Not Suppressed";
+		final String name = "HIV Switched To Second Line";
 		List<SqlCohortDefinition> matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
 		        .getDefinitions(name, true);
 		assertEquals(0, matches.size());
@@ -153,7 +153,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		assertTrue(query.getParameters().contains(new Parameter("CIEL_1990", null, null)));
 		assertTrue(query.getParameters().contains(new Parameter("CIEL_1991", null, null)));
 		
-		query = defService.getDefinitions("HIV Virus Not Suppressed", true).get(0);
+		query = defService.getDefinitions("HIV Switched To Second Line", true).get(0);
 		assertEquals("Select patient_id from patient where date_created > :lastExecutionTime", query.getQuery());
 		assertNull(query.getDescription());
 		Parameter p = query.getParameter("CIEL_1050");
@@ -175,7 +175,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	public void contextRefreshed_shouldAddTheCaseReportTasksIfTheyDoNotExist() throws Exception {
 		Map<String, Long> nameRepeatIntervalMap = new HashMap<String, Long>();
 		nameRepeatIntervalMap.put("HIV Patient Died", 60L);
-		nameRepeatIntervalMap.put("HIV Virus Not Suppressed", 120L);
+		nameRepeatIntervalMap.put("HIV Switched To Second Line", 120L);
 		SchedulerService ss = Context.getSchedulerService();
 		for (String name : nameRepeatIntervalMap.keySet()) {
 			assertNull(ss.getTaskByName(name));

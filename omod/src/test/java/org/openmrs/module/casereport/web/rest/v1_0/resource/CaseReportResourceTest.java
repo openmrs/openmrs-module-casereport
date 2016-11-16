@@ -29,7 +29,7 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	
 	@Override
 	public String getDisplayProperty() {
-		return "CaseReport for Mr. Horatio Test Hornblower Esq., Trigger(s): HIV Virus Not Suppressed, Another Trigger";
+		return "CaseReport for Mr. Horatio Test Hornblower Esq., Trigger(s): HIV Switched To Second Line, New HIV Case";
 	}
 	
 	@Override

@@ -62,8 +62,8 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals("2016-07-07T00:00:00.000-0400", reportForm.getDeathdate());
 		assertEquals(patient.isDead(), reportForm.getDead());
 		assertEquals(2, reportForm.getTriggers().size());
-		assertTrue(CaseReportUtil.collContainsItemWithValue(reportForm.getTriggers(), "HIV Virus Not Suppressed"));
-		assertTrue(CaseReportUtil.collContainsItemWithValue(reportForm.getTriggers(), "Another Trigger"));
+		assertTrue(CaseReportUtil.collContainsItemWithValue(reportForm.getTriggers(), "HIV Switched To Second Line"));
+		assertTrue(CaseReportUtil.collContainsItemWithValue(reportForm.getTriggers(), "New HIV Case"));
 		assertEquals(3, reportForm.getMostRecentViralLoads().size());
 		assertEquals(3, reportForm.getMostRecentCd4Counts().size());
 		assertEquals(3, reportForm.getMostRecentHivTests().size());

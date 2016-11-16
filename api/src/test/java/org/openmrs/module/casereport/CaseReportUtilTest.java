@@ -10,26 +10,58 @@
 package org.openmrs.module.casereport;
 
 import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	
+	private static final String XML_DATASET = "moduleTestData-initialCaseReports.xml";
+	
 	private static final String XML_OTHER_DATASET = "moduleTestData-other.xml";
 	
 	@Autowired
+	private CaseReportService service;
+	
+	@Autowired
 	PatientService patientService;
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+	
+	public static SqlCohortDefinition createTestSqlCohortDefinition(String name, String sql, boolean retired,
+	                                                                Parameter... parameters) {
+		SqlCohortDefinition definition = new SqlCohortDefinition(sql);
+		definition.setName(name);
+		definition.setRetired(retired);
+		for (Parameter param : parameters) {
+			definition.addParameter(param);
+		}
+		return DefinitionContext.saveDefinition(definition);
+	}
 	
 	/**
 	 * @see CaseReportUtil#getMostRecentViralLoads(Patient)
@@ -37,6 +69,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getMostRecentViralLoads_shouldReturnThe3MostRecentViralLoadObservations() throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		List<Obs> viralLoads = CaseReportUtil.getMostRecentViralLoads(patient);
@@ -52,6 +85,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getMostRecentCD4counts_shouldReturnThe3MostRecentCd4CountObservations() throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		List<Obs> cd4counts = CaseReportUtil.getMostRecentCD4counts(patient);
@@ -67,6 +101,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getMostRecentHIVTests_shouldReturnThe3MostRecentHIVTestObservations() throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		List<Obs> hivTests = CaseReportUtil.getMostRecentHIVTests(patient);
@@ -82,6 +117,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getMostRecentWHOStage_shouldReturnTheMostRecentWHOStageObservation() throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		assertEquals(8020, CaseReportUtil.getMostRecentWHOStage(patient).getId().intValue());
@@ -93,6 +129,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getCurrentARVMedications_shouldGetTheCurrentARVMedicationsForTheSpecifiedPatient() throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		Date asOfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2016-01-14 00:00:00.0");
@@ -114,6 +151,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getMostRecentReasonARVsStopped_shouldReturnTheMostRecentObsForTheReasonWhyThePatientStoppedTakingARVs()
 	    throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		assertEquals(8024, CaseReportUtil.getMostRecentReasonARVsStopped(patient).getId().intValue());
@@ -128,5 +166,215 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		assertEquals(101, CaseReportUtil.getLastVisit(patient).getId().intValue());
+	}
+	
+	/**
+	 * @see CaseReportUtil#getSqlCohortDefinition(String)
+	 * @verifies return null if no cohort query is found that matches the trigger name
+	 */
+	@Test
+	public void getSqlCohortDefinition_shouldReturnNullIfNoCohortQueryIsFoundThatMatchesTheTriggerName() throws Exception {
+		assertNull(CaseReportUtil.getSqlCohortDefinition("some name that does not exist"));
+	}
+	
+	/**
+	 * @see CaseReportUtil#getSqlCohortDefinition(String)
+	 * @verifies fail if multiple cohort queries are found that match the trigger name
+	 */
+	@Test
+	public void getSqlCohortDefinition_shouldFailIfMultipleCohortQueriesAreFoundThatMatchTheTriggerName() throws Exception {
+		final String name = "some name that is a duplicate";
+		createTestSqlCohortDefinition(name, "some query", false);
+		createTestSqlCohortDefinition(name, "some query", false);
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Found multiple Sql Cohort Queries with name:" + name));
+		CaseReportUtil.getSqlCohortDefinition(name);
+	}
+	
+	/**
+	 * @see CaseReportUtil#getSqlCohortDefinition(String)
+	 * @verifies not return a retired cohort query
+	 */
+	@Test
+	public void getSqlCohortDefinition_shouldNotReturnARetiredCohortQuery() throws Exception {
+		final String name = "some retired cohort query";
+		createTestSqlCohortDefinition(name, "some query", true);
+		assertNull(CaseReportUtil.getSqlCohortDefinition(name));
+	}
+	
+	/**
+	 * @see CaseReportUtil#getSqlCohortDefinition(String)
+	 * @verifies return the matched cohort query
+	 */
+	@Test
+	public void getSqlCohortDefinition_shouldReturnTheMatchedCohortQuery() throws Exception {
+		executeDataSet(XML_DATASET);
+		SqlCohortDefinition definition = CaseReportUtil.getSqlCohortDefinition("HIV Switched To Second Line");
+		assertNotNull(definition);
+		Assert.assertEquals("5b4f091e-4f28-4810-944b-4e4ccf9bfbb3", definition.getUuid());
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String, TaskDefinition)
+	 * @verifies not create a duplicate trigger for the same patient
+	 */
+	@Test
+	public void runTrigger_shouldNotCreateADuplicateTriggerForTheSamePatient() throws Exception {
+		executeDataSet(XML_DATASET);
+		final String name = "HIV Switched To Second Line";
+		final Integer patientId = 2;
+		CaseReport caseReport = service.getCaseReport(1);
+		Assert.assertEquals(patientId, caseReport.getPatient().getId());
+		Assert.assertEquals(2, caseReport.getReportTriggers().size());
+		int originalCaseReportCount = service.getCaseReports().size();
+		assertNotNull(caseReport.getCaseReportTriggerByName(name));
+		SqlCohortDefinition definition = CaseReportUtil.getSqlCohortDefinition(name);
+		definition.setQuery("select patient_id from patient where patient_id=" + patientId);
+		DefinitionContext.saveDefinition(definition);
+		
+		CaseReportUtil.runTrigger(name, null);
+		Assert.assertEquals(2, caseReport.getReportTriggers().size());
+		Assert.assertEquals(originalCaseReportCount, service.getCaseReports().size());
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String,TaskDefinition)
+	 * @verifies set the concept mappings in the evaluation context
+	 */
+	@Test
+	public void runTrigger_shouldSetTheConceptMappingsInTheEvaluationContext() throws Exception {
+		executeDataSet(XML_DATASET);
+		executeDataSet(XML_OTHER_DATASET);
+		final String name = "some cohort query";
+		Integer[] patientIds = { 2, 7 };
+		String[] params = { "CIEL_856", "CIEL_1040" };
+		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select distinct person_id from obs where concept_id = :"
+		        + params[0] + " or concept_id = :" + params[0], false, new Parameter(params[0], null, Integer.class),
+		    new Parameter(params[1], null, Integer.class));
+		int originalCount = service.getCaseReports().size();
+		int originalTriggerCount = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
+		        .getReportTriggers().size();
+		Assert.assertEquals(2, originalTriggerCount);
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+		
+		CaseReportUtil.runTrigger(name, null);
+		List<CaseReport> reports = service.getCaseReports();
+		int newCount = reports.size();
+		Assert.assertEquals(++originalCount, newCount);
+		Assert.assertEquals(++originalTriggerCount, service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
+		        .getReportTriggers().size());
+		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String, TaskDefinition)
+	 * @verifies fail if no sql cohort query matches the specified trigger name
+	 */
+	@Test
+	public void runTrigger_shouldFailIfNoSqlCohortQueryMatchesTheSpecifiedTriggerName() throws Exception {
+		final String name = "some name that doesn't exist";
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("No sql cohort query was found that matches the name:" + name));
+		CaseReportUtil.runTrigger(name, null);
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String,TaskDefinition)
+	 * @verifies fail for a task where the last execution time cannot be resolved
+	 */
+	@Test
+	public void runTrigger_shouldFailForATaskWhereTheLastExecutionTimeCannotBeResolved() throws Exception {
+		final String name = "some cohort query";
+		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select patient_id from patient where date_changed > :"
+		        + CaseReportConstants.LAST_EXECUTION_TIME, false, new Parameter(CaseReportConstants.LAST_EXECUTION_TIME,
+		        null, Date.class));
+		
+		TaskDefinition taskDefinition = new TaskDefinition();
+		taskDefinition.setRepeatInterval(0L);
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Failed to resolve the value for the last execution time"));
+		CaseReportUtil.runTrigger(name, taskDefinition);
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String, TaskDefinition)
+	 * @verifies create case reports for the matched patients
+	 */
+	@Test
+	public void runTrigger_shouldCreateCaseReportsForTheMatchedPatients() throws Exception {
+		final String name = "some cohort query";
+		Integer[] patientIds = { 7, 8 };
+		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in ("
+		        + patientIds[0] + "," + patientIds[1] + ")", false);
+		int originalCount = service.getCaseReports().size();
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+		
+		CaseReportUtil.runTrigger(name, null);
+		List<CaseReport> reports = service.getCaseReports();
+		int newCount = reports.size();
+		Assert.assertEquals(originalCount + 2, newCount);
+		CaseReport caseReport1 = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]));
+		assertNotNull(caseReport1);
+		Assert.assertEquals(1, caseReport1.getReportTriggers().size());
+		Assert.assertEquals(name, caseReport1.getReportTriggers().iterator().next().getName());
+		CaseReport caseReport2 = service.getCaseReportByPatient(patientService.getPatient(patientIds[1]));
+		assertNotNull(caseReport2);
+		Assert.assertEquals(1, caseReport2.getReportTriggers().size());
+		Assert.assertEquals(name, caseReport2.getReportTriggers().iterator().next().getName());
+		
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String,TaskDefinition)
+	 * @verifies set the last execution time in the evaluation context
+	 */
+	@Test
+	public void runTrigger_shouldSetTheLastExecutionTimeInTheEvaluationContext() throws Exception {
+		final String name = "some cohort query";
+		Integer[] patientIds = { 7, 8 };
+		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in ("
+		        + patientIds[0] + "," + patientIds[1] + ") and date_changed > :" + CaseReportConstants.LAST_EXECUTION_TIME,
+		    false, new Parameter(CaseReportConstants.LAST_EXECUTION_TIME, null, Date.class));
+		int originalCount = service.getCaseReports().size();
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+		
+		TaskDefinition taskDefinition = new TaskDefinition();
+		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:25:57"));
+		CaseReportUtil.runTrigger(name, taskDefinition);
+		List<CaseReport> reports = service.getCaseReports();
+		Assert.assertEquals(originalCount, reports.size());
+		
+		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34"));
+		CaseReportUtil.runTrigger(name, taskDefinition);
+		reports = service.getCaseReports();
+		int newCount = reports.size();
+		Assert.assertEquals(++originalCount, newCount);
+		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
+		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
+	}
+	
+	/**
+	 * @see CaseReportUtil#runTrigger(String, TaskDefinition)
+	 * @verifies add a new trigger to an existing queue item for the patient
+	 */
+	@Test
+	public void runTrigger_shouldAddANewTriggerToAnExistingQueueItemForThePatient() throws Exception {
+		executeDataSet(XML_DATASET);
+		final String name = "some valid cohort query name";
+		final Integer patientId = 2;
+		CaseReport caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
+		assertNotNull(caseReport);
+		int originalTriggerCount = caseReport.getReportTriggers().size();
+		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id = "
+		        + patientId, false);
+		
+		service = Context.getService(CaseReportService.class);
+		int originalCount = service.getCaseReports().size();
+		CaseReportUtil.runTrigger(name, null);
+		Assert.assertEquals(originalCount, service.getCaseReports().size());
+		caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
+		Assert.assertEquals(++originalTriggerCount, caseReport.getReportTriggers().size());
 	}
 }

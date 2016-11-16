@@ -86,20 +86,20 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	@Test
 	public void shouldSubmitTheCaseReport() throws Exception {
 		executeDataSet("moduleTestData-other.xml");
-		final String hivNotSuppressed = "HIV Virus Not Suppressed";
-		final String anotherTrigger = "Another Trigger";
+		final String hivSwitchToSecondLine = "HIV Switched To Second Line";
+		final String newHivCase = "New HIV Case";
 		ObjectMapper mapper = new ObjectMapper();
 		User submitter = Context.getUserService().getUserByUuid("c98a1558-e131-11de-babe-001e378eb67e");
 		CaseReport cr = service.getCaseReportByUuid(getUuid());
 		assertTrue(StringUtils.isBlank(cr.getReportForm()));
 		CaseReportForm form = new CaseReportForm(cr);
 		assertEquals(2, form.getTriggers().size());
-		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), hivNotSuppressed));
-		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), anotherTrigger));
+		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), hivSwitchToSecondLine));
+		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), newHivCase));
 		assertFalse(cr.isSubmitted());
 		
 		form.setSubmitter(new UuidAndValue(submitter.getUuid(), submitter.getSystemId()));
-		form.getTriggers().remove(form.getTriggerByName(anotherTrigger));
+		form.getTriggers().remove(form.getTriggerByName(newHivCase));
 		final String implementationId = "Test_Impl";
 		form.setAssigningAuthorityId(implementationId);
 		
@@ -113,8 +113,8 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		assertEquals(submitter.getSystemId(), savedForm.getSubmitter().getValue());
 		assertEquals(implementationId, savedForm.getAssigningAuthorityId());
 		assertEquals(1, savedForm.getTriggers().size());
-		assertTrue(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), hivNotSuppressed));
-		assertFalse(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), anotherTrigger));
+		assertTrue(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), hivSwitchToSecondLine));
+		assertFalse(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), newHivCase));
 	}
 	
 	@Test

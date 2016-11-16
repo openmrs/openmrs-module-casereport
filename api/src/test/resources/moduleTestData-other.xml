@@ -13,8 +13,6 @@
 -->
 
 <dataset>
-    <concept_reference_source concept_source_id="9000" name="CIEL Dictionary" hl7_code="CIEL" description="A made up source" creator="1" date_created="2016-01-11 00:00:00.0" retired="false" uuid="22221827-639f-4cb4-961f-1e025bf82222" />
-
     <!-- Viral load concept -->
     <concept concept_id="1000" datatype_id="1" class_id="1" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-4905-b25d-5784167d0214" />
     <concept_name concept_name_id="2000" concept_id="1000" name="HIV Viral Load" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7e77e374-18a1-4ec6-8ed4-4152a5a7d621" />

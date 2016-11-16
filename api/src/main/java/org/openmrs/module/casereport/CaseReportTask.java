@@ -12,10 +12,7 @@ package org.openmrs.module.casereport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
 import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
 /**
@@ -28,19 +25,6 @@ import org.openmrs.scheduler.tasks.AbstractTask;
 public class CaseReportTask extends AbstractTask {
 	
 	protected Log log = LogFactory.getLog(getClass());
-	
-	public String getTriggerName() {
-		return getTaskDefinition().getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY);
-	}
-	
-	public Concept getConcept() {
-		String mapping = getTaskDefinition().getProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY);
-		if (mapping.startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
-			return CaseReportUtil.getConceptByMappingString(mapping, true);
-		} else {
-			throw new APIException("Only CIEL concept mappings are currently allowed");
-		}
-	}
 	
 	/**
 	 * @see AbstractTask#execute()
@@ -60,7 +44,7 @@ public class CaseReportTask extends AbstractTask {
 					throw new APIException("The Trigger Name property is required for a Case Report Task");
 				}
 				
-				Context.getService(CaseReportService.class).runTrigger(trigger, getTaskDefinition());
+				CaseReportUtil.runTrigger(trigger, getTaskDefinition());
 				
 				if (log.isDebugEnabled()) {
 					log.debug("Case report task completed successfully ...");
