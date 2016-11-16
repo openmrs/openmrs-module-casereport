@@ -118,6 +118,7 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should submit the specified case report
 	 * @should call the registered submit event listeners
 	 * @should fail if no concept is linked to the trigger
+	 * @should fail if the linked concept isn't mapped to ciel
 	 */
 	@Authorized(CaseReportConstants.PRIV_MANAGE_CASE_REPORTS)
 	CaseReport submitCaseReport(CaseReport caseReport) throws APIException;

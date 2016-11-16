@@ -33,10 +33,13 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.DemoListener;
 import org.openmrs.module.casereport.UuidAndValue;
+import org.openmrs.scheduler.SchedulerService;
+import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
 import org.openmrs.util.OpenmrsConstants;
@@ -548,6 +551,25 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(CoreMatchers.equalTo("No concept was found that is linked to the trigger: "
 		        + triggerName));
+		service.submitCaseReport(cr);
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport)
+	 * @verifies fail if the linked concept isn't mapped to ciel
+	 */
+	@Test
+	public void submitCaseReport_shouldFailIfTheLinkedConceptIsntMappedToCiel() throws Exception {
+		CaseReport cr = service.getCaseReport(4);
+		assertEquals(1, cr.getReportTriggers().size());
+		String triggerName = cr.getReportTriggers().iterator().next().getName();
+		SchedulerService ss = Context.getSchedulerService();
+		TaskDefinition td = ss.getTaskByName(triggerName);
+		td.setProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY, "LOINC_123");
+		ss.saveTaskDefinition(td);
+		cr.setReportForm("some json");
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(CoreMatchers.equalTo("Only CIEL concept mappings are currently allowed"));
 		service.submitCaseReport(cr);
 	}
 }
