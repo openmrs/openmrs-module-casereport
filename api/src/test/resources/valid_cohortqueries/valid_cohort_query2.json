@@ -1,5 +1,6 @@
 {
   "name": "HIV Patient Died",
+  "concept": "CIEL_159",
   "sql": "Select patient_id from patient pa, person p where pa.patient_id=p.person_id and dead = 1",
   "repeatInterval": 60,
   "description": "HIV patients that have died",

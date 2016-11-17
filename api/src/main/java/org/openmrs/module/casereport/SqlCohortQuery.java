@@ -15,6 +15,8 @@ public class SqlCohortQuery {
 	
 	private String name;
 	
+	private String concept;
+	
 	private String sql;
 	
 	private Long repeatInterval;
@@ -29,6 +31,14 @@ public class SqlCohortQuery {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getConcept() {
+		return concept;
+	}
+	
+	public void setConcept(String concept) {
+		this.concept = concept;
 	}
 	
 	public String getSql() {

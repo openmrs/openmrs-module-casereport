@@ -1,5 +1,6 @@
 {
   "name": "HIV Treatment Failure",
+  "concept": "CIEL_843",
   "description": "HIV patients who have reported treatment failure or have viral load > 5000",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [

@@ -39,7 +39,8 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	
 	@Before
 	public void setup() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 	}
 	

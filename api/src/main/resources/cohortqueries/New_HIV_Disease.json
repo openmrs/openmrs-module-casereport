@@ -1,5 +1,6 @@
 {
   "name": "New HIV Disease",
+  "concept": "CIEL_",
   "description": "HIV patients for whom WHO Classification advanced to 3 or 4",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [

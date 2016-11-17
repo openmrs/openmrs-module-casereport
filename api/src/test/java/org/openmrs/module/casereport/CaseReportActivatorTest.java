@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -47,6 +48,11 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
+	
+	@Before
+	public void setup() throws Exception {
+		executeDataSet("moduleTestData-initialConcepts.xml");
+	}
 	
 	@After
 	public void cleanup() {
@@ -76,6 +82,58 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/missing_sql_cohort_query.json");
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("Failed to load cohort query because of missing sql field"));
+		
+		activator.contextRefreshed();
+	}
+	
+	/**
+	 * @see CaseReportActivator#contextRefreshed()
+	 * @verifies fail for a query with an invalid concept mapping
+	 */
+	@Test
+	public void contextRefreshed_shouldFailForAQueryWithAnInvalidConceptMapping() throws Exception {
+		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/invalid_concept_cohort_query.json");
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Invalid concept mapping: CIEL_"));
+		
+		activator.contextRefreshed();
+	}
+	
+	/**
+	 * @see CaseReportActivator#contextRefreshed()
+	 * @verifies fail for a query with no concept
+	 */
+	@Test
+	public void contextRefreshed_shouldFailForAQueryWithNoConcept() throws Exception {
+		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/missing_concept_cohort_query.json");
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Failed to load cohort query because of missing concept field"));
+		
+		activator.contextRefreshed();
+	}
+	
+	/**
+	 * @see CaseReportActivator#contextRefreshed()
+	 * @verifies fail for a query with a none ciel concept
+	 */
+	@Test
+	public void contextRefreshed_shouldFailForAQueryWithANoneCielConcept() throws Exception {
+		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/missing_none_ciel_concept_cohort_query.json");
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Only CIEL concept mappings are currently allowed"));
+		
+		activator.contextRefreshed();
+	}
+	
+	/**
+	 * @see CaseReportActivator#contextRefreshed()
+	 * @verifies fail for a query with a none existent concept
+	 */
+	@Test
+	public void contextRefreshed_shouldFailForAQueryWithANoneExistentConcept() throws Exception {
+		loader.setPathPattern(INVALID_FILE_DIR_NAME + "/none_existent_concept_cohort_query.json");
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("Failed to find concept with mapping: CIEL_9999999"));
 		
 		activator.contextRefreshed();
 	}

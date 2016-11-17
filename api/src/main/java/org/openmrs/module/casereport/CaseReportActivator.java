@@ -46,6 +46,10 @@ public class CaseReportActivator extends BaseModuleActivator {
 	/**
 	 * @should fail for a query with no name
 	 * @should fail for a query with no sql
+	 * @should fail for a query with no concept
+	 * @should fail for a query with a none ciel concept
+	 * @should fail for a query with an invalid concept mapping
+	 * @should fail for a query with a none existent concept
 	 * @should ignore a cohort query with a duplicate name
 	 * @should save a cohort queries with a name that matches a retired duplicate
 	 * @should load queries and register them with the reporting module
@@ -81,6 +85,15 @@ public class CaseReportActivator extends BaseModuleActivator {
 				throw new APIException("Failed to load cohort query because of missing name field");
 			} else if (StringUtils.isBlank(cohortQuery.getSql())) {
 				throw new APIException("Failed to load cohort query because of missing sql field");
+			} else if (StringUtils.isBlank(cohortQuery.getConcept())) {
+				throw new APIException("Failed to load cohort query because of missing concept field");
+			}
+			
+			String conceptStr = cohortQuery.getConcept();
+			if (conceptStr.startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
+				CaseReportUtil.getConceptByMappingString(conceptStr, true);
+			} else {
+				throw new APIException("Only CIEL concept mappings are currently allowed");
 			}
 			
 			List<SqlCohortDefinition> duplicates = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)

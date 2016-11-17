@@ -41,7 +41,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Before
 	public void setup() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
 	}
 	
 	@Override
@@ -85,6 +85,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Test
 	public void shouldSubmitTheCaseReport() throws Exception {
+		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		final String hivSwitchToSecondLine = "HIV Switched To Second Line";
 		final String newHivCase = "New HIV Case";

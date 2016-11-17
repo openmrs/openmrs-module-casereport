@@ -50,7 +50,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
-	private static final String XML_DATASET = "moduleTestData-initialCaseReports.xml";
+	private static final String XML_DATASET = "moduleTestData-initial.xml";
+	
+	private static final String XML_CONCEPT_DATASET = "moduleTestData-initialConcepts.xml";
 	
 	private static final String XML_OTHER_DATASET = "moduleTestData-other.xml";
 	
@@ -68,6 +70,7 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void setup() throws Exception {
 		executeDataSet(XML_DATASET);
+		executeDataSet(XML_CONCEPT_DATASET);
 		if (mapper == null) {
 			mapper = new ObjectMapper();
 		}
@@ -556,10 +559,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
-	 * @verifies fail if the linked concept isn't mapped to ciel
+	 * @verifies fail if the linked concept is not mapped to ciel
 	 */
 	@Test
-	public void submitCaseReport_shouldFailIfTheLinkedConceptIsntMappedToCiel() throws Exception {
+	public void submitCaseReport_shouldFailIfTheLinkedConceptIsNotMappedToCiel() throws Exception {
 		CaseReport cr = service.getCaseReport(4);
 		assertEquals(1, cr.getReportTriggers().size());
 		String triggerName = cr.getReportTriggers().iterator().next().getName();
@@ -570,6 +573,26 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		cr.setReportForm("some json");
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(CoreMatchers.equalTo("Only CIEL concept mappings are currently allowed"));
+		service.submitCaseReport(cr);
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport)
+	 * @verifies fail for a query with an invalid concept mapping
+	 */
+	@Test
+	public void submitCaseReport_shouldFailForAQueryWithAnInvalidConceptMapping() throws Exception {
+		CaseReport cr = service.getCaseReport(4);
+		assertEquals(1, cr.getReportTriggers().size());
+		String triggerName = cr.getReportTriggers().iterator().next().getName();
+		SchedulerService ss = Context.getSchedulerService();
+		TaskDefinition td = ss.getTaskByName(triggerName);
+		final String invalidMapping = "CIEL_";
+		td.setProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY, invalidMapping);
+		ss.saveTaskDefinition(td);
+		cr.setReportForm("some json");
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(CoreMatchers.equalTo("Invalid concept mapping: " + invalidMapping));
 		service.submitCaseReport(cr);
 	}
 }

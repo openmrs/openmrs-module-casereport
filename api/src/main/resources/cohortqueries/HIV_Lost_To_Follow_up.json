@@ -1,5 +1,6 @@
 {
   "name": "HIV Lost To Follow Up",
+  "concept": "CIEL_",
   "description": "HIV patients who have not been seen for at least 18 months",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [

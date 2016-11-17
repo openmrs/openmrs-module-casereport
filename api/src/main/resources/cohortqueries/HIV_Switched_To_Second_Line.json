@@ -1,5 +1,6 @@
 {
   "name": "HIV Switched To Second Line",
+  "concept": "CIEL_162188",
   "description": "HIV patients who have been switched to a second line regimen",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [

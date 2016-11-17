@@ -1,5 +1,5 @@
 {
-  "name": "",
-  "concept":"CIEL_159",
+  "name": "Patient Died",
+  "concept": " ",
   "sql": "Select * from patients where dead = 1"
 }

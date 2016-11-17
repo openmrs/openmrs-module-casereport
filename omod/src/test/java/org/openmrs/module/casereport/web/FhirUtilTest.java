@@ -37,7 +37,8 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 	 */
 	@Test
 	public void createFhirDocument_shouldReturnTheGeneratedJson() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		final String implId = "Test_Impl";
 		final String implName = "Test_Name";

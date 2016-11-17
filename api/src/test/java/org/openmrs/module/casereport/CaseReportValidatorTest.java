@@ -76,7 +76,7 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void validate_shouldPassForAValidCaseReport() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
 		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReport(1);
 		Errors errors = new BindException(caseReport, "casereport");
 		validator.validate(caseReport, errors);

@@ -36,7 +36,8 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void shouldGenerateTheReportFormForTheSpecifiedPatient() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		PatientService ps = Context.getPatientService();
 		Patient patient = ps.getPatient(2);

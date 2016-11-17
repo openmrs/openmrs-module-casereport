@@ -1,5 +1,6 @@
 {
   "name": "HIV Switched To Second Line",
+  "concept": "CIEL_162188",
   "sql": "Select patient_id from patient where date_created > :lastExecutionTime",
   "repeatInterval": 120,
   "conceptMappings": ["CIEL_1050"]

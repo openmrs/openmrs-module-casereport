@@ -209,12 +209,16 @@ public class CaseReportUtil {
 	 */
 	public static Concept getConceptByMappingString(String mappingString, boolean failIfNotFound) {
 		String[] sourceAndCode = StringUtils.split(mappingString, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR);
+		if (sourceAndCode.length == 1 && failIfNotFound) {
+			throw new APIException("Invalid concept mapping: " + mappingString);
+		}
 		String source = sourceAndCode[0];
 		String code = sourceAndCode[1];
 		Concept concept = Context.getConceptService().getConceptByMapping(code, source);
 		if (concept == null && failIfNotFound) {
-			throw new APIException("Failed to find concept with mapping " + source + ":" + code);
+			throw new APIException("Failed to find concept with mapping: " + mappingString);
 		}
+		
 		return concept;
 	}
 	

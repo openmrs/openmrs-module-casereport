@@ -34,7 +34,8 @@ public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensi
 	 */
 	@Test
 	public void onApplicationEvent_shouldGenerateAFhirMessageMessageAndWriteItToTheOutputDirectory() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		final String implId = "Test_Impl";
 		final String implName = "Test_Name";

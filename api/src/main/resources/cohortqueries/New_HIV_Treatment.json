@@ -1,5 +1,6 @@
 {
   "name": "New HIV Treatment",
+  "concept": "CIEL_1256",
   "description": "HIV patients for starting treatment",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [

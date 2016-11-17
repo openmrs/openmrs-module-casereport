@@ -1,5 +1,6 @@
 {
   "name": "HIV Patient Not Tested",
+  "concept": "CIEL_",
   "description": "HIV patients for whom a viral load has not been done for at least 12 months",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [

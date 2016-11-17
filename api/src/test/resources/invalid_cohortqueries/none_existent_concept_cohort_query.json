@@ -1,0 +1,5 @@
+{
+  "name": "Patient Died",
+  "concept": "CIEL_9999999",
+  "sql": "Select * from patients where dead = 1"
+}

@@ -109,7 +109,7 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 	 */
 	@Test
 	public void validate_shouldFailIfACaseReportWithTheSameTriggerAlreadyExistsForThePatient() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
 		final String name = "HIV Switched To Second Line";
 		final Patient patient = Context.getPatientService().getPatient(2);
 		CaseReportTrigger existingTrigger = null;
@@ -202,7 +202,7 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 	 */
 	@Test
 	public void validate_shouldPassForAValidCaseReportTrigger() throws Exception {
-		executeDataSet("moduleTestData-initialCaseReports.xml");
+		executeDataSet("moduleTestData-initial.xml");
 		CaseReportTrigger trigger = Context.getService(CaseReportService.class).getCaseReport(1).getReportTriggers()
 		        .iterator().next();
 		Errors errors = new BindException(trigger, "trigger");
