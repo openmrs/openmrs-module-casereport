@@ -1,6 +1,6 @@
 {
   "name": "New HIV Case",
-  "concept": "CIEL_703",
+  "concept": "CIEL_138571",
   "description": "Patients newly diagnosed with HIV",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [
