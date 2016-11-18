@@ -114,12 +114,12 @@ public class CaseReportActivator extends BaseModuleActivator {
 					}
 				}
 				DefinitionContext.saveDefinition(definition);
-				addSchedulerTaskIfNecessary(cohortQuery.getName(), cohortQuery.getRepeatInterval());
+				addSchedulerTaskIfNecessary(cohortQuery.getName(), conceptStr, cohortQuery.getRepeatInterval());
 			}
 		}
 	}
 	
-	private void addSchedulerTaskIfNecessary(String name, Long repeatInterval) {
+	private void addSchedulerTaskIfNecessary(String name, String concept, Long repeatInterval) {
 		log.info("Creating Case Reports Task for: " + name);
 		
 		SchedulerService ss = Context.getSchedulerService();
@@ -131,6 +131,7 @@ public class CaseReportActivator extends BaseModuleActivator {
 			td = new TaskDefinition(null, name, description, className);
 			td.setStartOnStartup(false);
 			td.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
+			td.setProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY, concept);
 			td.setRepeatInterval(repeatInterval);
 			if (td.getRepeatInterval() == null) {
 				td.setRepeatInterval(0L);

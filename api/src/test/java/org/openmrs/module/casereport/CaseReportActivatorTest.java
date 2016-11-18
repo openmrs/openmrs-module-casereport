@@ -232,8 +232,11 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void contextRefreshed_shouldAddTheCaseReportTasksIfTheyDoNotExist() throws Exception {
 		Map<String, Long> nameRepeatIntervalMap = new HashMap<String, Long>();
+		Map<String, String> nameConceptMap = new HashMap<String, String>();
 		nameRepeatIntervalMap.put("HIV Patient Died", 60L);
 		nameRepeatIntervalMap.put("HIV Switched To Second Line", 120L);
+		nameConceptMap.put("HIV Patient Died", "CIEL_159");
+		nameConceptMap.put("HIV Switched To Second Line", "CIEL_162188");
 		SchedulerService ss = Context.getSchedulerService();
 		for (String name : nameRepeatIntervalMap.keySet()) {
 			assertNull(ss.getTaskByName(name));
@@ -246,6 +249,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 			assertNotNull(td);
 			assertEquals("casereport.description.schedulerTaskFor", td.getDescription());
 			assertEquals(entry.getKey(), td.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY));
+			assertEquals(nameConceptMap.get(entry.getKey()), td.getProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY));
 			assertEquals(entry.getValue(), td.getRepeatInterval());
 		}
 		
