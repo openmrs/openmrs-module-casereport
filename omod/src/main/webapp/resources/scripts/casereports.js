@@ -19,6 +19,11 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 templateUrl: "templates/list.page",
                 controller: "ViewCaseReportsController"
             })
+            .state('caseReportQueueItemForm', {
+                url: "/caseReportQueueItemForm",
+                templateUrl: "templates/caseReportQueueItemForm.page",
+                controller: "CaseReportQueueItemFormController"
+            })
             .state('reportForm', {
                 url: "/reportForm/:uuid",
                 templateUrl: "templates/reportForm.page",
@@ -33,6 +38,28 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 }
             })
     }])
+
+    .controller("CaseReportQueueItemFormController", ["$scope", "$state", "CaseReport",
+        function ($scope, $state, CaseReport) {
+            $scope.patientUuid = "";
+            $scope.trigger = "";
+
+            $scope.saveNewQueueItem = function(){
+                alert('eee');
+                var newItem = {
+                    patient: $scope.patientUuid,
+                    reportTriggers: [
+                        {"name": $scope.trigger}
+                    ]
+                }
+
+                CaseReport.save(newItem).$promise.then(function() {
+                    $state.go("list");
+                    emr.successMessage(emr.message("casereport.save.success"));
+                });
+            }
+        }
+    ])
 
     .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
         function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {

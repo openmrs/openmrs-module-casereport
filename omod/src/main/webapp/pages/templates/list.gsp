@@ -12,6 +12,11 @@
 
 <h2>${ ui.message('casereport.caseReportQueue.label')}</h2>
 
+<div>
+    <button ui-sref="caseReportQueueItemForm">${ ui.message('casereport.addNewQueueItem.label')}</button>
+</div>
+</br>
+
 <input ng-model="patientSearchText" placeholder="${ui.message('casereport.searchByPatient')}" />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input ng-model="triggerSearchText" placeholder="${ui.message('casereport.filterByTriggers')}" />
