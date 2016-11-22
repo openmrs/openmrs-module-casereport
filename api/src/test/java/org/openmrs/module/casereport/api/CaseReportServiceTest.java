@@ -595,4 +595,13 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		expectedException.expectMessage(CoreMatchers.equalTo("Invalid concept mapping: " + invalidMapping));
 		service.submitCaseReport(cr);
 	}
+	
+	/**
+	 * @see CaseReportService#getTriggers()
+	 * @verifies return all the triggers
+	 */
+	@Test
+	public void getTriggers_shouldReturnAllTheTriggers() throws Exception {
+		assertEquals(4, service.getTriggers().size());
+	}
 }

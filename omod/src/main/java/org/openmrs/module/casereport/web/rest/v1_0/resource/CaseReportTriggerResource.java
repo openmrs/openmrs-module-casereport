@@ -51,6 +51,21 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 		return null;
 	}
 	
+	/**
+	 * @see DelegatingSubResource#newDelegate()
+	 */
+	@Override
+	public CaseReportTrigger newDelegate() {
+		return new CaseReportTrigger();
+	}
+	
+	@Override
+	public DelegatingResourceDescription getCreatableProperties() throws ResourceDoesNotSupportOperationException {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addRequiredProperty("name");
+		return description;
+	}
+	
 	@PropertyGetter("display")
 	public String getDisplayString(CaseReportTrigger delegate) {
 		return delegate.toString();
@@ -93,15 +108,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	protected void delete(CaseReportTrigger delegate, String reason, RequestContext context) throws ResponseException {
-		throw new ResourceDoesNotSupportOperationException("read-only resource");
-	}
-	
-	/**
-	 * @see DelegatingSubResource#newDelegate()
-	 */
-	@Override
-	public CaseReportTrigger newDelegate() {
-		throw new ResourceDoesNotSupportOperationException("read-only resource");
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -109,7 +116,7 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public CaseReportTrigger save(CaseReportTrigger delegate) {
-		throw new ResourceDoesNotSupportOperationException("read-only resource");
+		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**
@@ -117,6 +124,6 @@ public class CaseReportTriggerResource extends DelegatingSubResource<CaseReportT
 	 */
 	@Override
 	public void purge(CaseReportTrigger delegate, RequestContext context) throws ResponseException {
-		throw new ResourceDoesNotSupportOperationException("read-only resource");
+		throw new ResourceDoesNotSupportOperationException();
 	}
 }

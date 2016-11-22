@@ -72,6 +72,11 @@
     </privilege>
 
     <privilege>
+        <name>Get Triggers</name>
+        <description>Able to get triggers</description>
+    </privilege>
+
+    <privilege>
         <name>App: casereport.manageCaseReports</name>
         <description>Able to access the manage case reports app</description>
     </privilege>

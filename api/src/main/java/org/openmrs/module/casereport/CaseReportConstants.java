@@ -24,6 +24,8 @@ public class CaseReportConstants {
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
 	
+	public static final String PRIV_GET_TRIGGERS = "Get Triggers";
+	
 	public static final String LAST_EXECUTION_TIME = "lastExecutionTime";
 	
 	public static final String SOURCE_CIEL_HL7_CODE = "CIEL";

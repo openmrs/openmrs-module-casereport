@@ -17,6 +17,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
+import org.openmrs.module.casereport.Trigger;
 
 /**
  * Contains methods for processing CRUD operations related to case reports
@@ -173,4 +174,13 @@ public interface CaseReportService extends OpenmrsService {
 	 */
 	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
 	List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException;
+	
+	/**
+	 * Gets all the triggers
+	 * 
+	 * @return a list of triggers
+	 * @should return all the triggers
+	 */
+	@Authorized(CaseReportConstants.PRIV_GET_TRIGGERS)
+	List<Trigger> getTriggers();
 }

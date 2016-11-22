@@ -16,10 +16,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
+import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
@@ -68,6 +70,32 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 		return null;
 	}
 	
+	/**
+	 * @see DataDelegatingCrudResource#newDelegate()
+	 */
+	@Override
+	public CaseReport newDelegate() {
+		return new CaseReport();
+	}
+	
+	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getCreatableProperties()
+	 */
+	@Override
+	public DelegatingResourceDescription getCreatableProperties() throws ResourceDoesNotSupportOperationException {
+		DelegatingResourceDescription description = new DelegatingResourceDescription();
+		description.addRequiredProperty("patient");
+		description.addRequiredProperty("reportTriggers");
+		return description;
+	}
+	
+	@PropertySetter("reportTriggers")
+	public void setTriggers(CaseReport instance, CaseReportTrigger... reportTriggers) {
+		for (CaseReportTrigger trigger : reportTriggers) {
+			instance.addTrigger(trigger);
+		}
+	}
+	
 	@PropertyGetter("display")
 	public String getDisplayString(CaseReport delegate) {
 		return delegate.toString();
@@ -98,6 +126,14 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	}
 	
 	/**
+	 * @see DataDelegatingCrudResource#save(Object)
+	 */
+	@Override
+	public CaseReport save(CaseReport caseReport) {
+		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
+	}
+	
+	/**
 	 * @see DataDelegatingCrudResource#doGetAll(RequestContext)
 	 */
 	@Override
@@ -112,22 +148,6 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	@Override
 	protected void delete(CaseReport caseReport, String reason, RequestContext requestContext) throws ResponseException {
 		Context.getService(CaseReportService.class).voidCaseReport(caseReport, reason);
-	}
-	
-	/**
-	 * @see DataDelegatingCrudResource#newDelegate()
-	 */
-	@Override
-	public CaseReport newDelegate() {
-		throw new ResourceDoesNotSupportOperationException();
-	}
-	
-	/**
-	 * @see DataDelegatingCrudResource#save(Object)
-	 */
-	@Override
-	public CaseReport save(CaseReport caseReport) {
-		throw new ResourceDoesNotSupportOperationException();
 	}
 	
 	/**

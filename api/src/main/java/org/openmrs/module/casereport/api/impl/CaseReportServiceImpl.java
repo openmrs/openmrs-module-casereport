@@ -35,6 +35,7 @@ import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTask;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.CaseReportUtil;
+import org.openmrs.module.casereport.Trigger;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
@@ -55,6 +56,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	private CaseReportDAO dao;
 	
 	private ObjectMapper mapper = null;
+	
+	private List<Trigger> triggers = null;
 	
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -184,22 +187,20 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		//We need to find the task associated to the queue item so we can get the triggers concept
-		Collection<TaskDefinition> taskDefinitions = Context.getSchedulerService().getRegisteredTasks();
+		Collection<TaskDefinition> taskDefinitions = getCaseReportTaskDefinitions();
 		for (CaseReportTrigger crt : caseReport.getReportTriggers()) {
 			Concept triggerConcept = null;
 			for (TaskDefinition taskDef : taskDefinitions) {
-				if (CaseReportTask.class.getName().equals(taskDef.getTaskClass())) {
-					String tName = taskDef.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY);
-					//if this queue item was created by this task
-					if (crt.getName().equalsIgnoreCase(tName)) {
-						String mapping = taskDef.getProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY);
-						if (StringUtils.isNotBlank(mapping)) {
-							if (mapping.startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
-								triggerConcept = CaseReportUtil.getConceptByMappingString(mapping, true);
-								break;
-							} else {
-								throw new APIException("Only CIEL concept mappings are currently allowed");
-							}
+				String tName = taskDef.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY);
+				//if this queue item was created by this task
+				if (crt.getName().equalsIgnoreCase(tName)) {
+					String mapping = taskDef.getProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY);
+					if (StringUtils.isNotBlank(mapping)) {
+						if (mapping.startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
+							triggerConcept = CaseReportUtil.getConceptByMappingString(mapping, true);
+							break;
+						} else {
+							throw new APIException("Only CIEL concept mappings are currently allowed");
 						}
 					}
 				}
@@ -307,5 +308,32 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		return dao.getCaseReports(patient, statusesToExclude, false);
+	}
+	
+	/**
+	 * @see CaseReportService#getTriggers()
+	 */
+	@Override
+	public List<Trigger> getTriggers() {
+		if (triggers == null) {
+			triggers = new ArrayList<Trigger>();
+		}
+		
+		for (TaskDefinition td : getCaseReportTaskDefinitions()) {
+			triggers.add(new Trigger(td.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY)));
+		}
+		
+		return triggers;
+	}
+	
+	private List<TaskDefinition> getCaseReportTaskDefinitions() {
+		List<TaskDefinition> taskDefinitions = new ArrayList<TaskDefinition>();
+		Collection<TaskDefinition> taskDefs = Context.getSchedulerService().getRegisteredTasks();
+		for (TaskDefinition taskDef : taskDefs) {
+			if (CaseReportTask.class.getName().equals(taskDef.getTaskClass())) {
+				taskDefinitions.add(taskDef);
+			}
+		}
+		return taskDefinitions;
 	}
 }

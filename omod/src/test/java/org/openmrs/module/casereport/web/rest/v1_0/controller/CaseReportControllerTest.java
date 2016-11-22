@@ -15,6 +15,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,6 +64,22 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		SimpleObject result = deserialize(handle(newGetRequest(getURI())));
 		assertNotNull(result);
 		assertEquals(getAllCount(), Util.getResultsSize(result));
+	}
+	
+	@Test
+	public void shouldCreateNewCaseReportQueueItem() throws Exception {
+		long initialCount = getAllCount();
+		assertEquals(initialCount, Util.getResultsSize(deserialize(handle(newGetRequest(getURI())))));
+		SimpleObject reportQueueItem = new SimpleObject();
+		reportQueueItem.add("patient", "5946f880-b197-400b-9caa-a3c661d23041");
+		SimpleObject trigger1 = new SimpleObject();
+		trigger1.add("name", "HIV Patient Died");
+		SimpleObject trigger2 = new SimpleObject();
+		trigger2.add("name", "New HIV Case");
+		reportQueueItem.add("reportTriggers", Arrays.asList(trigger1, trigger2));
+		SimpleObject newReportItem = deserialize(handle(newPostRequest(getURI(), reportQueueItem)));
+		assertEquals(++initialCount, Util.getResultsSize(deserialize(handle(newGetRequest(getURI())))));
+		assertEquals(2, ((List) Util.getByPath(newReportItem, "reportTriggers")).size());
 	}
 	
 	@Test
