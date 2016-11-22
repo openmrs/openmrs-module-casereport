@@ -9,22 +9,17 @@
  */
 package org.openmrs.module.casereport;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.Patient;
-import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
@@ -129,71 +124,6 @@ public class CaseReportTriggerValidatorTest extends BaseModuleContextSensitiveTe
 		validator.validate(trigger, errors);
 		assertTrue(errors.hasFieldErrors("name"));
 		assertEquals("casereport.error.trigger.duplicate", errors.getFieldError("name").getCode());
-	}
-	
-	/**
-	 * @see CaseReportTriggerValidator#validate(Object,Errors)
-	 * @verifies fail if multiple sql cohort queries match the trigger name
-	 */
-	@Test
-	public void validate_shouldFailIfMultipleSqlCohortQueriesMatchTheTriggerName() throws Exception {
-		final String name = "some name that is a duplicate";
-		SqlCohortDefinition definition1 = new SqlCohortDefinition("some query");
-		definition1.setName(name);
-		DefinitionContext.saveDefinition(definition1);
-		SqlCohortDefinition definition2 = new SqlCohortDefinition("some query");
-		definition2.setName(name);
-		DefinitionContext.saveDefinition(definition2);
-		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Found multiple Sql Cohort Queries with name:" + name));
-		
-		CaseReportTrigger trigger = new CaseReportTrigger(name);
-		CaseReport caseReport = new CaseReport();
-		caseReport.setPatient(Context.getPatientService().getPatient(2));
-		trigger.setCaseReport(caseReport);
-		Errors errors = new BindException(trigger, "trigger");
-		validator.validate(trigger, errors);
-	}
-	
-	/**
-	 * @see CaseReportTriggerValidator#validate(Object, Errors)
-	 * @verifies fail if no sql cohort query matches the trigger name
-	 */
-	@Test
-	public void validate_shouldFailIfNoSqlCohortQueryMatchesTheTriggerName() throws Exception {
-		final String name = "some non existent trigger";
-		assertNull(CaseReportUtil.getSqlCohortDefinition(name));
-		
-		CaseReportTrigger trigger = new CaseReportTrigger(name);
-		CaseReport caseReport = new CaseReport();
-		caseReport.setPatient(Context.getPatientService().getPatient(2));
-		trigger.setCaseReport(caseReport);
-		Errors errors = new BindException(trigger, "trigger");
-		validator.validate(trigger, errors);
-		assertTrue(errors.hasFieldErrors("name"));
-		assertEquals("casereport.error.sqlCohortQuery.notFound", errors.getFieldError("name").getCode());
-	}
-	
-	/**
-	 * @see CaseReportTriggerValidator#validate(Object,Errors)
-	 * @verifies fail if the sql cohort query associated to the trigger is retired
-	 */
-	@Test
-	public void validate_shouldFailIfTheSqlCohortQueryAssociatedToTheTriggerIsRetired() throws Exception {
-		final String name = "some retired cohort query";
-		SqlCohortDefinition definition = new SqlCohortDefinition("some query");
-		definition.setName(name);
-		definition.setRetired(true);
-		DefinitionContext.saveDefinition(definition);
-		
-		CaseReportTrigger trigger = new CaseReportTrigger(name);
-		CaseReport caseReport = new CaseReport();
-		caseReport.setPatient(Context.getPatientService().getPatient(7));
-		trigger.setCaseReport(caseReport);
-		Errors errors = new BindException(trigger, "trigger");
-		validator.validate(trigger, errors);
-		assertTrue(errors.hasFieldErrors("name"));
-		assertEquals("casereport.error.sqlCohortQuery.notFound", errors.getFieldError("name").getCode());
 	}
 	
 	/**

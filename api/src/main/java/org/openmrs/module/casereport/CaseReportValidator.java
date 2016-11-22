@@ -11,6 +11,8 @@ package org.openmrs.module.casereport;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.openmrs.annotation.Handler;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -37,6 +39,7 @@ public class CaseReportValidator implements Validator {
 	 * @should fail if the case report object is null
 	 * @should fail if the patient is null
 	 * @should fail if the report has no trigger added
+	 * @should fail for a new item the patient already has an existing report item
 	 * @should pass for a valid case report
 	 */
 	@Override
@@ -47,24 +50,30 @@ public class CaseReportValidator implements Validator {
 		
 		CaseReport caseReport = (CaseReport) target;
 		ValidationUtils.rejectIfEmpty(errors, "patient", "casereports.error.patient.required");
+		if (!errors.hasErrors()) {
+			CaseReportService service = Context.getService(CaseReportService.class);
+			if (caseReport.getId() == null && service.getCaseReportByPatient(caseReport.getPatient()) != null) {
+				errors.reject("casereports.error.patient.alreadyHasQueueItem");
+			}
+		}
+		
 		if (CollectionUtils.isEmpty(caseReport.getReportTriggers())) {
 			errors.rejectValue("reportTriggers", "casereports.error.atleast.one.trigger.required");
 		}
 		
-		if (errors.hasErrors()) {
-			return;
+		if (!errors.hasErrors()) {
+			int index = 0;
+			for (CaseReportTrigger trigger : caseReport.getReportTriggers()) {
+				try {
+					errors.pushNestedPath("reportTriggers[" + index + "]");
+					ValidationUtils.invokeValidator(triggerValidator, trigger, errors);
+				}
+				finally {
+					errors.popNestedPath();
+					index++;
+				}
+			}
 		}
 		
-		int index = 0;
-		for (CaseReportTrigger trigger : caseReport.getReportTriggers()) {
-			try {
-				errors.pushNestedPath("reportTriggers[" + index + "]");
-				ValidationUtils.invokeValidator(triggerValidator, trigger, errors);
-			}
-			finally {
-				errors.popNestedPath();
-				index++;
-			}
-		}
 	}
 }

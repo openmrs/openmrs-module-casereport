@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -81,5 +82,21 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 		Errors errors = new BindException(caseReport, "casereport");
 		validator.validate(caseReport, errors);
 		assertFalse(errors.hasErrors());
+	}
+	
+	/**
+	 * @see CaseReportValidator#validate(Object,Errors)
+	 * @verifies fail for a new item the patient already has an existing report item
+	 */
+	@Test
+	public void validate_shouldFailForANewItemThePatientAlreadyHasAnExistingReportItem() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		Patient patient = Context.getPatientService().getPatient(6);
+		CaseReport caseReport = new CaseReport(patient, "HIV Patient Died");
+		Errors errors = new BindException(caseReport, "casereport");
+		validator.validate(caseReport, errors);
+		assertTrue(errors.hasErrors());
+		assertEquals(1, errors.getGlobalErrors().size());
+		assertEquals("casereports.error.patient.alreadyHasQueueItem", errors.getGlobalErrors().get(0).getCode());
 	}
 }

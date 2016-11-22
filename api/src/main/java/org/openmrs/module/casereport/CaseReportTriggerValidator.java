@@ -37,9 +37,6 @@ public class CaseReportTriggerValidator implements Validator {
 	 * @should fail if the trigger name is a white space character
 	 * @should fail if the case report field is null
 	 * @should fail if a case report with the same trigger already exists for the patient
-	 * @should fail if multiple sql cohort queries match the trigger name
-	 * @should fail if no sql cohort query matches the trigger name
-	 * @should fail if the sql cohort query associated to the trigger is retired
 	 * @should pass for a valid case report trigger
 	 */
 	@Override
@@ -63,10 +60,6 @@ public class CaseReportTriggerValidator implements Validator {
 			if (crt != null && !crt.equals(trigger)) {
 				errors.rejectValue("name", "casereport.error.trigger.duplicate", new Object[] { trigger.getName() }, null);
 			}
-		}
-		
-		if (trigger.getId() == null && CaseReportUtil.getSqlCohortDefinition(trigger.getName()) == null) {
-			errors.rejectValue("name", "casereport.error.sqlCohortQuery.notFound", new Object[] { trigger.getName() }, null);
 		}
 	}
 }
