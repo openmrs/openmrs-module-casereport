@@ -16,12 +16,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
@@ -80,6 +82,22 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		SimpleObject newReportItem = deserialize(handle(newPostRequest(getURI(), reportQueueItem)));
 		assertEquals(++initialCount, Util.getResultsSize(deserialize(handle(newGetRequest(getURI())))));
 		assertEquals(2, ((List) Util.getByPath(newReportItem, "reportTriggers")).size());
+	}
+	
+	@Test
+	public void shouldAddTheTriggerToAnExistingQueueItemForThePatient() throws Exception {
+		long initialCount = getAllCount();
+		CaseReport existingReport = service.getCaseReportByPatient(Context.getPatientService().getPatient(6));
+		int initialTriggerCount = existingReport.getReportTriggers().size();
+		assertEquals(initialCount, Util.getResultsSize(deserialize(handle(newGetRequest(getURI())))));
+		SimpleObject reportQueueItem = new SimpleObject();
+		reportQueueItem.add("patient", existingReport.getPatient().getUuid());
+		SimpleObject trigger = new SimpleObject();
+		trigger.add("name", "HIV Patient Died");
+		reportQueueItem.add("reportTriggers", Collections.singleton(trigger));
+		SimpleObject updatedReport = deserialize(handle(newPostRequest(getURI(), reportQueueItem)));
+		assertEquals(initialCount, Util.getResultsSize(deserialize(handle(newGetRequest(getURI())))));
+		assertEquals(++initialTriggerCount, ((List) Util.getByPath(updatedReport, "reportTriggers")).size());
 	}
 	
 	@Test

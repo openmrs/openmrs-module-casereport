@@ -13,11 +13,15 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
+import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.webservices.rest.SimpleObject;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
@@ -75,7 +79,8 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	 */
 	@Override
 	public CaseReport newDelegate() {
-		return new CaseReport();
+		//this is never really called since we override the create method and implement other creation logic
+		return null;
 	}
 	
 	/**
@@ -123,6 +128,32 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	@Override
 	public CaseReport getByUniqueId(String uniqueId) {
 		return Context.getService(CaseReportService.class).getCaseReportByUuid(uniqueId);
+	}
+	
+	/**
+	 * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#create(SimpleObject,
+	 *      RequestContext)
+	 */
+	@Override
+	public Object create(SimpleObject propertiesToCreate, RequestContext context) throws ResponseException {
+		CaseReport caseReport = new CaseReport();
+		setConvertedProperties(caseReport, propertiesToCreate, this.getCreatableProperties(), true);
+		
+		//Hack to avoid creating duplicates for the same patient
+		String[] triggerNames = new String[caseReport.getReportTriggers().size()];
+		int index = 0;
+		for (CaseReportTrigger t : caseReport.getReportTriggers()) {
+			triggerNames[index] = t.getName();
+			index++;
+		}
+		caseReport = CaseReportUtil.createReportIfNecessary(caseReport.getPatient(), triggerNames);
+		if (caseReport == null) {
+			throw new APIException("Patient already has a case report queue item with the specified trigger(s)");
+		}
+		
+		caseReport = save(caseReport);
+		return ConversionUtil.convertToRepresentation(caseReport, Representation.DEFAULT);
+		
 	}
 	
 	/**

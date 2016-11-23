@@ -323,15 +323,25 @@ public class CaseReportUtil {
 		}
 	}
 	
-	public static CaseReport createReportIfNecessary(Patient patient, String triggerName) {
+	public static CaseReport createReportIfNecessary(Patient patient, String... triggerNames) {
 		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReportByPatient(patient);
 		if (caseReport == null) {
-			caseReport = new CaseReport(patient, triggerName);
-		} else if (caseReport.getCaseReportTriggerByName(triggerName) == null) {
-			caseReport.addTrigger(new CaseReportTrigger(triggerName));
-		} else {
-			//Don't create a duplicate trigger for the same patient
-			caseReport = null;
+			caseReport = new CaseReport();
+			caseReport.setPatient(patient);
+		}
+		
+		int addedTriggerCount = 0;
+		for (String t : triggerNames) {
+			if (caseReport.getCaseReportTriggerByName(t) == null) {
+				caseReport.addTrigger(new CaseReportTrigger(t));
+				addedTriggerCount++;
+			}
+		}
+		
+		if (caseReport.getId() != null && addedTriggerCount == 0) {
+			//This patient had a queue item and all the 'new' triggers were duplicates
+			//Therefore don't create duplicates for the same patient
+			return null;
 		}
 		
 		return caseReport;
