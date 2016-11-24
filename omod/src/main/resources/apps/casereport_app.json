@@ -1,0 +1,23 @@
+[
+  {
+    "id": "${project.parent.artifactId}.newItemForm",
+    "instanceOf": "coreapps.template.findPatient",
+    "order": 3,
+    "config": {
+      "afterSelectedUrl": "/${project.parent.artifactId}/caseReportQueue.page#/caseReportQueueItemForm/{{patientId}}",
+      "label": "${project.parent.artifactId}.addNewQueueItem.label",
+      "heading": "${project.parent.artifactId}.selectPatient.label"
+    },
+    "extensions": [
+      {
+        "id": "${project.parent.artifactId}.app",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "casereport.label",
+        "url": "casereport/caseReports.page",
+        "icon": "icon-list-alt",
+        "requiredPrivilege": "App: casereport.manageCaseReports"
+      }
+    ]
+  }
+]

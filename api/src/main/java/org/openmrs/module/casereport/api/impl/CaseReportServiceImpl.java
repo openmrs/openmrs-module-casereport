@@ -317,10 +317,9 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	public List<Trigger> getTriggers() {
 		if (triggers == null) {
 			triggers = new ArrayList<Trigger>();
-		}
-		
-		for (TaskDefinition td : getCaseReportTaskDefinitions()) {
-			triggers.add(new Trigger(td.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY)));
+			for (TaskDefinition td : getCaseReportTaskDefinitions()) {
+				triggers.add(new Trigger(td.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY)));
+			}
 		}
 		
 		return triggers;

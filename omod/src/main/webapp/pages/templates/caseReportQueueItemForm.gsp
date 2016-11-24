@@ -10,17 +10,38 @@
 
 -->
 
+<%
+    def triggerOptions = []
+    triggers.each { it ->
+        triggerOptions << [
+                label: it.name,
+                value: it.name
+        ]
+    }
+%>
+
 <h2>${ ui.message("casereport.caseReportQueueItemForm.label")}</h2>
 
 <form class="simple-form-ui" name="caseReportQueueItemForm" novalidate ng-submit="saveNewQueueItem()">
     <p>
         <label>${ui.message("general.patient")}</label>
-
     </p>
     <p>
-        <label>${ui.message("casereport.trigger")}</label>
-        TRIGGERS: ${triggers}
+        {{patient | omrs.display}}
     </p>
+    <p>
+        ${ui.includeFragment("uicommons", "field/dropDown", [
+                id: "casereport-triggers",
+                formFieldName: "reportTriggers",
+                label: ui.message("casereport.trigger"),
+                options: triggerOptions,
+                otherAttributes: [
+                        "ng-model": "trigger"
+                ]
+        ])}
+    </p>
+
+    <br />
     <p>
         <button type="submit" class="right confirm">${ui.message("general.save")}</button>
         <button type="button" class="cancel" ui-sref="list">${ui.message("general.cancel")}</button>

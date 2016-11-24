@@ -13,7 +13,7 @@
 <h2>${ ui.message('casereport.caseReportQueue.label')}</h2>
 
 <div>
-    <button ui-sref="caseReportQueueItemForm">${ ui.message('casereport.addNewQueueItem.label')}</button>
+    <button ng-click="openNewItemForm()">${ ui.message('casereport.addNewQueueItem.label')}</button>
 </div>
 </br>
 

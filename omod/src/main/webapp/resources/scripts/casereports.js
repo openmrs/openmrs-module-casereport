@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
+angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise("/list");
@@ -20,9 +20,17 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 controller: "ViewCaseReportsController"
             })
             .state('caseReportQueueItemForm', {
-                url: "/caseReportQueueItemForm",
+                url: "/caseReportQueueItemForm/:patientUuid",
                 templateUrl: "templates/caseReportQueueItemForm.page",
-                controller: "CaseReportQueueItemFormController"
+                controller: "CaseReportQueueItemFormController",
+                params:{
+                    patientUuid: null
+                },
+                resolve: {
+                    patient: function($stateParams, Person) {
+                       return Person.get({uuid: $stateParams.patientUuid, v: "custom:(display,uuid)"});
+                    }
+                }
             })
             .state('reportForm', {
                 url: "/reportForm/:uuid",
@@ -38,28 +46,6 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 }
             })
     }])
-
-    .controller("CaseReportQueueItemFormController", ["$scope", "$state", "CaseReport",
-        function ($scope, $state, CaseReport) {
-            $scope.patientUuid = "";
-            $scope.trigger = "";
-
-            $scope.saveNewQueueItem = function(){
-                alert('eee');
-                var newItem = {
-                    patient: $scope.patientUuid,
-                    reportTriggers: [
-                        {"name": $scope.trigger}
-                    ]
-                }
-
-                CaseReport.save(newItem).$promise.then(function() {
-                    $state.go("list");
-                    emr.successMessage(emr.message("casereport.save.success"));
-                });
-            }
-        }
-    ])
 
     .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
         function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
@@ -89,6 +75,16 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
                 $scope.caseReports = orderBy($scope.caseReports, $scope.propertyName, $scope.reverse);
             }
 
+            $scope.openNewItemForm = function(){
+                emr.navigateTo({
+                    provider: "coreapps",
+                    page: "findpatient/findPatient",
+                    query: {
+                        app: "casereport.newItemForm"
+                    }
+                });
+            }
+
             $scope.dismiss = function(caseReport){
                 ngDialog.openConfirm({
                     showClose: false,
@@ -111,6 +107,27 @@ angular.module("manageCaseReports", [ "caseReportService", "ui.router", "ngDialo
 
             loadCaseReports();
     }])
+
+    .controller("CaseReportQueueItemFormController", ["$scope", "$state", "CaseReport", "patient",
+        function ($scope, $state, CaseReport, patient) {
+            $scope.patient = patient;
+            $scope.trigger;
+
+            $scope.saveNewQueueItem = function(){
+                var newItem = {
+                    patient: $scope.patient.uuid,
+                    reportTriggers: [
+                        {"name": $scope.trigger}
+                    ]
+                }
+
+                CaseReport.save(newItem).$promise.then(function() {
+                    $state.go("list");
+                    emr.successMessage("casereport.save.success");
+                });
+            }
+        }
+    ])
 
     .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "orderByFilter", "CaseReport", "StatusChange", "caseReport",
         function($scope, $state, $filter, orderBy, CaseReport, StatusChange, caseReport) {

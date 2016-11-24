@@ -83,7 +83,21 @@ public class CaseReportActivator extends BaseModuleActivator {
 		for (SqlCohortQuery cohortQuery : cohortQueries) {
 			if (StringUtils.isBlank(cohortQuery.getName())) {
 				throw new APIException("Failed to load cohort query because of missing name field");
-			} else if (StringUtils.isBlank(cohortQuery.getSql())) {
+			}
+			
+			List<SqlCohortDefinition> matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
+			        .getDefinitions(cohortQuery.getName(), true);
+			List<SqlCohortDefinition> nonRetiredQueries = new ArrayList<SqlCohortDefinition>(matches.size());
+			for (SqlCohortDefinition match : matches) {
+				if (!match.isRetired()) {
+					nonRetiredQueries.add(match);
+				}
+			}
+			if (nonRetiredQueries.size() > 0) {
+				continue;
+			}
+			
+			if (StringUtils.isBlank(cohortQuery.getSql())) {
 				throw new APIException("Failed to load cohort query because of missing sql field");
 			} else if (StringUtils.isBlank(cohortQuery.getConcept())) {
 				throw new APIException("Failed to load cohort query because of missing concept field");
@@ -96,26 +110,21 @@ public class CaseReportActivator extends BaseModuleActivator {
 				throw new APIException("Only CIEL concept mappings are currently allowed");
 			}
 			
-			List<SqlCohortDefinition> duplicates = DefinitionContext.getDefinitionService(SqlCohortDefinition.class)
-			        .getDefinitions(cohortQuery.getName(), true);
-			
-			if (duplicates.size() == 0 || (duplicates.size() == 1 && duplicates.get(0).isRetired())) {
-				CohortDefinition definition = new SqlCohortDefinition(cohortQuery.getSql());
-				definition.setName(cohortQuery.getName());
-				definition.setDescription(cohortQuery.getDescription());
-				if (cohortQuery.getSql().indexOf(":" + CaseReportConstants.LAST_EXECUTION_TIME) > -1) {
-					String label = Context.getMessageSourceService().getMessage("casereport.lastExecutionTime");
-					definition.addParameter(new Parameter(CaseReportConstants.LAST_EXECUTION_TIME, label, Date.class));
-				}
-				if (cohortQuery.getConceptMappings() != null) {
-					for (String mapping : cohortQuery.getConceptMappings()) {
-						definition.addParameter(new Parameter(mapping, mapping.replaceFirst(
-						    CaseReportConstants.CONCEPT_MAPPING_SEPARATOR, ":"), Concept.class));
-					}
-				}
-				DefinitionContext.saveDefinition(definition);
-				addSchedulerTaskIfNecessary(cohortQuery.getName(), conceptStr, cohortQuery.getRepeatInterval());
+			CohortDefinition definition = new SqlCohortDefinition(cohortQuery.getSql());
+			definition.setName(cohortQuery.getName());
+			definition.setDescription(cohortQuery.getDescription());
+			if (cohortQuery.getSql().indexOf(":" + CaseReportConstants.LAST_EXECUTION_TIME) > -1) {
+				String label = Context.getMessageSourceService().getMessage("casereport.lastExecutionTime");
+				definition.addParameter(new Parameter(CaseReportConstants.LAST_EXECUTION_TIME, label, Date.class));
 			}
+			if (cohortQuery.getConceptMappings() != null) {
+				for (String mapping : cohortQuery.getConceptMappings()) {
+					definition.addParameter(new Parameter(mapping, mapping.replaceFirst(
+					    CaseReportConstants.CONCEPT_MAPPING_SEPARATOR, ":"), Concept.class));
+				}
+			}
+			DefinitionContext.saveDefinition(definition);
+			addSchedulerTaskIfNecessary(cohortQuery.getName(), conceptStr, cohortQuery.getRepeatInterval());
 		}
 	}
 	

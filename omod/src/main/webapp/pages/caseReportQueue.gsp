@@ -22,6 +22,7 @@
     ui.includeJavascript("uicommons", "angular-common-error.js")
     ui.includeJavascript("uicommons", "filters/display.js")
     ui.includeJavascript("uicommons", "filters/serverDate.js")
+    ui.includeJavascript("uicommons", "services/personService.js")
     ui.includeJavascript("casereport", "lib/bootstrap/ui-bootstrap-tpls-2.2.0.min.js")
     ui.includeJavascript("casereport", "caseReportService.js")
     ui.includeJavascript("casereport", "casereports.js")
@@ -38,7 +39,7 @@
         {label: "${ ui.message("casereport.caseReportQueue.label")}" }
     ];
 
-    emr.loadMessages(["casereport.dismissed"]);
+    emr.loadMessages(["casereport.dismissed", "casereport.save.success"]);
 </script>
 
 <div id="manage-casereports">

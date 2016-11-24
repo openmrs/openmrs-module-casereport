@@ -9,13 +9,14 @@
  */
 package org.openmrs.module.casereport.page.controller.templates;
 
-import java.util.ArrayList;
-
+import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.ui.framework.Model;
+import org.openmrs.ui.framework.annotation.SpringBean;
 
 public class CaseReportQueueItemFormPageController {
 	
-	public void get(Model model) {
-		model.put("triggers", new ArrayList<String>());
+	public void get(Model model, @SpringBean("caseReportService") CaseReportService caseReportService) {
+		//This controller needs to be removed and expose the triggers via rest
+		model.put("triggers", caseReportService.getTriggers());
 	}
 }
