@@ -20,7 +20,7 @@
     }
 %>
 
-<h2>${ ui.message("casereport.caseReportQueueItemForm.label")}</h2>
+<h2>${ ui.message("casereport.caseReportQueueItemForm.title")}</h2>
 
 <form class="simple-form-ui" name="caseReportQueueItemForm" novalidate ng-submit="saveNewQueueItem()">
     <p>
