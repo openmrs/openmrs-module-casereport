@@ -68,9 +68,12 @@
         </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="caseReport in caseReports | mainFilter:this">
+    <tr id="e" ng-repeat="caseReport in caseReports | mainFilter:this">
         <td valign="top">{{caseReport.dateCreated | serverDate}}</td>
-        <td valign="top">{{caseReport.patient.patientIdentifier.identifier}}</td>
+        <td valign="top" style="max-width: 100px; overflow: hidden; text-overflow: ellipsis"
+            title="{{caseReport.patient.patientIdentifier.identifier}}">
+            {{caseReport.patient.patientIdentifier.identifier}}
+        </td>
         <td valign="top">{{caseReport.patient.person.personName.display}}
             <span ng-show="{{caseReport.status == 'DRAFT'}}" class="casereport-draft-lozenge">
                 ${ui.message("casereport.draft")}

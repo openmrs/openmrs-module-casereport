@@ -9,6 +9,11 @@
  */
 package org.openmrs.module.casereport.web;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,6 +34,8 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
+	private static final String OpenHIM_URL = "https://openshr-preprod.jembi.org:5000/openmrs/ms/xdsrepository";
+	
 	/**
 	 * @see ApplicationListener#onApplicationEvent(ApplicationEvent)
 	 */
@@ -37,11 +44,46 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 		try {
 			CaseReport caseReport = (CaseReport) event.getSource();
 			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
-			String cdaDocument = CdaDocumentGenerator.getInstance().generate(form);
-			//TODO send the cda message
+			form.setReportUuid(caseReport.getUuid());
+			form.setReportDate(caseReport.getDateCreated());
+			
+			String document = CdaDocumentGenerator.getInstance().generate(form);
+			
+			HttpURLConnection httpConnection = (HttpURLConnection) new URL(OpenHIM_URL).openConnection();
+			httpConnection.setRequestMethod("POST");
+			httpConnection.setDoOutput(true);
+			httpConnection.setRequestProperty("Accept", "application/soap+xml");
+			httpConnection.setConnectTimeout(60000);
+			httpConnection.setUseCaches(false);
+			httpConnection.setRequestProperty("Content-length", String.valueOf(document.length()));
+			httpConnection
+			        .setRequestProperty(
+			            "Content-Type",
+			            "multipart/related; boundary=MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323; type=\"application/xop+xml\"; start=\"<0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>\"; start-info=\"application/soap+xml\";");
+			OutputStream writer = httpConnection.getOutputStream();
+			writer.write(document.getBytes());
+			writer.flush();
+			writer.close();
+			
+			int statusCode = httpConnection.getResponseCode();
+			log.info("STATUS:" + statusCode);
+			log.info("MESSAGE:" + httpConnection.getResponseMessage());
+			log.warn("RESPONSE:" + IOUtils.toString(httpConnection.getInputStream()));
+			if (statusCode != 200) {
+				log.warn("Http Error:" + statusCode);
+				if (httpConnection.getErrorStream() != null) {
+					log.warn("Error response from server:" + IOUtils.toString(httpConnection.getErrorStream()));
+				}
+				throw new APIException();
+			} else {
+				String response = IOUtils.toString(httpConnection.getInputStream());
+				if (response.indexOf("Error") > -1) {
+					log.warn("Error message from server:" + response);
+					throw new APIException(response);
+				}
+			}
 		}
 		catch (Exception e) {
-			log.warn("An error occurred while submitting the CDA message");
 			throw new APIException("An error occurred while submitting the cda message for the case report", e);
 		}
 	}

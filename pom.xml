@@ -146,6 +146,8 @@
                             <exclude>src/main/compass/sass-external/uicommons-scss/**</exclude>
                             <exclude>src/main/webapp/resources/scripts/lib/**/*.js</exclude>
                             <exclude>src/main/webapp/resources/styles/lib/**/*.css</exclude>
+                            <exclude>src/main/webapp/resources/styles/lib/**/*.css</exclude>
+                            <exclude>src/main/resources/org/openmrs/module/casereport/templates/**</exclude>
                             <!--
                                 The bamboo stage that releases the module copies the release scripts
                                 into the project root, we need to ignore those files

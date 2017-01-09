@@ -214,6 +214,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		CaseReportForm form;
 		try {
 			form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
+			form.setReportUuid(caseReport.getUuid());
+			form.setReportDate(caseReport.getDateCreated());
 		}
 		catch (IOException e) {
 			throw new APIException("Failed to parse case report form data", e);
@@ -252,7 +254,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
 		}
 		catch (Throwable t) {
-			log.warn("An error occurred while publishing events to the listeners");
+			log.warn("An error occurred while publishing events to the listeners", t);
 		}
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);

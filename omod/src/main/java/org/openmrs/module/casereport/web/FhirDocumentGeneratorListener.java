@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  * report form and writes the to a file in the casereport directory in the application data
  * directory.
  */
-@Component(FhirDocumentGeneratorListener.BEAN_ID)
+//@Component(FhirDocumentGeneratorListener.BEAN_ID)
 public class FhirDocumentGeneratorListener implements ApplicationListener<CaseReportSubmittedEvent> {
 	
 	public final static String BEAN_ID = "fhirDocumentGeneratorListener";

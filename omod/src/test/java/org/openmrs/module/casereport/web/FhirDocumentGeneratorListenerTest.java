@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
@@ -26,6 +27,7 @@ import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
+@Ignore
 public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
