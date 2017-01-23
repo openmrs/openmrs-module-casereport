@@ -57,6 +57,7 @@
         <calculationVersion>1.1</calculationVersion>
         <serializationXstreamVersion>0.2.10</serializationXstreamVersion>
         <webservices.restVersion>2.14</webservices.restVersion>
+        <everestVersion>1.1.0</everestVersion>
         <javaCompilerVersion>1.6</javaCompilerVersion>
 	</properties>
 
@@ -225,6 +226,11 @@
             <name>Maven Repository Switchboard</name>
             <layout>default</layout>
             <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>marc-te-main</id>
+            <name>MARC-HI Technology Exchange Private Maven Repository</name>
+            <url>http://te.marc-hi.ca/mvn</url>
         </repository>
 	</repositories>
 
