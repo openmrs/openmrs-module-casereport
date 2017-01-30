@@ -87,9 +87,7 @@ public interface CaseReportService extends OpenmrsService {
 	    throws APIException;
 	
 	/**
-	 * Saves a case report to the database, developers should typically call #runTrigger() which
-	 * will create case reports if necessary and only call this method to update an existing case
-	 * report.
+	 * Saves a case report to the database.
 	 * 
 	 * @param caseReport the case report to save
 	 * @return the saved case report

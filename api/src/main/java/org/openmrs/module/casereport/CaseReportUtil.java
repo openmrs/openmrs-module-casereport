@@ -271,7 +271,7 @@ public class CaseReportUtil {
 	 * @should set the concept mappings in the evaluation context
 	 * @should fail for a task where the last execution time cannot be resolved
 	 */
-	public static void runTrigger(String triggerName, TaskDefinition taskDefinition) throws APIException,
+	public static void executeTask(String triggerName, TaskDefinition taskDefinition) throws APIException,
 	    EvaluationException {
 		SqlCohortDefinition definition = getSqlCohortDefinition(triggerName);
 		if (definition == null) {
