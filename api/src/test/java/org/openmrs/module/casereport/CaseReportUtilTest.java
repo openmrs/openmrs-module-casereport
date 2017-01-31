@@ -27,11 +27,11 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
@@ -50,6 +50,9 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	PatientService patientService;
+	
+	@Autowired
+	SchedulerService schedulerService;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -223,7 +226,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String, TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies not create a duplicate trigger for the same patient
 	 */
 	@Test
@@ -240,13 +243,13 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		definition.setQuery("select patient_id from patient where patient_id=" + patientId);
 		DefinitionContext.saveDefinition(definition);
 		
-		CaseReportUtil.executeTask(name, null);
+		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
 		Assert.assertEquals(2, caseReport.getReportTriggers().size());
 		Assert.assertEquals(originalCaseReportCount, service.getCaseReports().size());
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String,TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies set the concept mappings in the evaluation context
 	 */
 	@Test
@@ -254,19 +257,22 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_DATASET);
 		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
-		final String name = "some cohort query";
+		final String name = "HIV Patient Died";
 		Integer[] patientIds = { 2, 7 };
 		String[] params = { "CIEL_856", "CIEL_1040" };
-		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select distinct person_id from obs where concept_id = :"
-		        + params[0] + " or concept_id = :" + params[0], false, new Parameter(params[0], null, Integer.class),
-		    new Parameter(params[1], null, Integer.class));
+		SqlCohortDefinition def = CaseReportUtil.getSqlCohortDefinition(name);
+		def.setQuery("select distinct person_id from obs where concept_id = :" + params[0] + " or concept_id = :"
+		        + params[0]);
+		def.addParameter(new Parameter(params[0], null, Integer.class));
+		def.addParameter(new Parameter(params[1], null, Integer.class));
+		DefinitionContext.saveDefinition(def);
 		int originalCount = service.getCaseReports().size();
 		int originalTriggerCount = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
 		        .getReportTriggers().size();
 		Assert.assertEquals(2, originalTriggerCount);
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 		
-		CaseReportUtil.executeTask(name, null);
+		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
 		List<CaseReport> reports = service.getCaseReports();
 		int newCount = reports.size();
 		Assert.assertEquals(++originalCount, newCount);
@@ -276,7 +282,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String, TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies fail if no sql cohort query matches the specified trigger name
 	 */
 	@Test
@@ -284,11 +290,13 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		final String name = "some name that doesn't exist";
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("No sql cohort query was found that matches the name:" + name));
-		CaseReportUtil.executeTask(name, null);
+		TaskDefinition taskDefinition = new TaskDefinition();
+		taskDefinition.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
+		CaseReportUtil.executeTask(taskDefinition);
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String,TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies fail for a task where the last execution time cannot be resolved
 	 */
 	@Test
@@ -299,27 +307,29 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		        null, Date.class));
 		
 		TaskDefinition taskDefinition = new TaskDefinition();
+		taskDefinition.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
 		taskDefinition.setRepeatInterval(0L);
 		expectedException.expect(APIException.class);
 		expectedException.expectMessage(equalTo("Failed to resolve the value for the last execution time"));
-		CaseReportUtil.executeTask(name, taskDefinition);
+		CaseReportUtil.executeTask(taskDefinition);
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String, TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies create case reports for the matched patients
 	 */
 	@Test
 	public void executeTask_shouldCreateCaseReportsForTheMatchedPatients() throws Exception {
-		final String name = "some cohort query";
+		executeDataSet(XML_DATASET);
+		final String name = "New HIV Case";
 		Integer[] patientIds = { 7, 8 };
-		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id in ("
-		        + patientIds[0] + "," + patientIds[1] + ")", false);
+		SqlCohortDefinition def = CaseReportUtil.getSqlCohortDefinition(name);
+		def.setQuery("select patient_id from patient where patient_id in (" + patientIds[0] + "," + patientIds[1] + ")");
+		DefinitionContext.saveDefinition(def);
 		int originalCount = service.getCaseReports().size();
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
-		
-		CaseReportUtil.executeTask(name, null);
+		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
 		List<CaseReport> reports = service.getCaseReports();
 		int newCount = reports.size();
 		Assert.assertEquals(originalCount + 2, newCount);
@@ -335,7 +345,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String,TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies set the last execution time in the evaluation context
 	 */
 	@Test
@@ -350,13 +360,14 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 		
 		TaskDefinition taskDefinition = new TaskDefinition();
+		taskDefinition.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
 		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:25:57"));
-		CaseReportUtil.executeTask(name, taskDefinition);
+		CaseReportUtil.executeTask(taskDefinition);
 		List<CaseReport> reports = service.getCaseReports();
 		Assert.assertEquals(originalCount, reports.size());
 		
 		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34"));
-		CaseReportUtil.executeTask(name, taskDefinition);
+		CaseReportUtil.executeTask(taskDefinition);
 		reports = service.getCaseReports();
 		int newCount = reports.size();
 		Assert.assertEquals(++originalCount, newCount);
@@ -365,23 +376,22 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportUtil#executeTask(String, TaskDefinition)
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
 	 * @verifies add a new trigger to an existing queue item for the patient
 	 */
 	@Test
 	public void executeTask_shouldAddANewTriggerToAnExistingQueueItemForThePatient() throws Exception {
 		executeDataSet(XML_DATASET);
-		final String name = "some valid cohort query name";
+		final String name = "HIV Patient Died";
 		final Integer patientId = 2;
 		CaseReport caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
 		assertNotNull(caseReport);
 		int originalTriggerCount = caseReport.getReportTriggers().size();
-		CaseReportUtilTest.createTestSqlCohortDefinition(name, "select patient_id from patient where patient_id = "
-		        + patientId, false);
-		
-		service = Context.getService(CaseReportService.class);
+		SqlCohortDefinition def = CaseReportUtil.getSqlCohortDefinition(name);
+		def.setQuery("select patient_id from patient where patient_id = " + patientId);
+		DefinitionContext.saveDefinition(def);
 		int originalCount = service.getCaseReports().size();
-		CaseReportUtil.executeTask(name, null);
+		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
 		Assert.assertEquals(originalCount, service.getCaseReports().size());
 		caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
 		Assert.assertEquals(++originalTriggerCount, caseReport.getReportTriggers().size());

@@ -259,7 +259,6 @@ public class CaseReportUtil {
 	 * Runs the SQL cohort query with the specified name and creates a case report for each matched
 	 * patient of none exists
 	 *
-	 * @param triggerName the name of the sql cohort query to be run
 	 * @param taskDefinition the scheduler taskDefinition inside which the trigger is being run
 	 * @throws APIException
 	 * @throws EvaluationException
@@ -271,25 +270,29 @@ public class CaseReportUtil {
 	 * @should set the concept mappings in the evaluation context
 	 * @should fail for a task where the last execution time cannot be resolved
 	 */
-	public static void executeTask(String triggerName, TaskDefinition taskDefinition) throws APIException,
-	    EvaluationException {
+	public static void executeTask(TaskDefinition taskDefinition) throws APIException, EvaluationException {
+		if (taskDefinition == null) {
+			throw new APIException("TaskDefinition can't be null");
+		}
+		
+		String triggerName = taskDefinition.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY);
+		if (StringUtils.isBlank(triggerName)) {
+			throw new APIException(taskDefinition.getName() + " task doesn't have a "
+			        + CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY + " property");
+		}
 		SqlCohortDefinition definition = getSqlCohortDefinition(triggerName);
 		if (definition == null) {
 			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
 		}
-		
 		EvaluationContext evaluationContext = new EvaluationContext();
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (definition.getParameter(CaseReportConstants.LAST_EXECUTION_TIME) != null) {
-			Date lastExecutionTime = null;
-			if (taskDefinition != null) {
-				lastExecutionTime = taskDefinition.getLastExecutionTime();
-				if (lastExecutionTime == null && taskDefinition.getRepeatInterval() != null
-				        && taskDefinition.getRepeatInterval() > 0) {
-					//TODO add a unit test for this
-					//default to now minus repeat interval
-					lastExecutionTime = DateUtils.addSeconds(new Date(), -taskDefinition.getRepeatInterval().intValue());
-				}
+			Date lastExecutionTime = taskDefinition.getLastExecutionTime();
+			if (lastExecutionTime == null && taskDefinition.getRepeatInterval() != null
+			        && taskDefinition.getRepeatInterval() > 0) {
+				//TODO add a unit test for this
+				//default to now minus repeat interval
+				lastExecutionTime = DateUtils.addSeconds(new Date(), -taskDefinition.getRepeatInterval().intValue());
 			}
 			if (lastExecutionTime == null) {
 				throw new APIException("Failed to resolve the value for the last execution time");

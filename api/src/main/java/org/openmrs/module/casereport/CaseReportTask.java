@@ -44,7 +44,7 @@ public class CaseReportTask extends AbstractTask {
 					throw new APIException("The Trigger Name property is required for a Case Report Task");
 				}
 				
-				CaseReportUtil.executeTask(trigger, getTaskDefinition());
+				CaseReportUtil.executeTask(getTaskDefinition());
 				
 				if (log.isDebugEnabled()) {
 					log.debug("Case report task completed successfully ...");
