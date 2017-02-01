@@ -9,7 +9,7 @@
  */
 package org.openmrs.module.casereport.web.rest.v1_0.controller;
 
-import org.openmrs.module.casereport.web.rest.CaseReportRestConstants;
+import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 
 public abstract class BaseCaseReportRestControllerTest extends MainResourceControllerTest {

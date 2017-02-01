@@ -26,7 +26,7 @@ import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.web.rest.StatusChange;
+import org.openmrs.module.casereport.rest.StatusChange;
 import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.springframework.beans.factory.annotation.Autowired;

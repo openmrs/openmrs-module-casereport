@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web;
+package org.openmrs.module.casereport;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -18,8 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.APIException;
-import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;

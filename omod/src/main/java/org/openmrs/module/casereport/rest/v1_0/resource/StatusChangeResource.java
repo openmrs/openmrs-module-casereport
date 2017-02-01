@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web.rest.v1_0.resource;
+package org.openmrs.module.casereport.rest.v1_0.resource;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.web.rest.StatusChange;
+import org.openmrs.module.casereport.rest.StatusChange;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;

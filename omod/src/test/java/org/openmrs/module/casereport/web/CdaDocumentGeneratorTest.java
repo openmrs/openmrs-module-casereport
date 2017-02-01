@@ -18,6 +18,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.CdaDocumentGenerator;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;

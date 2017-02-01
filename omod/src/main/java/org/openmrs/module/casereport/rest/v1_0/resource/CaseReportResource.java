@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web.rest.v1_0.resource;
+package org.openmrs.module.casereport.rest.v1_0.resource;
 
 import java.io.IOException;
 

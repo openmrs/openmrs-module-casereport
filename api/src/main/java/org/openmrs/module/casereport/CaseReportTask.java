@@ -43,7 +43,7 @@ public class CaseReportTask extends AbstractTask {
 				if (StringUtils.isBlank(trigger)) {
 					throw new APIException("The Trigger Name property is required for a Case Report Task");
 				}
-				
+
 				CaseReportUtil.executeTask(getTaskDefinition());
 				
 				if (log.isDebugEnabled()) {

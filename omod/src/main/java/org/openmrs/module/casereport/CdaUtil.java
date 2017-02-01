@@ -40,7 +40,6 @@ import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.web.CdaDocumentGenerator;
 
 /**
  * Contains utility methods for creating entities to add to the CDA document

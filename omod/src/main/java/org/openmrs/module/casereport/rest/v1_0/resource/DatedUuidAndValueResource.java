@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web.rest.v1_0.resource;
+package org.openmrs.module.casereport.rest.v1_0.resource;
 
 import org.openmrs.module.casereport.DatedUuidAndValue;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -32,7 +32,7 @@ public class DatedUuidAndValueResource extends UuidAndValueResource {
 	}
 	
 	/**
-	 * @see UuidAndValueResource@getCreatableProperties()
+	 * @see UuidAndValueResource @getCreatableProperties()
 	 */
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() throws ResourceDoesNotSupportOperationException {

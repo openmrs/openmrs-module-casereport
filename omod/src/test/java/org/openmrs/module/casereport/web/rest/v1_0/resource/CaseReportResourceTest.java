@@ -12,6 +12,7 @@ package org.openmrs.module.casereport.web.rest.v1_0.resource;
 import org.junit.Before;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.casereport.rest.v1_0.resource.CaseReportResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResourceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

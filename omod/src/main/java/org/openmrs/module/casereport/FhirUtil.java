@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web;
+package org.openmrs.module.casereport;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -20,11 +20,6 @@ import org.openmrs.Obs;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.casereport.CaseReportConstants;
-import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.CaseReportUtil;
-import org.openmrs.module.casereport.DatedUuidAndValue;
-import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;

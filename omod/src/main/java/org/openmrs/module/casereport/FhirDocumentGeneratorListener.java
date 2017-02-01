@@ -7,20 +7,17 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web;
+package org.openmrs.module.casereport;
 
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.APIException;
-import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 
 /**
  * And instance of this class generates a FHIR document containing details in the specified case
