@@ -1,6 +1,6 @@
 {
   "name": "HIV Treatment Stopped",
-  "concept": "CIEL_",
+  "concept": "CIEL_164349",
   "description": "HIV patients who have reported treatment stopped or interrupted",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [
