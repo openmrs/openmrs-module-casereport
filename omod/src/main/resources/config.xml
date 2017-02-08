@@ -39,7 +39,12 @@
 	
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.CaseReportActivator</activator>
-	
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.caseReportDestinationUrl</property>
+        <description>The Url of where to submit case reports</description>
+    </globalProperty>
+
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 		CaseReport.hbm.xml

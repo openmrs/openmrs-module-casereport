@@ -203,6 +203,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>${springWsVersion}</version>
+        </dependency>
+
         <!-- Everest Dependencies -->
         <dependency>
             <groupId>org.marc.everest</groupId>
@@ -226,6 +232,24 @@
             <groupId>org.marc.everest</groupId>
             <artifactId>everest-formatters-xml-dt-r1</artifactId>
             <version>${everestVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4chee-xds2-infoset</artifactId>
+            <version>${dcm4cheeVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4chee-xds2-common</artifactId>
+            <version>${dcm4cheeVersion}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.spec.javax.servlet</groupId>
+                    <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 	</dependencies>

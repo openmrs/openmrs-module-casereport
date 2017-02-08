@@ -58,6 +58,8 @@
         <serializationXstreamVersion>0.2.10</serializationXstreamVersion>
         <webservices.restVersion>2.14</webservices.restVersion>
         <everestVersion>1.1.0</everestVersion>
+        <dcm4cheeVersion>2.0.6</dcm4cheeVersion>
+        <springWsVersion>2.4.0.RELEASE</springWsVersion>
         <javaCompilerVersion>1.6</javaCompilerVersion>
 	</properties>
 
@@ -231,6 +233,11 @@
             <id>marc-te-main</id>
             <name>MARC-HI Technology Exchange Private Maven Repository</name>
             <url>http://te.marc-hi.ca/mvn</url>
+        </repository>
+        <repository>
+            <id>dcm4che-repo</id>
+            <name>DCM4CHE Repository</name>
+            <url>http://www.dcm4che.org/maven2</url>
         </repository>
 	</repositories>
 

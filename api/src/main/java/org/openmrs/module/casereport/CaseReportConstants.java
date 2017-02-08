@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 
 public class CaseReportConstants {
 	
+	public static final String MODULE_ID = "casereport";
+	
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
 	public static final String TRIGGER_NAME_TASK_PROPERTY = "Trigger Name";

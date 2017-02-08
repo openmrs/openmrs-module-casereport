@@ -21,5 +21,14 @@
     <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
+
+    <!-- Module global property listeners -->
+    <bean id="${project.parent.artifactId}EventListeners" parent="openmrsEventListeners">
+        <property name="globalPropertyListeners">
+            <list value-type="org.openmrs.api.GlobalPropertyListener">
+                <bean class="${project.parent.groupId}.${project.parent.artifactId}.HealthInfoExchangeListener" />
+            </list>
+        </property>
+    </bean>
 		
 </beans>
