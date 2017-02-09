@@ -426,4 +426,15 @@ public class CaseReportForm {
 		}
 		return null;
 	}
+	
+	public boolean containsDiagnosticData() {
+		if (getCurrentHivWhoStage() != null || getMostRecentArvStopReason() != null || getLastVisitDate() != null) {
+			return true;
+		}
+		if (CollectionUtils.isNotEmpty(getMostRecentViralLoads()) || CollectionUtils.isNotEmpty(getMostRecentCd4Counts())
+		        || CollectionUtils.isNotEmpty(getMostRecentHivTests())) {
+			return true;
+		}
+		return false;
+	}
 }

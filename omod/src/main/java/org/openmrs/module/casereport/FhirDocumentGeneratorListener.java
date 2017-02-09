@@ -48,13 +48,13 @@ public class FhirDocumentGeneratorListener implements ApplicationListener<CaseRe
 	@Override
 	public void onApplicationEvent(CaseReportSubmittedEvent event) {
 		try {
-			CaseReport caseReport = (CaseReport) event.getSource();
+			/*CaseReport caseReport = (CaseReport) event.getSource();
 			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 			form.setReportUuid(caseReport.getUuid());
 			form.setReportDate(caseReport.getDateCreated());
 			String fhirTemplate = FhirUtil.createFhirDocument(form);
 			File file = new File(getOutputDirectory(), caseReport.getUuid() + FILE_EXT_TXT);
-			FileUtils.writeStringToFile(file, fhirTemplate, ENCODING_UTF8);
+			FileUtils.writeStringToFile(file, fhirTemplate, ENCODING_UTF8);*/
 		}
 		catch (Exception e) {
 			throw new APIException("Failed to save the fhir message for the submitted report", e);

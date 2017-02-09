@@ -26,7 +26,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
@@ -36,7 +35,6 @@ import org.springframework.ws.soap.addressing.core.EndpointReference;
  * An instance of this class listens for event fired when a case report is submitted so that it can
  * generate and submit a CDA message to the HIE
  */
-//@Component
 public class HealthInfoExchangeListener implements ApplicationListener<CaseReportSubmittedEvent>, GlobalPropertyListener {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());

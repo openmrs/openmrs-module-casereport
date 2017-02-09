@@ -87,7 +87,7 @@ public final class CdaDocumentGenerator {
 		cdaDocument.getRecordTarget().add(CdaUtil.createRecordTarget(reportForm));
 		cdaDocument.getAuthor().add(CdaUtil.createAuthor(reportForm));
 		cdaDocument.setCustodian(CdaUtil.createCustodian(reportForm));
-		cdaDocument.setComponent(CdaUtil.createComponent(reportForm));
+		cdaDocument.setComponent(CdaUtil.createRootComponent(reportForm));
 		
 		XmlIts1Formatter fmtr = new XmlIts1Formatter();
 		//This instructs the XML ITS1 Formatter we want to use CDA datatypes

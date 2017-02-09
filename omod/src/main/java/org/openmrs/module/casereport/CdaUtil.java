@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +27,7 @@ import org.marc.everest.datatypes.PN;
 import org.marc.everest.datatypes.SD;
 import org.marc.everest.datatypes.TS;
 import org.marc.everest.datatypes.doc.StructDocElementNode;
+import org.marc.everest.datatypes.doc.StructDocTextNode;
 import org.marc.everest.datatypes.generic.CD;
 import org.marc.everest.datatypes.generic.CE;
 import org.marc.everest.datatypes.generic.SET;
@@ -195,10 +197,9 @@ public class CdaUtil {
 		return new Custodian(assignedCustodian);
 	}
 	
-	public static Component2 createComponent(CaseReportForm form) throws ParseException {
+	public static Component2 createRootComponent(CaseReportForm form) throws ParseException {
 		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
 		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents(form));
-		
 		return comp;
 	}
 	
@@ -207,8 +208,8 @@ public class CdaUtil {
 		ArrayList<Component3> components = new ArrayList<Component3>();
 		Section triggersSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_CLINICAL_INFO,
 		    DocumentConstants.TEXT_CLINICAL_INFO);
-		StructDocElementNode triggerstTextNode = createTextNodeForTriggers(form);
-		triggersSection.setText(new SD(triggerstTextNode));
+		StructDocElementNode triggersTextNode = createTextNodeForTriggers(form);
+		triggersSection.setText(new SD(triggersTextNode));
 		triggersSection.getEntry().add(createEntryForTriggers(form));
 		Component3 triggersComponent = new Component3();
 		triggersComponent.setSection(triggersSection);
@@ -226,7 +227,47 @@ public class CdaUtil {
 			components.add(medsComponent);
 		}
 		
+		//Add other clinical data
+		if (form.containsDiagnosticData()) {
+			Section diagnosticsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_DIAGNOSTICS,
+			    DocumentConstants.TEXT_DIAGNOSTICS);
+			StructDocElementNode diagnosticTextNode = createTextNodeForDiagnostics(form);
+			diagnosticsSection.setText(new SD(diagnosticTextNode));
+			// diagnosticsSection.getEntry().add(createEntryForDiagnostics(form));
+			Component3 diagnosticsComponent = new Component3();
+			diagnosticsComponent.setSection(diagnosticsSection);
+			components.add(diagnosticsComponent);
+		}
+		
 		return components;
+	}
+	
+	private static StructDocElementNode createTextNodeForDiagnostics(CaseReportForm form) throws ParseException {
+		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		if (form.getCurrentHivWhoStage() != null) {
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_WHO_STAGE
+			        + form.getCurrentHivWhoStage().getValue().toString());
+		}
+		if (form.getMostRecentArvStopReason() != null) {
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_ARV_STOP_REASON
+			        + form.getMostRecentArvStopReason().getValue().toString());
+		}
+		if (form.getLastVisitDate() != null) {
+			Date date = CaseReportConstants.DATE_FORMATTER.parse(form.getLastVisitDate().getValue().toString());
+			String dateStr = DocumentConstants.DATE_FORMATTER.format(date);
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_LAST_VISIT_DATE + dateStr);
+		}
+		if (CollectionUtils.isNotEmpty(form.getMostRecentViralLoads())) {
+			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_VIRAL_LOADS, form.getMostRecentViralLoads());
+		}
+		if (CollectionUtils.isNotEmpty(form.getMostRecentCd4Counts())) {
+			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_CD4_COUNTS, form.getMostRecentCd4Counts());
+		}
+		if (CollectionUtils.isNotEmpty(form.getMostRecentHivTests())) {
+			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_HIV_TESTS, form.getMostRecentHivTests());
+		}
+		
+		return rootListNode;
 	}
 	
 	private static Section createSectionWithLoincCode(String code, String displayName) {
@@ -240,26 +281,28 @@ public class CdaUtil {
 	}
 	
 	private static StructDocElementNode createTextNodeForTriggers(CaseReportForm form) {
-		StructDocElementNode triggerTextNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
-		triggerTextNode.addText(DocumentConstants.TEXT_TRIGGERS);
-		for (DatedUuidAndValue trigger : form.getTriggers()) {
-			triggerTextNode.addElement(DocumentConstants.ELEMENT_ITEM, trigger.getValue().toString());
-		}
-		StructDocElementNode outerList = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
-		outerList.addElement(DocumentConstants.ELEMENT_ITEM, triggerTextNode);
+		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_TRIGGERS, form.getTriggers());
 		if (StringUtils.isNotBlank(form.getComments())) {
-			outerList.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_COMMENTS + form.getComments());
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_COMMENTS + form.getComments());
 		}
-		return triggerTextNode;
+		return rootListNode;
 	}
 	
 	private static StructDocElementNode createTextNodeForMedications(CaseReportForm form) {
-		StructDocElementNode medsTextNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
-		medsTextNode.addText(DocumentConstants.TEXT_ARVS);
-		for (UuidAndValue medication : form.getCurrentHivMedications()) {
-			medsTextNode.addElement(DocumentConstants.ELEMENT_ITEM, medication.getValue().toString());
+		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
+		return rootListNode;
+	}
+	
+	private static void addNestedListToRootNode(StructDocElementNode parentNode, String label,
+	                                            List<? extends UuidAndValue> itemsToAdd) {
+		StructDocElementNode itemList = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		for (UuidAndValue item : itemsToAdd) {
+			itemList.addElement(DocumentConstants.ELEMENT_ITEM, item.getValue().toString());
 		}
-		return medsTextNode;
+		StructDocTextNode labelNode = new StructDocTextNode(label);
+		parentNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, itemList);
 	}
 	
 	private static Entry createEntryForTriggers(CaseReportForm form) throws ParseException {
@@ -324,6 +367,7 @@ public class CdaUtil {
 		Consumable consumable = new Consumable(mp);
 		SubstanceAdministration sa = new SubstanceAdministration(x_DocumentSubstanceMood.Eventoccurrence, consumable);
 		sa.setNegationInd(BL.FALSE);
+		sa.setStatusCode(ActStatus.Active);
 		return sa;
 	}
 	

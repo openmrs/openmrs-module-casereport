@@ -66,7 +66,7 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
 		//ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
-		CdaDocumentGenerator.getInstance().generate(form);
+		//CdaDocumentGenerator.getInstance().generate(form);
 		if (true)
 			return;
 		//String d = CdaDocumentGenerator.getInstance().generate(form);

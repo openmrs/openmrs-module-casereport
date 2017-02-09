@@ -9,13 +9,17 @@
  */
 package org.openmrs.module.casereport;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public final class DocumentConstants {
+	
+	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
 	public static final String TYPE_ID_ROOT = "2.16.840.1.113883.1.3";
 	
 	public static final String TEXT_EXTENSION = "POCD_HD000040";
 	
-	//
 	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.18.1.2";
 	
 	public static final String TEXT_TITLE = "Public Health Case Report - HIV";
@@ -50,6 +54,8 @@ public final class DocumentConstants {
 	
 	public static final String LOINC_CODE_MED_INFO = "55753-8";
 	
+	public static final String LOINC_CODE_DIAGNOSTICS = "30954-2";
+	
 	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
 	public static final String CIEL_CODE_HIV_TREAMENT = "162240";
@@ -64,13 +70,27 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_MED_INFO = "Treatment Information";
 	
-	public static final String TEXT_TRIGGERS = "Trigger(s)";
+	public static final String TEXT_TRIGGERS = "Trigger(s): ";
 	
 	public static final String TEXT_HIV_TREATMENT = "Human immunodeficiency virus treatment regimen";
 	
-	public static final String TEXT_ARVS = "Antiretrovirals";
+	public static final String TEXT_ARVS = "Antiretrovirals: ";
 	
-	public static final String TEXT_COMMENTS = "Comments:";
+	public static final String TEXT_COMMENTS = "Comments: ";
 	
 	public static final String TEXT_TRIGGER = "Trigger";
+	
+	public static final String TEXT_DIAGNOSTICS = "Relevant diagnostic tests and/or laboratory data";
+	
+	public static final String TEXT_WHO_STAGE = "Current HIV WHO Stage: ";
+	
+	public static final String TEXT_ARV_STOP_REASON = "Most recent ARV stop reason: ";
+	
+	public static final String TEXT_LAST_VISIT_DATE = "Date of last patient visit: ";
+	
+	public static final String TEXT_VIRAL_LOADS = "Viral Loads: ";
+	
+	public static final String TEXT_CD4_COUNTS = "CD4 Counts: ";
+	
+	public static final String TEXT_HIV_TESTS = "HIV Tests: ";
 }
