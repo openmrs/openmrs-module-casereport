@@ -213,7 +213,7 @@ Content-ID: <1.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>
 <templateId root="1.3.6.1.4.1.19376.1.5.3.1.1.18.1.2" />
 <id root="B823FAEC-F626-44C6-944D-B8755DA73665" />
 <code code="SOME_CIEL_CODE" codeSystem="2.16.840.1.113883.6.1" codeSystemName="CIEL" displayName="Case Report" />
-<title language="en-US">Case Report</title>
+<title language="en-US">Public Health Case Report - HIV</title>
 <effectiveTime value="#{reportDate}" />
 <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" displayName="normal" />
 <languageCode code="en-US" />
@@ -253,8 +253,8 @@ Content-ID: <1.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>
                 <templateId root="2.16.840.1.113883.10.20.1.6" />
                 <templateId root="1.3.6.1.4.1.19376.1.5.3.1.3.23" />
                 <id root="A2B39996-A1C7-4E1B-8A95-D1EC0DCA28B0" />
-                <code code="8306-3" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Case Report" />
-                <title language="en-US">Case Report</title>
+                <code code="55752-0" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Clinical Information" />
+                <title language="en-US">Clinical Information</title>
                 <text language="en-US">
                     <list>
                         #{triggerList}

@@ -42,7 +42,7 @@
 
     <globalProperty>
         <property>${project.parent.artifactId}.caseReportDestinationUrl</property>
-        <description>The Url of where to submit case reports</description>
+        <description>The Url where to submit case reports</description>
     </globalProperty>
 
 	<!-- Maps hibernate file's, if present -->

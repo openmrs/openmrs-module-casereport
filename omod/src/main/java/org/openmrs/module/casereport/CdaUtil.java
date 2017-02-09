@@ -9,10 +9,16 @@
  */
 package org.openmrs.module.casereport;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.marc.everest.datatypes.ANY;
 import org.marc.everest.datatypes.BL;
+import org.marc.everest.datatypes.EN;
 import org.marc.everest.datatypes.ENXP;
 import org.marc.everest.datatypes.II;
 import org.marc.everest.datatypes.ON;
@@ -20,12 +26,24 @@ import org.marc.everest.datatypes.PN;
 import org.marc.everest.datatypes.SD;
 import org.marc.everest.datatypes.TS;
 import org.marc.everest.datatypes.doc.StructDocElementNode;
-import org.marc.everest.datatypes.generic.LIST;
+import org.marc.everest.datatypes.generic.CD;
+import org.marc.everest.datatypes.generic.CE;
 import org.marc.everest.datatypes.generic.SET;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Act;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.AssignedAuthor;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.AssignedCustodian;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Author;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalStatement;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Component2;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Component3;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Consumable;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Custodian;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.CustodianOrganization;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Entry;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.EntryRelationship;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ManufacturedProduct;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Material;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Observation;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Organization;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Patient;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.PatientRole;
@@ -33,18 +51,45 @@ import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Person;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.RecordTarget;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Section;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.StructuredBody;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.SubstanceAdministration;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.ActRelationshipHasComponent;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.ActStatus;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.AdministrativeGender;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.ContextControl;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActClassDocumentEntryAct;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActMoodDocumentObservation;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActRelationshipEntry;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActRelationshipEntryRelationship;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.x_DocumentActMood;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.x_DocumentSubstanceMood;
+import org.openmrs.Concept;
 import org.openmrs.PersonName;
 import org.openmrs.User;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.scheduler.SchedulerService;
+import org.openmrs.scheduler.TaskDefinition;
 
 /**
  * Contains utility methods for creating entities to add to the CDA document
  */
 public class CdaUtil {
+	
+	public static CE<String> createLoincCE(String code, String displayName) {
+		return new CE<String>(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, null,
+		        displayName, null);
+	}
+	
+	public static CD<String> createCielCD(String code, String displayName) {
+		return new CD<String>(code, DocumentConstants.CODE_SYSTEM_CIEL, DocumentConstants.CODE_SYSTEM_NAME_CIEL, null,
+		        displayName, null);
+	}
+	
+	public static CD<String> createSnomedCD(String code, String displayName) {
+		return new CD<String>(code, DocumentConstants.CODE_SYSTEM_SNOMEDCT, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT,
+		        null, displayName, null);
+	}
 	
 	/**
 	 * Create a RecordTarget
@@ -78,11 +123,12 @@ public class CdaUtil {
 		if (form.getPatientIdentifier() != null) {
 			Object id = form.getPatientIdentifier().getValue();
 			if (id != null && StringUtils.isNotBlank(id.toString())) {
-				patientRole.setId(SET.createSET(new II(CdaDocumentGenerator.PATIENT_ID_ROOT, id.toString())));
+				patientRole.setId(SET.createSET(new II(DocumentConstants.PATIENT_ID_ROOT, id.toString())));
 			}
 		}
+		patientRole.setProviderOrganization(createOrganization(form.getAssigningAuthorityId(),
+		    form.getAssigningAuthorityName()));
 		rt.setPatientRole(patientRole);
-		
 		return rt;
 	}
 	
@@ -93,12 +139,11 @@ public class CdaUtil {
 	 * @param name
 	 * @return an Organisation instance
 	 */
-	public static Organization createOrganization(String id, String name) {
+	private static Organization createOrganization(String id, String name) {
 		Organization org = new Organization();
 		org.setId(SET.createSET(new II(id)));
 		org.setName(SET.createSET(new ON()));
 		org.getName().get(0).getParts().add(new ENXP(name));
-		
 		return org;
 	}
 	
@@ -109,18 +154,16 @@ public class CdaUtil {
 	 * @return an Author instance
 	 */
 	public static Author createAuthor(CaseReportForm form) {
-		Author author = new Author(ContextControl.OverridingPropagating);
+		Author author = new Author();
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
-		author.setTime(TS.now());
 		String systemId = form.getSubmitter().getValue().toString();
 		assignedAuthor.setId(SET.createSET(new II(null, systemId)));
 		User user = Context.getUserService().getUserByUsername(systemId);
 		Person person = createPerson(user.getPersonName());
 		assignedAuthor.setAssignedAuthorChoice(person);
-		Organization org = createOrganization(form.getAssigningAuthorityId(), form.getAssigningAuthorityName());
-		assignedAuthor.setRepresentedOrganization(org);
+		assignedAuthor.setRepresentedOrganization(createOrganization(form.getAssigningAuthorityId(),
+		    form.getAssigningAuthorityName()));
 		author.setAssignedAuthor(assignedAuthor);
-		
 		return author;
 	}
 	
@@ -130,7 +173,7 @@ public class CdaUtil {
 	 * @param personName
 	 * @return a Person instance
 	 */
-	public static Person createPerson(PersonName personName) {
+	private static Person createPerson(PersonName personName) {
 		Person person = new Person();
 		PN name;
 		if (StringUtils.isNotBlank(personName.getMiddleName())) {
@@ -140,120 +183,160 @@ public class CdaUtil {
 			name = PN.fromFamilyGiven(null, personName.getFamilyName(), personName.getGivenName());
 		}
 		person.setName(SET.createSET(name));
-		
 		return person;
 	}
 	
-	public static Component2 createComponent(CaseReportForm form) {
-		Section section = new Section();
-		section.setTemplateId(LIST.createLIST(new II(CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT1), new II(
-		        CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT2)));
-		section.setId(form.getReportUuid());
-		section.setTitle(CdaDocumentGenerator.TITLE);
-		StructDocElementNode list = new StructDocElementNode("list");
-		for (DatedUuidAndValue trigger : form.getTriggers()) {
-			list.addElement("item", trigger.getValue().toString());
-		}
-		SD sd = new SD(list);
-		sd.setLanguage(CdaDocumentGenerator.LANGUAGE_CODE);
-		section.setText(sd);
-		Component3 comp3 = new Component3();
-		comp3.setSection(section);
-		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE);
-		comp.setBodyChoice(new StructuredBody(comp3));
+	public static Custodian createCustodian(CaseReportForm form) {
+		CustodianOrganization custodianOrganization = new CustodianOrganization();
+		custodianOrganization.setId(SET.createSET(new II(form.getAssigningAuthorityId())));
+		custodianOrganization.setName(new ON());
+		custodianOrganization.getName().getParts().add(new ENXP(form.getAssigningAuthorityName()));
+		AssignedCustodian assignedCustodian = new AssignedCustodian(custodianOrganization);
+		return new Custodian(assignedCustodian);
+	}
+	
+	public static Component2 createComponent(CaseReportForm form) throws ParseException {
+		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
+		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents(form));
 		
 		return comp;
 	}
 	
-	/**
-	 * Create an author with the specified name
-	 */
-	/*public static Author createAuthorLimited(String id) {
-		Author retVal = new Author(ContextControl.OverridingPropagating);
-		AssignedAuthor assignedAuthor = new AssignedAuthor();
-		retVal.setTime(TS.now());
+	public static ArrayList<Component3> createComponents(CaseReportForm form) throws ParseException {
+		//Add the triggers component
+		ArrayList<Component3> components = new ArrayList<Component3>();
+		Section triggersSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_CLINICAL_INFO,
+		    DocumentConstants.TEXT_CLINICAL_INFO);
+		StructDocElementNode triggerstTextNode = createTextNodeForTriggers(form);
+		triggersSection.setText(new SD(triggerstTextNode));
+		triggersSection.getEntry().add(createEntryForTriggers(form));
+		Component3 triggersComponent = new Component3();
+		triggersComponent.setSection(triggersSection);
+		components.add(triggersComponent);
 		
-		// Set ID 
-		assignedAuthor.setId(SET.createSET(new II("2.16.840.1.113883.4.6", id),
-		    new II(String.format("1.3.6.1.4.1.12009.1.99.7.%s", id))));
-		retVal.setAssignedAuthor(assignedAuthor);
+		//Add the ARV medications component
+		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
+			Section medsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_MED_INFO,
+			    DocumentConstants.TEXT_MED_INFO);
+			StructDocElementNode medsTextNode = createTextNodeForMedications(form);
+			medsSection.setText(new SD(medsTextNode));
+			medsSection.getEntry().add(createEntryForMedications(form));
+			Component3 medsComponent = new Component3();
+			medsComponent.setSection(medsSection);
+			components.add(medsComponent);
+		}
 		
-		return retVal;
-	}*/
+		return components;
+	}
 	
-	/**
-	 * Create a custodian organization
-	 */
-	/*public static Custodian createCustodian() {
-		Custodian retVal = new Custodian();
-		AssignedCustodian assignedCustodian = new AssignedCustodian();
-		CustodianOrganization organization = new CustodianOrganization();
-		Organization copyOrganization = createOrganization();
-		
-		organization.setId(copyOrganization.getId());
-		organization.setTelecom(copyOrganization.getTelecom().get(0));
-		organization.setName(copyOrganization.getName().get(0));
-		
-		assignedCustodian.setRepresentedCustodianOrganization(organization);
-		retVal.setAssignedCustodian(assignedCustodian);
-		
-		return retVal;
-	} */
+	private static Section createSectionWithLoincCode(String code, String displayName) {
+		Section section = new Section();
+		//section.setTemplateId(LIST.createLIST(new II(CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT1), new II(
+		//        CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT2)));
+		//section.setTemplateId(LIST.createLIST(new II(CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT1)));
+		section.setCode(createLoincCE(code, displayName));
+		section.setTitle(displayName);
+		return section;
+	}
 	
-	/**
-	 * Creates a participant as a father
-	 */
-	/*public static Participant1 createFatherParticipant() {
-		Participant1 retVal = new Participant1();
-		retVal.setTypeCode(ParticipationType.IND);
-		AssociatedEntity associatedEntity = new AssociatedEntity();
-		
-		retVal.setTime(TS.now());
-		associatedEntity.setId(SET.createSET(new II("1.3.6.1.4.1.12009.1.99.7", "3012")));
-		associatedEntity.setClassCode(RoleClassAssociative.NextOfKin);
-		associatedEntity.setCode("FTH", "CdaHandlerConstants.CODE_SYSTEM_FAMILY_MEMBER");
-		associatedEntity.setAssociatedPerson(createPerson("Andrew", "Smith"));
-		retVal.setAssociatedEntity(associatedEntity);
-		
-		return retVal;
-	} */
+	private static StructDocElementNode createTextNodeForTriggers(CaseReportForm form) {
+		StructDocElementNode triggerTextNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		triggerTextNode.addText(DocumentConstants.TEXT_TRIGGERS);
+		for (DatedUuidAndValue trigger : form.getTriggers()) {
+			triggerTextNode.addElement(DocumentConstants.ELEMENT_ITEM, trigger.getValue().toString());
+		}
+		StructDocElementNode outerList = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		outerList.addElement(DocumentConstants.ELEMENT_ITEM, triggerTextNode);
+		if (StringUtils.isNotBlank(form.getComments())) {
+			outerList.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_COMMENTS + form.getComments());
+		}
+		return triggerTextNode;
+	}
 	
-	/**
-	 * Creates a participant as a spouse
-	 */
-	/*public static Participant1 createSpouseParticipant() {
-		Participant1 retVal = new Participant1();
-		retVal.setTypeCode(ParticipationType.IND);
-		
-		AssociatedEntity associatedEntity = new AssociatedEntity();
-		retVal.setTemplateId(LIST.createLIST(new II("1.3.6.1.4.1.19376.1.5.3.1.2.4.1")));
-		associatedEntity.setClassCode(RoleClassAssociative.NextOfKin);
-		retVal.setTime(TS.now());
-		associatedEntity.setId(SET.createSET(new II("1.3.6.1.4.1.12009.1.99.7", "3014")));
-		associatedEntity.setCode("127848009", "CdaHandlerConstants.CODE_SYSTEM_SNOMED");
-		associatedEntity.setAssociatedPerson(createPerson("Jason", "Taylor"));
-		retVal.setAssociatedEntity(associatedEntity);
-		
-		return retVal;
-	}*/
+	private static StructDocElementNode createTextNodeForMedications(CaseReportForm form) {
+		StructDocElementNode medsTextNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		medsTextNode.addText(DocumentConstants.TEXT_ARVS);
+		for (UuidAndValue medication : form.getCurrentHivMedications()) {
+			medsTextNode.addElement(DocumentConstants.ELEMENT_ITEM, medication.getValue().toString());
+		}
+		return medsTextNode;
+	}
 	
-	/**
-	 * Creates a participant as a father of baby
-	 */
-	/*public static Participant1 createFatherOfBabyParticipant() {
-		Participant1 retVal = new Participant1();
-		retVal.setTypeCode(ParticipationType.IND);
-		
-		AssociatedEntity associatedEntity = new AssociatedEntity();
-		retVal.setTemplateId(LIST.createLIST(new II("1.3.6.1.4.1.19376.1.5.3.1.2.4.2")));
-		associatedEntity.setClassCode(RoleClassAssociative.PersonalRelationship);
-		retVal.setTime(TS.now());
-		associatedEntity.setId(SET.createSET(new II("1.3.6.1.4.1.12009.1.99.7", "3014")));
-		associatedEntity.setCode("xx-fatherofbaby", "CdaHandlerConstants.CODE_SYSTEM_SNOMED");
-		associatedEntity.setAssociatedPerson(createPerson("Jason", "Taylor"));
-		retVal.setAssociatedEntity(associatedEntity);
-		
-		return retVal;
-	}*/
+	private static Entry createEntryForTriggers(CaseReportForm form) throws ParseException {
+		ArrayList<EntryRelationship> relationships = new ArrayList<EntryRelationship>(form.getTriggers().size());
+		SchedulerService ss = Context.getSchedulerService();
+		for (DatedUuidAndValue trigger : form.getTriggers()) {
+			String triggerName = trigger.getValue().toString();
+			TaskDefinition taskDefinition = ss.getTaskByName(triggerName);
+			if (taskDefinition == null) {
+				throw new APIException("No scheduled task found with for trigger:" + triggerName);
+			}
+			String conceptMap = taskDefinition.getProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY);
+			if (StringUtils.isBlank(conceptMap) || !conceptMap.startsWith(CaseReportConstants.CIEL_MAPPING_PREFIX)) {
+				throw new APIException("The scheduled task associated to the " + triggerName
+				        + " trigger has an invalid value for the concept property");
+			}
+			Concept concept = CaseReportUtil.getConceptByMappingString(conceptMap, true);
+			String code = StringUtils.split(conceptMap, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR)[1];
+			CD<String> value = createCielCD(code, concept.getDisplayString());
+			CD<String> question = new CD<String>(DocumentConstants.ACT_CODE_ASSERTION, DocumentConstants.CODE_SYSTEM_ACTCODE);
+			Date triggerDate = CaseReportConstants.DATE_FORMATTER.parse(trigger.getDate());
+			Observation observation = createObservation(question, value, triggerDate, ActStatus.Completed);
+			relationships.add(createEntryRelationship(observation));
+		}
+		CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER, DocumentConstants.TEXT_TRIGGER);
+		//TODO Set the answer for this observation?
+		Entry entry = new Entry(x_ActRelationshipEntry.DRIV, null, createObservation(question, null, null,
+		    ActStatus.Completed));
+		entry.getClinicalStatementIfObservation().setEntryRelationship(relationships);
+		return entry;
+	}
 	
+	private static Entry createEntryForMedications(CaseReportForm form) {
+		ArrayList<EntryRelationship> relationships = new ArrayList<EntryRelationship>(form.getTriggers().size());
+		for (UuidAndValue medication : form.getCurrentHivMedications()) {
+			SubstanceAdministration subMedication = createSubstanceAdministration(medication);
+			relationships.add(createEntryRelationship(subMedication));
+		}
+		CD<String> question = createCielCD(DocumentConstants.CIEL_CODE_HIV_TREAMENT, DocumentConstants.TEXT_HIV_TREATMENT);
+		Act act = new Act(x_ActClassDocumentEntryAct.Act, x_DocumentActMood.Eventoccurrence);
+		act.setNegationInd(BL.FALSE);
+		act.setCode(question);
+		act.setStatusCode(ActStatus.Completed);
+		Entry entry = new Entry(x_ActRelationshipEntry.DRIV, null, act);
+		entry.getClinicalStatementIfAct().setEntryRelationship(relationships);
+		return entry;
+	}
+	
+	private static EntryRelationship createEntryRelationship(ClinicalStatement clinicalStatement) {
+		EntryRelationship relationship = new EntryRelationship();
+		relationship.setTypeCode(x_ActRelationshipEntryRelationship.HasComponent);
+		relationship.setClinicalStatement(clinicalStatement);
+		return relationship;
+	}
+	
+	private static SubstanceAdministration createSubstanceAdministration(UuidAndValue uuidAndValue) {
+		//TODO Should these be drug orders? And what if a concept has no CIEL mapping?
+		Material material = new Material();
+		material.setName(EN.createEN(null, new ENXP(uuidAndValue.getValue().toString())));
+		ManufacturedProduct mp = new ManufacturedProduct();
+		mp.setManufacturedDrugOrOtherMaterial(material);
+		Consumable consumable = new Consumable(mp);
+		SubstanceAdministration sa = new SubstanceAdministration(x_DocumentSubstanceMood.Eventoccurrence, consumable);
+		sa.setNegationInd(BL.FALSE);
+		return sa;
+	}
+	
+	private static Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime,
+	                                             ActStatus statusCode) {
+		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
+		observation.setValue(value);
+		observation.setStatusCode(statusCode);
+		if (obsdatetime != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(obsdatetime);
+			observation.setEffectiveTime(new TS(calendar));
+		}
+		return observation;
+	}
 }

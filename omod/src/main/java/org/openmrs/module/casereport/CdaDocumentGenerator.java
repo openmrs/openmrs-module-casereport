@@ -28,7 +28,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.marc.everest.datatypes.II;
-import org.marc.everest.datatypes.generic.CE;
 import org.marc.everest.datatypes.generic.CS;
 import org.marc.everest.datatypes.generic.SET;
 import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
@@ -47,31 +46,6 @@ public final class CdaDocumentGenerator {
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss.SSSZ");
-	
-	public static final String TYPE_ID_ROOT = "2.16.840.1.113883.1.3";
-	
-	public static final String EXTENSION = "POCD_HD000040";
-	
-	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.18.1.2";
-	
-	public static final String TITLE = "Case Based Report for HIV";
-	
-	//Should this be system locale or a constant?
-	public static final String LANGUAGE_CODE = "en-US";
-	
-	public static final String CODE_SYSTEM_LOINC = "2.16.840.1.113883.6.1";
-	
-	public static final String DOCUMENT_CODE = "55751-2";
-	
-	public static final String PATIENT_ID_ROOT = "1.3.6.1.4.1.21367.2010.1.2.300";
-	
-	public static final String SECTION_TEMPLATE_ID_ROOT1 = "2.16.840.1.113883.10.20.1.6";
-	
-	public static final String SECTION_TEMPLATE_ID_ROOT2 = "1.3.6.1.4.1.19376.1.5.3.1.3.23";
-	
-	public static final String CODE_SYSTEM_NAME_LOINC = "LOINC";
-	
-	public static final String LOINC_DOCUMENT_NAME = "Public health Case report";
 	
 	private static CdaDocumentGenerator instance;
 	
@@ -100,19 +74,19 @@ public final class CdaDocumentGenerator {
 		ClinicalDocument cdaDocument = new ClinicalDocument();
 		cdaDocument.setRealmCode(new SET<CS<BindingRealm>>(new CS<BindingRealm>(
 		        BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
-		cdaDocument.setTypeId(TYPE_ID_ROOT, EXTENSION);
-		cdaDocument.setTemplateId(Arrays.asList(new II(TEMPLATE_ID_ROOT)));
+		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
+		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
 		cdaDocument.setId(reportForm.getReportUuid());
-		cdaDocument.setCode(new CE<String>(DOCUMENT_CODE, CODE_SYSTEM_LOINC, CODE_SYSTEM_NAME_LOINC, null,
-		        LOINC_DOCUMENT_NAME, null));
-		cdaDocument.setTitle(TITLE);
+		cdaDocument.setCode(CdaUtil.createLoincCE(DocumentConstants.DOCUMENT_CODE, DocumentConstants.TEXT_DOCUMENT_NAME));
+		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(reportForm.getReportDate());
 		cdaDocument.setEffectiveTime(calendar);
 		cdaDocument.setConfidentialityCode(x_BasicConfidentialityKind.Normal);
-		cdaDocument.setLanguageCode(LANGUAGE_CODE);
+		cdaDocument.setLanguageCode(DocumentConstants.LANGUAGE_CODE);
 		cdaDocument.getRecordTarget().add(CdaUtil.createRecordTarget(reportForm));
 		cdaDocument.getAuthor().add(CdaUtil.createAuthor(reportForm));
+		cdaDocument.setCustodian(CdaUtil.createCustodian(reportForm));
 		cdaDocument.setComponent(CdaUtil.createComponent(reportForm));
 		
 		XmlIts1Formatter fmtr = new XmlIts1Formatter();
@@ -134,7 +108,7 @@ public final class CdaDocumentGenerator {
 		
 		StreamResult result = new StreamResult(new ByteArrayOutputStream());
 		transformer.transform(new DOMSource(doc), result);
-		
+		System.out.println(result.getOutputStream().toString());
 		return result.getOutputStream().toString();
 	}
 }

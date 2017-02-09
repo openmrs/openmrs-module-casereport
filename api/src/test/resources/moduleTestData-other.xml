@@ -77,7 +77,7 @@
 
     <!-- Atazanavir concept -->
     <concept concept_id="1010" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="x59ab2c5-878e-5905-b25d-5784167d0214" />
-    <concept_name concept_name_id="200" concept_id="1010" name="Atazanavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_name concept_name_id="2010" concept_id="1010" name="Atazanavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3010" concept_id="1010" description="Atazanavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d888tt71-9580-4d91-b18f-0a63a1840aa6" />
 
     <!-- Efavirenz concept -->

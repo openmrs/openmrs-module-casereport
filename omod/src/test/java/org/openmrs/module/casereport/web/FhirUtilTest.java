@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
@@ -26,8 +25,6 @@ import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CdaDocumentGenerator;
 import org.openmrs.module.casereport.FhirUtil;
-import org.openmrs.module.casereport.ProvideAndRegisterDocumentSetRequestGenerator;
-import org.openmrs.module.casereport.WebConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
@@ -43,8 +40,8 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 	@Test
 	public void createFhirDocument_shouldReturnTheGeneratedJson() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
+		executeDataSet("moduleTestData-initialConcepts.xml");
 		final String implId = "Test_Impl";
 		final String implName = "Test_Name";
 		//set the implementation id for test purposes
@@ -55,8 +52,8 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		        + implName + "]]></name>\n" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
-        //GlobalProperty gpw = new GlobalProperty(WebConstants.GP_CR_DEST_URL, "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
-        //adminService.saveGlobalProperty(gpw);
+		//GlobalProperty gpw = new GlobalProperty(WebConstants.GP_CR_DEST_URL, "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
+		//adminService.saveGlobalProperty(gpw);
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
@@ -68,12 +65,14 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-        ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
+		//ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
+		CdaDocumentGenerator.getInstance().generate(form);
 		if (true)
 			return;
-        String d = CdaDocumentGenerator.getInstance().generate(form);
-        assertEquals(-1, d.indexOf("#{"));
+		//String d = CdaDocumentGenerator.getInstance().generate(form);
+		//assertEquals(-1, d.indexOf("#{"));
 		String doc = FhirUtil.createFhirDocument(form);
+        System.out.println(doc);
 		SimpleObject so = new ObjectMapper().readValue(doc, SimpleObject.class);
 		assertEquals("Composition", Util.getByPath(so, "resourceType"));
 		assertEquals(caseReport.getUuid(), Util.getByPath(so, "id"));

@@ -31,8 +31,8 @@
 
     <!-- New HIV Case concept -->
     <concept concept_id="102" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d09ab2c5-567e-2305-b25d-5784167d0214" />
-    <concept_name concept_name_id="202" concept_id="102" name="HIV Switched To Second Line" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="6e88e825-18a1-4ec6-8ed4-4152a5a7d621" />
-    <concept_description concept_description_id="302" concept_id="100" description="PATIENT ON SECOND-LINE ARV TREATMENT" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="2677rc71-0713-4d91-b18f-0a63a1840aa6" />
-    <concept_reference_term concept_reference_term_id="402" concept_source_id="9000" code="703" name="HIV Switched To Second Line" description="HIV Switched To Second Line" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="86fb7f47-u80a-4086-9452-bd798be13c63" />
+    <concept_name concept_name_id="202" concept_id="102" name="New HIV Case" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="6e88e825-18a1-4ec6-8ed4-4152a5a7d621" />
+    <concept_description concept_description_id="302" concept_id="102" description="New HIV case" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="2677rc71-0713-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="402" concept_source_id="9000" code="703" name="New HIV case" description="New HIV case" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="86fb7f47-u80a-4086-9452-bd798be13c63" />
     <concept_reference_map concept_map_id="502" concept_id="102" concept_reference_term_id="402" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7b309489-49d8-61e0-8fed-18a905e044dc" />
 </dataset>
