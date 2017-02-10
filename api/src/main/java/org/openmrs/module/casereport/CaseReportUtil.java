@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
 import org.openmrs.Concept;
-import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Obs;
 import org.openmrs.Order;
@@ -128,26 +127,26 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the current ARV medications for the specified patient
+	 * Gets the active ARV drug orders for the specified patient
 	 *
 	 * @param patient the patient to match against
 	 * @param asOfDate
-	 * @return a list of ARV medications
-	 * @should get the current ARV medications for the specified patient
+	 * @return a list of active ARV drug orders
+	 * @should get the active ARV drug orders for the specified patient
 	 */
-	public static List<Drug> getCurrentARVMedications(Patient patient, Date asOfDate) {
-		List<Drug> arvs = new ArrayList<Drug>();
+	public static List<DrugOrder> getActiveArvDrugOrders(Patient patient, Date asOfDate) {
 		Concept arvMedset = getCeilConceptByCode(CaseReportConstants.TERM_CODE_ARV_MED_SET);
 		OrderService os = Context.getOrderService();
 		OrderType orderType = os.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
 		List<Order> orders = os.getActiveOrders(patient, orderType, null, asOfDate);
+		List<DrugOrder> arvDrugOrders = new ArrayList<DrugOrder>();
 		for (Order order : orders) {
 			DrugOrder drugOrder = (DrugOrder) order;
-			if (arvMedset.getSetMembers().contains(order.getConcept()) && !arvs.contains(drugOrder.getDrug())) {
-				arvs.add(drugOrder.getDrug());
+			if (arvMedset.getSetMembers().contains(order.getConcept())) {
+				arvDrugOrders.add(drugOrder);
 			}
 		}
-		return arvs;
+		return arvDrugOrders;
 	}
 	
 	/**

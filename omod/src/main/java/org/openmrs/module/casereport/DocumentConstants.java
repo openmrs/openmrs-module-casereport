@@ -58,7 +58,7 @@ public final class DocumentConstants {
 	
 	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
-	public static final String CIEL_CODE_HIV_TREAMENT = "162240";
+	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
 	
 	public static final String ACT_CODE_ASSERTION = "ASSERTION";
 	
@@ -72,7 +72,7 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_TRIGGERS = "Trigger(s): ";
 	
-	public static final String TEXT_HIV_TREATMENT = "Human immunodeficiency virus treatment regimen";
+	public static final String TEXT_HIV_TREATMENT = "Current antiretroviral drugs used for treatment";
 	
 	public static final String TEXT_ARVS = "Antiretrovirals: ";
 	

@@ -31,18 +31,15 @@ import org.marc.everest.datatypes.doc.StructDocTextNode;
 import org.marc.everest.datatypes.generic.CD;
 import org.marc.everest.datatypes.generic.CE;
 import org.marc.everest.datatypes.generic.SET;
-import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Act;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.AssignedAuthor;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.AssignedCustodian;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Author;
-import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalStatement;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Component2;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Component3;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Consumable;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Custodian;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.CustodianOrganization;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Entry;
-import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.EntryRelationship;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ManufacturedProduct;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Material;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.Observation;
@@ -58,11 +55,8 @@ import org.marc.everest.rmim.uv.cdar2.vocabulary.ActRelationshipHasComponent;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.ActStatus;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.AdministrativeGender;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.ContextControl;
-import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActClassDocumentEntryAct;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActMoodDocumentObservation;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActRelationshipEntry;
-import org.marc.everest.rmim.uv.cdar2.vocabulary.x_ActRelationshipEntryRelationship;
-import org.marc.everest.rmim.uv.cdar2.vocabulary.x_DocumentActMood;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.x_DocumentSubstanceMood;
 import org.openmrs.Concept;
 import org.openmrs.PersonName;
@@ -210,7 +204,7 @@ public class CdaUtil {
 		    DocumentConstants.TEXT_CLINICAL_INFO);
 		StructDocElementNode triggersTextNode = createTextNodeForTriggers(form);
 		triggersSection.setText(new SD(triggersTextNode));
-		triggersSection.getEntry().add(createEntryForTriggers(form));
+		triggersSection.setEntry(createEntriesForTriggers(form));
 		Component3 triggersComponent = new Component3();
 		triggersComponent.setSection(triggersSection);
 		components.add(triggersComponent);
@@ -221,7 +215,7 @@ public class CdaUtil {
 			    DocumentConstants.TEXT_MED_INFO);
 			StructDocElementNode medsTextNode = createTextNodeForMedications(form);
 			medsSection.setText(new SD(medsTextNode));
-			medsSection.getEntry().add(createEntryForMedications(form));
+			medsSection.setEntry(createEntriesForMedications(form));
 			Component3 medsComponent = new Component3();
 			medsComponent.setSection(medsSection);
 			components.add(medsComponent);
@@ -233,7 +227,7 @@ public class CdaUtil {
 			    DocumentConstants.TEXT_DIAGNOSTICS);
 			StructDocElementNode diagnosticTextNode = createTextNodeForDiagnostics(form);
 			diagnosticsSection.setText(new SD(diagnosticTextNode));
-			// diagnosticsSection.getEntry().add(createEntryForDiagnostics(form));
+			// diagnosticsSection.setEntry(createEntryForDiagnostics(form));
 			Component3 diagnosticsComponent = new Component3();
 			diagnosticsComponent.setSection(diagnosticsSection);
 			components.add(diagnosticsComponent);
@@ -305,8 +299,8 @@ public class CdaUtil {
 		parentNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, itemList);
 	}
 	
-	private static Entry createEntryForTriggers(CaseReportForm form) throws ParseException {
-		ArrayList<EntryRelationship> relationships = new ArrayList<EntryRelationship>(form.getTriggers().size());
+	private static ArrayList<Entry> createEntriesForTriggers(CaseReportForm form) throws ParseException {
+		ArrayList<Entry> entries = new ArrayList<Entry>(form.getTriggers().size());
 		SchedulerService ss = Context.getSchedulerService();
 		for (DatedUuidAndValue trigger : form.getTriggers()) {
 			String triggerName = trigger.getValue().toString();
@@ -321,41 +315,34 @@ public class CdaUtil {
 			}
 			Concept concept = CaseReportUtil.getConceptByMappingString(conceptMap, true);
 			String code = StringUtils.split(conceptMap, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR)[1];
+			CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER, DocumentConstants.TEXT_TRIGGER);
 			CD<String> value = createCielCD(code, concept.getDisplayString());
-			CD<String> question = new CD<String>(DocumentConstants.ACT_CODE_ASSERTION, DocumentConstants.CODE_SYSTEM_ACTCODE);
 			Date triggerDate = CaseReportConstants.DATE_FORMATTER.parse(trigger.getDate());
 			Observation observation = createObservation(question, value, triggerDate, ActStatus.Completed);
-			relationships.add(createEntryRelationship(observation));
+			entries.add(new Entry(x_ActRelationshipEntry.DRIV, null, observation));
 		}
-		CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER, DocumentConstants.TEXT_TRIGGER);
-		//TODO Set the answer for this observation?
-		Entry entry = new Entry(x_ActRelationshipEntry.DRIV, null, createObservation(question, null, null,
-		    ActStatus.Completed));
-		entry.getClinicalStatementIfObservation().setEntryRelationship(relationships);
-		return entry;
+		
+		return entries;
 	}
 	
-	private static Entry createEntryForMedications(CaseReportForm form) {
-		ArrayList<EntryRelationship> relationships = new ArrayList<EntryRelationship>(form.getTriggers().size());
+	private static ArrayList<Entry> createEntriesForMedications(CaseReportForm form) {
+		ArrayList<Entry> entries = new ArrayList<Entry>(form.getCurrentHivMedications().size());
 		for (UuidAndValue medication : form.getCurrentHivMedications()) {
-			SubstanceAdministration subMedication = createSubstanceAdministration(medication);
-			relationships.add(createEntryRelationship(subMedication));
+			CD<String> question = createCielCD(DocumentConstants.CIEL_CODE_HIV_TREAMENT,
+			    DocumentConstants.TEXT_HIV_TREATMENT);
+			
+			//CD<String> value = createCielCD(, );
+			//Date dateActivated = CaseReportConstants.DATE_FORMATTER.parse(trigger.getDate());
+			//Observation observation = createObservation(question, value, dateActivated, ActStatus.Completed);
+			/*Act act = new Act(x_ActClassDocumentEntryAct.Act, x_DocumentActMood.Eventoccurrence);
+			act.setNegationInd(BL.FALSE);
+			act.setCode(question);
+			act.setStatusCode(ActStatus.Completed);
+			Entry entry = new Entry(x_ActRelationshipEntry.DRIV, null, act);*/
+			
+			//entry.getClinicalStatementIfAct().setEntryRelationship(relationships);
 		}
-		CD<String> question = createCielCD(DocumentConstants.CIEL_CODE_HIV_TREAMENT, DocumentConstants.TEXT_HIV_TREATMENT);
-		Act act = new Act(x_ActClassDocumentEntryAct.Act, x_DocumentActMood.Eventoccurrence);
-		act.setNegationInd(BL.FALSE);
-		act.setCode(question);
-		act.setStatusCode(ActStatus.Completed);
-		Entry entry = new Entry(x_ActRelationshipEntry.DRIV, null, act);
-		entry.getClinicalStatementIfAct().setEntryRelationship(relationships);
-		return entry;
-	}
-	
-	private static EntryRelationship createEntryRelationship(ClinicalStatement clinicalStatement) {
-		EntryRelationship relationship = new EntryRelationship();
-		relationship.setTypeCode(x_ActRelationshipEntryRelationship.HasComponent);
-		relationship.setClinicalStatement(clinicalStatement);
-		return relationship;
+		return entries;
 	}
 	
 	private static SubstanceAdministration createSubstanceAdministration(UuidAndValue uuidAndValue) {

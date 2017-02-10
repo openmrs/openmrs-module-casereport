@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openmrs.Drug;
+import org.openmrs.DrugOrder;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
@@ -133,25 +133,28 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportUtil#getCurrentARVMedications(Patient, java.util.Date)
-	 * @verifies get the current ARV medications for the specified patient
+	 * @see CaseReportUtil#getActiveArvDrugOrders(Patient, java.util.Date)
+	 * @verifies get the active ARV drug orders for the specified patient
 	 */
 	@Test
-	public void getCurrentARVMedications_shouldGetTheCurrentARVMedicationsForTheSpecifiedPatient() throws Exception {
+	public void getActiveArvDrugOrders_shouldGetTheActiveARVDrugOrdersForTheSpecifiedPatient() throws Exception {
 		executeDataSet(XML_DATASET);
 		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		Date asOfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2016-01-14 00:00:00.0");
-		List<Drug> meds = CaseReportUtil.getCurrentARVMedications(patient, asOfDate);
-		assertEquals(1, meds.size());
-		assertEquals(20000, meds.get(0).getId().intValue());
+		List<DrugOrder> drugOrders = CaseReportUtil.getActiveArvDrugOrders(patient, asOfDate);
+		assertEquals(1, drugOrders.size());
+		assertEquals(10000, drugOrders.get(0).getId().intValue());
+		assertEquals(20000, drugOrders.get(0).getDrug().getId().intValue());
 		asOfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2016-01-16 00:00:00.0");
 		
-		meds = CaseReportUtil.getCurrentARVMedications(patient, asOfDate);
-		assertEquals(2, meds.size());
-		TestUtil.containsId(meds, 20000);
-		TestUtil.containsId(meds, 20001);
+		drugOrders = CaseReportUtil.getActiveArvDrugOrders(patient, asOfDate);
+		assertEquals(2, drugOrders.size());
+		TestUtil.containsId(drugOrders, 10000);
+		TestUtil.containsId(drugOrders, 10001);
+		assertEquals(20000, drugOrders.get(0).getDrug().getId().intValue());
+		assertEquals(20001, drugOrders.get(1).getDrug().getId().intValue());
 	}
 	
 	/**

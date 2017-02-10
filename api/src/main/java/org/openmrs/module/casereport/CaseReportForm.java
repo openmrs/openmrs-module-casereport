@@ -22,7 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.openmrs.Drug;
+import org.openmrs.DrugOrder;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -75,7 +75,7 @@ public class CaseReportForm {
 	
 	private UuidAndValue currentHivWhoStage;
 	
-	private List<UuidAndValue> currentHivMedications;
+	private List<DatedUuidAndValue> currentHivMedications;
 	
 	private UuidAndValue mostRecentArvStopReason;
 	
@@ -146,9 +146,17 @@ public class CaseReportForm {
 			            .getObsDatetime())));
 		}
 		
-		List<Drug> arvMeds = CaseReportUtil.getCurrentARVMedications(patient, null);
-		for (Drug d : arvMeds) {
-			getCurrentHivMedications().add(new UuidAndValue(d.getUuid(), d.getName()));
+		List<DrugOrder> arvOrders = CaseReportUtil.getActiveArvDrugOrders(patient, null);
+		for (DrugOrder drugOrder : arvOrders) {
+			String displayName = "";
+			displayName += drugOrder.getConcept().getName().getName();
+			if (drugOrder.getDrug() != null && StringUtils.isNotBlank(drugOrder.getDrug().getName())) {
+				if (!displayName.equalsIgnoreCase(drugOrder.getDrug().getName())) {
+					displayName += (" (" + drugOrder.getDrug().getName() + ")");
+				}
+			}
+			String dateActivated = DATE_FORMATTER.format(drugOrder.getDateActivated());
+			getCurrentHivMedications().add(new DatedUuidAndValue(drugOrder.getDrug().getUuid(), displayName, dateActivated));
 		}
 		
 		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
@@ -340,14 +348,14 @@ public class CaseReportForm {
 		this.mostRecentViralLoads = mostRecentViralLoads;
 	}
 	
-	public List<UuidAndValue> getCurrentHivMedications() {
+	public List<DatedUuidAndValue> getCurrentHivMedications() {
 		if (currentHivMedications == null) {
-			currentHivMedications = new ArrayList<UuidAndValue>();
+			currentHivMedications = new ArrayList<DatedUuidAndValue>();
 		}
 		return currentHivMedications;
 	}
 	
-	public void setCurrentHivMedications(List<UuidAndValue> currentHivMedications) {
+	public void setCurrentHivMedications(List<DatedUuidAndValue> currentHivMedications) {
 		this.currentHivMedications = currentHivMedications;
 	}
 	
