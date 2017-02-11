@@ -77,17 +77,17 @@ public final class CdaDocumentGenerator {
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
 		cdaDocument.setId(reportForm.getReportUuid());
-		cdaDocument.setCode(CdaUtil.createLoincCE(DocumentConstants.DOCUMENT_CODE, DocumentConstants.TEXT_DOCUMENT_NAME));
+		cdaDocument.setCode(CdaGeneratorUtil.createLoincCE(DocumentConstants.DOCUMENT_CODE, DocumentConstants.TEXT_DOCUMENT_NAME));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(reportForm.getReportDate());
 		cdaDocument.setEffectiveTime(calendar);
 		cdaDocument.setConfidentialityCode(x_BasicConfidentialityKind.Normal);
 		cdaDocument.setLanguageCode(DocumentConstants.LANGUAGE_CODE);
-		cdaDocument.getRecordTarget().add(CdaUtil.createRecordTarget(reportForm));
-		cdaDocument.getAuthor().add(CdaUtil.createAuthor(reportForm));
-		cdaDocument.setCustodian(CdaUtil.createCustodian(reportForm));
-		cdaDocument.setComponent(CdaUtil.createRootComponent(reportForm));
+		cdaDocument.getRecordTarget().add(CdaGeneratorUtil.createRecordTarget(reportForm));
+		cdaDocument.getAuthor().add(CdaGeneratorUtil.createAuthor(reportForm));
+		cdaDocument.setCustodian(CdaGeneratorUtil.createCustodian(reportForm));
+		cdaDocument.setComponent(CdaGeneratorUtil.createRootComponent(reportForm));
 		
 		XmlIts1Formatter fmtr = new XmlIts1Formatter();
 		//This instructs the XML ITS1 Formatter we want to use CDA datatypes

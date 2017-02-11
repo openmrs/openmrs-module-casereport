@@ -69,7 +69,7 @@ import org.openmrs.scheduler.TaskDefinition;
 /**
  * Contains utility methods for creating entities to add to the CDA document
  */
-public class CdaUtil {
+public class CdaGeneratorUtil {
 	
 	public static CE<String> createLoincCE(String code, String displayName) {
 		return new CE<String>(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, null,
