@@ -61,19 +61,7 @@ public class FhirUtil {
 	
 	private static final String MANAGED_BY = "Managed by";
 	
-	private static final String TITLE_VIRAL_LOADS = "Viral Load(s)";
-	
-	private static final String TITLE_CD4_COUNTS = "CD4 count(s)";
-	
-	private static final String TITLE_HIV_TESTS = "HIV Test, Qualitative test result(s)";
-	
-	private static final String TITLE_CURRENT_WHO_STAGE = "Current WHO Stage";
-	
 	private static final String TITLE_CURRENT_ARVS = "Current HIV medications (ARVs)";
-	
-	private static final String TITLE_REASON_ARVS_STOPPED = "Reason ARVs stopped";
-	
-	private static final String TITLE_DATE_OF_LAST_VISIT = "Date of last visit";
 	
 	private static final String TEXT_VIRAL_LOADS = "This is a measure of the number of copies/ml of DNA/RNA in patients with HIV";
 	
@@ -119,38 +107,40 @@ public class FhirUtil {
 		addEvent(composition, caseReportForm);
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentViralLoads())) {
-			addSection(composition, TITLE_VIRAL_LOADS, CaseReportConstants.TERM_CODE_VIRAL_LOAD, TEXT_VIRAL_LOADS, true,
-			    caseReportForm.getMostRecentViralLoads());
+			addSection(composition, DocumentConstants.TEXT_VIRAL_LOAD, CaseReportConstants.CIEL_CODE_VIRAL_LOAD,
+			    TEXT_VIRAL_LOADS, true, caseReportForm.getMostRecentViralLoads());
 		}
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentCd4Counts())) {
-			addSection(composition, TITLE_CD4_COUNTS, CaseReportConstants.TERM_CODE_CD4_COUNT, TEXT_CD4_COUNTS, false,
-			    caseReportForm.getMostRecentCd4Counts());
+			addSection(composition, DocumentConstants.TEXT_CD4_COUNT, CaseReportConstants.CIEL_CODE_CD4_COUNT,
+			    TEXT_CD4_COUNTS, false, caseReportForm.getMostRecentCd4Counts());
 		}
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentHivTests())) {
-			addSection(composition, TITLE_HIV_TESTS, CaseReportConstants.TERM_CODE_HIV_TEST, TEXT_HIV_TESTS, false,
-			    caseReportForm.getMostRecentHivTests());
+			addSection(composition, DocumentConstants.TEXT_HIV_TEST, CaseReportConstants.CIEL_CODE_HIV_TEST, TEXT_HIV_TESTS,
+			    false, caseReportForm.getMostRecentHivTests());
 		}
 		
 		if (caseReportForm.getCurrentHivWhoStage() != null) {
-			addSection(composition, TITLE_CURRENT_WHO_STAGE, CaseReportConstants.TERM_CODE_WHO_STAGE,
+			addSection(composition, DocumentConstants.TEXT_CURRENT_WHO_STAGE, CaseReportConstants.CIEL_CODE_WHO_STAGE,
 			    TEXT_CURRENT_WHO_STAGE, false, Arrays.asList(caseReportForm.getCurrentHivWhoStage()));
 		}
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getCurrentHivMedications())) {
-			addSection(composition, TITLE_CURRENT_ARVS, CaseReportConstants.TERM_CODE_CURRENT_ARVS, TEXT_CURRENT_ARVS,
+			addSection(composition, TITLE_CURRENT_ARVS, CaseReportConstants.CIEL_CODE_CURRENT_ARVS, TEXT_CURRENT_ARVS,
 			    false, caseReportForm.getCurrentHivMedications());
 		}
 		
 		if (caseReportForm.getMostRecentArvStopReason() != null) {
-			addSection(composition, TITLE_REASON_ARVS_STOPPED, CaseReportConstants.TERM_CODE_REASON_FOR_STOPPING_ARVS,
-			    TEXT_REASON_ARVS_STOPPED, false, Arrays.asList(caseReportForm.getMostRecentArvStopReason()));
+			addSection(composition, DocumentConstants.TEXT_REASON_ARVS_STOPPED,
+			    CaseReportConstants.CIEL_CODE_REASON_FOR_STOPPING_ARVS, TEXT_REASON_ARVS_STOPPED, false,
+			    Arrays.asList(caseReportForm.getMostRecentArvStopReason()));
 		}
 		
 		if (caseReportForm.getLastVisitDate() != null) {
-			addSection(composition, TITLE_DATE_OF_LAST_VISIT, CaseReportConstants.TERM_CODE_DATE_OF_LAST_VISIT,
-			    TEXT_DATE_OF_LAST_VISIT, false, Arrays.asList(caseReportForm.getLastVisitDate()));
+			addSection(composition, DocumentConstants.TEXT_DATE_OF_LAST_VISIT,
+			    CaseReportConstants.CIEL_CODE_DATE_OF_LAST_VISIT, TEXT_DATE_OF_LAST_VISIT, false,
+			    Arrays.asList(caseReportForm.getLastVisitDate()));
 		}
 		
 		return FhirContext.forDstu2().newJsonParser().setPrettyPrint(true).encodeResourceToString(composition);

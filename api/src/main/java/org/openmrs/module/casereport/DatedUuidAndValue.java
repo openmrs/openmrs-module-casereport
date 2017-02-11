@@ -20,6 +20,11 @@ public class DatedUuidAndValue extends UuidAndValue {
 	public DatedUuidAndValue() {
 	}
 	
+	public DatedUuidAndValue(UuidAndValue uuidAndValue) {
+		setUuid(uuidAndValue.getUuid());
+		setValue((uuidAndValue.getValue()));
+	}
+	
 	public DatedUuidAndValue(String uuid, Object value, String date) {
 		super(uuid, value);
 		this.date = date;

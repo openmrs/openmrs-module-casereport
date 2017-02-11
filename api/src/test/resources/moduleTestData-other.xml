@@ -21,20 +21,22 @@
     <concept_reference_map concept_map_id="5000" concept_id="1000" concept_reference_term_id="4000" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5b309478-49d8-61e0-8fed-18a905e044dc" />
 
     <!-- CIEL Concept term and mapping for cd4 count concept -->
-    <concept_reference_term concept_reference_term_id="4001" concept_source_id="9000" code="5497" name="CD4 count" description="A person's cd4 count" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="77fb7f47-u80t-4086-9285-bd798be13c63" />
-    <concept_reference_map concept_map_id="5001" concept_id="5497" concept_reference_term_id="4001" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6y309478-49d8-61e0-8fed-19a905e044dc" />
+    <concept_reference_term concept_reference_term_id="4050" concept_source_id="9000" code="5497" name="CD4 count" description="A person's cd4 count" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="77fb7f47-u80t-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5050" concept_id="5497" concept_reference_term_id="4050" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6y309478-49d8-61e0-8fed-19a905e044dc" />
 
     <!-- HIV Test, Qualitative concept -->
     <concept concept_id="1001" datatype_id="2" class_id="1" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a09ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2001" concept_id="1001" name="HIV Test, Qualitative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7e88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3001" concept_id="1001" description="HIV Test status, Qualitative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="8777rc71-9580-4d91-b18f-0a63a1840aa6" />
-    <concept_reference_term concept_reference_term_id="4002" concept_source_id="9000" code="1040" name="HIV Test status, Qualitative" description="A person's HIV status" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="88fb7f47-i80a-4086-9285-bd798be13c63" />
-    <concept_reference_map concept_map_id="5002" concept_id="1001" concept_reference_term_id="4002" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7i309478-49d8-61e0-8fed-18a905e044dc" />
+    <concept_reference_term concept_reference_term_id="4001" concept_source_id="9000" code="1040" name="HIV Test status, Qualitative" description="A person's HIV status" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="88fb7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5001" concept_id="1001" concept_reference_term_id="4001" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7i309478-49d8-61e0-8fed-18a905e044dc" />
 
     <!-- Negative concept -->
     <concept concept_id="1002" datatype_id="4" class_id="11" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2002" concept_id="1002" name="Negative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="7f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3002" concept_id="1002" description="Negative" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="9666rc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4002" concept_source_id="9000" code="664" name="Negative" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="77fb7f47-i81a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5002" concept_id="1002" concept_reference_term_id="4002" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6i309478-49d7-61e0-8fed-18a905e044dc" />
 
     <!-- Current WHO HIV Stage concept -->
     <concept concept_id="1003" datatype_id="2" class_id="5" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c09ab2c5-878e-5905-b25d-5784167d0214" />
@@ -47,6 +49,8 @@
     <concept concept_id="1004" datatype_id="4" class_id="10" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d09ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2004" concept_id="1004" name="WHO HIV stage 2" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="9f88k374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3004" concept_id="1004" description="WHO HIV stage 2" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="2888rc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4004" concept_source_id="9000" code="1205" name="WHO HIV stage 2" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="66fb7f47-i81a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5004" concept_id="1004" concept_reference_term_id="4004" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5i309478-49d7-61e0-8fed-18a905e044dc" />
 
     <!-- ARV medset concept -->
     <concept concept_id="1005" datatype_id="4" class_id="9" is_set="true" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="e09ab2c5-878e-5905-b25d-5784167d0214" />
@@ -59,11 +63,15 @@
     <concept concept_id="1006" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="r59ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2006" concept_id="1006" name="Lopinavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="3d55f374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3006" concept_id="1006" description="Lopinavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7888tc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4006" concept_source_id="9000" code="79040" name="Lopinavir" description="Lopinavir drug" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="56ty7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5006" concept_id="1006" concept_reference_term_id="4006" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5t309478-49d8-61e0-8fed-18a905e044dc" />
 
     <!-- Ritonavir concept -->
     <concept concept_id="1007" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="s59ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2007" concept_id="1007" name="Ritonavir" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="4f55f374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3007" concept_id="1007" description="Ritonavir drug" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a888tt71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4007" concept_source_id="9000" code="83412" name="Ritonavir" description="Ritonavir drug" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="57ty7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5007" concept_id="1007" concept_reference_term_id="4007" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5u309478-49d8-61e0-8fed-18a905e044dc" />
 
     <!-- Abacavir concept -->
     <concept concept_id="1008" datatype_id="4" class_id="3" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="z59ab2c5-878e-5905-b25d-5784167d0214" />
@@ -89,13 +97,15 @@
     <concept concept_id="1012" datatype_id="2" class_id="7" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d09ab2c5-878f-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2012" concept_id="1012" name="Reason Antiretrovirals stopped" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="9f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3012" concept_id="1012" description="" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a888rc71-9580-4e91-b18f-0a63a1840aa6" />
-    <concept_reference_term concept_reference_term_id="4006" concept_source_id="9000" code="1252" name="Reason Antiretrovirals stopped" description="WHO HIV stage" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="67fa7f47-i80a-4086-9285-bd798be13c63" />
-    <concept_reference_map concept_map_id="5006" concept_id="1012" concept_reference_term_id="4006" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7p309478-49d8-61e0-8fed-18a905e044dc" />
+    <concept_reference_term concept_reference_term_id="4012" concept_source_id="9000" code="1252" name="Reason Antiretrovirals stopped" description="WHO HIV stage" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="67fa7f47-i80a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5012" concept_id="1012" concept_reference_term_id="4012" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7p309478-49d8-61e0-8fed-18a905e044dc" />
 
     <!-- Regimen failure concept -->
     <concept concept_id="1013" datatype_id="4" class_id="5" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="t69ab2c5-878e-5905-b25d-5784167d0214" />
     <concept_name concept_name_id="2013" concept_id="1013" name="Regimen failure" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="4i88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3013" concept_id="1013" description="Regimen failure" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3488rc71-9580-4d91-b18f-0a63a1840aa6" />
+    <concept_reference_term concept_reference_term_id="4013" concept_source_id="9000" code="843" name="Regimen failure" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="55fb7f47-i81a-4086-9285-bd798be13c63" />
+    <concept_reference_map concept_map_id="5013" concept_id="1013" concept_reference_term_id="4013" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="4i309478-49d7-61e0-8fed-18a905e044dc" />
 
     <!-- ARV Drugs -->
     <drug drug_id="20000" concept_id="1006" name="Lopinavir" combination="0" strength="500mg" creator="1" date_created="2016-01-12 00:00:00.0" retired="0" uuid="4yfcf118-931c-46f7-8ff6-7b876f0d4202"/>

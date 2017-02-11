@@ -66,13 +66,13 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
 		//ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
-		//CdaDocumentGenerator.getInstance().generate(form);
+		CdaDocumentGenerator.getInstance().generate(form);
 		if (true)
 			return;
 		//String d = CdaDocumentGenerator.getInstance().generate(form);
 		//assertEquals(-1, d.indexOf("#{"));
 		String doc = FhirUtil.createFhirDocument(form);
-        System.out.println(doc);
+		System.out.println(doc);
 		SimpleObject so = new ObjectMapper().readValue(doc, SimpleObject.class);
 		assertEquals("Composition", Util.getByPath(so, "resourceType"));
 		assertEquals(caseReport.getUuid(), Util.getByPath(so, "id"));

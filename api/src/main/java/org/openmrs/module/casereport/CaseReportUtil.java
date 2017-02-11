@@ -80,7 +80,7 @@ public class CaseReportUtil {
 	 * @should return the 3 most recent Viral load observations
 	 */
 	public static List<Obs> getMostRecentViralLoads(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.TERM_CODE_VIRAL_LOAD, 3);
+		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_VIRAL_LOAD, 3);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class CaseReportUtil {
 	 * @should return the 3 most recent cd4 count observations
 	 */
 	public static List<Obs> getMostRecentCD4counts(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.TERM_CODE_CD4_COUNT, 3);
+		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_CD4_COUNT, 3);
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class CaseReportUtil {
 	 * @should return the 3 most recent HIV test observations
 	 */
 	public static List<Obs> getMostRecentHIVTests(Patient patient) {
-		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.TERM_CODE_HIV_TEST, 3);
+		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_HIV_TEST, 3);
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class CaseReportUtil {
 	 * @should return the most recent WHO stage observation
 	 */
 	public static Obs getMostRecentWHOStage(Patient patient) {
-		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.TERM_CODE_WHO_STAGE, 1);
+		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_WHO_STAGE, 1);
 		if (whoStages.isEmpty()) {
 			return null;
 		}
@@ -135,7 +135,7 @@ public class CaseReportUtil {
 	 * @should get the active ARV drug orders for the specified patient
 	 */
 	public static List<DrugOrder> getActiveArvDrugOrders(Patient patient, Date asOfDate) {
-		Concept arvMedset = getCeilConceptByCode(CaseReportConstants.TERM_CODE_ARV_MED_SET);
+		Concept arvMedset = getCeilConceptByCode(CaseReportConstants.CIEL_CODE_ARV_MED_SET);
 		OrderService os = Context.getOrderService();
 		OrderType orderType = os.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
 		List<Order> orders = os.getActiveOrders(patient, orderType, null, asOfDate);
@@ -159,7 +159,7 @@ public class CaseReportUtil {
 	 */
 	public static Obs getMostRecentReasonARVsStopped(Patient patient) {
 		List<Obs> reasons = getMostRecentObsByPatientAndConceptMapping(patient,
-		    CaseReportConstants.TERM_CODE_REASON_FOR_STOPPING_ARVS, 1);
+		    CaseReportConstants.CIEL_CODE_REASON_FOR_STOPPING_ARVS, 1);
 		if (reasons.isEmpty()) {
 			return null;
 		}

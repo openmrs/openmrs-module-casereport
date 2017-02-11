@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 
 public final class DocumentConstants {
 	
+	//Formatter used to print dates in text sections that are human readable
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
 	public static final String TYPE_ID_ROOT = "2.16.840.1.113883.1.3";
@@ -88,9 +89,21 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_LAST_VISIT_DATE = "Date of last patient visit: ";
 	
-	public static final String TEXT_VIRAL_LOADS = "Viral Loads: ";
+	public static final String TEXT_CD4_RECENT_COUNT = "Most Recent CD4 Count: ";
 	
-	public static final String TEXT_CD4_COUNTS = "CD4 Counts: ";
+	public static final String TEXT_HIV_RECENT_TEST = "Most Recent HIV Test: ";
 	
-	public static final String TEXT_HIV_TESTS = "HIV Tests: ";
+	public static final String TEXT_RECENT_VIRAL_LOAD = "Most Recent Viral Load: ";
+	
+	public static final String TEXT_CURRENT_WHO_STAGE = "Current WHO HIV Stage";
+	
+	public static final String TEXT_REASON_ARVS_STOPPED = "Reason antiretrovirals stopped";
+	
+	public static final String TEXT_DATE_OF_LAST_VISIT = "Date of last patient visit";
+	
+	public static final String TEXT_CD4_COUNT = "CD4 count";
+	
+	public static final String TEXT_HIV_TEST = "HIV rapid test 1, qualitative";
+	
+	public static final String TEXT_VIRAL_LOAD = "HIV Viral Load";
 }

@@ -37,20 +37,20 @@ public class CaseReportConstants {
 	public static final String CIEL_MAPPING_PREFIX = CaseReportConstants.SOURCE_CIEL_HL7_CODE
 	        + CaseReportConstants.CONCEPT_MAPPING_SEPARATOR;
 	
-	public static final String TERM_CODE_VIRAL_LOAD = "856";
+	public static final String CIEL_CODE_VIRAL_LOAD = "856";
 	
-	public static final String TERM_CODE_CD4_COUNT = "5497";
+	public static final String CIEL_CODE_CD4_COUNT = "5497";
 	
-	public static final String TERM_CODE_HIV_TEST = "1040";
+	public static final String CIEL_CODE_HIV_TEST = "1040";
 	
-	public static final String TERM_CODE_WHO_STAGE = "5356";
+	public static final String CIEL_CODE_WHO_STAGE = "5356";
 	
-	public static final String TERM_CODE_ARV_MED_SET = "1085";
+	public static final String CIEL_CODE_ARV_MED_SET = "1085";
 	
-	public static final String TERM_CODE_CURRENT_ARVS = "1088";
+	public static final String CIEL_CODE_CURRENT_ARVS = "1088";
 	
-	public static final String TERM_CODE_REASON_FOR_STOPPING_ARVS = "1252";
+	public static final String CIEL_CODE_REASON_FOR_STOPPING_ARVS = "1252";
 	
-	public static final String TERM_CODE_DATE_OF_LAST_VISIT = "160753";
+	public static final String CIEL_CODE_DATE_OF_LAST_VISIT = "164093";
 	
 }
