@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.dcm4chee.xds2.common.XDSConstants;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIException;
 import org.openmrs.api.GlobalPropertyListener;
@@ -58,7 +59,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	private static WebServiceMessageCallback getActionCallBack() throws URISyntaxException {
 		if (messageCallback == null) {
 			ActionCallback callback = new ActionCallback(WebConstants.PROV_REG_DOC_ACTION);
-			callback.setReplyTo(new EndpointReference(new URI(WebConstants.WS_ADDR_ANONYMOUS)));
+			callback.setReplyTo(new EndpointReference(new URI(XDSConstants.WS_ADDRESSING_ANONYMOUS)));
 			messageCallback = callback;
 		}
 		return messageCallback;

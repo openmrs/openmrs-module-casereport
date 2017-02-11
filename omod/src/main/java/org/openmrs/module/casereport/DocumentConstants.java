@@ -17,6 +17,42 @@ public final class DocumentConstants {
 	//Formatter used to print dates in text sections that are human readable
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
+	public static final String PATIENT_ID_PATTERN = "%s^^^&%s&ISO";
+	
+	public static final String PID_3_PATTERN = "PID-3|%s";
+	
+	public static final String PID_5_PATTERN = "PID-5|%s^%s^^^";
+	
+	public static final String PID_7_PATTERN = "PID-7|%s";
+	
+	public static final String PID_8_PATTERN = "PID-8|%s";
+	
+	public static final String XDS_TX_NAMESPACE_URI = "urn:ihe:iti:xds-b:2007";
+	
+	public static final String XDS_ACTION = "ProvideAndRegisterDocumentSetRequest";
+	
+	public static final String XDS_NAMESPACE_URI = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0";
+	
+	public static final String XDS_SYMBOLIC_LINKS_PREFIX = "urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:";
+	
+	public static final String XDS_EXTRINSIC_OBJECT = "ExtrinsicObject";
+	
+	public static final String XDS_REG_PACKAGE = "RegistryPackage";
+	
+	public static final String XDS_CLASSIFICATION = "Classification";
+	
+	public static final String XDS_ASSOCIATION = "Association";
+	
+	public static final String XDS_DOC_ID = "Document1";
+	
+	public static final String XDS_SUBSET_ID = "SubSet1";
+	
+	public static final String XDS_CLASSIFICATION_ID = "Class1";
+	
+	public static final String XDS_ASSOCIATION_ID = "Assoc1";
+	
+	public static final String XDS_SLOT_CODING_SCHEME = "codingScheme";
+	
 	public static final String TYPE_ID_ROOT = "2.16.840.1.113883.1.3";
 	
 	public static final String TEXT_EXTENSION = "POCD_HD000040";
@@ -26,10 +62,6 @@ public final class DocumentConstants {
 	public static final String TEXT_TITLE = "Public Health Case Report - HIV";
 	
 	public static final String LANGUAGE_CODE = "en-US";
-	
-	public static final String DOCUMENT_CODE = "55751-2";
-	
-	public static final String PATIENT_ID_ROOT = "1.3.6.1.4.1.21367.2010.1.2.300";
 	
 	public static final String SECTION_TEMPLATE_ID_ROOT1 = "2.16.840.1.113883.10.20.1.6";
 	
@@ -48,6 +80,8 @@ public final class DocumentConstants {
 	public static final String CODE_SYSTEM_CIEL = "2.16.840.1.113883.3.7201";
 	
 	public static final String CODE_SYSTEM_NAME_CIEL = "CIEL";
+	
+	public static final String LOINC_CODE_CR = "55751-2";
 	
 	public static final String LOINC_CODE_CLINICAL_INFO = "55752-0";
 	

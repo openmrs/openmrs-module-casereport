@@ -25,7 +25,6 @@ import org.marc.everest.datatypes.ON;
 import org.marc.everest.datatypes.PN;
 import org.marc.everest.datatypes.REAL;
 import org.marc.everest.datatypes.SD;
-import org.marc.everest.datatypes.TS;
 import org.marc.everest.datatypes.doc.StructDocElementNode;
 import org.marc.everest.datatypes.doc.StructDocTextNode;
 import org.marc.everest.datatypes.generic.CD;
@@ -62,7 +61,6 @@ import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 
@@ -92,7 +90,7 @@ public class CdaGeneratorUtil {
 	 * @param form
 	 * @return a RecordTarget instance
 	 */
-	public static RecordTarget createRecordTarget(CaseReportForm form) {
+	public static RecordTarget createRecordTarget(CaseReportForm form) throws ParseException {
 		RecordTarget rt = new RecordTarget(ContextControl.OverridingPropagating);
 		Patient patient = new Patient();
 		PN name;
@@ -109,18 +107,16 @@ public class CdaGeneratorUtil {
 			gender = AdministrativeGender.Female;
 		}
 		patient.setAdministrativeGenderCode(gender);
-		Calendar calendar = Calendar.getInstance();
-		CaseReport cr = Context.getService(CaseReportService.class).getCaseReportByUuid(form.getReportUuid());
-		calendar.setTime(cr.getPatient().getBirthdate());
-		patient.setBirthTime(calendar);
+		if (form.getBirthdate() != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(CaseReportConstants.DATE_FORMATTER.parse(form.getBirthdate()));
+			patient.setBirthTime(calendar);
+		}
 		PatientRole patientRole = new PatientRole();
 		patientRole.setPatient(patient);
-		if (form.getPatientIdentifier() != null) {
-			Object id = form.getPatientIdentifier().getValue();
-			if (id != null && StringUtils.isNotBlank(id.toString())) {
-				patientRole.setId(SET.createSET(new II(DocumentConstants.PATIENT_ID_ROOT, id.toString())));
-			}
-		}
+		Object id = form.getPatientIdentifier().getValue();
+		Object idType = form.getIdentifierType().getValue();
+		patientRole.setId(SET.createSET(new II(idType.toString(), id.toString())));
 		patientRole.setProviderOrganization(createOrganization(form.getAssigningAuthorityId(),
 		    form.getAssigningAuthorityName()));
 		rt.setPatientRole(patientRole);
@@ -253,9 +249,7 @@ public class CdaGeneratorUtil {
 			    DocumentConstants.TEXT_DATE_OF_LAST_VISIT);
 			String dateStr = form.getLastVisitDate().getValue().toString();
 			Date visitDate = CaseReportConstants.DATE_FORMATTER.parse(dateStr);
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(visitDate);
-			entries.add(createObservationEntry(question, new TS(calendar), dateStr));
+			entries.add(createObservationEntry(question, DocUtil.createTS(visitDate), dateStr));
 		}
 		if (form.getMostRecentCd4Count() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithNumericValue(CaseReportConstants.CIEL_CODE_CD4_COUNT,
@@ -505,11 +499,7 @@ public class CdaGeneratorUtil {
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);
-		if (obsdatetime != null) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(obsdatetime);
-			observation.setEffectiveTime(new TS(calendar));
-		}
+		observation.setEffectiveTime(DocUtil.createTS(obsdatetime));
 		return observation;
 	}
 }

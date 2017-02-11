@@ -9,11 +9,22 @@
  */
 package org.openmrs.module.casereport;
 
-import static org.openmrs.module.casereport.CaseReportConstants.MODULE_ID;
+import java.util.Calendar;
+import java.util.Date;
 
-public class WebConstants {
+import org.marc.everest.datatypes.NullFlavor;
+import org.marc.everest.datatypes.TS;
+
+public class DocUtil {
 	
-	public static final String GP_CR_DEST_URL = MODULE_ID + ".caseReportDestinationUrl";
-	
-	public static final String PROV_REG_DOC_ACTION = "urn:ihe:iti:2007:ProvideAndRegisterDocumentSet-b";
+	public static TS createTS(Date date) {
+		if (date == null) {
+			TS retVal = new TS();
+			retVal.setNullFlavor(NullFlavor.NoInformation);
+			return retVal;
+		}
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return new TS(calendar);
+	}
 }

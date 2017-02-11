@@ -167,19 +167,11 @@ public class FhirUtil {
 		} else {
 			patient.setDeceased(new BooleanDt(form.getDead()));
 		}
-		if (form.getPatientIdentifier() != null) {
-			Object id = form.getPatientIdentifier().getValue();
-			if (id != null && StringUtils.isNotBlank(id.toString())) {
-				IdentifierDt identifier = patient.addIdentifier();
-				identifier.setValue(id.toString());
-				if (form.getIdentifierType() != null) {
-					Object idType = form.getIdentifierType().getValue();
-					if (idType != null && StringUtils.isNotBlank(idType.toString())) {
-						identifier.setSystem(new UriDt(idType.toString()));
-					}
-				}
-			}
-		}
+		Object id = form.getPatientIdentifier().getValue();
+		IdentifierDt identifier = patient.addIdentifier();
+		identifier.setValue(id.toString());
+		Object idType = form.getIdentifierType().getValue();
+		identifier.setSystem(new UriDt(idType.toString()));
 		
 		composition.getContained().getContainedResources().add(patient);
 	}

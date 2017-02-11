@@ -57,7 +57,7 @@ Content-ID: <0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>
                         <ns5:LocalizedString value="Case Report"/>
                     </ns5:Name>
                     <ns5:Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a" classifiedObject="Document01"
-                                        id="urn:uuid:#{randomUUID}" nodeRepresentation="51851-4">
+                                        id="urn:uuid:#{randomUUID}" nodeRepresentation="55751-2">
                         <ns5:Slot name="codingScheme">
                             <ns5:ValueList>
                                 <ns5:Value>2.16.840.1.113883.6.1</ns5:Value>

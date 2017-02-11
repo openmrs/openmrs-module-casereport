@@ -25,6 +25,7 @@ import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CdaDocumentGenerator;
 import org.openmrs.module.casereport.FhirUtil;
+import org.openmrs.module.casereport.ProvideAndRegisterDocumentSetRequestGenerator;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
@@ -61,12 +62,12 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		patient.setDead(true);
 		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-03-20T00:00:00.000-0400"));
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(caseReport)));
-		service.submitCaseReport(caseReport);
+		//service.submitCaseReport(caseReport);
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		//ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
-		CdaDocumentGenerator.getInstance().generate(form);
+		ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
+		//CdaDocumentGenerator.getInstance().generate(form);
 		if (true)
 			return;
 		//String d = CdaDocumentGenerator.getInstance().generate(form);

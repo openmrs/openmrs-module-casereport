@@ -123,10 +123,8 @@ public class CaseReportForm {
 			}
 		}
 		PatientIdentifier id = patient.getPatientIdentifier();
-		if (id != null) {
-			setPatientIdentifier(new UuidAndValue(id.getUuid(), id.getIdentifier()));
-			setIdentifierType(new UuidAndValue(id.getIdentifierType().getUuid(), id.getIdentifierType().getName()));
-		}
+		setPatientIdentifier(new UuidAndValue(id.getUuid(), id.getIdentifier()));
+		setIdentifierType(new UuidAndValue(id.getIdentifierType().getUuid(), id.getIdentifierType().getName()));
 		
 		for (CaseReportTrigger tr : caseReport.getReportTriggers()) {
 			getTriggers().add(new DatedUuidAndValue(tr.getUuid(), tr.getName(), DATE_FORMATTER.format(tr.getDateCreated())));
