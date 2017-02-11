@@ -448,11 +448,11 @@ public class CdaUtil {
 		ArrayList<Entry> entries = new ArrayList<Entry>(form.getCurrentHivMedications().size());
 		ConceptService cs = Context.getConceptService();
 		for (DatedUuidAndValue med : form.getCurrentHivMedications()) {
-			Drug drug = cs.getDrugByUuid(med.getUuid().toString());
+			Drug drug = cs.getDrugByUuid(med.getUuid());
 			String name = med.getValue().toString();
 			if (drug == null) {
-				throw new APIException("Cannot find drug with uuid " + drug.getUuid() + ", seems like the drug named "
-				        + name + " was deleted.");
+				throw new APIException("Cannot find drug with uuid " + med.getUuid() + ", seems like the drug named " + name
+				        + " was deleted.");
 			}
 			Entry e = createObservationEntryWithACielQuestionCodeAndCodedValue(DocumentConstants.CIEL_CODE_HIV_TREAMENT,
 			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name);

@@ -63,7 +63,7 @@ public class FhirUtil {
 	
 	private static final String TITLE_CURRENT_ARVS = "Current HIV medications (ARVs)";
 	
-	private static final String TEXT_VIRAL_LOADS = "This is a measure of the number of copies/ml of DNA/RNA in patients with HIV";
+	private static final String TEXT_VIRAL_LOAD = "This is a measure of the number of copies/ml of DNA/RNA in patients with HIV";
 	
 	private static final String TEXT_CURRENT_WHO_STAGE = "Question asked on encounter form. Expects a numeric answer defining";
 	
@@ -73,9 +73,9 @@ public class FhirUtil {
 	
 	private static final String TEXT_DATE_OF_LAST_VISIT = "Date of event (last visit)";
 	
-	private static final String TEXT_CD4_COUNTS = "Measure of CD4 (T-helper cells) in blood";
+	private static final String TEXT_CD4_COUNT = "Measure of CD4 (T-helper cells) in blood";
 	
-	private static final String TEXT_HIV_TESTS = "Qualitative interpretation of rapid HIV screening test.";
+	private static final String TEXT_HIV_TEST = "Qualitative interpretation of rapid HIV screening test.";
 	
 	/**
 	 * Generates a CDA document containing details in the specified case report form.
@@ -108,16 +108,16 @@ public class FhirUtil {
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentViralLoads())) {
 			addSection(composition, DocumentConstants.TEXT_VIRAL_LOAD, CaseReportConstants.CIEL_CODE_VIRAL_LOAD,
-			    TEXT_VIRAL_LOADS, true, caseReportForm.getMostRecentViralLoads());
+			    TEXT_VIRAL_LOAD, true, caseReportForm.getMostRecentViralLoads());
 		}
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentCd4Counts())) {
 			addSection(composition, DocumentConstants.TEXT_CD4_COUNT, CaseReportConstants.CIEL_CODE_CD4_COUNT,
-			    TEXT_CD4_COUNTS, false, caseReportForm.getMostRecentCd4Counts());
+			    TEXT_CD4_COUNT, false, caseReportForm.getMostRecentCd4Counts());
 		}
 		
 		if (CollectionUtils.isNotEmpty(caseReportForm.getMostRecentHivTests())) {
-			addSection(composition, DocumentConstants.TEXT_HIV_TEST, CaseReportConstants.CIEL_CODE_HIV_TEST, TEXT_HIV_TESTS,
+			addSection(composition, DocumentConstants.TEXT_HIV_TEST, CaseReportConstants.CIEL_CODE_HIV_TEST, TEXT_HIV_TEST,
 			    false, caseReportForm.getMostRecentHivTests());
 		}
 		

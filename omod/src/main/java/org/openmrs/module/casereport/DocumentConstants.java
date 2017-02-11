@@ -37,8 +37,6 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_DOCUMENT_NAME = "Public health Case report";
 	
-	public static final String CODE_SYSTEM_ACTCODE = "2.16.840.1.113883.5.4";
-	
 	public static final String CODE_SYSTEM_LOINC = "2.16.840.1.113883.6.1";
 	
 	public static final String CODE_SYSTEM_NAME_LOINC = "LOINC";
@@ -60,8 +58,6 @@ public final class DocumentConstants {
 	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
 	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
-	
-	public static final String ACT_CODE_ASSERTION = "ASSERTION";
 	
 	public static final String ELEMENT_LIST = "list";
 	
