@@ -60,7 +60,7 @@
         <everestVersion>1.1.0</everestVersion>
         <dcm4cheeVersion>2.0.6</dcm4cheeVersion>
         <springWsVersion>2.4.0.RELEASE</springWsVersion>
-        <javaCompilerVersion>1.6</javaCompilerVersion>
+        <javaCompilerVersion>1.7</javaCompilerVersion>
 	</properties>
 
 	<dependencyManagement>

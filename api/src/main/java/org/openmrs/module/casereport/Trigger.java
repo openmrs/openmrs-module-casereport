@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Trigger implements Serializable {
 	
 	/*
-	 * TODO In future nstances of this class need to be persistent and should extend BaseOpenmrsMetadata,
+	 * TODO In future instances of this class need to be persistent and should extend BaseOpenmrsMetadata,
 	 * at that point we should get rid of equals and hashcode methods
 	 */
 	private static final long serialVersionUID = 1L;
@@ -43,13 +43,21 @@ public class Trigger implements Serializable {
 		}
 		
 		Trigger other = (Trigger) o;
+		String nameLowerCase = name;
+		if (nameLowerCase != null) {
+			nameLowerCase = nameLowerCase.toLowerCase();
+		}
+		String otherNameLowerCase = other.name;
+		if (otherNameLowerCase != null) {
+			otherNameLowerCase = otherNameLowerCase.toLowerCase();
+		}
 		
-		return (name == null) ? other.name == null : name.equalsIgnoreCase(other.name);
+		return (nameLowerCase != null) ? nameLowerCase.equals(otherNameLowerCase) : super.equals(o);
 		
 	}
 	
 	@Override
 	public int hashCode() {
-		return name != null ? name.hashCode() : super.hashCode();
+		return name != null ? name.toLowerCase().hashCode() : super.hashCode();
 	}
 }

@@ -9,17 +9,24 @@
  */
 package org.openmrs.module.casereport;
 
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.namespace.QName;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPException;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIException;
 import org.openmrs.api.GlobalPropertyListener;
@@ -27,10 +34,19 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
+import org.springframework.ws.client.support.interceptor.ClientInterceptorAdapter;
+import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
+import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
+import org.springframework.ws.transport.context.TransportContext;
+import org.springframework.ws.transport.context.TransportContextHolder;
+import org.springframework.ws.transport.http.HttpUrlConnection;
 
 /***
  * An instance of this class listens for event fired when a case report is submitted so that it can
@@ -44,19 +60,20 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	
 	private static WebServiceMessageCallback messageCallback;
 	
-	private static WebServiceTemplate getWebServiceTemplate() {
+	private WebServiceTemplate getWebServiceTemplate() throws SOAPException {
 		if (webServiceTemplate == null) {
 			webServiceTemplate = new WebServiceTemplate();
 			webServiceTemplate.setDefaultUri(getDocumentRepositoryUrl());
-			//MessageFactory msgFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-			//SaajSoapMessageFactory newSoapMessageFactory = new SaajSoapMessageFactory(msgFactory);
-			//newSoapMessageFactory.setSoapVersion(SoapVersion.SOAP_12);
-			//webServiceTemplate.setMessageFactory(newSoapMessageFactory);
+			webServiceTemplate.setInterceptors(new ClientInterceptor[] { new Interceptor() });
+			MessageFactory msgFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+			SaajSoapMessageFactory newSoapMessageFactory = new SaajSoapMessageFactory(msgFactory);
+			newSoapMessageFactory.setSoapVersion(SoapVersion.SOAP_12);
+			webServiceTemplate.setMessageFactory(newSoapMessageFactory);
 		}
 		return webServiceTemplate;
 	}
 	
-	private static WebServiceMessageCallback getActionCallBack() throws URISyntaxException {
+	private WebServiceMessageCallback getActionCallBack() throws URISyntaxException {
 		if (messageCallback == null) {
 			ActionCallback callback = new ActionCallback(WebConstants.PROV_REG_DOC_ACTION);
 			callback.setReplyTo(new EndpointReference(new URI(XDSConstants.WS_ADDRESSING_ANONYMOUS)));
@@ -79,13 +96,20 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 			form.setReportUuid(caseReport.getUuid());
 			form.setReportDate(caseReport.getDateCreated());
-			
-			String document = CdaDocumentGenerator.getInstance().generate(form);
-			
-			StreamSource source = new StreamSource(new StringReader(document));
+			ProvideAndRegisterDocumentSetRequestType docRequest = ProvideAndRegisterDocumentSetRequestGenerator
+			        .getInstance().generate(form);
+			QName qName = new QName(DocumentConstants.XDS_TX_NAMESPACE_URI, DocumentConstants.XDS_ROOT_ELEMENT);
+			JAXBElement rootElement = new JAXBElement(qName, docRequest.getClass(), docRequest);
+			JAXBContext jaxbContext = JAXBContext.newInstance(docRequest.getClass());
+			Source source = new JAXBSource(jaxbContext, rootElement);
 			StreamResult result = new StreamResult(System.out);
+			if (log.isDebugEnabled()) {
+				log.debug("Sending Case report document.....");
+			}
 			getWebServiceTemplate().sendSourceAndReceiveToResult(source, getActionCallBack(), result);
-			
+			if (log.isDebugEnabled()) {
+				log.debug("Case report document successfully sent!");
+			}
 		}
 		catch (Exception e) {
 			throw new APIException("An error occurred while submitting the cda message for the case report", e);
@@ -114,5 +138,26 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	@Override
 	public boolean supportsPropertyName(String propertyName) {
 		return WebConstants.GP_CR_DEST_URL.equals(propertyName);
+	}
+	
+	private class Interceptor extends ClientInterceptorAdapter {
+		
+		@Override
+		public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
+			TransportContext context = TransportContextHolder.getTransportContext();
+			HttpUrlConnection connection = (HttpUrlConnection) context.getConnection();
+			/*try {
+				connection
+				        .addRequestHeader(
+				            "Content-Type",
+				            "multipart/related; boundary=MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323; type=\"application/xop+xml\"; start=\"<0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>\"; start-info=\"application/soap+xml\";");
+
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}*/
+			
+			return super.handleRequest(messageContext);
+		}
 	}
 }

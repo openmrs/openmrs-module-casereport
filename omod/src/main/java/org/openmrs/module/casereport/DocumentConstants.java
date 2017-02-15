@@ -17,6 +17,10 @@ public final class DocumentConstants {
 	//Formatter used to print dates in text sections that are human readable
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
+	public static final String OID_PREFIX = "2.25.";
+	
+	public static final String CODE_CONFIDENTIALITY_N = "N";
+	
 	public static final String PATIENT_ID_PATTERN = "%s^^^&%s&ISO";
 	
 	public static final String PID_3_PATTERN = "PID-3|%s";
@@ -29,7 +33,7 @@ public final class DocumentConstants {
 	
 	public static final String XDS_TX_NAMESPACE_URI = "urn:ihe:iti:xds-b:2007";
 	
-	public static final String XDS_ACTION = "ProvideAndRegisterDocumentSetRequest";
+	public static final String XDS_ROOT_ELEMENT = "ProvideAndRegisterDocumentSetRequest";
 	
 	public static final String XDS_NAMESPACE_URI = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0";
 	
@@ -79,6 +83,16 @@ public final class DocumentConstants {
 	
 	public static final String CODE_SYSTEM_CIEL = "2.16.840.1.113883.3.7201";
 	
+	public static final String CODE_SYSTEM_CONFIDENTIALITY = "2.16.840.1.113883.5.25";
+	
+	public static final String CODE_SYSTEM_CONNECTATHON_FACILITY = "Connect-a-thon healthcareFacilityTypeCodes";
+	
+	public static final String CODE_SYSTEM_CONNECTATHON_FORMAT = "Connect-a-thon formatCodes";
+	
+	public static final String CODE_SYSTEM_CONNECTATHON_PRACTICE = "Connect-a-thon practiceSettingCodes";
+	
+	public static final String CODE_SYSTEM_NAME_CONFIDENTIALITY = "HL7 Code System Confidentiality";
+	
 	public static final String CODE_SYSTEM_NAME_CIEL = "CIEL";
 	
 	public static final String LOINC_CODE_CR = "55751-2";
@@ -92,6 +106,12 @@ public final class DocumentConstants {
 	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
 	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
+	
+	public static final String CONNECTATHON_CODE_FACILITY = "Hospital Unit";
+	
+	public static final String CONNECTATHON_CODE_FORMAT = "CDAR2/IHE 1.0";
+	
+	public static final String CONNECTATHON_CODE_PRACTICE = "General Medicine";
 	
 	public static final String ELEMENT_LIST = "list";
 	
@@ -136,4 +156,24 @@ public final class DocumentConstants {
 	public static final String TEXT_HIV_TEST = "HIV rapid test 1, qualitative";
 	
 	public static final String TEXT_VIRAL_LOAD = "HIV Viral Load";
+	
+	public static final String TEXT_NORMAL = "Normal";
+	
+	public static final String TEXT_FACILITY = "Hospital Unit";
+	
+	public static final String TEXT_FORMAT = "CDAR2/IHE 1.0";
+	
+	public static final String TEXT_PRACTICE = CONNECTATHON_CODE_PRACTICE;
+	
+	public static final String TEXT_DOC_PATIENT_ID = "XDSDocumentEntry.patientId";
+	
+	public static final String TEXT_DOC_UNIQUE_ID = "XDSDocumentEntry.uniqueId";
+	
+	public static final String TEXT_SUBSET_PATIENT_ID = "XDSSubmissionSet.patientId";
+	
+	public static final String TEXT_SUBSET_UNIQUE_ID = "XDSSubmissionSet.uniqueId";
+	
+	public static final String TEXT_SUBSET_SOURCE_ID = "XDSSubmissionSet.sourceId";
+	
+	public static final String TEXT_ORIGINAL = "Original";
 }

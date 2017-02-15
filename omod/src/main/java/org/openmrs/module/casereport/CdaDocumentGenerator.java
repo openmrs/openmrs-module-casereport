@@ -12,8 +12,6 @@ package org.openmrs.module.casereport;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -45,8 +43,6 @@ public final class CdaDocumentGenerator {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
-	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss.SSSZ");
-	
 	private static CdaDocumentGenerator instance;
 	
 	private CdaDocumentGenerator() {
@@ -67,13 +63,11 @@ public final class CdaDocumentGenerator {
 	 * @should generate a CDA document
 	 */
 	public String generate(CaseReportForm reportForm) throws Exception {
-		//cdaMessage = StringUtils.replace(cdaMessage, getPlaceHolder("triggerList"), triggerList);
-		//cdaMessage = StringUtils.replace(cdaMessage, getPlaceHolder("dateSubmitted"), DATE_FORMATTER.format(new Date()));
-		//String oid1 = "2.25." + new BigInteger(reportForm.getReportUuid().getBytes());
-		//String oid2 = "2.25." + new BigInteger(UUID.randomUUID().toString().getBytes())
+		if (log.isDebugEnabled()) {
+			log.debug("Generating case report CDA document...");
+		}
 		ClinicalDocument cdaDocument = new ClinicalDocument();
-		cdaDocument.setRealmCode(new SET<CS<BindingRealm>>(new CS<BindingRealm>(
-		        BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
+		cdaDocument.setRealmCode(new SET(new CS(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
 		cdaDocument.setId(reportForm.getReportUuid());
@@ -83,7 +77,7 @@ public final class CdaDocumentGenerator {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(reportForm.getReportDate());
 		cdaDocument.setEffectiveTime(calendar);
-		cdaDocument.setConfidentialityCode(x_BasicConfidentialityKind.Restricted);
+		cdaDocument.setConfidentialityCode(x_BasicConfidentialityKind.Normal);
 		cdaDocument.setLanguageCode(DocumentConstants.LANGUAGE_CODE);
 		cdaDocument.getRecordTarget().add(CdaGeneratorUtil.createRecordTarget(reportForm));
 		cdaDocument.getAuthor().add(CdaGeneratorUtil.createAuthor(reportForm));
@@ -109,7 +103,7 @@ public final class CdaDocumentGenerator {
 		
 		StreamResult result = new StreamResult(new ByteArrayOutputStream());
 		transformer.transform(new DOMSource(doc), result);
-		System.out.println(result.getOutputStream().toString());
+		
 		return result.getOutputStream().toString();
 	}
 }

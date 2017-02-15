@@ -254,7 +254,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
 		}
 		catch (Throwable t) {
-			log.warn("An error occurred while publishing events to the listeners", t);
+			log.warn("An error occurred while publishing case report submission events", t);
 		}
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);

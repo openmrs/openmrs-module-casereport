@@ -18,14 +18,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.CdaDocumentGenerator;
 import org.openmrs.module.casereport.FhirUtil;
-import org.openmrs.module.casereport.ProvideAndRegisterDocumentSetRequestGenerator;
+import org.openmrs.module.casereport.WebConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
@@ -55,6 +56,13 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		adminService.saveGlobalProperty(gp);
 		//GlobalProperty gpw = new GlobalProperty(WebConstants.GP_CR_DEST_URL, "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
 		//adminService.saveGlobalProperty(gpw);
+		GlobalProperty gpUrl = new GlobalProperty(WebConstants.GP_CR_DEST_URL,
+		        "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
+		adminService.saveGlobalProperty(gpUrl);
+		PatientService ps = Context.getPatientService();
+		PatientIdentifierType idType = ps.getPatientIdentifierType(1);
+		idType.setName("1.3.6.1.4.1.21367.2010.1.2.300");
+		ps.savePatientIdentifierType(idType);
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
@@ -62,11 +70,11 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		patient.setDead(true);
 		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-03-20T00:00:00.000-0400"));
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(caseReport)));
-		//service.submitCaseReport(caseReport);
+		service.submitCaseReport(caseReport);
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
+		//ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
 		//CdaDocumentGenerator.getInstance().generate(form);
 		if (true)
 			return;
