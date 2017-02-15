@@ -12,15 +12,8 @@ package org.openmrs.module.casereport;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,18 +25,16 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.GlobalPropertyListener;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.client.support.interceptor.ClientInterceptorAdapter;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.soap.SoapVersion;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
-import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.springframework.ws.transport.context.TransportContext;
 import org.springframework.ws.transport.context.TransportContextHolder;
 import org.springframework.ws.transport.http.HttpUrlConnection;
@@ -56,22 +47,12 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
-	private static WebServiceTemplate webServiceTemplate;
+	@Autowired
+	private WebServiceTemplate webServiceTemplate;
 	
 	private static WebServiceMessageCallback messageCallback;
 	
-	private WebServiceTemplate getWebServiceTemplate() throws SOAPException {
-		if (webServiceTemplate == null) {
-			webServiceTemplate = new WebServiceTemplate();
-			webServiceTemplate.setDefaultUri(getDocumentRepositoryUrl());
-			webServiceTemplate.setInterceptors(new ClientInterceptor[] { new Interceptor() });
-			MessageFactory msgFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-			SaajSoapMessageFactory newSoapMessageFactory = new SaajSoapMessageFactory(msgFactory);
-			newSoapMessageFactory.setSoapVersion(SoapVersion.SOAP_12);
-			webServiceTemplate.setMessageFactory(newSoapMessageFactory);
-		}
-		return webServiceTemplate;
-	}
+	private static String documentRepositoryUrl;
 	
 	private WebServiceMessageCallback getActionCallBack() throws URISyntaxException {
 		if (messageCallback == null) {
@@ -82,8 +63,11 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 		return messageCallback;
 	}
 	
-	private static String getDocumentRepositoryUrl() {
-		return Context.getAdministrationService().getGlobalProperty(WebConstants.GP_CR_DEST_URL);
+	private static String getRepositoryUrl() {
+		if (documentRepositoryUrl == null) {
+			documentRepositoryUrl = Context.getAdministrationService().getGlobalProperty(WebConstants.GP_CR_DEST_URL);
+		}
+		return documentRepositoryUrl;
 	}
 	
 	/**
@@ -100,15 +84,14 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			        .getInstance().generate(form);
 			QName qName = new QName(DocumentConstants.XDS_TX_NAMESPACE_URI, DocumentConstants.XDS_ROOT_ELEMENT);
 			JAXBElement rootElement = new JAXBElement(qName, docRequest.getClass(), docRequest);
-			JAXBContext jaxbContext = JAXBContext.newInstance(docRequest.getClass());
-			Source source = new JAXBSource(jaxbContext, rootElement);
-			StreamResult result = new StreamResult(System.out);
 			if (log.isDebugEnabled()) {
 				log.debug("Sending Case report document.....");
 			}
-			getWebServiceTemplate().sendSourceAndReceiveToResult(source, getActionCallBack(), result);
+			
+			Object response = webServiceTemplate.marshalSendAndReceive(getRepositoryUrl(), rootElement, getActionCallBack());
 			if (log.isDebugEnabled()) {
 				log.debug("Case report document successfully sent!");
+				log.debug(response);
 			}
 		}
 		catch (Exception e) {
@@ -121,7 +104,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	 */
 	@Override
 	public void globalPropertyChanged(GlobalProperty globalProperty) {
-		webServiceTemplate = null;
+		documentRepositoryUrl = null;
 	}
 	
 	/**
@@ -129,7 +112,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	 */
 	@Override
 	public void globalPropertyDeleted(String s) {
-		webServiceTemplate = null;
+		documentRepositoryUrl = null;
 	}
 	
 	/**
@@ -150,7 +133,17 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 				connection
 				        .addRequestHeader(
 				            "Content-Type",
-				            "multipart/related; boundary=MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323; type=\"application/xop+xml\"; start=\"<0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>\"; start-info=\"application/soap+xml\";");
+
+				            "multipart/related;
+				            boundary=MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323;
+				            type=\"application/xop+xml\";
+				            start=\"<0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>\";
+				            start-info=\"application/soap+xml\";");
+
+				            Multipart/Related;
+				            boundary="----=_Part_0_1114703675.1487126550106"
+				            type="application/xop+xml";
+				            start-info="application/soap+xml";
 
 			}
 			catch (IOException e) {
