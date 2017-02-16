@@ -29,6 +29,7 @@ import org.marc.everest.datatypes.doc.StructDocElementNode;
 import org.marc.everest.datatypes.doc.StructDocTextNode;
 import org.marc.everest.datatypes.generic.CD;
 import org.marc.everest.datatypes.generic.CE;
+import org.marc.everest.datatypes.generic.LIST;
 import org.marc.everest.datatypes.generic.SET;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.AssignedAuthor;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.AssignedCustodian;
@@ -148,7 +149,7 @@ public class CdaGeneratorUtil {
 		Author author = new Author();
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String systemId = form.getSubmitter().getValue().toString();
-		assignedAuthor.setId(SET.createSET(new II(null, systemId)));
+		assignedAuthor.setId(SET.createSET(new II(form.getAssigningAuthorityId(), systemId)));
 		User user = Context.getUserService().getUserByUsername(systemId);
 		Person person = createPerson(user.getPersonName());
 		assignedAuthor.setAssignedAuthorChoice(person);
@@ -203,7 +204,7 @@ public class CdaGeneratorUtil {
 		Component3 triggersComponent = new Component3();
 		triggersComponent.setSection(triggersSection);
 		components.add(triggersComponent);
-		
+
 		//Add the ARV medications component
 		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
 			Section medsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_MED_INFO,
@@ -381,9 +382,7 @@ public class CdaGeneratorUtil {
 	
 	private static Section createSectionWithLoincCode(String code, String displayName) {
 		Section section = new Section();
-		//section.setTemplateId(LIST.createLIST(new II(CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT1), new II(
-		//        CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT2)));
-		//section.setTemplateId(LIST.createLIST(new II(CdaDocumentGenerator.SECTION_TEMPLATE_ID_ROOT1)));
+		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
 		section.setCode(createLoincCE(code, displayName));
 		section.setTitle(displayName);
 		return section;

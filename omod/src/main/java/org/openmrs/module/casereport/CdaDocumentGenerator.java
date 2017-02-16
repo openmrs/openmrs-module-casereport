@@ -9,19 +9,9 @@
  */
 package org.openmrs.module.casereport;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +24,6 @@ import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.BindingRealm;
 import org.marc.everest.rmim.uv.cdar2.vocabulary.x_BasicConfidentialityKind;
-import org.w3c.dom.Document;
 
 /**
  * Generates a CDA document
@@ -62,7 +51,7 @@ public final class CdaDocumentGenerator {
 	 * @return the generated CDA document
 	 * @should generate a CDA document
 	 */
-	public String generate(CaseReportForm reportForm) throws Exception {
+	public byte[] generate(CaseReportForm reportForm) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("Generating case report CDA document...");
 		}
@@ -89,21 +78,6 @@ public final class CdaDocumentGenerator {
 		fmtr.getGraphAides().add(new DatatypeFormatter(R1FormatterCompatibilityMode.ClinicalDocumentArchitecture));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fmtr.graph(out, cdaDocument);
-		
-		//Use a Transformer for output the cda in a pretty format
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-		Document doc = builder.parse(inputStream);
-		
-		TransformerFactory tFactory = TransformerFactory.newInstance();
-		Transformer transformer = tFactory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		
-		StreamResult result = new StreamResult(new ByteArrayOutputStream());
-		transformer.transform(new DOMSource(doc), result);
-		
-		return result.getOutputStream().toString();
+		return out.toByteArray();
 	}
 }

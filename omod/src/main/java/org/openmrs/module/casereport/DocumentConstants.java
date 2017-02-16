@@ -69,8 +69,6 @@ public final class DocumentConstants {
 	
 	public static final String SECTION_TEMPLATE_ID_ROOT1 = "2.16.840.1.113883.10.20.1.6";
 	
-	public static final String SECTION_TEMPLATE_ID_ROOT2 = "1.3.6.1.4.1.19376.1.5.3.1.3.23";
-	
 	public static final String TEXT_DOCUMENT_NAME = "Public health Case report";
 	
 	public static final String CODE_SYSTEM_LOINC = "2.16.840.1.113883.6.1";
@@ -87,7 +85,7 @@ public final class DocumentConstants {
 	
 	public static final String CODE_SYSTEM_CONNECTATHON_FACILITY = "Connect-a-thon healthcareFacilityTypeCodes";
 	
-	public static final String CODE_SYSTEM_CONNECTATHON_FORMAT = "Connect-a-thon formatCodes";
+	public static final String CODE_SYSTEM_FORMAT_CODE_SET = "1.3.6.1.4.1.19376.1.2.3";
 	
 	public static final String CODE_SYSTEM_CONNECTATHON_PRACTICE = "Connect-a-thon practiceSettingCodes";
 	
@@ -95,7 +93,8 @@ public final class DocumentConstants {
 	
 	public static final String CODE_SYSTEM_NAME_CIEL = "CIEL";
 	
-	public static final String LOINC_CODE_CR = "55751-2";
+	//TODO we need to assign this a proper code
+	public static final String LOINC_CODE_CR = "*";
 	
 	public static final String LOINC_CODE_CLINICAL_INFO = "55752-0";
 	
@@ -109,9 +108,11 @@ public final class DocumentConstants {
 	
 	public static final String CONNECTATHON_CODE_FACILITY = "Hospital Unit";
 	
-	public static final String CONNECTATHON_CODE_FORMAT = "CDAR2/IHE 1.0";
-	
 	public static final String CONNECTATHON_CODE_PRACTICE = "General Medicine";
+	
+	//This code is actually for a medical summaries, We only used it   
+	//so that the CDA handler can be assigned to it as the handler
+	public static final String IHE_PCC_CODE_FORMAT = "urn:ihe:pcc:xds-ms:2007";
 	
 	public static final String ELEMENT_LIST = "list";
 	
@@ -161,7 +162,7 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_FACILITY = "Hospital Unit";
 	
-	public static final String TEXT_FORMAT = "CDAR2/IHE 1.0";
+	public static final String TEXT_FORMAT = "XDS Medical Summaries";
 	
 	public static final String TEXT_PRACTICE = CONNECTATHON_CODE_PRACTICE;
 	

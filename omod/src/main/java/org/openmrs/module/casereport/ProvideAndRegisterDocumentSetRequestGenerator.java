@@ -78,29 +78,36 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		
 		addClassification(extrinsicObj, DocumentConstants.CODE_CONFIDENTIALITY_N,
 		    DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY, XDSConstants.UUID_XDSDocumentEntry_confidentialityCode,
 		    DocumentConstants.TEXT_NORMAL);
+		
 		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_FACILITY,
 		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_FACILITY,
 		    XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, DocumentConstants.TEXT_FACILITY);
-		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_FORMAT,
-		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_FORMAT, XDSConstants.UUID_XDSDocumentEntry_formatCode,
+		
+		addClassification(extrinsicObj, DocumentConstants.IHE_PCC_CODE_FORMAT,
+		    DocumentConstants.CODE_SYSTEM_FORMAT_CODE_SET, XDSConstants.UUID_XDSDocumentEntry_formatCode,
 		    DocumentConstants.TEXT_FORMAT);
+		
 		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_PRACTICE,
 		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_PRACTICE, XDSConstants.UUID_XDSDocumentEntry_practiceSettingCode,
 		    DocumentConstants.TEXT_PRACTICE);
+		
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_typeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		
 		addExternalIdentifier(extrinsicObj, patientId, XDSConstants.UUID_XDSDocumentEntry_patientId,
 		    DocumentConstants.TEXT_DOC_PATIENT_ID);
+		
 		//String docUniqueId = generateOIDFromUuid(UUID.fromString(form.getReportUuid()));
 		String docUniqueId = generateOIDFromUuid(UUID.randomUUID());
 		addExternalIdentifier(extrinsicObj, docUniqueId, XDSConstants.UUID_XDSDocumentEntry_uniqueId,
 		    DocumentConstants.TEXT_DOC_UNIQUE_ID);
+		
 		SubmitObjectsRequest registryRequest = new SubmitObjectsRequest();
 		registryRequest.setRegistryObjectList(new RegistryObjectListType());
-		
 		addObjectToRequest(registryRequest, extrinsicObj, DocumentConstants.XDS_EXTRINSIC_OBJECT);
 		
 		//Create RegistryPackage/SubmissionSet
@@ -112,11 +119,14 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		InfosetUtil.addOrOverwriteSlot(regPackage, XDSConstants.SLOT_NAME_SUBMISSION_TIME, dateSubmitted);
 		addClassification(regPackage, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		
 		addExternalIdentifier(regPackage, patientId, XDSConstants.UUID_XDSSubmissionSet_patientId,
 		    DocumentConstants.TEXT_SUBSET_PATIENT_ID);
+		
 		String subUniqueId = generateOIDFromUuid(UUID.randomUUID());
 		addExternalIdentifier(regPackage, subUniqueId, XDSConstants.UUID_XDSSubmissionSet_uniqueId,
 		    DocumentConstants.TEXT_SUBSET_UNIQUE_ID);
+		
 		//TODO use GP for sourceId
 		addExternalIdentifier(regPackage, "1.3.6.1.4.1.21367.2010.1.2", XDSConstants.UUID_XDSSubmissionSet_sourceId,
 		    DocumentConstants.TEXT_SUBSET_SOURCE_ID);
@@ -144,8 +154,7 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		docRequest.setSubmitObjectsRequest(registryRequest);
 		Document document = new Document();
 		document.setId(DocumentConstants.XDS_DOC_ID);
-		document.setValue("Testing...".getBytes());
-		//document.setValue(CdaDocumentGenerator.getInstance().generate(form).getBytes());
+		document.setValue(CdaDocumentGenerator.getInstance().generate(form));
 		docRequest.getDocument().add(document);
 		
 		return docRequest;

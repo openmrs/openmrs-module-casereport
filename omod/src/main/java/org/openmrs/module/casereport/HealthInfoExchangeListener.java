@@ -28,16 +28,10 @@ import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.client.support.interceptor.ClientInterceptorAdapter;
-import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
-import org.springframework.ws.transport.context.TransportContext;
-import org.springframework.ws.transport.context.TransportContextHolder;
-import org.springframework.ws.transport.http.HttpUrlConnection;
 
 /***
  * An instance of this class listens for event fired when a case report is submitted so that it can
@@ -121,36 +115,5 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	@Override
 	public boolean supportsPropertyName(String propertyName) {
 		return WebConstants.GP_CR_DEST_URL.equals(propertyName);
-	}
-	
-	private class Interceptor extends ClientInterceptorAdapter {
-		
-		@Override
-		public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
-			TransportContext context = TransportContextHolder.getTransportContext();
-			HttpUrlConnection connection = (HttpUrlConnection) context.getConnection();
-			/*try {
-				connection
-				        .addRequestHeader(
-				            "Content-Type",
-
-				            "multipart/related;
-				            boundary=MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323;
-				            type=\"application/xop+xml\";
-				            start=\"<0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>\";
-				            start-info=\"application/soap+xml\";");
-
-				            Multipart/Related;
-				            boundary="----=_Part_0_1114703675.1487126550106"
-				            type="application/xop+xml";
-				            start-info="application/soap+xml";
-
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}*/
-			
-			return super.handleRequest(messageContext);
-		}
 	}
 }

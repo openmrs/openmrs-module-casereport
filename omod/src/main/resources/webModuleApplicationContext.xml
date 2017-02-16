@@ -34,7 +34,7 @@
 
     <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="org.dcm4chee.xds2.infoset.ihe:org.dcm4chee.xds2.infoset.rim"/>
-        <!-- Enables marshalling of the outgoing message using XOP/MTOM -->
+        <!-- Enables marshalling of the outgoing message using MTOM/XOP -->
         <property name="mtomEnabled" value="true" />
     </bean>
 

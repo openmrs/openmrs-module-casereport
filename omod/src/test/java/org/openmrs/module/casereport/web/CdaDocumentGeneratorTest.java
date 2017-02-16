@@ -55,7 +55,7 @@ public class CdaDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest 
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		String doc = CdaDocumentGenerator.getInstance().generate(form);
-		System.out.println("\n" + doc);
+		byte[] bytes = CdaDocumentGenerator.getInstance().generate(form);
+		System.out.println("\n" + new String(bytes));
 	}
 }
