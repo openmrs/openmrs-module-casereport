@@ -74,8 +74,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 			form.setReportUuid(caseReport.getUuid());
 			form.setReportDate(caseReport.getDateCreated());
-			ProvideAndRegisterDocumentSetRequestType docRequest = ProvideAndRegisterDocumentSetRequestGenerator
-			        .getInstance().generate(form);
+			ProvideAndRegisterDocumentSetRequestType docRequest = new ProvideAndRegisterDocGenerator().generate(form);
 			QName qName = new QName(DocumentConstants.XDS_TX_NAMESPACE_URI, DocumentConstants.XDS_ROOT_ELEMENT);
 			JAXBElement rootElement = new JAXBElement(qName, docRequest.getClass(), docRequest);
 			if (log.isDebugEnabled()) {

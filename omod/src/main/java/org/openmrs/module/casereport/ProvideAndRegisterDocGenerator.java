@@ -40,27 +40,21 @@ import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.springframework.http.MediaType;
 
 /**
- * Generates a soap envelope
+ * Generates an XDS.b ProvideAndRegisterDocumentSetRequestType object from a CaseReportForm
  */
-public final class ProvideAndRegisterDocumentSetRequestGenerator {
+public final class ProvideAndRegisterDocGenerator {
 	
-	protected static final Log log = LogFactory.getLog(ProvideAndRegisterDocumentSetRequestGenerator.class);
+	protected static final Log log = LogFactory.getLog(ProvideAndRegisterDocGenerator.class);
 	
-	private static Integer idCounter = 1;
-	
-	private static ProvideAndRegisterDocumentSetRequestGenerator instance;
-	
-	private ProvideAndRegisterDocumentSetRequestGenerator() {
-	}
-	
-	public synchronized static ProvideAndRegisterDocumentSetRequestGenerator getInstance() {
-		if (instance == null) {
-			instance = new ProvideAndRegisterDocumentSetRequestGenerator();
-		}
-		return instance;
-	}
-	
+	/**
+	 * Generates a ProvideAndRegisterDocumentSetRequestType for the specified case report form
+	 * 
+	 * @param form
+	 * @return
+	 * @throws Exception
+	 */
 	public ProvideAndRegisterDocumentSetRequestType generate(CaseReportForm form) throws Exception {
+		int idCounter = 0;
 		if (log.isDebugEnabled()) {
 			log.debug("Generating ProvideAndRegisterDocumentSetRequest...");
 		}
@@ -77,34 +71,34 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		        .toString(), form.getIdentifierType().getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
-		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME, ++idCounter);
 		
 		addClassification(extrinsicObj, DocumentConstants.CODE_CONFIDENTIALITY_N,
 		    DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY, XDSConstants.UUID_XDSDocumentEntry_confidentialityCode,
-		    DocumentConstants.TEXT_NORMAL);
+		    DocumentConstants.TEXT_NORMAL, ++idCounter);
 		
 		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_FACILITY,
 		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_FACILITY,
-		    XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, DocumentConstants.TEXT_FACILITY);
+		    XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, DocumentConstants.TEXT_FACILITY, ++idCounter);
 		
 		addClassification(extrinsicObj, DocumentConstants.IHE_PCC_CODE_FORMAT,
 		    DocumentConstants.CODE_SYSTEM_FORMAT_CODE_SET, XDSConstants.UUID_XDSDocumentEntry_formatCode,
-		    DocumentConstants.TEXT_FORMAT);
+		    DocumentConstants.TEXT_FORMAT, ++idCounter);
 		
 		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_PRACTICE,
 		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_PRACTICE, XDSConstants.UUID_XDSDocumentEntry_practiceSettingCode,
-		    DocumentConstants.TEXT_PRACTICE);
+		    DocumentConstants.TEXT_PRACTICE, ++idCounter);
 		
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
-		    XDSConstants.UUID_XDSDocumentEntry_typeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		    XDSConstants.UUID_XDSDocumentEntry_typeCode, DocumentConstants.TEXT_DOCUMENT_NAME, ++idCounter);
 		
 		addExternalIdentifier(extrinsicObj, patientId, XDSConstants.UUID_XDSDocumentEntry_patientId,
-		    DocumentConstants.TEXT_DOC_PATIENT_ID);
+		    DocumentConstants.TEXT_DOC_PATIENT_ID, ++idCounter);
 		
 		//String docUniqueId = generateOIDFromUuid(UUID.fromString(form.getReportUuid()));
 		String docUniqueId = generateOIDFromUuid(UUID.randomUUID());
 		addExternalIdentifier(extrinsicObj, docUniqueId, XDSConstants.UUID_XDSDocumentEntry_uniqueId,
-		    DocumentConstants.TEXT_DOC_UNIQUE_ID);
+		    DocumentConstants.TEXT_DOC_UNIQUE_ID, ++idCounter);
 		
 		SubmitObjectsRequest registryRequest = new SubmitObjectsRequest();
 		registryRequest.setRegistryObjectList(new RegistryObjectListType());
@@ -118,18 +112,18 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		String dateSubmitted = DocUtil.createTS(new Date()).getValue();
 		InfosetUtil.addOrOverwriteSlot(regPackage, XDSConstants.SLOT_NAME_SUBMISSION_TIME, dateSubmitted);
 		addClassification(regPackage, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
-		    XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		    XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, DocumentConstants.TEXT_DOCUMENT_NAME, ++idCounter);
 		
 		addExternalIdentifier(regPackage, patientId, XDSConstants.UUID_XDSSubmissionSet_patientId,
-		    DocumentConstants.TEXT_SUBSET_PATIENT_ID);
+		    DocumentConstants.TEXT_SUBSET_PATIENT_ID, ++idCounter);
 		
 		String subUniqueId = generateOIDFromUuid(UUID.randomUUID());
 		addExternalIdentifier(regPackage, subUniqueId, XDSConstants.UUID_XDSSubmissionSet_uniqueId,
-		    DocumentConstants.TEXT_SUBSET_UNIQUE_ID);
+		    DocumentConstants.TEXT_SUBSET_UNIQUE_ID, ++idCounter);
 		
 		//TODO use GP for sourceId
 		addExternalIdentifier(regPackage, "1.3.6.1.4.1.21367.2010.1.2", XDSConstants.UUID_XDSSubmissionSet_sourceId,
-		    DocumentConstants.TEXT_SUBSET_SOURCE_ID);
+		    DocumentConstants.TEXT_SUBSET_SOURCE_ID, ++idCounter);
 		
 		addObjectToRequest(registryRequest, regPackage, DocumentConstants.XDS_REG_PACKAGE);
 		
@@ -160,6 +154,13 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		return docRequest;
 	}
 	
+	/**
+	 * Adds an IdentifiableType object to the specified SubmitObjectsRequest
+	 * 
+	 * @param registryRequest the SubmitObjectsRequest object
+	 * @param object IdentifiableType object
+	 * @param objectName the name to use for the element
+	 */
 	private <T extends IdentifiableType> void addObjectToRequest(SubmitObjectsRequest registryRequest, T object,
 	                                                             String objectName) {
 		QName qName = new QName(DocumentConstants.XDS_NAMESPACE_URI, objectName);
@@ -170,19 +171,18 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 	/**
 	 * Adds a classification to the specified RegistryObjectType.
 	 * 
-	 * @param classifiedObj
+	 * @param classifiedObj the object to which to add the classified object
 	 * @param code
-	 * @param codeSystem
-	 * @param scheme
-	 * @param localizedString
-	 * @return
+	 * @param codeSystem the OID of teh coding scheme the code belongs
+	 * @param scheme the XDS.b classification scheme URN
+	 * @param localizedString the internationalized text label for the scheme
+	 * @param idCounter
 	 * @throws JAXBException
 	 */
 	private void addClassification(RegistryObjectType classifiedObj, String code, String codeSystem, String scheme,
-	                               String localizedString) throws JAXBException {
+	                               String localizedString, int idCounter) throws JAXBException {
 		ClassificationType classification = new ClassificationType();
-		classification.setId("id_" + idCounter.toString());
-		idCounter++;
+		classification.setId("id_" + idCounter);
 		classification.setClassifiedObject(classifiedObj.getId());
 		classification.setClassificationScheme(scheme);
 		classification.setNodeRepresentation(code);
@@ -196,19 +196,17 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 	/**
 	 * Adds an externalIdentifier to the specified RegistryObjectType.
 	 * 
-	 * @param classifiedObj
-	 * @param scheme
-	 * @param localizedString
-	 * @return
-	 * @throws JAXBException
+	 * @param classifiedObj the object to which to add the external identifier object
+	 * @param scheme the XDS.b identification scheme URN
+	 * @param localizedString the internationalized text label for the scheme
+	 * @param idCounter
 	 */
 	private void addExternalIdentifier(final RegistryObjectType classifiedObj, String value, final String scheme,
-	                                   final String localizedString) throws JAXBException {
+	                                   final String localizedString, int idCounter) {
 		
 		ExternalIdentifierType extId = new ExternalIdentifierType();
 		extId.setRegistryObject(classifiedObj.getId());
-		extId.setId("id_" + idCounter.toString());
-		idCounter++;
+		extId.setId("id_" + idCounter);
 		extId.setValue(value);
 		extId.setIdentificationScheme(scheme);
 		if (StringUtils.isNotBlank(localizedString)) {
@@ -217,6 +215,12 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		classifiedObj.getExternalIdentifier().add(extId);
 	}
 	
+	/**
+	 * Creates an InternationalStringType for the specified name
+	 * 
+	 * @param name
+	 * @return the InternationalStringType object
+	 */
 	private InternationalStringType createName(String name) {
 		InternationalStringType iName = new InternationalStringType();
 		LocalizedStringType localizedStringType = new LocalizedStringType();
@@ -225,6 +229,12 @@ public final class ProvideAndRegisterDocumentSetRequestGenerator {
 		return iName;
 	}
 	
+	/**
+	 * Generates and returns an OID from the specified uuid object
+	 * 
+	 * @param uuid the uuid object
+	 * @return the generated OID
+	 */
 	private String generateOIDFromUuid(UUID uuid) {
 		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
 		bb.putLong(uuid.getMostSignificantBits());
