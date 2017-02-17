@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
@@ -39,7 +40,7 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 	 * @see FhirUtil#createFhirDocument(CaseReportForm)
 	 * @verifies return the generated json
 	 */
-	@Test
+	@Test @Ignore
 	public void createFhirDocument_shouldReturnTheGeneratedJson() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-other.xml");
