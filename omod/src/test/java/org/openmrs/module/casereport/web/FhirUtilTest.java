@@ -54,11 +54,9 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		        + implName + "]]></name>\n" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
-		//GlobalProperty gpw = new GlobalProperty(WebConstants.GP_CR_DEST_URL, "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
-		//adminService.saveGlobalProperty(gpw);
-		GlobalProperty gpUrl = new GlobalProperty(WebConstants.GP_CR_DEST_URL,
+		GlobalProperty gpw = new GlobalProperty(WebConstants.GP_CR_DEST_URL,
 		        "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
-		adminService.saveGlobalProperty(gpUrl);
+		adminService.saveGlobalProperty(gpw);
 		PatientService ps = Context.getPatientService();
 		PatientIdentifierType idType = ps.getPatientIdentifierType(1);
 		idType.setName("1.3.6.1.4.1.21367.2010.1.2.300");
@@ -74,12 +72,8 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		//ProvideAndRegisterDocumentSetRequestGenerator.getInstance().generate(form);
-		//CdaDocumentGenerator.getInstance().generate(form);
 		if (true)
 			return;
-		//String d = CdaDocumentGenerator.getInstance().generate(form);
-		//assertEquals(-1, d.indexOf("#{"));
 		String doc = FhirUtil.createFhirDocument(form);
 		System.out.println(doc);
 		SimpleObject so = new ObjectMapper().readValue(doc, SimpleObject.class);

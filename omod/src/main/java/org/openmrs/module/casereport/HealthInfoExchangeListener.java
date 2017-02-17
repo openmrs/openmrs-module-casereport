@@ -12,10 +12,14 @@ package org.openmrs.module.casereport;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.rim.RegistryError;
+import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIException;
 import org.openmrs.api.GlobalPropertyListener;
@@ -68,12 +72,30 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			}
 			
 			Object response = webServiceTemplate.marshalSendAndReceive(getRepositoryUrl(), rootElement, messageCallback);
+			
+			RegistryResponseType regResp = ((JAXBElement<RegistryResponseType>) response).getValue();
+			if (!XDSConstants.XDS_B_STATUS_SUCCESS.equals(regResp.getStatus())) {
+				log.error("The case report was submitted but an error occurred on the remote server(s), "
+				        + "see below for more details.");
+				if (regResp.getRegistryErrorList() != null && regResp.getRegistryErrorList().getRegistryError() != null) {
+					for (RegistryError re : regResp.getRegistryErrorList().getRegistryError()) {
+						log.error("Submission failed with Severity: "
+						        + (StringUtils.isNotBlank(re.getSeverity()) ? re.getSeverity().substring(
+						            re.getSeverity().lastIndexOf(":") + 1) : "?") + ", Code: "
+						        + (StringUtils.isNotBlank(re.getErrorCode()) ? re.getErrorCode() : "?") + ", Message: "
+						        + (StringUtils.isNotBlank(re.getCodeContext()) ? re.getCodeContext() : "?"));
+					}
+				}
+				
+				return;
+			}
+			
 			if (log.isDebugEnabled()) {
 				log.debug("Case report document successfully sent!");
-				log.debug(response);
 			}
 		}
 		catch (Exception e) {
+			//TODO handle error properly
 			throw new APIException("An error occurred while submitting a case report document to the HIE", e);
 		}
 	}
