@@ -9,16 +9,12 @@
  */
 package org.openmrs.module.casereport;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIException;
@@ -30,8 +26,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.addressing.client.ActionCallback;
-import org.springframework.ws.soap.addressing.core.EndpointReference;
 
 /***
  * An instance of this class listens for event fired when a case report is submitted so that it can
@@ -44,18 +38,10 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	@Autowired
 	private WebServiceTemplate webServiceTemplate;
 	
-	private static WebServiceMessageCallback messageCallback;
+	@Autowired
+	private WebServiceMessageCallback messageCallback;
 	
 	private static String documentRepositoryUrl;
-	
-	private WebServiceMessageCallback getActionCallBack() throws URISyntaxException {
-		if (messageCallback == null) {
-			ActionCallback callback = new ActionCallback(WebConstants.PROV_REG_DOC_ACTION);
-			callback.setReplyTo(new EndpointReference(new URI(XDSConstants.WS_ADDRESSING_ANONYMOUS)));
-			messageCallback = callback;
-		}
-		return messageCallback;
-	}
 	
 	private static String getRepositoryUrl() {
 		if (documentRepositoryUrl == null) {
@@ -81,7 +67,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 				log.debug("Sending Case report document.....");
 			}
 			
-			Object response = webServiceTemplate.marshalSendAndReceive(getRepositoryUrl(), rootElement, getActionCallBack());
+			Object response = webServiceTemplate.marshalSendAndReceive(getRepositoryUrl(), rootElement, messageCallback);
 			if (log.isDebugEnabled()) {
 				log.debug("Case report document successfully sent!");
 				log.debug(response);
