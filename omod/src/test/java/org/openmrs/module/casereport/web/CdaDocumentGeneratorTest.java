@@ -11,6 +11,7 @@ package org.openmrs.module.casereport.web;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -26,7 +27,7 @@ import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 public class CdaDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
-	 * @see CdaDocumentGenerator#generate(CaseReportForm)
+	 * @see CdaDocumentGenerator#generate()
 	 * @verifies generate a CDA document
 	 */
 	@Test
@@ -55,7 +56,6 @@ public class CdaDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest 
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		byte[] bytes = CdaDocumentGenerator.getInstance().generate(form);
-		System.out.println("\n" + new String(bytes));
+		ClinicalDocument clinicalDocument = new CdaDocumentGenerator(form).generate();
 	}
 }

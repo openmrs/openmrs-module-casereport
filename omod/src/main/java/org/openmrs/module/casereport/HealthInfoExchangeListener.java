@@ -88,7 +88,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			}
 		}
 		catch (Exception e) {
-			throw new APIException("An error occurred while submitting the cda message for the case report", e);
+			throw new APIException("An error occurred while submitting a case report document to the HIE", e);
 		}
 	}
 	

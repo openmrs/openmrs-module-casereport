@@ -11,6 +11,7 @@ package org.openmrs.module.casereport;
 
 import static org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType.Document;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
@@ -37,6 +38,12 @@ import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.util.InfosetUtil;
+import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
+import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
+import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.casereport.api.CaseReportService;
 import org.springframework.http.MediaType;
 
 /**
@@ -46,7 +53,7 @@ public final class ProvideAndRegisterDocGenerator {
 	
 	protected static final Log log = LogFactory.getLog(ProvideAndRegisterDocGenerator.class);
 	
-	private int idCounter = 0;
+	private int idCounter;
 	
 	private CaseReportForm form;
 	
@@ -58,15 +65,22 @@ public final class ProvideAndRegisterDocGenerator {
 	}
 	
 	/**
-	 * Generates a ProvideAndRegisterDocumentSetRequestType for the specified case report form
+	 * Generates a ProvideAndRegisterDocumentSetRequestType object from its backing CaseReportForm
+	 * object
 	 * 
-	 * @return
+	 * @return ProvideAndRegisterDocumentSetRequestType object
 	 * @throws Exception
 	 */
 	public ProvideAndRegisterDocumentSetRequestType generate() throws Exception {
 		if (log.isDebugEnabled()) {
-			log.debug("Generating ProvideAndRegisterDocumentSetRequest...");
+			CaseReportService crs = Context.getService(CaseReportService.class);
+			CaseReport cr = crs.getCaseReportByUuid(form.getReportUuid());
+			log.debug("Generating ProvideAndRegisterDocumentSetRequest for: " + cr);
 		}
+		
+		//reset in case this method is called multiple times on the same instance
+		idCounter = 0;
+		
 		//Create DocumentEntry/ExtrinsicObject
 		ExtrinsicObjectType extrinsicObj = new ExtrinsicObjectType();
 		extrinsicObj.setId(DocumentConstants.XDS_DOC_ID);
@@ -155,9 +169,19 @@ public final class ProvideAndRegisterDocGenerator {
 		
 		ProvideAndRegisterDocumentSetRequestType docRequest = new ProvideAndRegisterDocumentSetRequestType();
 		docRequest.setSubmitObjectsRequest(registryRequest);
+		ClinicalDocument cdaDocument = new CdaDocumentGenerator(form).generate();
+		
+		XmlIts1Formatter fmtr = new XmlIts1Formatter();
+		//This instructs the XML ITS1 Formatter we want to use CDA datatypes
+		fmtr.getGraphAides().add(new DatatypeFormatter(R1FormatterCompatibilityMode.ClinicalDocumentArchitecture));
+		//The cda is ~8KB, might as well initialize the
+		//byte array to a fairly large size
+		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream(8192);
+		fmtr.graph(cdaOutput, cdaDocument);
+		
 		Document document = new Document();
 		document.setId(DocumentConstants.XDS_DOC_ID);
-		document.setValue(CdaDocumentGenerator.getInstance().generate(form));
+		document.setValue(cdaOutput.toByteArray());
 		docRequest.getDocument().add(document);
 		
 		return docRequest;
