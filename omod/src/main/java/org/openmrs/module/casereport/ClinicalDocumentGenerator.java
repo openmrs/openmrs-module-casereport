@@ -24,9 +24,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 
 /**
- * Generates a CDA document
+ * Generates a ClinicalDocument object
  */
-public final class CdaDocumentGenerator {
+public final class ClinicalDocumentGenerator {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
@@ -35,7 +35,7 @@ public final class CdaDocumentGenerator {
 	/**
 	 * @param form the CaseReportForm from which to generate a ClinicalDocument
 	 */
-	public CdaDocumentGenerator(CaseReportForm form) {
+	public ClinicalDocumentGenerator(CaseReportForm form) {
 		this.form = form;
 	}
 	

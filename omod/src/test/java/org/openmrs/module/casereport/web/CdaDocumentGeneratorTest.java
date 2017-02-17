@@ -19,7 +19,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.CdaDocumentGenerator;
+import org.openmrs.module.casereport.ClinicalDocumentGenerator;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
@@ -27,7 +27,7 @@ import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 public class CdaDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
-	 * @see CdaDocumentGenerator#generate()
+	 * @see ClinicalDocumentGenerator#generate()
 	 * @verifies generate a CDA document
 	 */
 	@Test
@@ -56,6 +56,6 @@ public class CdaDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest 
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		ClinicalDocument clinicalDocument = new CdaDocumentGenerator(form).generate();
+		ClinicalDocument clinicalDocument = new ClinicalDocumentGenerator(form).generate();
 	}
 }

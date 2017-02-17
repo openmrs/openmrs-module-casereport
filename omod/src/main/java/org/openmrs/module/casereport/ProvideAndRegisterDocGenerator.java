@@ -169,7 +169,7 @@ public final class ProvideAndRegisterDocGenerator {
 		
 		ProvideAndRegisterDocumentSetRequestType docRequest = new ProvideAndRegisterDocumentSetRequestType();
 		docRequest.setSubmitObjectsRequest(registryRequest);
-		ClinicalDocument cdaDocument = new CdaDocumentGenerator(form).generate();
+		ClinicalDocument cdaDocument = new ClinicalDocumentGenerator(form).generate();
 		
 		XmlIts1Formatter fmtr = new XmlIts1Formatter();
 		//This instructs the XML ITS1 Formatter we want to use CDA datatypes
