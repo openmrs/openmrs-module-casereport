@@ -103,7 +103,7 @@ public final class ClinicalDocumentGenerator {
 		}
 		
 		ClinicalDocument cdaDocument = new ClinicalDocument();
-		cdaDocument.setRealmCode(new SET(new CS(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
+		cdaDocument.setRealmCode(new SET<>(new CS<>(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
 		cdaDocument.setId(form.getReportUuid());
@@ -114,10 +114,10 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setEffectiveTime(calendar);
 		cdaDocument.setConfidentialityCode(x_BasicConfidentialityKind.Normal);
 		cdaDocument.setLanguageCode(DocumentConstants.LANGUAGE_CODE);
-		cdaDocument.getRecordTarget().add(createRecordTarget(form));
-		cdaDocument.getAuthor().add(createAuthor(form));
-		cdaDocument.setCustodian(createCustodian(form));
-		cdaDocument.setComponent(createRootComponent(form));
+		cdaDocument.getRecordTarget().add(createRecordTarget());
+		cdaDocument.getAuthor().add(createAuthor());
+		cdaDocument.setCustodian(createCustodian());
+		cdaDocument.setComponent(createRootComponent());
 		
 		return cdaDocument;
 	}
@@ -140,10 +140,9 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Create a RecordTarget
 	 *
-	 * @param form
 	 * @return a RecordTarget instance
 	 */
-	private RecordTarget createRecordTarget(CaseReportForm form) throws ParseException {
+	private RecordTarget createRecordTarget() throws ParseException {
 		RecordTarget rt = new RecordTarget(ContextControl.OverridingPropagating);
 		Patient patient = new Patient();
 		PN name;
@@ -194,10 +193,9 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Create an author with the specified name
 	 *
-	 * @param form
 	 * @return an Author instance
 	 */
-	private Author createAuthor(CaseReportForm form) {
+	private Author createAuthor() {
 		Author author = new Author();
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String systemId = form.getSubmitter().getValue().toString();
@@ -230,7 +228,7 @@ public final class ClinicalDocumentGenerator {
 		return person;
 	}
 	
-	private Custodian createCustodian(CaseReportForm form) {
+	private Custodian createCustodian() {
 		CustodianOrganization custodianOrganization = new CustodianOrganization();
 		custodianOrganization.setId(SET.createSET(new II(form.getAssigningAuthorityId())));
 		custodianOrganization.setName(new ON());
@@ -239,20 +237,20 @@ public final class ClinicalDocumentGenerator {
 		return new Custodian(assignedCustodian);
 	}
 	
-	private Component2 createRootComponent(CaseReportForm form) throws ParseException {
+	private Component2 createRootComponent() throws ParseException {
 		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
-		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents(form));
+		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents());
 		return comp;
 	}
 	
-	private ArrayList<Component3> createComponents(CaseReportForm form) throws ParseException {
+	private ArrayList<Component3> createComponents() throws ParseException {
 		//Add the triggers component
 		ArrayList<Component3> components = new ArrayList<>();
 		Section triggersSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_CLINICAL_INFO,
 		    DocumentConstants.TEXT_CLINICAL_INFO);
-		StructDocElementNode triggersTextNode = createTextNodeForTriggers(form);
+		StructDocElementNode triggersTextNode = createTextNodeForTriggers();
 		triggersSection.setText(new SD(triggersTextNode));
-		triggersSection.setEntry(createEntriesForTriggers(form));
+		triggersSection.setEntry(createEntriesForTriggers());
 		Component3 triggersComponent = new Component3();
 		triggersComponent.setSection(triggersSection);
 		components.add(triggersComponent);
@@ -261,9 +259,9 @@ public final class ClinicalDocumentGenerator {
 		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
 			Section medsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_MED_INFO,
 			    DocumentConstants.TEXT_MED_INFO);
-			StructDocElementNode medsTextNode = createTextNodeForMedications(form);
+			StructDocElementNode medsTextNode = createTextNodeForMedications();
 			medsSection.setText(new SD(medsTextNode));
-			medsSection.setEntry(createEntriesForMedications(form));
+			medsSection.setEntry(createEntriesForMedications());
 			Component3 medsComponent = new Component3();
 			medsComponent.setSection(medsSection);
 			components.add(medsComponent);
@@ -273,9 +271,9 @@ public final class ClinicalDocumentGenerator {
 		if (form.containsDiagnosticData()) {
 			Section diagnosticsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_DIAGNOSTICS,
 			    DocumentConstants.TEXT_DIAGNOSTICS);
-			StructDocElementNode diagnosticTextNode = createTextNodeForDiagnostics(form);
+			StructDocElementNode diagnosticTextNode = createTextNodeForDiagnostics();
 			diagnosticsSection.setText(new SD(diagnosticTextNode));
-			diagnosticsSection.setEntry(createEntriesForDiagnostics(form));
+			diagnosticsSection.setEntry(createEntriesForDiagnostics());
 			Component3 diagnosticsComponent = new Component3();
 			diagnosticsComponent.setSection(diagnosticsSection);
 			components.add(diagnosticsComponent);
@@ -284,7 +282,7 @@ public final class ClinicalDocumentGenerator {
 		return components;
 	}
 	
-	private ArrayList<Entry> createEntriesForDiagnostics(CaseReportForm form) throws ParseException {
+	private ArrayList<Entry> createEntriesForDiagnostics() throws ParseException {
 		ArrayList<Entry> entries = new ArrayList<>();
 		if (form.getCurrentHivWhoStage() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithCodedValue(CaseReportConstants.CIEL_CODE_WHO_STAGE,
@@ -393,7 +391,7 @@ public final class ClinicalDocumentGenerator {
 		return new Entry(x_ActRelationshipEntry.DRIV, null, observation);
 	}
 	
-	private StructDocElementNode createTextNodeForDiagnostics(CaseReportForm form) throws ParseException {
+	private StructDocElementNode createTextNodeForDiagnostics() throws ParseException {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		if (form.getCurrentHivWhoStage() != null) {
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_WHO_STAGE
@@ -436,7 +434,7 @@ public final class ClinicalDocumentGenerator {
 		return section;
 	}
 	
-	private StructDocElementNode createTextNodeForTriggers(CaseReportForm form) {
+	private StructDocElementNode createTextNodeForTriggers() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_TRIGGERS, form.getTriggers());
 		if (StringUtils.isNotBlank(form.getComments())) {
@@ -445,7 +443,7 @@ public final class ClinicalDocumentGenerator {
 		return rootListNode;
 	}
 	
-	private StructDocElementNode createTextNodeForMedications(CaseReportForm form) {
+	private StructDocElementNode createTextNodeForMedications() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
 		return rootListNode;
@@ -461,7 +459,7 @@ public final class ClinicalDocumentGenerator {
 		parentNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, itemList);
 	}
 	
-	private ArrayList<Entry> createEntriesForTriggers(CaseReportForm form) throws ParseException {
+	private ArrayList<Entry> createEntriesForTriggers() throws ParseException {
 		ArrayList<Entry> entries = new ArrayList<>(form.getTriggers().size());
 		SchedulerService ss = Context.getSchedulerService();
 		for (DatedUuidAndValue trigger : form.getTriggers()) {
@@ -485,7 +483,7 @@ public final class ClinicalDocumentGenerator {
 		return entries;
 	}
 	
-	private ArrayList<Entry> createEntriesForMedications(CaseReportForm form) throws ParseException {
+	private ArrayList<Entry> createEntriesForMedications() throws ParseException {
 		ArrayList<Entry> entries = new ArrayList<>(form.getCurrentHivMedications().size());
 		ConceptService cs = Context.getConceptService();
 		for (DatedUuidAndValue med : form.getCurrentHivMedications()) {
