@@ -24,9 +24,9 @@ import org.marc.everest.datatypes.ANY;
 import org.marc.everest.datatypes.BL;
 import org.marc.everest.datatypes.ENXP;
 import org.marc.everest.datatypes.II;
+import org.marc.everest.datatypes.INT;
 import org.marc.everest.datatypes.ON;
 import org.marc.everest.datatypes.PN;
-import org.marc.everest.datatypes.REAL;
 import org.marc.everest.datatypes.SD;
 import org.marc.everest.datatypes.doc.StructDocElementNode;
 import org.marc.everest.datatypes.doc.StructDocTextNode;
@@ -254,7 +254,7 @@ public final class ClinicalDocumentGenerator {
 		Component3 triggersComponent = new Component3();
 		triggersComponent.setSection(triggersSection);
 		components.add(triggersComponent);
-
+		
 		//Add the ARV medications component
 		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
 			Section medsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_MED_INFO,
@@ -335,7 +335,9 @@ public final class ClinicalDocumentGenerator {
 	                                                                    DatedUuidAndValue numericObsValue)
 	    throws ParseException {
 		CD<String> question = createCielCD(cielQuestionCode, qnText);
-		return createObservationEntry(question, new REAL(Double.valueOf(numericObsValue.getValue().toString())),
+		//TODO REAL should be the correct datatype however the shr's cdahandler doesn't support it
+		//but the only numerical concepts are cd4 count and viral load which are always integers anyway
+		return createObservationEntry(question, new INT(Double.valueOf(numericObsValue.getValue().toString()).intValue()),
 		    numericObsValue.getDate());
 	}
 	

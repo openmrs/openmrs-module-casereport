@@ -61,17 +61,20 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_EXTENSION = "POCD_HD000040";
 	
-	//This template id ensures this document is processed by the MedicalDocumentsDocumentProcessor
+	//This template id ensures this document is processed by the 
+	//MedicalDocumentsDocumentProcessor in the shr-cdahandler module
 	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.1";
 	
 	public static final String TEXT_TITLE = "Public Health Case Report - HIV";
 	
 	public static final String LANGUAGE_CODE = "en-US";
 	
-	//This template id ensures this obs entries are processed by the CodedResultsSectionProcessor
+	//This template id ensures this obs entries are processed by the 
+	//CodedResultsSectionProcessor in the shr-cdahandler module
 	public static final String SECTION_TEMPLATE_ID_ROOT1 = "1.3.6.1.4.1.19376.1.5.3.1.3.27";
 	
-	//This template id ensures this obs entries are processed by the SimpleObservationEntryProcessor
+	//This template id ensures this obs entries are processed by the 
+	//SimpleObservationEntryProcessor in the shr-cdahandler module
 	public static final String OBS_TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.4.13";
 	
 	public static final String TEXT_DOCUMENT_NAME = "Public health Case report";
