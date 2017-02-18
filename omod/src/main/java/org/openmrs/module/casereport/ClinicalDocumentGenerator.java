@@ -106,7 +106,7 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setRealmCode(new SET<>(new CS<>(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
-		cdaDocument.setId(form.getReportUuid());
+		cdaDocument.setId(form.getAssigningAuthorityId(), form.getReportUuid());
 		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR, DocumentConstants.TEXT_DOCUMENT_NAME));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
@@ -254,7 +254,7 @@ public final class ClinicalDocumentGenerator {
 		Component3 triggersComponent = new Component3();
 		triggersComponent.setSection(triggersSection);
 		components.add(triggersComponent);
-		
+
 		//Add the ARV medications component
 		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
 			Section medsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_MED_INFO,
@@ -541,6 +541,7 @@ public final class ClinicalDocumentGenerator {
 	
 	private Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime, ActStatus statusCode) {
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
+		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);
 		observation.setEffectiveTime(DocUtil.createTS(obsdatetime));

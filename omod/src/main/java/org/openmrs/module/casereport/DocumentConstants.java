@@ -61,13 +61,18 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_EXTENSION = "POCD_HD000040";
 	
-	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.18.1.2";
+	//This template id ensures this document is processed by the MedicalDocumentsDocumentProcessor
+	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.1";
 	
 	public static final String TEXT_TITLE = "Public Health Case Report - HIV";
 	
 	public static final String LANGUAGE_CODE = "en-US";
 	
-	public static final String SECTION_TEMPLATE_ID_ROOT1 = "2.16.840.1.113883.10.20.1.6";
+	//This template id ensures this obs entries are processed by the CodedResultsSectionProcessor
+	public static final String SECTION_TEMPLATE_ID_ROOT1 = "1.3.6.1.4.1.19376.1.5.3.1.3.27";
+	
+	//This template id ensures this obs entries are processed by the SimpleObservationEntryProcessor
+	public static final String OBS_TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.4.13";
 	
 	public static final String TEXT_DOCUMENT_NAME = "Public health Case report";
 	
@@ -93,8 +98,10 @@ public final class DocumentConstants {
 	
 	public static final String CODE_SYSTEM_NAME_CIEL = "CIEL";
 	
+	public static final String LOINC_CODE_CR = "55751-2";
+	
 	//TODO we need to assign this a proper code
-	public static final String LOINC_CODE_CR = "*";
+	public static final String LOINC_CODE_TYPE_CODE_CR = "*";
 	
 	public static final String LOINC_CODE_CLINICAL_INFO = "55752-0";
 	
