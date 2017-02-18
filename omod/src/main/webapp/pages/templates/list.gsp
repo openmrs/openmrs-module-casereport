@@ -86,7 +86,7 @@
                 <tr ng-class="{'casereport-border-bottom' : caseReport.reportTriggers.length > 1 && !\$last}"
                     ng-repeat="trigger in caseReport.reportTriggers | searchTriggers:triggerSearchText">
                     <td ng-class="{'casereport-focus-element' : \$parent.\$odd}">
-                        {{trigger | omrs.display}}
+                        {{trigger | omrsDisplay}}
                         <span class="casereport-small-faint">{{trigger.auditInfo.dateCreated | serverDate}}</span>
                     </td>
                 </tr>

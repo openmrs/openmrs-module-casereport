@@ -39,8 +39,7 @@ public class SubmittedCaseReportsPageController {
 		return mapper;
 	}
 	
-	public void get(PageModel model, @SpringBean CaseReportService service,
-	                @SpringBean(FhirDocumentGeneratorListener.BEAN_ID) FhirDocumentGeneratorListener listener)
+	public void get(PageModel model, @SpringBean CaseReportService service)
 	    throws Exception {
 		
 		List<CaseReport> caseReports = service.getSubmittedCaseReports(null);
@@ -58,9 +57,9 @@ public class SubmittedCaseReportsPageController {
 		
 		for (CaseReport caseReport : caseReports) {
 			String uuid = caseReport.getUuid();
-			String document = FileUtils.readFileToString(new File(listener.getOutputDirectory(), uuid
+			/*String document = FileUtils.readFileToString(new File(listener.getOutputDirectory(), uuid
 			        + FhirDocumentGeneratorListener.FILE_EXT_TXT), FhirDocumentGeneratorListener.ENCODING_UTF8);
-			reportUuidDocumentMap.put(uuid, document);
+			reportUuidDocumentMap.put(uuid, document);*/
 			CaseReportForm form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 			List<String> triggers = new ArrayList<String>();
 			for (UuidAndValue uuidAndValue : form.getTriggers()) {

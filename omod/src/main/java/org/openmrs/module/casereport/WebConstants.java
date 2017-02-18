@@ -13,5 +13,5 @@ import static org.openmrs.module.casereport.CaseReportConstants.MODULE_ID;
 
 public class WebConstants {
 	
-	public static final String GP_CR_DEST_URL = MODULE_ID + ".caseReportDestinationUrl";
+	public static final String GP_CR_DEST_URL = MODULE_ID + ".destinationUrl";
 }

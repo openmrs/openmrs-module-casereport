@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
@@ -42,6 +43,7 @@ import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
 import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
 import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.springframework.http.MediaType;
@@ -56,6 +58,18 @@ public final class ProvideAndRegisterDocGenerator {
 	private int idCounter;
 	
 	private CaseReportForm form;
+	
+	private static final HashMap<String, String> codeLocalizedStringMap;
+	
+	static {
+		codeLocalizedStringMap = new HashMap();
+		codeLocalizedStringMap.put("U", "Unrestricted");
+		codeLocalizedStringMap.put("L", "Low");
+		codeLocalizedStringMap.put("M", "Moderate");
+		codeLocalizedStringMap.put("N", "Normal");
+		codeLocalizedStringMap.put("R", "Restricted");
+		codeLocalizedStringMap.put("V", "Very restricted");
+	}
 	
 	/**
 	 * @param form the CaseReportForm from which to generate for a document set request
@@ -90,27 +104,32 @@ public final class ProvideAndRegisterDocGenerator {
 		String reportDate = DocUtil.createTS(form.getReportDate()).getValue();
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_CREATION_TIME, reportDate);
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_LANGUAGE_CODE, DocumentConstants.LANGUAGE_CODE);
-		String patientId = String.format(DocumentConstants.PATIENT_ID_PATTERN, form.getPatientIdentifier().getValue()
-		        .toString(), form.getIdentifierType().getValue().toString());
+		AdministrationService as = Context.getAdministrationService();
+		String patientId = String.format(as.getGlobalProperty(DocumentConstants.GP_ID_FORMAT), form.getIdentifierType()
+		        .getValue().toString(), form.getPatientIdentifier().getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
 		
-		addClassification(extrinsicObj, DocumentConstants.CODE_CONFIDENTIALITY_N,
-		    DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY, XDSConstants.UUID_XDSDocumentEntry_confidentialityCode,
-		    DocumentConstants.TEXT_NORMAL);
+		String confidentiality = as.getGlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE);
+		addClassification(extrinsicObj, confidentiality, DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY,
+		    XDSConstants.UUID_XDSDocumentEntry_confidentialityCode, codeLocalizedStringMap.get(confidentiality));
 		
-		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_FACILITY,
-		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_FACILITY,
-		    XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, DocumentConstants.TEXT_FACILITY);
+		String facilityTypeCode = as.getGlobalProperty(DocumentConstants.GP_FACILITY_TYPE_CODE);
+		String facilityTypeCodeScheme = as.getGlobalProperty(DocumentConstants.GP_FACILITY_TYPE_CODING_SCHEME);
+		String facilityTypeName = as.getGlobalProperty(DocumentConstants.GP_FACILITY_TYPE_NAME);
+		addClassification(extrinsicObj, facilityTypeCode, facilityTypeCodeScheme,
+		    XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, facilityTypeName);
 		
 		addClassification(extrinsicObj, DocumentConstants.IHE_PCC_CODE_FORMAT,
 		    DocumentConstants.CODE_SYSTEM_FORMAT_CODE_SET, XDSConstants.UUID_XDSDocumentEntry_formatCode,
 		    DocumentConstants.TEXT_FORMAT);
 		
-		addClassification(extrinsicObj, DocumentConstants.CONNECTATHON_CODE_PRACTICE,
-		    DocumentConstants.CODE_SYSTEM_CONNECTATHON_PRACTICE, XDSConstants.UUID_XDSDocumentEntry_practiceSettingCode,
-		    DocumentConstants.TEXT_PRACTICE);
+		String practiceCode = as.getGlobalProperty(DocumentConstants.GP_PRACTICE_CODE);
+		String practiceCodingScheme = as.getGlobalProperty(DocumentConstants.GP_PRACTICE_CODING_SCHEME);
+		String practiceName = as.getGlobalProperty(DocumentConstants.GP_PRACTICE_NAME);
+		addClassification(extrinsicObj, practiceCode, practiceCodingScheme,
+		    XDSConstants.UUID_XDSDocumentEntry_practiceSettingCode, practiceName);
 		
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_TYPE_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_typeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
@@ -118,8 +137,7 @@ public final class ProvideAndRegisterDocGenerator {
 		addExternalIdentifier(extrinsicObj, patientId, XDSConstants.UUID_XDSDocumentEntry_patientId,
 		    DocumentConstants.TEXT_DOC_PATIENT_ID);
 		
-		//String docUniqueId = generateOIDFromUuid(UUID.fromString(form.getReportUuid()));
-		String docUniqueId = generateOIDFromUuid(UUID.randomUUID());
+		String docUniqueId = generateOIDFromUuid(UUID.fromString(form.getReportUuid()));
 		addExternalIdentifier(extrinsicObj, docUniqueId, XDSConstants.UUID_XDSDocumentEntry_uniqueId,
 		    DocumentConstants.TEXT_DOC_UNIQUE_ID);
 		

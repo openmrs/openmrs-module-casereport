@@ -33,7 +33,7 @@
             <div id="casereport-prev-reports">
                 <ul>
                     <li ng-repeat="prevReport in previousReportDetails">
-                        {{ prevReport.datechanged | serverDate }} - {{ getValues(prevReport.triggers) | omrs.display }}
+                        {{ prevReport.datechanged | serverDate }} - {{ getValues(prevReport.triggers) | omrsDisplay }}
                     </li>
                 </ul>
             </div>
@@ -59,7 +59,7 @@
         </tr>
         <tr ng-show="caseReport.reportForm.dead">
             <th valign="top">${ui.message("Person.dead")}</th>
-            <td valign="top">${ui.message("general.yes")}</td>
+            <td valign="top">{{ caseReport.reportForm.dead }}</td>
         </tr>
         <tr ng-show="caseReport.reportForm.dead && caseReport.reportForm.deathdate">
             <th valign="top">${ui.message("casereport.deathdate")}</th>
@@ -88,9 +88,8 @@
         <tr ng-show="caseReport.reportForm.mostRecentViralLoads.length > 0
                     || caseReport.reportForm.mostRecentCd4Counts.length > 0
                     || caseReport.reportForm.mostRecentHivTests.length > 0">
-            <th valign="top">${ui.message("casereport.data")}</th>
+            <th valign="top">${ui.message("casereport.diagnosticData")}</th>
             <td valign="top">
-                <br />
                 <table id="casereport-data-table" cellpadding="0" cellspacing="0">
                     <tr>
                         <th valign="top">${ui.message("casereport.viralLoad")}</th>
@@ -140,7 +139,7 @@
         </tr>
         <tr ng-show="caseReport.reportForm.currentHivMedications.length > 0">
             <th valign="top">${ui.message("casereport.arvs")}</th>
-            <td valign="top">{{ getValues(caseReport.reportForm.currentHivMedications) | omrs.display }}</td>
+            <td valign="top">{{ getValues(caseReport.reportForm.currentHivMedications) | omrsDisplay }}</td>
         </tr>
         <tr ng-show="caseReport.reportForm.mostRecentArvStopReason">
             <th valign="top">${ui.message("casereport.reasonArvsStopped")}</th>

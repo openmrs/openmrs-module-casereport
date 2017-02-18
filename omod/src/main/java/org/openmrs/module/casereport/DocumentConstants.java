@@ -9,19 +9,19 @@
  */
 package org.openmrs.module.casereport;
 
+import static org.openmrs.module.casereport.CaseReportConstants.MODULE_ID;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public final class DocumentConstants {
 	
+	public static final String GP_PREFX = MODULE_ID + ".";
+	
 	//Formatter used to print dates in text sections that are human readable
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
 	public static final String OID_PREFIX = "2.25.";
-	
-	public static final String CODE_CONFIDENTIALITY_N = "N";
-	
-	public static final String PATIENT_ID_PATTERN = "%s^^^&%s&ISO";
 	
 	public static final String PID_3_PATTERN = "PID-3|%s";
 	
@@ -65,17 +65,17 @@ public final class DocumentConstants {
 	//MedicalDocumentsDocumentProcessor in the shr-cdahandler module
 	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.1";
 	
-	public static final String TEXT_TITLE = "Public Health Case Report - HIV";
-	
-	public static final String LANGUAGE_CODE = "en-US";
-	
-	//This template id ensures this obs entries are processed by the 
+	//This template id ensures this obs entries are processed by the
 	//CodedResultsSectionProcessor in the shr-cdahandler module
 	public static final String SECTION_TEMPLATE_ID_ROOT1 = "1.3.6.1.4.1.19376.1.5.3.1.3.27";
 	
-	//This template id ensures this obs entries are processed by the 
+	//This template id ensures this obs entries are processed by the
 	//SimpleObservationEntryProcessor in the shr-cdahandler module
 	public static final String OBS_TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.4.13";
+	
+	public static final String TEXT_TITLE = "Public Health Case Report - HIV";
+	
+	public static final String LANGUAGE_CODE = "en-US";
 	
 	public static final String TEXT_DOCUMENT_NAME = "Public health Case report";
 	
@@ -91,13 +91,7 @@ public final class DocumentConstants {
 	
 	public static final String CODE_SYSTEM_CONFIDENTIALITY = "2.16.840.1.113883.5.25";
 	
-	public static final String CODE_SYSTEM_CONNECTATHON_FACILITY = "Connect-a-thon healthcareFacilityTypeCodes";
-	
 	public static final String CODE_SYSTEM_FORMAT_CODE_SET = "1.3.6.1.4.1.19376.1.2.3";
-	
-	public static final String CODE_SYSTEM_CONNECTATHON_PRACTICE = "Connect-a-thon practiceSettingCodes";
-	
-	public static final String CODE_SYSTEM_NAME_CONFIDENTIALITY = "HL7 Code System Confidentiality";
 	
 	public static final String CODE_SYSTEM_NAME_CIEL = "CIEL";
 	
@@ -116,9 +110,21 @@ public final class DocumentConstants {
 	
 	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
 	
-	public static final String CONNECTATHON_CODE_FACILITY = "Hospital Unit";
+	public static final String GP_ID_FORMAT = GP_PREFX + "idFormat";
 	
-	public static final String CONNECTATHON_CODE_PRACTICE = "General Medicine";
+	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFX + "confidentialityCode";
+	
+	public static final String GP_FACILITY_TYPE_CODE = GP_PREFX + "healthCareFacilityTypeCode";
+	
+	public static final String GP_FACILITY_TYPE_CODING_SCHEME = GP_PREFX + "healthCareFacilityTypeCodingSystem";
+	
+	public static final String GP_FACILITY_TYPE_NAME = GP_PREFX + "healthCareFacilityTypeDisplayName";
+	
+	public static final String GP_PRACTICE_CODE = GP_PREFX + "practiceSettingCode";
+	
+	public static final String GP_PRACTICE_CODING_SCHEME = GP_PREFX + "practiceSettingCodingSystem";
+	
+	public static final String GP_PRACTICE_NAME = GP_PREFX + "practiceSettingDisplayName";
 	
 	//This code is actually for a medical summaries, We only used it   
 	//so that the CDA handler can be assigned to it as the handler
@@ -168,13 +174,7 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_VIRAL_LOAD = "HIV Viral Load";
 	
-	public static final String TEXT_NORMAL = "Normal";
-	
-	public static final String TEXT_FACILITY = "Hospital Unit";
-	
 	public static final String TEXT_FORMAT = "XDS Medical Summaries";
-	
-	public static final String TEXT_PRACTICE = CONNECTATHON_CODE_PRACTICE;
 	
 	public static final String TEXT_DOC_PATIENT_ID = "XDSDocumentEntry.patientId";
 	

@@ -40,11 +40,6 @@
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.CaseReportActivator</activator>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.caseReportDestinationUrl</property>
-        <description>The Url where to submit case reports</description>
-    </globalProperty>
-
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 		CaseReport.hbm.xml
@@ -66,21 +61,72 @@
 	</messages>
 	<!-- /Internationalization -->
 
+    <!-- GPs -->
+    <globalProperty>
+        <property>${project.parent.artifactId}.destinationUrl</property>
+        <defaultValue>https://${needsToConfigure}:5000/openmrs/ms/xdsrepository</defaultValue>
+        <description>The URL to the server where to send submitted case reports</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.idFormat</property>
+        <defaultValue>%2$s^^^&amp;%1$s&amp;ISO</defaultValue>
+        <description>Identifies the string representation of instance identifier from the CDA document.
+            %1$s = Root (or domain) and %2$s = Extension (or identifier)</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.confidentialityCode</property>
+        <defaultValue>N</defaultValue>
+        <description>
+            The code specifying the level of confidentiality of the CDA document, allowed values U, L, M, N, R, or V,
+            which stand for Unrestricted, Low, Moderate, Normal, Restricted and Very restricted respectively
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.healthCareFacilityTypeCode</property>
+        <description>
+            This code represents the type of organizational setting of the facility submitting case
+            report documents, the allowed values are predefined in the repository where the reports
+            are submitted, see <a href="https://wiki.openmrs.org/x/IxXfBQ">documentation</a> for more details.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.healthCareFacilityTypeCodingSystem</property>
+        <description>The coding system of the health facility type code</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.healthCareFacilityTypeDisplayName</property>
+        <description>The display name of the health facility type</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.practiceSettingCode</property>
+        <description>
+            The code specifying the clinical specialty of the facility submitting case report documents
+            (e.g. Family Practice, Laboratory, Radiology), the allowed values are predefined in the repository where
+            the reports are submitted, see <a href="https://wiki.openmrs.org/x/IxXfBQ">documentation</a> for more details.
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.practiceSettingCodingSystem</property>
+        <description>The coding system of the practice setting code</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.practiceSettingDisplayName</property>
+        <description>The display name of the practice setting</description>
+    </globalProperty>
+
+    <!-- Privileges -->
     <privilege>
         <name>Get Case Reports</name>
         <description>Able to get case reports</description>
     </privilege>
-
     <privilege>
         <name>Manage Case Reports</name>
         <description>Able to manage case reports</description>
     </privilege>
-
     <privilege>
         <name>Get Triggers</name>
         <description>Able to get triggers</description>
     </privilege>
-
     <privilege>
         <name>App: casereport.manageCaseReports</name>
         <description>Able to access the manage case reports app</description>

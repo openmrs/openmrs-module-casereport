@@ -27,7 +27,7 @@
         <label>${ui.message("general.patient")}</label>
     </p>
     <p>
-        {{patient | omrs.display}}
+        {{patient | omrsDisplay}}
     </p>
     <p>
         ${ui.includeFragment("uicommons", "field/dropDown", [
