@@ -22,7 +22,7 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.casereport.FhirDocumentGeneratorListener;
+//import org.openmrs.module.casereport.FhirDocumentGeneratorListener;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;

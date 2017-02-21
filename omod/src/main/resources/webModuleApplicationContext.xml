@@ -50,22 +50,13 @@
     <bean id="casereport-marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="org.dcm4chee.xds2.infoset.ihe:org.dcm4chee.xds2.infoset.rim"/>
         <!-- Enables marshalling of the outgoing message using MTOM/XOP -->
-        <property name="mtomEnabled" value="true" />
+        <property name="mtomEnabled" value="false" />
     </bean>
 
     <bean id="casereport-webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
         <constructor-arg ref="casereport-messageFactory" />
         <property name="marshaller" ref="casereport-marshaller" />
         <property name="unmarshaller" ref="casereport-marshaller" />
-    </bean>
-
-    <!-- Module global property listeners -->
-    <bean id="${project.parent.artifactId}EventListeners" parent="openmrsEventListeners">
-        <property name="globalPropertyListeners">
-            <list value-type="org.openmrs.api.GlobalPropertyListener">
-                <bean class="${project.parent.groupId}.${project.parent.artifactId}.HealthInfoExchangeListener" />
-            </list>
-        </property>
     </bean>
 		
 </beans>

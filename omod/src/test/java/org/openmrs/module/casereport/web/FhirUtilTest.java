@@ -25,7 +25,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.FhirUtil;
+//import org.openmrs.module.casereport.FhirUtil;
 import org.openmrs.module.casereport.WebConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
@@ -74,7 +74,7 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		form.setReportDate(caseReport.getDateCreated());
 		if (true)
 			return;
-		String doc = FhirUtil.createFhirDocument(form);
+		String doc = "";//FhirUtil.createFhirDocument(form);
 		System.out.println(doc);
 		SimpleObject so = new ObjectMapper().readValue(doc, SimpleObject.class);
 		assertEquals("Composition", Util.getByPath(so, "resourceType"));

@@ -20,14 +20,13 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.rim.RegistryError;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
-import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIException;
-import org.openmrs.api.GlobalPropertyListener;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
@@ -35,7 +34,8 @@ import org.springframework.ws.client.core.WebServiceTemplate;
  * An instance of this class listens for event fired when a case report is submitted so that it can
  * generate and submit a CDA message to the HIE
  */
-public class HealthInfoExchangeListener implements ApplicationListener<CaseReportSubmittedEvent>, GlobalPropertyListener {
+@Component
+public class HealthInfoExchangeListener implements ApplicationListener<CaseReportSubmittedEvent> {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
@@ -44,15 +44,6 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	
 	@Autowired
 	private WebServiceMessageCallback messageCallback;
-	
-	private static String documentRepositoryUrl;
-	
-	private static String getRepositoryUrl() {
-		if (documentRepositoryUrl == null) {
-			documentRepositoryUrl = Context.getAdministrationService().getGlobalProperty(WebConstants.GP_CR_DEST_URL);
-		}
-		return documentRepositoryUrl;
-	}
 	
 	/**
 	 * @see ApplicationListener#onApplicationEvent(ApplicationEvent)
@@ -70,8 +61,8 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			if (log.isDebugEnabled()) {
 				log.debug("Sending Case report document.....");
 			}
-			
-			Object response = webServiceTemplate.marshalSendAndReceive(getRepositoryUrl(), rootElement, messageCallback);
+			String url = Context.getAdministrationService().getGlobalProperty(WebConstants.GP_CR_DEST_URL);
+			Object response = webServiceTemplate.marshalSendAndReceive(url, rootElement, messageCallback);
 			
 			RegistryResponseType regResp = ((JAXBElement<RegistryResponseType>) response).getValue();
 			if (!XDSConstants.XDS_B_STATUS_SUCCESS.equals(regResp.getStatus())) {
@@ -98,29 +89,5 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			//TODO handle error properly
 			throw new APIException("An error occurred while submitting a case report document to the HIE", e);
 		}
-	}
-	
-	/**
-	 * @see GlobalPropertyListener#globalPropertyChanged(GlobalProperty)
-	 */
-	@Override
-	public void globalPropertyChanged(GlobalProperty globalProperty) {
-		documentRepositoryUrl = null;
-	}
-	
-	/**
-	 * @see GlobalPropertyListener#globalPropertyDeleted(String)
-	 */
-	@Override
-	public void globalPropertyDeleted(String s) {
-		documentRepositoryUrl = null;
-	}
-	
-	/**
-	 * @see GlobalPropertyListener#supportsPropertyName(String)
-	 */
-	@Override
-	public boolean supportsPropertyName(String propertyName) {
-		return WebConstants.GP_CR_DEST_URL.equals(propertyName);
 	}
 }
