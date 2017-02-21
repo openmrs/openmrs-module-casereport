@@ -9,30 +9,22 @@
  */
 package org.openmrs.module.casereport.web;
 
-import java.io.File;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.FhirDocumentGeneratorListener;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
 @Ignore
-public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensitiveTest {
+public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
-	 * @see FhirDocumentGeneratorListener#onApplicationEvent(CaseReportSubmittedEvent)
+	 * @see org.openmrs.module.casereport.HealthInfoExchangeListener#onApplicationEvent(CaseReportSubmittedEvent)
 	 * @verifies generate a fhir message message and write it to the output directory
 	 */
 	@Test
@@ -53,17 +45,6 @@ public class FhirDocumentGeneratorListenerTest extends BaseModuleWebContextSensi
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
-		FhirDocumentGeneratorListener listener = Context.getRegisteredComponent(FhirDocumentGeneratorListener.BEAN_ID,
-		    FhirDocumentGeneratorListener.class);
-		File expectedFile = new File(listener.getOutputDirectory(), caseReport.getUuid()
-		        + FhirDocumentGeneratorListener.FILE_EXT_TXT);
-		Assert.assertFalse(expectedFile.exists());
-		caseReport.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(caseReport)));
-		service.submitCaseReport(caseReport);
-		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
-		Assert.assertTrue(expectedFile.exists());
-		Assert.assertFalse(StringUtils.isBlank(FileUtils.readFileToString(expectedFile,
-		    FhirDocumentGeneratorListener.ENCODING_UTF8)));
 		//TODO Add assertion for the file contents
 	}
 }

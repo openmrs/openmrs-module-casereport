@@ -15,7 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
@@ -25,7 +27,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
-//import org.openmrs.module.casereport.FhirUtil;
+import org.openmrs.module.casereport.ClinicalDocumentGenerator;
 import org.openmrs.module.casereport.WebConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
@@ -33,17 +35,18 @@ import org.openmrs.module.webservices.rest.test.Util;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
-public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
+@Ignore
+public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
-	 * @see FhirUtil#createFhirDocument(CaseReportForm)
-	 * @verifies return the generated json
+	 * @see ClinicalDocumentGenerator#generate()
+	 * @verifies generate a CDA document
 	 */
 	@Test
-	public void createFhirDocument_shouldReturnTheGeneratedJson() throws Exception {
+	public void generate_shouldGenerateACDADocument() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-initialConcepts.xml");
+		executeDataSet("moduleTestData-other.xml");
 		final String implId = "Test_Impl";
 		final String implName = "Test_Name";
 		//set the implementation id for test purposes
@@ -72,11 +75,8 @@ public class FhirUtilTest extends BaseModuleWebContextSensitiveTest {
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
-		if (true)
-			return;
-		String doc = "";//FhirUtil.createFhirDocument(form);
-		System.out.println(doc);
-		SimpleObject so = new ObjectMapper().readValue(doc, SimpleObject.class);
+		ClinicalDocument clinicalDocument = new ClinicalDocumentGenerator(form).generate();
+		SimpleObject so = null;
 		assertEquals("Composition", Util.getByPath(so, "resourceType"));
 		assertEquals(caseReport.getUuid(), Util.getByPath(so, "id"));
 		assertEquals("generated", Util.getByPath(so, "text/status"));

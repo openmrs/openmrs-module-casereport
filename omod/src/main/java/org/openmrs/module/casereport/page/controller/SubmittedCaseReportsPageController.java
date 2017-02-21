@@ -9,20 +9,17 @@
  */
 package org.openmrs.module.casereport.page.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
-//import org.openmrs.module.casereport.FhirDocumentGeneratorListener;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -39,8 +36,7 @@ public class SubmittedCaseReportsPageController {
 		return mapper;
 	}
 	
-	public void get(PageModel model, @SpringBean CaseReportService service)
-	    throws Exception {
+	public void get(PageModel model, @SpringBean CaseReportService service) throws Exception {
 		
 		List<CaseReport> caseReports = service.getSubmittedCaseReports(null);
 		model.put("caseReports", caseReports);
@@ -57,9 +53,7 @@ public class SubmittedCaseReportsPageController {
 		
 		for (CaseReport caseReport : caseReports) {
 			String uuid = caseReport.getUuid();
-			/*String document = FileUtils.readFileToString(new File(listener.getOutputDirectory(), uuid
-			        + FhirDocumentGeneratorListener.FILE_EXT_TXT), FhirDocumentGeneratorListener.ENCODING_UTF8);
-			reportUuidDocumentMap.put(uuid, document);*/
+			//TODO Regenerate the CDA from the stored form
 			CaseReportForm form = getObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 			List<String> triggers = new ArrayList<String>();
 			for (UuidAndValue uuidAndValue : form.getTriggers()) {
