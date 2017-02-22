@@ -69,11 +69,11 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			
 			RegistryResponseType regResp = ((JAXBElement<RegistryResponseType>) response).getValue();
 			if (!XDSConstants.XDS_B_STATUS_SUCCESS.equals(regResp.getStatus())) {
-				log.error("The case report was submitted but an error occurred on the remote server(s), "
+				log.error("The case report was submitted but an error occurred on the remote server, "
 				        + "see below for more details.");
 				if (regResp.getRegistryErrorList() != null && regResp.getRegistryErrorList().getRegistryError() != null) {
 					for (RegistryError re : regResp.getRegistryErrorList().getRegistryError()) {
-						log.error("Submission failed with Severity: "
+						log.error("Case report submission failed with Severity: "
 						        + (StringUtils.isNotBlank(re.getSeverity()) ? re.getSeverity().substring(
 						            re.getSeverity().lastIndexOf(":") + 1) : "?") + ", Code: "
 						        + (StringUtils.isNotBlank(re.getErrorCode()) ? re.getErrorCode() : "?") + ", Message: "
