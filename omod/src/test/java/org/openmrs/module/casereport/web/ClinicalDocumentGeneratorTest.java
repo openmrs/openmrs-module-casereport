@@ -74,7 +74,7 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		service.submitCaseReport(caseReport);
 		CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);
 		form.setReportUuid(caseReport.getUuid());
-		form.setReportDate(caseReport.getDateCreated());if(true)return;
+		form.setReportDate(caseReport.getDateCreated());
 		ClinicalDocument clinicalDocument = new ClinicalDocumentGenerator(form).generate();
 		SimpleObject so = null;
 		assertEquals("Composition", Util.getByPath(so, "resourceType"));

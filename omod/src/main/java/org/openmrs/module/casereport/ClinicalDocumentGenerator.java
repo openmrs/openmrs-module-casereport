@@ -74,7 +74,7 @@ import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 
 /**
- * Generates a ClinicalDocument object
+ * Generates a ClinicalDocument object from it's CaseReportForm backing object
  */
 public final class ClinicalDocumentGenerator {
 	
@@ -83,7 +83,7 @@ public final class ClinicalDocumentGenerator {
 	private CaseReportForm form;
 	
 	/**
-	 * @param form the CaseReportForm from which to generate a ClinicalDocument
+	 * @param form the CaseReportForm to be used to generate the ClinicalDocument
 	 */
 	public ClinicalDocumentGenerator(CaseReportForm form) {
 		this.form = form;
@@ -117,7 +117,9 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.getRecordTarget().add(createRecordTarget());
 		cdaDocument.getAuthor().add(createAuthor());
 		cdaDocument.setCustodian(createCustodian());
-		cdaDocument.setComponent(createRootComponent());
+		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
+		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents());
+		cdaDocument.setComponent(comp);
 		
 		return cdaDocument;
 	}
@@ -155,7 +157,7 @@ public final class ClinicalDocumentGenerator {
 	 * 
 	 * @param code the code of CD instance
 	 * @param codeSystem the coding system of the code
-	 * @param codeSystemName the the name of the coding system
+	 * @param codeSystemName the name of the coding system
 	 * @param displayName the display text to set on the CD object
 	 * @return a CD object
 	 */
@@ -164,7 +166,7 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Create a RecordTarget
+	 * Creates a RecordTarget
 	 *
 	 * @return a RecordTarget object
 	 */
@@ -198,6 +200,7 @@ public final class ClinicalDocumentGenerator {
 		patientRole.setProviderOrganization(createOrganization(form.getAssigningAuthorityId(),
 		    form.getAssigningAuthorityName()));
 		rt.setPatientRole(patientRole);
+		
 		return rt;
 	}
 	
@@ -213,6 +216,7 @@ public final class ClinicalDocumentGenerator {
 		org.setId(SET.createSET(new II(id)));
 		org.setName(SET.createSET(new ON()));
 		org.getName().get(0).getParts().add(new ENXP(name));
+		
 		return org;
 	}
 	
@@ -232,11 +236,12 @@ public final class ClinicalDocumentGenerator {
 		assignedAuthor.setRepresentedOrganization(createOrganization(form.getAssigningAuthorityId(),
 		    form.getAssigningAuthorityName()));
 		author.setAssignedAuthor(assignedAuthor);
+		
 		return author;
 	}
 	
 	/**
-	 * Create a Person instance with the names matching those of the specified PersonName object
+	 * Create a Person instance with the names copied from the specified PersonName object
 	 *
 	 * @param personName the personName to copy from the names
 	 * @return a Person object
@@ -251,6 +256,7 @@ public final class ClinicalDocumentGenerator {
 			name = PN.fromFamilyGiven(null, personName.getFamilyName(), personName.getGivenName());
 		}
 		person.setName(SET.createSET(name));
+		
 		return person;
 	}
 	
@@ -265,24 +271,13 @@ public final class ClinicalDocumentGenerator {
 		custodianOrganization.setName(new ON());
 		custodianOrganization.getName().getParts().add(new ENXP(form.getAssigningAuthorityName()));
 		AssignedCustodian assignedCustodian = new AssignedCustodian(custodianOrganization);
+		
 		return new Custodian(assignedCustodian);
 	}
 	
 	/**
-	 * Creates the root Component2 object of the document
-	 * 
-	 * @return a Component2 object
-	 * @throws ParseException
-	 */
-	private Component2 createRootComponent() throws ParseException {
-		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
-		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents());
-		return comp;
-	}
-	
-	/**
-	 * Creates a individual Component3 instances i.e for the triggers, medications and any
-	 * diagnostic data if any is present in the case report form
+	 * Creates individual Component3 instances i.e for the triggers, medications and any diagnostic
+	 * data if present in the case report form
 	 * 
 	 * @return a list of Component3 objects
 	 * @throws ParseException
@@ -327,7 +322,7 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates Entry instances for the diagnostic data found in the case report form
+	 * Creates an Entry for each piece of diagnostic data in the case report form
 	 * 
 	 * @return a list of Entry objects
 	 * @throws ParseException
@@ -427,7 +422,7 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates an Entry instance from the specified parameter values
 	 * 
-	 * @param cielQuestionCode the question code from the ciel dictionary
+	 * @param cielQuestionCode the question code from the CIEL dictionary
 	 * @param questionText the display text
 	 * @param value the observation's coded value
 	 * @param obsDatetime the date of occurrence of the observation as a string
@@ -445,6 +440,7 @@ public final class ClinicalDocumentGenerator {
 			throw new APIException("No valid mapping found for the concept with id " + value.getId()
 			        + " to the any of the following sources: CIEL, LOINC and SNOMED CT");
 		}
+		
 		return createObservationEntry(question, val, obsDatetime);
 	}
 	
@@ -463,6 +459,7 @@ public final class ClinicalDocumentGenerator {
 		}
 		Date obsDate = CaseReportConstants.DATE_FORMATTER.parse(obsDatetime);
 		Observation observation = createObservation(obsQuestion, obsValue, obsDate, ActStatus.Completed);
+		
 		return new Entry(x_ActRelationshipEntry.DRIV, null, observation);
 	}
 	
@@ -501,10 +498,10 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Adds a item Node to the specified StructDocElementNode object with the text contents of the
-	 * created item node set to the text value of the DatedUuidAndValue
+	 * Adds an item node to the specified StructDocElementNode object with the text contents of the
+	 * created node set to the text value of the DatedUuidAndValue
 	 * 
-	 * @param listNode the StructDocElementNode object to add to
+	 * @param listNode the StructDocElementNode object to which to add the item node
 	 * @param datedValue the DatedUuidAndValue representation of the value to be set as the text
 	 *            contents
 	 * @param label the label(prefix) of the node's text contents
@@ -519,7 +516,7 @@ public final class ClinicalDocumentGenerator {
 	
 	/**
 	 * Creates a Section object with its code field set as the LOINC CD object generated from the
-	 * specified code and and displayName
+	 * specified code and displayName
 	 * 
 	 * @param code the section code
 	 * @param displayName the displayName to set
@@ -530,6 +527,7 @@ public final class ClinicalDocumentGenerator {
 		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
 		section.setCode(createLoincCE(code, displayName));
 		section.setTitle(displayName);
+		
 		return section;
 	}
 	
@@ -544,6 +542,7 @@ public final class ClinicalDocumentGenerator {
 		if (StringUtils.isNotBlank(form.getComments())) {
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_COMMENTS + form.getComments());
 		}
+		
 		return rootListNode;
 	}
 	
@@ -555,6 +554,7 @@ public final class ClinicalDocumentGenerator {
 	private StructDocElementNode createTextNodeForMedications() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
+		
 		return rootListNode;
 	}
 	
@@ -562,7 +562,7 @@ public final class ClinicalDocumentGenerator {
 	 * Adds item Nodes to the specified parent StructDocElementNode object with their text contents
 	 * set to the text values of the specified UuidAndValue instances
 	 *
-	 * @param parentNode the StructDocElementNode object to add to
+	 * @param parentNode the StructDocElementNode object to which to add the item nodes
 	 * @param itemsToAdd a list of DatedUuidAndValue representations of the values to be added
 	 * @param label the label(prefix) of the child nodes' text contents
 	 */
@@ -577,7 +577,7 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates an Entry list for the triggers in the case report form
+	 * Creates an entry for each trigger in the case report form
 	 * 
 	 * @return a list of Entry objects
 	 * @throws ParseException
@@ -607,7 +607,7 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates an Entry list for the medications in the case report form
+	 * Creates an Entry for each medications in the case report form
 	 *
 	 * @return a list of Entry objects
 	 * @throws ParseException
@@ -634,7 +634,7 @@ public final class ClinicalDocumentGenerator {
 	 * Gets the best code for the sepcified concept, the logic is such that it first looks for the
 	 * CIEL code, the LOINC code, SNOMED concept code otherwise null.
 	 *
-	 * @param concept the concept from which generate the CD
+	 * @param concept the concept to use to generate the CD
 	 * @return A CD<String> object
 	 */
 	private CD<String> createCD(Concept concept, String originalText) {
@@ -683,6 +683,7 @@ public final class ClinicalDocumentGenerator {
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);
 		observation.setEffectiveTime(DocumentUtil.createTS(obsdatetime));
+		
 		return observation;
 	}
 }
