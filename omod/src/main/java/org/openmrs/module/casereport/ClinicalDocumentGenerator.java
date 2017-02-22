@@ -122,25 +122,51 @@ public final class ClinicalDocumentGenerator {
 		return cdaDocument;
 	}
 	
+	/**
+	 * Creates a CD instance with LOINC as the code system
+	 *
+	 * @see #createCD(String, String, String, String)
+	 */
 	private CE<String> createLoincCE(String code, String displayName) {
-		return new CE<>(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, null,
-		        displayName, null);
+		return createCD(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, displayName);
 	}
 	
+	/**
+	 * Creates a CD instance with CIEL as the code system
+	 *
+	 * @see #createCD(String, String, String, String)
+	 */
 	private CD<String> createCielCD(String code, String displayName) {
-		return new CD<>(code, DocumentConstants.CODE_SYSTEM_CIEL, DocumentConstants.CODE_SYSTEM_NAME_CIEL, null,
-		        displayName, null);
+		return createCD(code, DocumentConstants.CODE_SYSTEM_CIEL, DocumentConstants.CODE_SYSTEM_NAME_CIEL, displayName);
 	}
 	
+	/**
+	 * Creates a CD instance with SNOMEDCT as the code system
+	 *
+	 * @see #createCD(String, String, String, String)
+	 */
 	private CD<String> createSnomedCD(String code, String displayName) {
-		return new CD<>(code, DocumentConstants.CODE_SYSTEM_SNOMEDCT, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT, null,
-		        displayName, null);
+		return createCD(code, DocumentConstants.CODE_SYSTEM_SNOMEDCT, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT,
+		    displayName);
+	}
+	
+	/**
+	 * Creates a CD instance
+	 * 
+	 * @param code the code of CD instance
+	 * @param codeSystem the coding system of the code
+	 * @param codeSystemName the the name of the coding system
+	 * @param displayName the display text to set on the CD object
+	 * @return a CD object
+	 */
+	private CD<String> createCD(String code, String codeSystem, String codeSystemName, String displayName) {
+		return new CD<>(code, codeSystem, codeSystemName, null, displayName, null);
 	}
 	
 	/**
 	 * Create a RecordTarget
 	 *
-	 * @return a RecordTarget instance
+	 * @return a RecordTarget object
 	 */
 	private RecordTarget createRecordTarget() throws ParseException {
 		RecordTarget rt = new RecordTarget(ContextControl.OverridingPropagating);
@@ -178,9 +204,9 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates an Organization
 	 *
-	 * @param id
-	 * @param name
-	 * @return an Organisation instance
+	 * @param id the identifier of the organisation
+	 * @param name the name of the organisation
+	 * @return an Organisation object
 	 */
 	private Organization createOrganization(String id, String name) {
 		Organization org = new Organization();
@@ -193,7 +219,7 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Create an author with the specified name
 	 *
-	 * @return an Author instance
+	 * @return an Author object
 	 */
 	private Author createAuthor() {
 		Author author = new Author();
@@ -210,10 +236,10 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Create a Person
+	 * Create a Person instance with the names matching those of the specified PersonName object
 	 *
-	 * @param personName
-	 * @return a Person instance
+	 * @param personName the personName to copy from the names
+	 * @return a Person object
 	 */
 	private Person createPerson(PersonName personName) {
 		Person person = new Person();
@@ -228,6 +254,11 @@ public final class ClinicalDocumentGenerator {
 		return person;
 	}
 	
+	/**
+	 * Creates a Custodian instance
+	 * 
+	 * @return a Custodian object
+	 */
 	private Custodian createCustodian() {
 		CustodianOrganization custodianOrganization = new CustodianOrganization();
 		custodianOrganization.setId(SET.createSET(new II(form.getAssigningAuthorityId())));
@@ -237,12 +268,25 @@ public final class ClinicalDocumentGenerator {
 		return new Custodian(assignedCustodian);
 	}
 	
+	/**
+	 * Creates the root Component2 object of the document
+	 * 
+	 * @return a Component2 object
+	 * @throws ParseException
+	 */
 	private Component2 createRootComponent() throws ParseException {
 		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
 		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents());
 		return comp;
 	}
 	
+	/**
+	 * Creates a individual Component3 instances i.e for the triggers, medications and any
+	 * diagnostic data if any is present in the case report form
+	 * 
+	 * @return a list of Component3 objects
+	 * @throws ParseException
+	 */
 	private ArrayList<Component3> createComponents() throws ParseException {
 		//Add the triggers component
 		ArrayList<Component3> components = new ArrayList<>();
@@ -282,6 +326,12 @@ public final class ClinicalDocumentGenerator {
 		return components;
 	}
 	
+	/**
+	 * Creates Entry instances for the diagnostic data found in the case report form
+	 * 
+	 * @return a list of Entry objects
+	 * @throws ParseException
+	 */
 	private ArrayList<Entry> createEntriesForDiagnostics() throws ParseException {
 		ArrayList<Entry> entries = new ArrayList<>();
 		if (form.getCurrentHivWhoStage() != null) {
@@ -326,8 +376,9 @@ public final class ClinicalDocumentGenerator {
 	 * qnCielCode argument value must be a CIEL code
 	 *
 	 * @param cielQuestionCode CIEL dictionary code for the Obs question
-	 * @param qnText
-	 * @param numericObsValue
+	 * @param qnText the text for the question concept
+	 * @param numericObsValue a DatedUuidAndValue representation of the observation's value, must be
+	 *            numeric
 	 * @return Entry Object
 	 * @throws ParseException
 	 */
@@ -347,9 +398,10 @@ public final class ClinicalDocumentGenerator {
 	 * and uses its obsDatetime as the value. The qnCielCode argument value must be a CIEL code
 	 *
 	 * @param cielQuestionCode CIEL dictionary code for the Obs question
-	 * @param qnText
-	 * @param codedObsValue
-	 * @return Entry Object
+	 * @param qnText the text for the question concept
+	 * @param codedObsValue a UuidAndValue representation of the observation's value, must be a
+	 *            coded value
+	 * @return an Entry Object
 	 * @throws ParseException
 	 */
 	private Entry createEntryFromCielQuestionCodeAndObsWithCodedValue(String cielQuestionCode, String qnText,
@@ -372,6 +424,18 @@ public final class ClinicalDocumentGenerator {
 		    dValue.getDate(), name);
 	}
 	
+	/**
+	 * Creates an Entry instance from the specified parameter values
+	 * 
+	 * @param cielQuestionCode the question code from the ciel dictionary
+	 * @param questionText the display text
+	 * @param value the observation's coded value
+	 * @param obsDatetime the date of occurrence of the observation as a string
+	 * @param originalTextValue the serialized text value
+	 * @return an Entry object
+	 * @throws ParseException
+	 * @see #createObservationEntry(CD, ANY, String)
+	 */
 	private Entry createObservationEntryWithACielQuestionCodeAndCodedValue(String cielQuestionCode, String questionText,
 	                                                                       Concept value, String obsDatetime,
 	                                                                       String originalTextValue) throws ParseException {
@@ -384,6 +448,15 @@ public final class ClinicalDocumentGenerator {
 		return createObservationEntry(question, val, obsDatetime);
 	}
 	
+	/**
+	 * Creates an Entry instance from the specified parameter values
+	 * 
+	 * @param obsQuestion the CD instance of the observation's question
+	 * @param obsValue the ANY instance of the observation's value
+	 * @param obsDatetime the date of occurrence of the observation as a string
+	 * @return an Entry Object
+	 * @throws ParseException
+	 */
 	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetime) throws ParseException {
 		if (StringUtils.isBlank(obsDatetime)) {
 			throw new APIException("A date is required in order to create an Observation for an entry");
@@ -393,6 +466,12 @@ public final class ClinicalDocumentGenerator {
 		return new Entry(x_ActRelationshipEntry.DRIV, null, observation);
 	}
 	
+	/**
+	 * Creates a StructDocElementNode instance for the diagnostic data
+	 * 
+	 * @return a StructDocElementNode object
+	 * @throws ParseException
+	 */
 	private StructDocElementNode createTextNodeForDiagnostics() throws ParseException {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		if (form.getCurrentHivWhoStage() != null) {
@@ -421,6 +500,16 @@ public final class ClinicalDocumentGenerator {
 		return rootListNode;
 	}
 	
+	/**
+	 * Adds a item Node to the specified StructDocElementNode object with the text contents of the
+	 * created item node set to the text value of the DatedUuidAndValue
+	 * 
+	 * @param listNode the StructDocElementNode object to add to
+	 * @param datedValue the DatedUuidAndValue representation of the value to be set as the text
+	 *            contents
+	 * @param label the label(prefix) of the node's text contents
+	 * @throws ParseException
+	 */
 	private void addDatedValueToListNode(StructDocElementNode listNode, DatedUuidAndValue datedValue, String label)
 	    throws ParseException {
 		Date date = CaseReportConstants.DATE_FORMATTER.parse(datedValue.getDate());
@@ -428,6 +517,14 @@ public final class ClinicalDocumentGenerator {
 		listNode.addElement(DocumentConstants.ELEMENT_ITEM, label + datedValue.getValue() + " (" + dateStr + ")");
 	}
 	
+	/**
+	 * Creates a Section object with its code field set as the LOINC CD object generated from the
+	 * specified code and and displayName
+	 * 
+	 * @param code the section code
+	 * @param displayName the displayName to set
+	 * @return a Section object
+	 */
 	private Section createSectionWithLoincCode(String code, String displayName) {
 		Section section = new Section();
 		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
@@ -436,6 +533,12 @@ public final class ClinicalDocumentGenerator {
 		return section;
 	}
 	
+	/**
+	 * Creates a StructDocElementNode instance for the triggers
+	 *
+	 * @return a StructDocElementNode object
+	 * @throws ParseException
+	 */
 	private StructDocElementNode createTextNodeForTriggers() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_TRIGGERS, form.getTriggers());
@@ -445,12 +548,27 @@ public final class ClinicalDocumentGenerator {
 		return rootListNode;
 	}
 	
+	/**
+	 * Creates a StructDocElementNode instance for the medications
+	 *
+	 * @return a StructDocElementNode object
+	 * @throws ParseException
+	 */
 	private StructDocElementNode createTextNodeForMedications() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
 		return rootListNode;
 	}
 	
+	/**
+	 * Adds item Nodes to the specified parent StructDocElementNode object with their text contents
+	 * set to the text values of the specified UuidAndValue instances
+	 *
+	 * @param parentNode the StructDocElementNode object to add to
+	 * @param itemsToAdd a list of DatedUuidAndValue representations of the values to be added
+	 * @param label the label(prefix) of the child nodes' text contents
+	 * @throws ParseException
+	 */
 	private void addNestedListToRootNode(StructDocElementNode parentNode, String label,
 	                                     List<? extends UuidAndValue> itemsToAdd) {
 		StructDocElementNode itemList = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
@@ -461,6 +579,12 @@ public final class ClinicalDocumentGenerator {
 		parentNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, itemList);
 	}
 	
+	/**
+	 * Creates an Entry list for the triggers in the case report form
+	 * 
+	 * @return a list of Entry objects
+	 * @throws ParseException
+	 */
 	private ArrayList<Entry> createEntriesForTriggers() throws ParseException {
 		ArrayList<Entry> entries = new ArrayList<>(form.getTriggers().size());
 		SchedulerService ss = Context.getSchedulerService();
@@ -485,6 +609,12 @@ public final class ClinicalDocumentGenerator {
 		return entries;
 	}
 	
+	/**
+	 * Creates an Entry list for the medications in the case report form
+	 *
+	 * @return a list of Entry objects
+	 * @throws ParseException
+	 */
 	private ArrayList<Entry> createEntriesForMedications() throws ParseException {
 		ArrayList<Entry> entries = new ArrayList<>(form.getCurrentHivMedications().size());
 		ConceptService cs = Context.getConceptService();
@@ -541,6 +671,15 @@ public final class ClinicalDocumentGenerator {
 		return null;
 	}
 	
+	/**
+	 * Creates an Observation instance
+	 * 
+	 * @param questionConcept the CD instance of the question concept code
+	 * @param value the ANY instance of the value
+	 * @param obsdatetime the date of occurrence of the observation
+	 * @param statusCode the ActStatus code
+	 * @return an Observation object
+	 */
 	private Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime, ActStatus statusCode) {
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));

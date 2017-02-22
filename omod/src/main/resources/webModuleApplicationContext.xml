@@ -40,7 +40,6 @@
         <property name="replyTo" ref="casereport-replyTo" />
     </bean>
 
-    <!-- Add here beans related to the API context -->
     <bean id="casereport-messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
         <property name="soapVersion">
             <util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_12" />
