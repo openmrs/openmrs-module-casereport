@@ -31,15 +31,7 @@ public final class DocumentConstants {
 	
 	public static final String PID_8_PATTERN = "PID-8|%s";
 	
-	public static final String XDS_TX_NAMESPACE_URI = "urn:ihe:iti:xds-b:2007";
-	
-	public static final String XDS_ROOT_ELEMENT = "ProvideAndRegisterDocumentSetRequest";
-	
-	public static final String XDS_NAMESPACE_URI = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0";
-	
 	public static final String XDS_SYMBOLIC_LINKS_PREFIX = "urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:";
-	
-	public static final String XDS_EXTRINSIC_OBJECT = "ExtrinsicObject";
 	
 	public static final String XDS_REG_PACKAGE = "RegistryPackage";
 	

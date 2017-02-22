@@ -15,7 +15,7 @@ import java.util.Date;
 import org.marc.everest.datatypes.NullFlavor;
 import org.marc.everest.datatypes.TS;
 
-public class DocUtil {
+public class DocumentUtil {
 	
 	public static TS createTS(Date date) {
 		if (date == null) {

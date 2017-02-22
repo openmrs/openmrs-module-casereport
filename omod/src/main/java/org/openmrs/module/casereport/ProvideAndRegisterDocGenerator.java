@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,6 +33,7 @@ import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
 import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.dcm4chee.xds2.infoset.rim.LocalizedStringType;
+import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectListType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
@@ -43,6 +43,7 @@ import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
 import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
 import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -57,12 +58,13 @@ public final class ProvideAndRegisterDocGenerator {
 	
 	private int idCounter;
 	
+	private ObjectFactory objectFactory = new ObjectFactory();
+	
 	private CaseReportForm form;
 	
-	private static final HashMap<String, String> codeLocalizedStringMap;
+	private static final HashMap<String, String> codeLocalizedStringMap = new HashMap();
 	
 	static {
-		codeLocalizedStringMap = new HashMap();
 		codeLocalizedStringMap.put("U", "Unrestricted");
 		codeLocalizedStringMap.put("L", "Low");
 		codeLocalizedStringMap.put("M", "Moderate");
@@ -101,7 +103,7 @@ public final class ProvideAndRegisterDocGenerator {
 		extrinsicObj.setMimeType(MediaType.TEXT_XML.toString());
 		extrinsicObj.setObjectType(XDSConstants.UUID_XDSDocumentEntry);
 		extrinsicObj.setName(createName(DocumentConstants.TEXT_TITLE));
-		String reportDate = DocUtil.createTS(form.getReportDate()).getValue();
+		String reportDate = DocumentUtil.createTS(form.getReportDate()).getValue();
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_CREATION_TIME, reportDate);
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_LANGUAGE_CODE, DocumentConstants.LANGUAGE_CODE);
 		AdministrationService as = Context.getAdministrationService();
@@ -143,14 +145,14 @@ public final class ProvideAndRegisterDocGenerator {
 		
 		SubmitObjectsRequest registryRequest = new SubmitObjectsRequest();
 		registryRequest.setRegistryObjectList(new RegistryObjectListType());
-		addObjectToRequest(registryRequest, extrinsicObj, DocumentConstants.XDS_EXTRINSIC_OBJECT);
+		addObjectToRequest(registryRequest, extrinsicObj);
 		
 		//Create RegistryPackage/SubmissionSet
 		RegistryPackageType regPackage = new RegistryPackageType();
 		regPackage.setId(DocumentConstants.XDS_SUBSET_ID);
 		regPackage.setObjectType(DocumentConstants.XDS_SYMBOLIC_LINKS_PREFIX + DocumentConstants.XDS_REG_PACKAGE);
 		regPackage.setName(createName(DocumentConstants.TEXT_TITLE));
-		String dateSubmitted = DocUtil.createTS(new Date()).getValue();
+		String dateSubmitted = DocumentUtil.createTS(new Date()).getValue();
 		InfosetUtil.addOrOverwriteSlot(regPackage, XDSConstants.SLOT_NAME_SUBMISSION_TIME, dateSubmitted);
 		addClassification(regPackage, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
@@ -166,7 +168,7 @@ public final class ProvideAndRegisterDocGenerator {
 		addExternalIdentifier(regPackage, "1.3.6.1.4.1.21367.2010.1.2", XDSConstants.UUID_XDSSubmissionSet_sourceId,
 		    DocumentConstants.TEXT_SUBSET_SOURCE_ID);
 		
-		addObjectToRequest(registryRequest, regPackage, DocumentConstants.XDS_REG_PACKAGE);
+		addObjectToRequest(registryRequest, regPackage);
 		
 		//Create the classification of the TX
 		ClassificationType classification = new ClassificationType();
@@ -174,16 +176,17 @@ public final class ProvideAndRegisterDocGenerator {
 		classification.setClassificationNode(XDSConstants.UUID_XDSSubmissionSet);
 		classification.setClassifiedObject(DocumentConstants.XDS_SUBSET_ID);
 		classification.setObjectType(DocumentConstants.XDS_SYMBOLIC_LINKS_PREFIX + DocumentConstants.XDS_CLASSIFICATION);
-		addObjectToRequest(registryRequest, classification, DocumentConstants.XDS_CLASSIFICATION);
+		addObjectToRequest(registryRequest, classification);
 		
 		//Create the association that links the DocumentEntry to the RegistryPackage
 		AssociationType1 assoc = new AssociationType1();
 		assoc.setId(DocumentConstants.XDS_ASSOCIATION_ID);
 		assoc.setAssociationType(XDSConstants.HAS_MEMBER);
+		assoc.setObjectType(DocumentConstants.XDS_SYMBOLIC_LINKS_PREFIX + DocumentConstants.XDS_ASSOCIATION);
 		assoc.setSourceObject(DocumentConstants.XDS_SUBSET_ID);
 		assoc.setTargetObject(DocumentConstants.XDS_DOC_ID);
-		addObjectToRequest(registryRequest, assoc, DocumentConstants.XDS_ASSOCIATION);
 		InfosetUtil.addOrOverwriteSlot(assoc, XDSConstants.SLOT_NAME_SUBMISSIONSET_STATUS, DocumentConstants.TEXT_ORIGINAL);
+		addObjectToRequest(registryRequest, assoc);
 		
 		ProvideAndRegisterDocumentSetRequestType docRequest = new ProvideAndRegisterDocumentSetRequestType();
 		docRequest.setSubmitObjectsRequest(registryRequest);
@@ -210,12 +213,24 @@ public final class ProvideAndRegisterDocGenerator {
 	 * 
 	 * @param registryRequest the SubmitObjectsRequest object
 	 * @param object IdentifiableType object
-	 * @param objectName the name to use for the element
 	 */
-	private <T extends IdentifiableType> void addObjectToRequest(SubmitObjectsRequest registryRequest, T object,
-	                                                             String objectName) {
-		QName qName = new QName(DocumentConstants.XDS_NAMESPACE_URI, objectName);
-		JAXBElement<T> element = new JAXBElement<>(qName, (Class<T>) object.getClass(), object);
+	private <T extends IdentifiableType> void addObjectToRequest(SubmitObjectsRequest registryRequest, T object) {
+		
+		JAXBElement<T> element;
+		
+		if (ExtrinsicObjectType.class.isAssignableFrom(object.getClass())) {
+			element = (JAXBElement<T>) objectFactory.createExtrinsicObject((ExtrinsicObjectType) object);
+		} else if (RegistryPackageType.class.isAssignableFrom(object.getClass())) {
+			element = (JAXBElement<T>) objectFactory.createRegistryPackage((RegistryPackageType) object);
+		} else if (ClassificationType.class.isAssignableFrom(object.getClass())) {
+			element = (JAXBElement<T>) objectFactory.createClassification((ClassificationType) object);
+		} else if (AssociationType1.class.isAssignableFrom(object.getClass())) {
+			element = (JAXBElement<T>) objectFactory.createAssociation((AssociationType1) object);
+		} else {
+			throw new APIException("Can't add object to the RegistryObjectList because it's of an unsupported type:"
+			        + object.getClass());
+		}
+		
 		registryRequest.getRegistryObjectList().getIdentifiable().add(element);
 	}
 	
@@ -223,7 +238,7 @@ public final class ProvideAndRegisterDocGenerator {
 	 * Adds a classification to the specified RegistryObjectType.
 	 * 
 	 * @param classifiedObj the object to which to add the classified object
-	 * @param code
+	 * @param code the value for the nodeRepresentation attribute
 	 * @param codeSystem the OID of teh coding scheme the code belongs
 	 * @param scheme the XDS.b classification scheme URN
 	 * @param localizedString the internationalized text label for the scheme
@@ -268,7 +283,7 @@ public final class ProvideAndRegisterDocGenerator {
 	/**
 	 * Creates an InternationalStringType for the specified name
 	 * 
-	 * @param name
+	 * @param name the localized name
 	 * @return the InternationalStringType object
 	 */
 	private InternationalStringType createName(String name) {

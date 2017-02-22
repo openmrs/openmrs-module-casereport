@@ -10,13 +10,13 @@
 package org.openmrs.module.casereport;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.infoset.ihe.ObjectFactory;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.rim.RegistryError;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
@@ -39,6 +39,8 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
+	private ObjectFactory objectFactory = new ObjectFactory();
+	
 	@Autowired
 	private WebServiceTemplate webServiceTemplate;
 	
@@ -56,11 +58,12 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			form.setReportUuid(caseReport.getUuid());
 			form.setReportDate(caseReport.getDateCreated());
 			ProvideAndRegisterDocumentSetRequestType docRequest = new ProvideAndRegisterDocGenerator(form).generate();
-			QName qName = new QName(DocumentConstants.XDS_TX_NAMESPACE_URI, DocumentConstants.XDS_ROOT_ELEMENT);
-			JAXBElement rootElement = new JAXBElement(qName, docRequest.getClass(), docRequest);
+			JAXBElement rootElement = objectFactory.createProvideAndRegisterDocumentSetRequest(docRequest);
+			
 			if (log.isDebugEnabled()) {
 				log.debug("Sending Case report document.....");
 			}
+			
 			String url = Context.getAdministrationService().getGlobalProperty(WebConstants.GP_CR_DEST_URL);
 			Object response = webServiceTemplate.marshalSendAndReceive(url, rootElement, messageCallback);
 			

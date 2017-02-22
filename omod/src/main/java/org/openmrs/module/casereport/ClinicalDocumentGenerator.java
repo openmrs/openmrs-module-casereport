@@ -350,7 +350,7 @@ public final class ClinicalDocumentGenerator {
 			    DocumentConstants.TEXT_DATE_OF_LAST_VISIT);
 			String dateStr = form.getLastVisitDate().getValue().toString();
 			Date visitDate = CaseReportConstants.DATE_FORMATTER.parse(dateStr);
-			entries.add(createObservationEntry(question, DocUtil.createTS(visitDate), dateStr));
+			entries.add(createObservationEntry(question, DocumentUtil.createTS(visitDate), dateStr));
 		}
 		if (form.getMostRecentCd4Count() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithNumericValue(CaseReportConstants.CIEL_CODE_CD4_COUNT,
@@ -537,7 +537,6 @@ public final class ClinicalDocumentGenerator {
 	 * Creates a StructDocElementNode instance for the triggers
 	 *
 	 * @return a StructDocElementNode object
-	 * @throws ParseException
 	 */
 	private StructDocElementNode createTextNodeForTriggers() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
@@ -552,7 +551,6 @@ public final class ClinicalDocumentGenerator {
 	 * Creates a StructDocElementNode instance for the medications
 	 *
 	 * @return a StructDocElementNode object
-	 * @throws ParseException
 	 */
 	private StructDocElementNode createTextNodeForMedications() {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
@@ -567,7 +565,6 @@ public final class ClinicalDocumentGenerator {
 	 * @param parentNode the StructDocElementNode object to add to
 	 * @param itemsToAdd a list of DatedUuidAndValue representations of the values to be added
 	 * @param label the label(prefix) of the child nodes' text contents
-	 * @throws ParseException
 	 */
 	private void addNestedListToRootNode(StructDocElementNode parentNode, String label,
 	                                     List<? extends UuidAndValue> itemsToAdd) {
@@ -637,7 +634,7 @@ public final class ClinicalDocumentGenerator {
 	 * Gets the best code for the sepcified concept, the logic is such that it first looks for the
 	 * CIEL code, the LOINC code, SNOMED concept code otherwise null.
 	 *
-	 * @param concept
+	 * @param concept the concept from which generate the CD
 	 * @return A CD<String> object
 	 */
 	private CD<String> createCD(Concept concept, String originalText) {
@@ -685,7 +682,7 @@ public final class ClinicalDocumentGenerator {
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);
-		observation.setEffectiveTime(DocUtil.createTS(obsdatetime));
+		observation.setEffectiveTime(DocumentUtil.createTS(obsdatetime));
 		return observation;
 	}
 }
