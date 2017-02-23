@@ -70,15 +70,15 @@
     <globalProperty>
         <property>${project.parent.artifactId}.idFormat</property>
         <defaultValue>%2$s^^^&amp;%1$s&amp;ISO</defaultValue>
-        <description>Identifies the string representation of instance identifier from the CDA document.
+        <description>Specifies the format to use for identifiers in the CDA document,
             %1$s = Root (or domain) and %2$s = Extension (or identifier)</description>
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.confidentialityCode</property>
         <defaultValue>N</defaultValue>
         <description>
-            The code specifying the level of confidentiality of the CDA document, allowed values U, L, M, N, R, or V,
-            which stand for Unrestricted, Low, Moderate, Normal, Restricted and Very restricted respectively
+            The code specifying the level of confidentiality of the CDA document, allowed values are N, R, or V,
+            which stand for Normal, Restricted and Very restricted respectively
         </description>
     </globalProperty>
     <globalProperty>
@@ -112,6 +112,10 @@
     <globalProperty>
         <property>${project.parent.artifactId}.practiceSettingDisplayName</property>
         <description>The display name of the practice setting</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.sourceId</property>
+        <description>Identifier of the entity that submits case report documents</description>
     </globalProperty>
 
     <!-- Privileges -->

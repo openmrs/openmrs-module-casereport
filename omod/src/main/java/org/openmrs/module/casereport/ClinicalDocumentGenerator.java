@@ -67,6 +67,7 @@ import org.openmrs.Obs;
 import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -112,7 +113,10 @@ public final class ClinicalDocumentGenerator {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(form.getReportDate());
 		cdaDocument.setEffectiveTime(calendar);
-		cdaDocument.setConfidentialityCode(x_BasicConfidentialityKind.Normal);
+		AdministrationService as = Context.getAdministrationService();
+		String gpValue = as.getGlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE);
+		x_BasicConfidentialityKind confidentiality = convertToBasicConfidentialityKind(gpValue);
+		cdaDocument.setConfidentialityCode(confidentiality);
 		cdaDocument.setLanguageCode(DocumentConstants.LANGUAGE_CODE);
 		cdaDocument.getRecordTarget().add(createRecordTarget());
 		cdaDocument.getAuthor().add(createAuthor());
@@ -122,6 +126,29 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setComponent(comp);
 		
 		return cdaDocument;
+	}
+	
+	/**
+	 * Converts the specified code to an x_BasicConfidentialityKind instance
+	 * 
+	 * @param code the code to convert
+	 * @return an x_BasicConfidentialityKind object
+	 */
+	private x_BasicConfidentialityKind convertToBasicConfidentialityKind(String code) {
+		if (!DocumentUtil.getConfidentialityCodeNameMap().containsKey(code)) {
+			throw new APIException("Unsupported confidentiality code:" + code);
+		}
+		
+		x_BasicConfidentialityKind ret = null;
+		if (DocumentConstants.CONFIDENTIALITY_N.equals(code)) {
+			ret = x_BasicConfidentialityKind.Normal;
+		} else if (DocumentConstants.CONFIDENTIALITY_R.equals(code)) {
+			ret = x_BasicConfidentialityKind.Restricted;
+		} else if (DocumentConstants.CONFIDENTIALITY_V.equals(code)) {
+			ret = x_BasicConfidentialityKind.VeryRestricted;
+		}
+		
+		return ret;
 	}
 	
 	/**

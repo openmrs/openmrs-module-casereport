@@ -11,12 +11,39 @@ package org.openmrs.module.casereport;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.marc.everest.datatypes.NullFlavor;
 import org.marc.everest.datatypes.TS;
 
+/**
+ * Contains utility methods that are used by document generators
+ */
 public class DocumentUtil {
 	
+	private static final HashMap<String, String> codeLocalizedStringMap = new HashMap();
+	
+	static {
+		codeLocalizedStringMap.put(DocumentConstants.CONFIDENTIALITY_N, "Normal");
+		codeLocalizedStringMap.put(DocumentConstants.CONFIDENTIALITY_R, "Restricted");
+		codeLocalizedStringMap.put(DocumentConstants.CONFIDENTIALITY_V, "Very restricted");
+	}
+	
+	/**
+	 * Gets the code and name mapping for confidentiality levels
+	 * 
+	 * @return A map of code and names
+	 */
+	public static HashMap<String, String> getConfidentialityCodeNameMap() {
+		return codeLocalizedStringMap;
+	}
+	
+	/**
+	 * Creates a TS object for the specified date
+	 * 
+	 * @param date the date object
+	 * @return the TS object
+	 */
 	public static TS createTS(Date date) {
 		if (date == null) {
 			TS retVal = new TS();

@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
@@ -62,17 +61,6 @@ public final class ProvideAndRegisterDocGenerator {
 	
 	private CaseReportForm form;
 	
-	private static final HashMap<String, String> codeLocalizedStringMap = new HashMap();
-	
-	static {
-		codeLocalizedStringMap.put("U", "Unrestricted");
-		codeLocalizedStringMap.put("L", "Low");
-		codeLocalizedStringMap.put("M", "Moderate");
-		codeLocalizedStringMap.put("N", "Normal");
-		codeLocalizedStringMap.put("R", "Restricted");
-		codeLocalizedStringMap.put("V", "Very restricted");
-	}
-	
 	/**
 	 * @param form the CaseReportForm from which to generate for a document set request
 	 */
@@ -115,7 +103,8 @@ public final class ProvideAndRegisterDocGenerator {
 		
 		String confidentiality = as.getGlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE);
 		addClassification(extrinsicObj, confidentiality, DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY,
-		    XDSConstants.UUID_XDSDocumentEntry_confidentialityCode, codeLocalizedStringMap.get(confidentiality));
+		    XDSConstants.UUID_XDSDocumentEntry_confidentialityCode,
+		    DocumentUtil.getConfidentialityCodeNameMap().get(confidentiality));
 		
 		String facilityTypeCode = as.getGlobalProperty(DocumentConstants.GP_FACILITY_TYPE_CODE);
 		String facilityTypeCodeScheme = as.getGlobalProperty(DocumentConstants.GP_FACILITY_TYPE_CODING_SCHEME);
@@ -164,8 +153,8 @@ public final class ProvideAndRegisterDocGenerator {
 		addExternalIdentifier(regPackage, subUniqueId, XDSConstants.UUID_XDSSubmissionSet_uniqueId,
 		    DocumentConstants.TEXT_SUBSET_UNIQUE_ID);
 		
-		//TODO use GP for sourceId
-		addExternalIdentifier(regPackage, "1.3.6.1.4.1.21367.2010.1.2", XDSConstants.UUID_XDSSubmissionSet_sourceId,
+		String sourceId = as.getGlobalProperty(DocumentConstants.GP_SOURCE_ID);
+		addExternalIdentifier(regPackage, sourceId, XDSConstants.UUID_XDSSubmissionSet_sourceId,
 		    DocumentConstants.TEXT_SUBSET_SOURCE_ID);
 		
 		addObjectToRequest(registryRequest, regPackage);

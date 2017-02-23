@@ -23,6 +23,12 @@ public final class DocumentConstants {
 	
 	public static final String OID_PREFIX = "2.25.";
 	
+	public static final String CONFIDENTIALITY_N = "N";
+	
+	public static final String CONFIDENTIALITY_R = "R";
+	
+	public static final String CONFIDENTIALITY_V = "V";
+	
 	public static final String PID_3_PATTERN = "PID-3|%s";
 	
 	public static final String PID_5_PATTERN = "PID-5|%s^%s^^^";
@@ -103,6 +109,8 @@ public final class DocumentConstants {
 	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
 	
 	public static final String GP_ID_FORMAT = GP_PREFX + "idFormat";
+	
+	public static final String GP_SOURCE_ID = GP_PREFX + "sourceId";
 	
 	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFX + "confidentialityCode";
 	
