@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 
 public final class DocumentConstants {
 	
-	public static final String GP_PREFX = MODULE_ID + ".";
+	public static final String GP_PREFIX = MODULE_ID + ".";
 	
 	//Formatter used to print dates in text sections that are human readable
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
@@ -98,33 +98,29 @@ public final class DocumentConstants {
 	//TODO we need to assign this a proper code
 	public static final String LOINC_CODE_TYPE_CODE_CR = "*";
 	
-	public static final String LOINC_CODE_CLINICAL_INFO = "55752-0";
-	
-	public static final String LOINC_CODE_MED_INFO = "55753-8";
-	
 	public static final String LOINC_CODE_DIAGNOSTICS = "30954-2";
 	
 	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
 	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
 	
-	public static final String GP_ID_FORMAT = GP_PREFX + "idFormat";
+	public static final String GP_ID_FORMAT = GP_PREFIX + "idFormat";
 	
-	public static final String GP_SOURCE_ID = GP_PREFX + "sourceId";
+	public static final String GP_ORG_ID = GP_PREFIX + "organisationIdentifier";
 	
-	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFX + "confidentialityCode";
+	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFIX + "confidentialityCode";
 	
-	public static final String GP_FACILITY_TYPE_CODE = GP_PREFX + "healthCareFacilityTypeCode";
+	public static final String GP_FACILITY_TYPE_CODE = GP_PREFIX + "healthCareFacilityTypeCode";
 	
-	public static final String GP_FACILITY_TYPE_CODING_SCHEME = GP_PREFX + "healthCareFacilityTypeCodingSystem";
+	public static final String GP_FACILITY_TYPE_CODING_SCHEME = GP_PREFIX + "healthCareFacilityTypeCodingSystem";
 	
-	public static final String GP_FACILITY_TYPE_NAME = GP_PREFX + "healthCareFacilityTypeDisplayName";
+	public static final String GP_FACILITY_TYPE_NAME = GP_PREFIX + "healthCareFacilityTypeDisplayName";
 	
-	public static final String GP_PRACTICE_CODE = GP_PREFX + "practiceSettingCode";
+	public static final String GP_PRACTICE_CODE = GP_PREFIX + "practiceSettingCode";
 	
-	public static final String GP_PRACTICE_CODING_SCHEME = GP_PREFX + "practiceSettingCodingSystem";
+	public static final String GP_PRACTICE_CODING_SCHEME = GP_PREFIX + "practiceSettingCodingSystem";
 	
-	public static final String GP_PRACTICE_NAME = GP_PREFX + "practiceSettingDisplayName";
+	public static final String GP_PRACTICE_NAME = GP_PREFIX + "practiceSettingDisplayName";
 	
 	//This code is actually for a medical summaries, We only used it   
 	//so that the CDA handler can be assigned to it as the handler
@@ -133,10 +129,6 @@ public final class DocumentConstants {
 	public static final String ELEMENT_LIST = "list";
 	
 	public static final String ELEMENT_ITEM = "item";
-	
-	public static final String TEXT_CLINICAL_INFO = "Clinical Information";
-	
-	public static final String TEXT_MED_INFO = "Treatment Information";
 	
 	public static final String TEXT_TRIGGERS = "Trigger(s): ";
 	
@@ -149,6 +141,8 @@ public final class DocumentConstants {
 	public static final String TEXT_TRIGGER = "Trigger";
 	
 	public static final String TEXT_DIAGNOSTICS = "Relevant diagnostic tests and/or laboratory data";
+	
+	public static final String OTHER_TEXT_DIAGNOSTICS = "Other Diagnostic Data: ";
 	
 	public static final String TEXT_WHO_STAGE = "Current HIV WHO Stage: ";
 	

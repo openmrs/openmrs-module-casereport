@@ -101,7 +101,7 @@ public final class ProvideAndRegisterDocGenerator {
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
 		
-		String confidentiality = as.getGlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE);
+		String confidentiality = DocumentUtil.getConfidentialityCode();
 		addClassification(extrinsicObj, confidentiality, DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY,
 		    XDSConstants.UUID_XDSDocumentEntry_confidentialityCode,
 		    DocumentUtil.getConfidentialityCodeNameMap().get(confidentiality));
@@ -153,8 +153,7 @@ public final class ProvideAndRegisterDocGenerator {
 		addExternalIdentifier(regPackage, subUniqueId, XDSConstants.UUID_XDSSubmissionSet_uniqueId,
 		    DocumentConstants.TEXT_SUBSET_UNIQUE_ID);
 		
-		String sourceId = as.getGlobalProperty(DocumentConstants.GP_SOURCE_ID);
-		addExternalIdentifier(regPackage, sourceId, XDSConstants.UUID_XDSSubmissionSet_sourceId,
+		addExternalIdentifier(regPackage, DocumentUtil.getOrganisationOID(), XDSConstants.UUID_XDSSubmissionSet_sourceId,
 		    DocumentConstants.TEXT_SUBSET_SOURCE_ID);
 		
 		addObjectToRequest(registryRequest, regPackage);

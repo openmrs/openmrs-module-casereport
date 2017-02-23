@@ -28,6 +28,7 @@ import org.marc.everest.datatypes.INT;
 import org.marc.everest.datatypes.ON;
 import org.marc.everest.datatypes.PN;
 import org.marc.everest.datatypes.SD;
+import org.marc.everest.datatypes.TS;
 import org.marc.everest.datatypes.doc.StructDocElementNode;
 import org.marc.everest.datatypes.doc.StructDocTextNode;
 import org.marc.everest.datatypes.generic.CD;
@@ -67,7 +68,6 @@ import org.openmrs.Obs;
 import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -107,22 +107,23 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setRealmCode(new SET<>(new CS<>(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
-		cdaDocument.setId(form.getAssigningAuthorityId(), form.getReportUuid());
+		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
 		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR, DocumentConstants.TEXT_DOCUMENT_NAME));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(form.getReportDate());
 		cdaDocument.setEffectiveTime(calendar);
-		AdministrationService as = Context.getAdministrationService();
-		String gpValue = as.getGlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE);
+		String gpValue = DocumentUtil.getConfidentialityCode();
 		x_BasicConfidentialityKind confidentiality = convertToBasicConfidentialityKind(gpValue);
 		cdaDocument.setConfidentialityCode(confidentiality);
 		cdaDocument.setLanguageCode(DocumentConstants.LANGUAGE_CODE);
 		cdaDocument.getRecordTarget().add(createRecordTarget());
 		cdaDocument.getAuthor().add(createAuthor());
 		cdaDocument.setCustodian(createCustodian());
-		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, new StructuredBody());
-		comp.getBodyChoiceIfStructuredBody().setComponent(createComponents());
+		Component3 component3 = new Component3();
+		component3.setSection(createSection());
+		StructuredBody structuredBody = new StructuredBody(component3);
+		Component2 comp = new Component2(ActRelationshipHasComponent.HasComponent, BL.TRUE, structuredBody);
 		cdaDocument.setComponent(comp);
 		
 		return cdaDocument;
@@ -136,7 +137,7 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private x_BasicConfidentialityKind convertToBasicConfidentialityKind(String code) {
 		if (!DocumentUtil.getConfidentialityCodeNameMap().containsKey(code)) {
-			throw new APIException("Unsupported confidentiality code:" + code);
+			throw new APIException("Unsupported confidentiality code: " + code);
 		}
 		
 		x_BasicConfidentialityKind ret = null;
@@ -303,58 +304,13 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates individual Component3 instances i.e for the triggers, medications and any diagnostic
-	 * data if present in the case report form
-	 * 
-	 * @return a list of Component3 objects
-	 * @throws ParseException
-	 */
-	private ArrayList<Component3> createComponents() throws ParseException {
-		//Add the triggers component
-		ArrayList<Component3> components = new ArrayList<>();
-		Section triggersSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_CLINICAL_INFO,
-		    DocumentConstants.TEXT_CLINICAL_INFO);
-		StructDocElementNode triggersTextNode = createTextNodeForTriggers();
-		triggersSection.setText(new SD(triggersTextNode));
-		triggersSection.setEntry(createEntriesForTriggers());
-		Component3 triggersComponent = new Component3();
-		triggersComponent.setSection(triggersSection);
-		components.add(triggersComponent);
-		
-		//Add the ARV medications component
-		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
-			Section medsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_MED_INFO,
-			    DocumentConstants.TEXT_MED_INFO);
-			StructDocElementNode medsTextNode = createTextNodeForMedications();
-			medsSection.setText(new SD(medsTextNode));
-			medsSection.setEntry(createEntriesForMedications());
-			Component3 medsComponent = new Component3();
-			medsComponent.setSection(medsSection);
-			components.add(medsComponent);
-		}
-		
-		//Add other clinical data
-		if (form.containsDiagnosticData()) {
-			Section diagnosticsSection = createSectionWithLoincCode(DocumentConstants.LOINC_CODE_DIAGNOSTICS,
-			    DocumentConstants.TEXT_DIAGNOSTICS);
-			StructDocElementNode diagnosticTextNode = createTextNodeForDiagnostics();
-			diagnosticsSection.setText(new SD(diagnosticTextNode));
-			diagnosticsSection.setEntry(createEntriesForDiagnostics());
-			Component3 diagnosticsComponent = new Component3();
-			diagnosticsComponent.setSection(diagnosticsSection);
-			components.add(diagnosticsComponent);
-		}
-		
-		return components;
-	}
-	
-	/**
 	 * Creates an Entry for each piece of diagnostic data in the case report form
 	 * 
 	 * @return a list of Entry objects
 	 * @throws ParseException
 	 */
 	private ArrayList<Entry> createEntriesForDiagnostics() throws ParseException {
+		
 		ArrayList<Entry> entries = new ArrayList<>();
 		if (form.getCurrentHivWhoStage() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithCodedValue(CaseReportConstants.CIEL_CODE_WHO_STAGE,
@@ -370,9 +326,10 @@ public final class ClinicalDocumentGenerator {
 		if (form.getLastVisitDate() != null) {
 			CD<String> question = createCielCD(CaseReportConstants.CIEL_CODE_DATE_OF_LAST_VISIT,
 			    DocumentConstants.TEXT_DATE_OF_LAST_VISIT);
-			String dateStr = form.getLastVisitDate().getValue().toString();
-			Date visitDate = CaseReportConstants.DATE_FORMATTER.parse(dateStr);
-			entries.add(createObservationEntry(question, DocumentUtil.createTS(visitDate), dateStr));
+			UuidAndValue uValue = form.getLastVisitDate();
+			Date visitDate = CaseReportConstants.DATE_FORMATTER.parse(uValue.getValue().toString());
+			TS visitDateTS = DocumentUtil.createTS(visitDate);
+			entries.add(createObservationEntry(question, visitDateTS, uValue.getValue().toString(), uValue.getUuid()));
 		}
 		if (form.getMostRecentCd4Count() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithNumericValue(CaseReportConstants.CIEL_CODE_CD4_COUNT,
@@ -407,11 +364,12 @@ public final class ClinicalDocumentGenerator {
 	private Entry createEntryFromCielQuestionCodeAndObsWithNumericValue(String cielQuestionCode, String qnText,
 	                                                                    DatedUuidAndValue numericObsValue)
 	    throws ParseException {
+		
 		CD<String> question = createCielCD(cielQuestionCode, qnText);
 		//TODO REAL should be the correct datatype however the shr's cdahandler doesn't support it
 		//but the only numerical concepts are cd4 count and viral load which are always integers anyway
 		return createObservationEntry(question, new INT(Double.valueOf(numericObsValue.getValue().toString()).intValue()),
-		    numericObsValue.getDate());
+		    numericObsValue.getDate(), numericObsValue.getUuid());
 	}
 	
 	/**
@@ -428,6 +386,7 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private Entry createEntryFromCielQuestionCodeAndObsWithCodedValue(String cielQuestionCode, String qnText,
 	                                                                  UuidAndValue codedObsValue) throws ParseException {
+		
 		Obs obs = Context.getObsService().getObsByUuid(codedObsValue.getUuid());
 		if (obs == null) {
 			throw new APIException("Failed to find Obs with uuid:" + codedObsValue.getUuid());
@@ -443,7 +402,7 @@ public final class ClinicalDocumentGenerator {
 		String name = dValue.getValue().toString();
 		
 		return createObservationEntryWithACielQuestionCodeAndCodedValue(cielQuestionCode, qnText, obs.getValueCoded(),
-		    dValue.getDate(), name);
+		    dValue.getDate(), name, codedObsValue.getUuid());
 	}
 	
 	/**
@@ -454,13 +413,16 @@ public final class ClinicalDocumentGenerator {
 	 * @param value the observation's coded value
 	 * @param obsDatetime the date of occurrence of the observation as a string
 	 * @param originalTextValue the serialized text value
+	 * @param uuid the uuid of the object from which the value was generated
 	 * @return an Entry object
 	 * @throws ParseException
-	 * @see #createObservationEntry(CD, ANY, String)
+	 * @see #createObservationEntry(CD, ANY, String, String)
 	 */
 	private Entry createObservationEntryWithACielQuestionCodeAndCodedValue(String cielQuestionCode, String questionText,
 	                                                                       Concept value, String obsDatetime,
-	                                                                       String originalTextValue) throws ParseException {
+	                                                                       String originalTextValue, String uuid)
+	    throws ParseException {
+		
 		CD<String> question = createCielCD(cielQuestionCode, questionText);
 		CD<String> val = createCD(value, originalTextValue);
 		if (val == null) {
@@ -468,7 +430,7 @@ public final class ClinicalDocumentGenerator {
 			        + " to the any of the following sources: CIEL, LOINC and SNOMED CT");
 		}
 		
-		return createObservationEntry(question, val, obsDatetime);
+		return createObservationEntry(question, val, obsDatetime, uuid);
 	}
 	
 	/**
@@ -477,15 +439,20 @@ public final class ClinicalDocumentGenerator {
 	 * @param obsQuestion the CD instance of the observation's question
 	 * @param obsValue the ANY instance of the observation's value
 	 * @param obsDatetime the date of occurrence of the observation as a string
+	 * @param uuid the uuid of the object from which the value was generated
 	 * @return an Entry Object
+	 * @see #createObservation(CD, ANY, Date, ActStatus, String)
 	 * @throws ParseException
 	 */
-	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetime) throws ParseException {
+	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetime, String uuid)
+	    throws ParseException {
+		
 		if (StringUtils.isBlank(obsDatetime)) {
 			throw new APIException("A date is required in order to create an Observation for an entry");
 		}
+		
 		Date obsDate = CaseReportConstants.DATE_FORMATTER.parse(obsDatetime);
-		Observation observation = createObservation(obsQuestion, obsValue, obsDate, ActStatus.Completed);
+		Observation observation = createObservation(obsQuestion, obsValue, obsDate, ActStatus.Completed, uuid);
 		
 		return new Entry(x_ActRelationshipEntry.DRIV, null, observation);
 	}
@@ -497,6 +464,7 @@ public final class ClinicalDocumentGenerator {
 	 * @throws ParseException
 	 */
 	private StructDocElementNode createTextNodeForDiagnostics() throws ParseException {
+		
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		if (form.getCurrentHivWhoStage() != null) {
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_WHO_STAGE
@@ -542,47 +510,43 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates a Section object with its code field set as the LOINC CD object generated from the
-	 * specified code and displayName
+	 * Creates a Section object for the case report form, the section contains all the triggers,
+	 * medications and any diagnostic data
 	 * 
-	 * @param code the section code
-	 * @param displayName the displayName to set
 	 * @return a Section object
+	 * @throws ParseException
 	 */
-	private Section createSectionWithLoincCode(String code, String displayName) {
-		Section section = new Section();
-		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
-		section.setCode(createLoincCE(code, displayName));
-		section.setTitle(displayName);
+	private Section createSection() throws ParseException {
 		
-		return section;
-	}
-	
-	/**
-	 * Creates a StructDocElementNode instance for the triggers
-	 *
-	 * @return a StructDocElementNode object
-	 */
-	private StructDocElementNode createTextNodeForTriggers() {
+		ArrayList<Entry> entries = new ArrayList<>();
+		//Add the triggers and any additional comments from surveillance officer
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_TRIGGERS, form.getTriggers());
 		if (StringUtils.isNotBlank(form.getComments())) {
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_COMMENTS + form.getComments());
 		}
+		entries.addAll(createEntriesForTriggers());
 		
-		return rootListNode;
-	}
-	
-	/**
-	 * Creates a StructDocElementNode instance for the medications
-	 *
-	 * @return a StructDocElementNode object
-	 */
-	private StructDocElementNode createTextNodeForMedications() {
-		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
-		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
+		//Add the ARV medication data
+		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
+			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
+			entries.addAll(createEntriesForMedications());
+		}
 		
-		return rootListNode;
+		//Add other observational data
+		if (form.containsDiagnosticData()) {
+			StructDocTextNode labelNode = new StructDocTextNode(DocumentConstants.OTHER_TEXT_DIAGNOSTICS);
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, createTextNodeForDiagnostics());
+			entries.addAll(createEntriesForDiagnostics());
+		}
+		
+		Section section = new Section();
+		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
+		section.setCode(createLoincCE(DocumentConstants.LOINC_CODE_DIAGNOSTICS, DocumentConstants.TEXT_DIAGNOSTICS));
+		section.setText(new SD(rootListNode));
+		section.setEntry(entries);
+		
+		return section;
 	}
 	
 	/**
@@ -595,6 +559,7 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private void addNestedListToRootNode(StructDocElementNode parentNode, String label,
 	                                     List<? extends UuidAndValue> itemsToAdd) {
+		
 		StructDocElementNode itemList = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		for (UuidAndValue item : itemsToAdd) {
 			itemList.addElement(DocumentConstants.ELEMENT_ITEM, item.getValue().toString());
@@ -610,6 +575,7 @@ public final class ClinicalDocumentGenerator {
 	 * @throws ParseException
 	 */
 	private ArrayList<Entry> createEntriesForTriggers() throws ParseException {
+		
 		ArrayList<Entry> entries = new ArrayList<>(form.getTriggers().size());
 		SchedulerService ss = Context.getSchedulerService();
 		for (DatedUuidAndValue trigger : form.getTriggers()) {
@@ -627,7 +593,7 @@ public final class ClinicalDocumentGenerator {
 			String code = StringUtils.split(conceptMap, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR)[1];
 			CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER, DocumentConstants.TEXT_TRIGGER);
 			CD<String> value = createCielCD(code, concept.getDisplayString());
-			entries.add(createObservationEntry(question, value, trigger.getDate()));
+			entries.add(createObservationEntry(question, value, trigger.getDate(), trigger.getUuid()));
 		}
 		
 		return entries;
@@ -640,6 +606,7 @@ public final class ClinicalDocumentGenerator {
 	 * @throws ParseException
 	 */
 	private ArrayList<Entry> createEntriesForMedications() throws ParseException {
+		
 		ArrayList<Entry> entries = new ArrayList<>(form.getCurrentHivMedications().size());
 		ConceptService cs = Context.getConceptService();
 		for (DatedUuidAndValue med : form.getCurrentHivMedications()) {
@@ -650,7 +617,7 @@ public final class ClinicalDocumentGenerator {
 				        + " was deleted.");
 			}
 			Entry e = createObservationEntryWithACielQuestionCodeAndCodedValue(DocumentConstants.CIEL_CODE_HIV_TREAMENT,
-			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name);
+			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name, med.getUuid());
 			entries.add(e);
 		}
 		
@@ -702,11 +669,17 @@ public final class ClinicalDocumentGenerator {
 	 * @param value the ANY instance of the value
 	 * @param obsdatetime the date of occurrence of the observation
 	 * @param statusCode the ActStatus code
+	 * @param uuid the uuid of the instance from which the value was generated, for instance if the
+	 *            value was generated from a Visit object then it would be the visit's uuid in the
+	 *            database
 	 * @return an Observation object
 	 */
-	private Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime, ActStatus statusCode) {
+	private Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime, ActStatus statusCode,
+	                                      String uuid) {
+		
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
+		observation.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), uuid)));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);
 		observation.setEffectiveTime(DocumentUtil.createTS(obsdatetime));

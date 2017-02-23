@@ -114,8 +114,8 @@
         <description>The display name of the practice setting</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.sourceId</property>
-        <description>Identifier of the entity that submits case report documents</description>
+        <property>${project.parent.artifactId}.organisationIdentifier</property>
+        <description>Identifier of the entity that submits case report documents, MUST be an OID</description>
     </globalProperty>
 
     <!-- Privileges -->
