@@ -425,11 +425,6 @@ public final class ClinicalDocumentGenerator {
 		
 		CD<String> question = createCielCD(cielQuestionCode, questionText);
 		CD<String> val = createCD(value, originalTextValue);
-		if (val == null) {
-			throw new APIException("No valid mapping found for the concept with id " + value.getId()
-			        + " to the any of the following sources: CIEL, LOINC and SNOMED CT");
-		}
-		
 		return createObservationEntry(question, val, obsDatetime, uuid);
 	}
 	
@@ -438,20 +433,19 @@ public final class ClinicalDocumentGenerator {
 	 * 
 	 * @param obsQuestion the CD instance of the observation's question
 	 * @param obsValue the ANY instance of the observation's value
-	 * @param obsDatetime the date of occurrence of the observation as a string
+	 * @param obsDatetimeStr the date of occurrence of the observation as a string
 	 * @param uuid the uuid of the object from which the value was generated
 	 * @return an Entry Object
 	 * @see #createObservation(CD, ANY, Date, ActStatus, String)
 	 * @throws ParseException
 	 */
-	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetime, String uuid)
+	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetimeStr, String uuid)
 	    throws ParseException {
 		
-		if (StringUtils.isBlank(obsDatetime)) {
-			throw new APIException("A date is required in order to create an Observation for an entry");
+		Date obsDate = null;
+		if (StringUtils.isNotBlank(obsDatetimeStr)) {
+			obsDate = CaseReportConstants.DATE_FORMATTER.parse(obsDatetimeStr);
 		}
-		
-		Date obsDate = CaseReportConstants.DATE_FORMATTER.parse(obsDatetime);
 		Observation observation = createObservation(obsQuestion, obsValue, obsDate, ActStatus.Completed, uuid);
 		
 		return new Entry(x_ActRelationshipEntry.DRIV, null, observation);
@@ -475,8 +469,7 @@ public final class ClinicalDocumentGenerator {
 			        + form.getMostRecentArvStopReason().getValue().toString());
 		}
 		if (form.getLastVisitDate() != null) {
-			Date date = CaseReportConstants.DATE_FORMATTER.parse(form.getLastVisitDate().getValue().toString());
-			String dateStr = DocumentConstants.DATE_FORMATTER.format(date);
+			String dateStr = DocumentUtil.getDisplayDate(form.getLastVisitDate().getValue().toString());
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_LAST_VISIT_DATE + dateStr);
 		}
 		if (form.getMostRecentCd4Count() != null) {
@@ -504,8 +497,7 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private void addDatedValueToListNode(StructDocElementNode listNode, DatedUuidAndValue datedValue, String label)
 	    throws ParseException {
-		Date date = CaseReportConstants.DATE_FORMATTER.parse(datedValue.getDate());
-		String dateStr = DocumentConstants.DATE_FORMATTER.format(date);
+		String dateStr = DocumentUtil.getDisplayDate(datedValue.getDate());
 		listNode.addElement(DocumentConstants.ELEMENT_ITEM, label + datedValue.getValue() + " (" + dateStr + ")");
 	}
 	
@@ -527,6 +519,52 @@ public final class ClinicalDocumentGenerator {
 		}
 		entries.addAll(createEntriesForTriggers());
 		
+		//Include death information if the patient is dead
+		if (form.getDead()) {
+			String deathDateStr = null;
+			List<UuidAndValue> deathInfoList = new ArrayList<>();
+			deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_CODE_HEALTH_STATUS + ": "
+			        + DocumentConstants.TEXT_DEAD));
+			
+			if (form.getDeathdate() != null) {
+				deathDateStr = form.getDeathdate();
+			} else {
+				//TODO since the code below really is estimating, it would be nice to send an Obs that says so
+				//CIEL(1544 - Date of death estimated) as the question concept with a value of true
+				//If one of the triggers in the report is Patient Died, default to trigger creation date
+				for (DatedUuidAndValue datedUuidAndValue : form.getTriggers()) {
+					if (CaseReportConstants.TRIGGER_PATIENT_DIED.equals(datedUuidAndValue.getValue().toString())) {
+						deathDateStr = datedUuidAndValue.getDate();
+						break;
+					}
+				}
+				//Otherwise by default the SHR will defoault to date the associated CaseReport object was created
+			}
+			
+			if (deathDateStr != null) {
+				String date = DocumentUtil.getDisplayDate(deathDateStr);
+				deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_DATE_OF_DEATH + date));
+			}
+			
+			CD<String> heathStatusQuestion = createCielCD(DocumentConstants.CIEL_CODE_HEALTH_STATUS,
+			    DocumentConstants.TEXT_CODE_HEALTH_STATUS);
+			CD<String> deadValue = createCielCD(DocumentConstants.CIEL_CODE_DEAD, DocumentConstants.TEXT_DEAD);
+			entries.add(createObservationEntry(heathStatusQuestion, deadValue, deathDateStr, null));
+			
+			if (form.getCauseOfDeath() != null) {
+				String cause = form.getCauseOfDeath().getValue().toString();
+				deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_CAUSE_OF_DEATH + ": " + cause));
+				CD<String> question = createCD(DocumentConstants.LOINC_CODE_CAUSE_OF_DEATH,
+				    DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC,
+				    DocumentConstants.TEXT_CAUSE_OF_DEATH);
+				Concept concept = Context.getConceptService().getConceptByUuid(form.getCauseOfDeath().getUuid());
+				CD<String> value = createCD(concept, cause);
+				entries.add(createObservationEntry(question, value, deathDateStr, form.getCauseOfDeath().getUuid()));
+			}
+			
+			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_DEATH_INFO, deathInfoList);
+		}
+		
 		//Add the ARV medication data
 		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
 			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
@@ -535,7 +573,7 @@ public final class ClinicalDocumentGenerator {
 		
 		//Add other observational data
 		if (form.containsDiagnosticData()) {
-			StructDocTextNode labelNode = new StructDocTextNode(DocumentConstants.OTHER_TEXT_DIAGNOSTICS);
+			StructDocTextNode labelNode = new StructDocTextNode(DocumentConstants.TEXT_OTHER_DIAGNOSTICS);
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, createTextNodeForDiagnostics());
 			entries.addAll(createEntriesForDiagnostics());
 		}
@@ -616,7 +654,7 @@ public final class ClinicalDocumentGenerator {
 				throw new APIException("Cannot find drug with uuid " + med.getUuid() + ", seems like the drug named " + name
 				        + " was deleted.");
 			}
-			Entry e = createObservationEntryWithACielQuestionCodeAndCodedValue(DocumentConstants.CIEL_CODE_HIV_TREAMENT,
+			Entry e = createObservationEntryWithACielQuestionCodeAndCodedValue(CaseReportConstants.CIEL_CODE_CURRENT_ARVS,
 			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name, med.getUuid());
 			entries.add(e);
 		}
@@ -659,7 +697,8 @@ public final class ClinicalDocumentGenerator {
 			return new CD<>(code, codeSystem, codeSystemName, null, concept.getDisplayString(), origText);
 		}
 		
-		return null;
+		throw new APIException("No valid mapping found for the concept with id " + concept.getId()
+		        + " to the any of the following sources: CIEL, LOINC and SNOMED CT");
 	}
 	
 	/**

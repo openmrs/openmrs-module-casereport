@@ -9,6 +9,9 @@
  */
 package org.openmrs.module.casereport;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +24,9 @@ import org.openmrs.api.context.Context;
  * Contains utility methods that are used by document generators
  */
 public class DocumentUtil {
+	
+	//Formatter used to print dates in text sections that are human readable
+	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
 	private static final HashMap<String, String> codeLocalizedStringMap = new HashMap();
 	
@@ -57,6 +63,19 @@ public class DocumentUtil {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return new TS(calendar);
+	}
+	
+	/**
+	 * Reformats the specified serialized date string to a human readable format, assumed the string
+	 * had previously been formatted with CaseReportConstants.DATE_FORMATTER
+	 * 
+	 * @param dateString the date string to format
+	 * @return a human readable date
+	 * @throws ParseException
+	 */
+	public static String getDisplayDate(String dateString) throws ParseException {
+		Date date = CaseReportConstants.DATE_FORMATTER.parse(dateString);
+		return DATE_FORMATTER.format(date);
 	}
 	
 	/**

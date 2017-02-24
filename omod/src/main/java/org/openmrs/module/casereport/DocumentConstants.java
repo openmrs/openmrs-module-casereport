@@ -11,15 +11,9 @@ package org.openmrs.module.casereport;
 
 import static org.openmrs.module.casereport.CaseReportConstants.MODULE_ID;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 public final class DocumentConstants {
 	
 	public static final String GP_PREFIX = MODULE_ID + ".";
-	
-	//Formatter used to print dates in text sections that are human readable
-	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
 	
 	public static final String OID_PREFIX = "2.25.";
 	
@@ -95,6 +89,8 @@ public final class DocumentConstants {
 	
 	public static final String LOINC_CODE_CR = "55751-2";
 	
+	public static final String LOINC_CODE_CAUSE_OF_DEATH = "79378-6";
+	
 	//TODO we need to assign this a proper code
 	public static final String LOINC_CODE_TYPE_CODE_CR = "*";
 	
@@ -102,7 +98,9 @@ public final class DocumentConstants {
 	
 	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
-	public static final String CIEL_CODE_HIV_TREAMENT = "1088";
+	public static final String CIEL_CODE_HEALTH_STATUS = "159640";
+	
+	public static final String CIEL_CODE_DEAD = "160432";
 	
 	public static final String GP_ID_FORMAT = GP_PREFIX + "idFormat";
 	
@@ -132,6 +130,8 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_TRIGGERS = "Trigger(s): ";
 	
+	public static final String TEXT_DEATH_INFO = "Death Information: ";
+	
 	public static final String TEXT_HIV_TREATMENT = "Current antiretroviral drugs used for treatment";
 	
 	public static final String TEXT_ARVS = "Antiretrovirals: ";
@@ -142,7 +142,15 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_DIAGNOSTICS = "Relevant diagnostic tests and/or laboratory data";
 	
-	public static final String OTHER_TEXT_DIAGNOSTICS = "Other Diagnostic Data: ";
+	public static final String TEXT_CODE_HEALTH_STATUS = "Patient health status";
+	
+	public static final String TEXT_DEAD = "Dead";
+	
+	public static final String TEXT_CAUSE_OF_DEATH = "Cause of death";
+	
+	public static final String TEXT_DATE_OF_DEATH = "Date of death: ";
+	
+	public static final String TEXT_OTHER_DIAGNOSTICS = "Other Diagnostic Data: ";
 	
 	public static final String TEXT_WHO_STAGE = "Current HIV WHO Stage: ";
 	

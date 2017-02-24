@@ -18,10 +18,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
@@ -89,6 +93,11 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		Patient patient = caseReport.getPatient();
 		patient.setDead(true);
 		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-03-20T00:00:00.000-0400"));
+		ConceptService cs = Context.getConceptService();
+		Concept causeOfDeath = cs.getConcept(22);
+		causeOfDeath.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(cs
+		        .getConceptSourceByName(CaseReportConstants.SOURCE_CIEL_HL7_CODE), "1067", null), null));
+		patient.setCauseOfDeath(causeOfDeath);
 		CaseReportForm form = new CaseReportForm(caseReport);
 		form.setComments("Testing...");
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));

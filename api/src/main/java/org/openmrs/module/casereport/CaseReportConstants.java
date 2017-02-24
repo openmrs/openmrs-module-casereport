@@ -18,6 +18,8 @@ public class CaseReportConstants {
 	
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	
+	public static final String TRIGGER_PATIENT_DIED = "Patient Died";
+	
 	public static final String TRIGGER_NAME_TASK_PROPERTY = "Trigger Name";
 	
 	public static final String CONCEPT_TASK_PROPERTY = "Concept";
