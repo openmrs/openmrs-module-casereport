@@ -401,8 +401,8 @@ public final class ClinicalDocumentGenerator {
 		}
 		String name = dValue.getValue().toString();
 		
-		return createObservationEntryWithACielQuestionCodeAndCodedValue(cielQuestionCode, qnText, obs.getValueCoded(),
-		    dValue.getDate(), name, codedObsValue.getUuid());
+		return createEntryFromCielQuestionCodeAndCodedValue(cielQuestionCode, qnText, obs.getValueCoded(), dValue.getDate(),
+		    name, codedObsValue.getUuid());
 	}
 	
 	/**
@@ -418,9 +418,8 @@ public final class ClinicalDocumentGenerator {
 	 * @throws ParseException
 	 * @see #createObservationEntry(CD, ANY, String, String)
 	 */
-	private Entry createObservationEntryWithACielQuestionCodeAndCodedValue(String cielQuestionCode, String questionText,
-	                                                                       Concept value, String obsDatetime,
-	                                                                       String originalTextValue, String uuid)
+	private Entry createEntryFromCielQuestionCodeAndCodedValue(String cielQuestionCode, String questionText, Concept value,
+	                                                           String obsDatetime, String originalTextValue, String uuid)
 	    throws ParseException {
 		
 		CD<String> question = createCielCD(cielQuestionCode, questionText);
@@ -461,25 +460,25 @@ public final class ClinicalDocumentGenerator {
 		
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		if (form.getCurrentHivWhoStage() != null) {
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_WHO_STAGE
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_WHO_STAGE
 			        + form.getCurrentHivWhoStage().getValue().toString());
 		}
 		if (form.getMostRecentArvStopReason() != null) {
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_ARV_STOP_REASON
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_ARV_STOP_REASON
 			        + form.getMostRecentArvStopReason().getValue().toString());
 		}
 		if (form.getLastVisitDate() != null) {
 			String dateStr = DocumentUtil.getDisplayDate(form.getLastVisitDate().getValue().toString());
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_LAST_VISIT_DATE + dateStr);
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_LAST_VISIT_DATE + dateStr);
 		}
 		if (form.getMostRecentCd4Count() != null) {
-			addDatedValueToListNode(rootListNode, form.getMostRecentCd4Count(), DocumentConstants.TEXT_CD4_RECENT_COUNT);
+			addDatedValueToListNode(rootListNode, form.getMostRecentCd4Count(), DocumentConstants.LABEL_CD4_RECENT_COUNT);
 		}
 		if (form.getMostRecentHivTest() != null) {
-			addDatedValueToListNode(rootListNode, form.getMostRecentHivTest(), DocumentConstants.TEXT_HIV_RECENT_TEST);
+			addDatedValueToListNode(rootListNode, form.getMostRecentHivTest(), DocumentConstants.LABEL_HIV_RECENT_TEST);
 		}
 		if (form.getMostRecentViralLoad() != null) {
-			addDatedValueToListNode(rootListNode, form.getMostRecentViralLoad(), DocumentConstants.TEXT_RECENT_VIRAL_LOAD);
+			addDatedValueToListNode(rootListNode, form.getMostRecentViralLoad(), DocumentConstants.LABEL_RECENT_VIRAL_LOAD);
 		}
 		
 		return rootListNode;
@@ -513,9 +512,9 @@ public final class ClinicalDocumentGenerator {
 		ArrayList<Entry> entries = new ArrayList<>();
 		//Add the triggers and any additional comments from surveillance officer
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
-		addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_TRIGGERS, form.getTriggers());
+		addNestedListToRootNode(rootListNode, DocumentConstants.LABEL_TRIGGERS, form.getTriggers());
 		if (StringUtils.isNotBlank(form.getComments())) {
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.TEXT_COMMENTS + form.getComments());
+			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_COMMENTS + form.getComments());
 		}
 		entries.addAll(createEntriesForTriggers());
 		
@@ -538,12 +537,13 @@ public final class ClinicalDocumentGenerator {
 						break;
 					}
 				}
-				//Otherwise by default the SHR will defoault to date the associated CaseReport object was created
+				//Otherwise the SHR will default to the date the visit/encounter was  
+				//created which is the CaseReport queue item creation date
 			}
 			
 			if (deathDateStr != null) {
 				String date = DocumentUtil.getDisplayDate(deathDateStr);
-				deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_DATE_OF_DEATH + date));
+				deathInfoList.add(new UuidAndValue(null, DocumentConstants.LABEL_DATE_OF_DEATH + date));
 			}
 			
 			CD<String> heathStatusQuestion = createCielCD(DocumentConstants.CIEL_CODE_HEALTH_STATUS,
@@ -562,18 +562,18 @@ public final class ClinicalDocumentGenerator {
 				entries.add(createObservationEntry(question, value, deathDateStr, form.getCauseOfDeath().getUuid()));
 			}
 			
-			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_DEATH_INFO, deathInfoList);
+			addNestedListToRootNode(rootListNode, DocumentConstants.LABEL_DEATH_INFO, deathInfoList);
 		}
 		
 		//Add the ARV medication data
 		if (CollectionUtils.isNotEmpty(form.getCurrentHivMedications())) {
-			addNestedListToRootNode(rootListNode, DocumentConstants.TEXT_ARVS, form.getCurrentHivMedications());
+			addNestedListToRootNode(rootListNode, DocumentConstants.LABEL_ARVS, form.getCurrentHivMedications());
 			entries.addAll(createEntriesForMedications());
 		}
 		
 		//Add other observational data
 		if (form.containsDiagnosticData()) {
-			StructDocTextNode labelNode = new StructDocTextNode(DocumentConstants.TEXT_OTHER_DIAGNOSTICS);
+			StructDocTextNode labelNode = new StructDocTextNode(DocumentConstants.LABEL_OTHER_DIAGNOSTICS);
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, createTextNodeForDiagnostics());
 			entries.addAll(createEntriesForDiagnostics());
 		}
@@ -654,7 +654,7 @@ public final class ClinicalDocumentGenerator {
 				throw new APIException("Cannot find drug with uuid " + med.getUuid() + ", seems like the drug named " + name
 				        + " was deleted.");
 			}
-			Entry e = createObservationEntryWithACielQuestionCodeAndCodedValue(CaseReportConstants.CIEL_CODE_CURRENT_ARVS,
+			Entry e = createEntryFromCielQuestionCodeAndCodedValue(CaseReportConstants.CIEL_CODE_CURRENT_ARVS,
 			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name, med.getUuid());
 			entries.add(e);
 		}

@@ -128,15 +128,7 @@ public final class DocumentConstants {
 	
 	public static final String ELEMENT_ITEM = "item";
 	
-	public static final String TEXT_TRIGGERS = "Trigger(s): ";
-	
-	public static final String TEXT_DEATH_INFO = "Death Information: ";
-	
 	public static final String TEXT_HIV_TREATMENT = "Current antiretroviral drugs used for treatment";
-	
-	public static final String TEXT_ARVS = "Antiretrovirals: ";
-	
-	public static final String TEXT_COMMENTS = "Comments: ";
 	
 	public static final String TEXT_TRIGGER = "Trigger";
 	
@@ -148,21 +140,29 @@ public final class DocumentConstants {
 	
 	public static final String TEXT_CAUSE_OF_DEATH = "Cause of death";
 	
-	public static final String TEXT_DATE_OF_DEATH = "Date of death: ";
+	public static final String LABEL_ARVS = "Antiretrovirals: ";
 	
-	public static final String TEXT_OTHER_DIAGNOSTICS = "Other Diagnostic Data: ";
+	public static final String LABEL_COMMENTS = "Comments: ";
 	
-	public static final String TEXT_WHO_STAGE = "Current HIV WHO Stage: ";
+	public static final String LABEL_TRIGGERS = "Trigger(s): ";
 	
-	public static final String TEXT_ARV_STOP_REASON = "Most recent ARV stop reason: ";
+	public static final String LABEL_DEATH_INFO = "Death Information: ";
 	
-	public static final String TEXT_LAST_VISIT_DATE = "Date of last patient visit: ";
+	public static final String LABEL_DATE_OF_DEATH = "Date of death: ";
 	
-	public static final String TEXT_CD4_RECENT_COUNT = "Most Recent CD4 Count: ";
+	public static final String LABEL_OTHER_DIAGNOSTICS = "Other Diagnostic Data: ";
 	
-	public static final String TEXT_HIV_RECENT_TEST = "Most Recent HIV Test: ";
+	public static final String LABEL_WHO_STAGE = "Current HIV WHO Stage: ";
 	
-	public static final String TEXT_RECENT_VIRAL_LOAD = "Most Recent Viral Load: ";
+	public static final String LABEL_ARV_STOP_REASON = "Most recent ARV stop reason: ";
+	
+	public static final String LABEL_LAST_VISIT_DATE = "Date of last patient visit: ";
+	
+	public static final String LABEL_CD4_RECENT_COUNT = "Most Recent CD4 Count: ";
+	
+	public static final String LABEL_HIV_RECENT_TEST = "Most Recent HIV Test: ";
+	
+	public static final String LABEL_RECENT_VIRAL_LOAD = "Most Recent Viral Load: ";
 	
 	public static final String TEXT_CURRENT_WHO_STAGE = "Current WHO HIV Stage";
 	

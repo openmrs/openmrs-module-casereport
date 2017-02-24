@@ -66,7 +66,7 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Reformats the specified serialized date string to a human readable format, assumed the string
+	 * Reformats the specified serialized date string to a human readable format, assumes the string
 	 * had previously been formatted with CaseReportConstants.DATE_FORMATTER
 	 * 
 	 * @param dateString the date string to format
