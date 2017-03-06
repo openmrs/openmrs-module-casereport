@@ -64,7 +64,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 				log.debug("Sending Case report document.....");
 			}
 			
-			String url = Context.getAdministrationService().getGlobalProperty(WebConstants.GP_CR_DEST_URL);
+			String url = Context.getAdministrationService().getGlobalProperty(DocumentConstants.GP_OPENHIM_URL);
 			Object response = webServiceTemplate.marshalSendAndReceive(url, rootElement, messageCallback);
 			
 			RegistryResponseType regResp = ((JAXBElement<RegistryResponseType>) response).getValue();
@@ -93,4 +93,5 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			throw new APIException("An error occurred while submitting a case report document to the HIE", e);
 		}
 	}
+	
 }

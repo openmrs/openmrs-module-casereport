@@ -61,7 +61,6 @@
         <dcm4cheeVersion>2.0.6</dcm4cheeVersion>
         <springWsVersion>2.4.0.RELEASE</springWsVersion>
         <javaCompilerVersion>1.7</javaCompilerVersion>
-        <needsToConfigure>NEEDS-TO-CONFIGURE</needsToConfigure>
 	</properties>
 
 	<dependencyManagement>

@@ -52,10 +52,17 @@
         <property name="mtomEnabled" value="false" />
     </bean>
 
+    <bean id="basicAuthInterceptor" class="org.openmrs.module.casereport.AuthenticatingInterceptor" />
+
     <bean id="casereport-webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
         <constructor-arg ref="casereport-messageFactory" />
         <property name="marshaller" ref="casereport-marshaller" />
         <property name="unmarshaller" ref="casereport-marshaller" />
+        <property name="interceptors">
+            <array>
+                <ref bean="basicAuthInterceptor" />
+            </array>
+        </property>
     </bean>
 		
 </beans>

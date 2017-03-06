@@ -63,9 +63,22 @@
 
     <!-- GPs -->
     <globalProperty>
-        <property>${project.parent.artifactId}.destinationUrl</property>
-        <defaultValue>https://${needsToConfigure}:5000/openmrs/ms/xdsrepository</defaultValue>
-        <description>The URL to the server where to send submitted case reports</description>
+        <property>${project.parent.artifactId}.openhimUrl</property>
+        <description>
+            The URL to the OpenHIM server, typically the path should match the URL pattern
+            of the channel for the OpenXDS mediator
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.openhimClientId</property>
+        <description>
+            The OpenHIM client Id, to be set if basic authentication is required, the client must have
+            access to the OpenXDS mediator
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.openhimClientPassword</property>
+        <description>The OpenHIM client password, to be set if basic authentication is required</description>
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.idFormat</property>

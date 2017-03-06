@@ -28,7 +28,7 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 	 * @verifies generate a fhir message message and write it to the output directory
 	 */
 	@Test
-	public void onApplicationEvent_shouldGenerateAFhirMessageMessageAndWriteItToTheOutputDirectory() throws Exception {
+	public void onApplicationEvent_shouldSubmitTheGeneratedCda() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");

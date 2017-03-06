@@ -33,7 +33,6 @@ import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.ClinicalDocumentGenerator;
 import org.openmrs.module.casereport.DocumentConstants;
-import org.openmrs.module.casereport.WebConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
@@ -56,8 +55,9 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		final String implName = "Test_Name";
 		PatientService ps = Context.getPatientService();
 		PatientIdentifierType idType = ps.getPatientIdentifierType(1);
-		idType.setName("1.3.6.1.4.1.21367.2010.1.2.300");
+		idType.setName("1.3.6.1.4.1.21367.2010.1.2.301");
 		ps.savePatientIdentifierType(idType);
+		ps.getPatient(2).getPatientIdentifier().setIdentifier("12345");
 		//set the implementation id for test purposes
 		AdministrationService adminService = Context.getAdministrationService();
 		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">\n"
@@ -66,7 +66,7 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		        + implName + "]]></name>\n" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(WebConstants.GP_CR_DEST_URL, "http://138.197.71.130:5001/openmrs/ms/xdsrepository");
+		gp = new GlobalProperty(DocumentConstants.GP_OPENHIM_URL, "http://:/xdsrepository");
 		adminService.saveGlobalProperty(gp);
 		gp = new GlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE, "N");
 		adminService.saveGlobalProperty(gp);
@@ -86,6 +86,10 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		gp = new GlobalProperty(DocumentConstants.GP_PRACTICE_NAME, "General Medicine");
 		adminService.saveGlobalProperty(gp);
 		gp = new GlobalProperty(DocumentConstants.GP_ORG_ID, "1.3.6.1.4.1.21367.2010.1.2");
+		adminService.saveGlobalProperty(gp);
+		gp = new GlobalProperty(DocumentConstants.GP_OPENHIM_CLIENT_ID, "");
+		adminService.saveGlobalProperty(gp);
+		gp = new GlobalProperty(DocumentConstants.GP_OPENHIM_CLIENT_PASSWORD, "");
 		adminService.saveGlobalProperty(gp);
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
