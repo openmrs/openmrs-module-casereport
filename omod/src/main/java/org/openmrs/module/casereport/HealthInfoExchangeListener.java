@@ -52,6 +52,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 	 */
 	@Override
 	public void onApplicationEvent(CaseReportSubmittedEvent event) {
+		
 		try {
 			CaseReport caseReport = (CaseReport) event.getSource();
 			CaseReportForm form = new ObjectMapper().readValue(caseReport.getReportForm(), CaseReportForm.class);

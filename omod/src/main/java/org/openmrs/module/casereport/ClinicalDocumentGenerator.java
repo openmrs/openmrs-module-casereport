@@ -106,7 +106,8 @@ public final class ClinicalDocumentGenerator {
 		ClinicalDocument cdaDocument = new ClinicalDocument();
 		cdaDocument.setRealmCode(new SET<>(new CS<>(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
-		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_ID_ROOT)));
+		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_IHE_MED_DOC), new II(
+		        DocumentConstants.TEMPLATE_HL7_GENERAL_HEADER)));
 		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
 		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR, DocumentConstants.TEXT_DOCUMENT_NAME));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
@@ -255,6 +256,7 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private Author createAuthor() {
 		Author author = new Author();
+		author.setTime(Calendar.getInstance());
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String systemId = form.getSubmitter().getValue().toString();
 		assignedAuthor.setId(SET.createSET(new II(form.getAssigningAuthorityId(), systemId)));
@@ -329,7 +331,7 @@ public final class ClinicalDocumentGenerator {
 			UuidAndValue uValue = form.getLastVisitDate();
 			Date visitDate = CaseReportConstants.DATE_FORMATTER.parse(uValue.getValue().toString());
 			TS visitDateTS = DocumentUtil.createTS(visitDate);
-			entries.add(createObservationEntry(question, visitDateTS, uValue.getValue().toString(), uValue.getUuid()));
+			entries.add(createObservationEntry(question, visitDateTS, uValue.getValue().toString()));
 		}
 		if (form.getMostRecentCd4Count() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithNumericValue(CaseReportConstants.CIEL_CODE_CD4_COUNT,
@@ -369,7 +371,7 @@ public final class ClinicalDocumentGenerator {
 		//TODO REAL should be the correct datatype however the shr's cdahandler doesn't support it
 		//but the only numerical concepts are cd4 count and viral load which are always integers anyway
 		return createObservationEntry(question, new INT(Double.valueOf(numericObsValue.getValue().toString()).intValue()),
-		    numericObsValue.getDate(), numericObsValue.getUuid());
+		    numericObsValue.getDate());
 	}
 	
 	/**
@@ -402,7 +404,7 @@ public final class ClinicalDocumentGenerator {
 		String name = dValue.getValue().toString();
 		
 		return createEntryFromCielQuestionCodeAndCodedValue(cielQuestionCode, qnText, obs.getValueCoded(), dValue.getDate(),
-		    name, codedObsValue.getUuid());
+		    name);
 	}
 	
 	/**
@@ -413,18 +415,17 @@ public final class ClinicalDocumentGenerator {
 	 * @param value the observation's coded value
 	 * @param obsDatetime the date of occurrence of the observation as a string
 	 * @param originalTextValue the serialized text value
-	 * @param uuid the uuid of the object from which the value was generated
 	 * @return an Entry object
 	 * @throws ParseException
-	 * @see #createObservationEntry(CD, ANY, String, String)
+	 * @see #createObservationEntry(CD, ANY, String)
 	 */
 	private Entry createEntryFromCielQuestionCodeAndCodedValue(String cielQuestionCode, String questionText, Concept value,
-	                                                           String obsDatetime, String originalTextValue, String uuid)
+	                                                           String obsDatetime, String originalTextValue)
 	    throws ParseException {
 		
 		CD<String> question = createCielCD(cielQuestionCode, questionText);
 		CD<String> val = createCD(value, originalTextValue);
-		return createObservationEntry(question, val, obsDatetime, uuid);
+		return createObservationEntry(question, val, obsDatetime);
 	}
 	
 	/**
@@ -433,19 +434,17 @@ public final class ClinicalDocumentGenerator {
 	 * @param obsQuestion the CD instance of the observation's question
 	 * @param obsValue the ANY instance of the observation's value
 	 * @param obsDatetimeStr the date of occurrence of the observation as a string
-	 * @param uuid the uuid of the object from which the value was generated
 	 * @return an Entry Object
-	 * @see #createObservation(CD, ANY, Date, ActStatus, String)
+	 * @see #createObservation(CD, ANY, Date, ActStatus)
 	 * @throws ParseException
 	 */
-	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetimeStr, String uuid)
-	    throws ParseException {
+	private Entry createObservationEntry(CD<String> obsQuestion, ANY obsValue, String obsDatetimeStr) throws ParseException {
 		
 		Date obsDate = null;
 		if (StringUtils.isNotBlank(obsDatetimeStr)) {
 			obsDate = CaseReportConstants.DATE_FORMATTER.parse(obsDatetimeStr);
 		}
-		Observation observation = createObservation(obsQuestion, obsValue, obsDate, ActStatus.Completed, uuid);
+		Observation observation = createObservation(obsQuestion, obsValue, obsDate, ActStatus.Completed);
 		
 		return new Entry(x_ActRelationshipEntry.DRIV, null, observation);
 	}
@@ -549,7 +548,7 @@ public final class ClinicalDocumentGenerator {
 			CD<String> heathStatusQuestion = createCielCD(DocumentConstants.CIEL_CODE_HEALTH_STATUS,
 			    DocumentConstants.TEXT_CODE_HEALTH_STATUS);
 			CD<String> deadValue = createCielCD(DocumentConstants.CIEL_CODE_DEAD, DocumentConstants.TEXT_DEAD);
-			entries.add(createObservationEntry(heathStatusQuestion, deadValue, deathDateStr, null));
+			entries.add(createObservationEntry(heathStatusQuestion, deadValue, deathDateStr));
 			
 			if (form.getCauseOfDeath() != null) {
 				String cause = form.getCauseOfDeath().getValue().toString();
@@ -559,7 +558,7 @@ public final class ClinicalDocumentGenerator {
 				    DocumentConstants.TEXT_CAUSE_OF_DEATH);
 				Concept concept = Context.getConceptService().getConceptByUuid(form.getCauseOfDeath().getUuid());
 				CD<String> value = createCD(concept, cause);
-				entries.add(createObservationEntry(question, value, deathDateStr, form.getCauseOfDeath().getUuid()));
+				entries.add(createObservationEntry(question, value, deathDateStr));
 			}
 			
 			addNestedListToRootNode(rootListNode, DocumentConstants.LABEL_DEATH_INFO, deathInfoList);
@@ -631,7 +630,7 @@ public final class ClinicalDocumentGenerator {
 			String code = StringUtils.split(conceptMap, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR)[1];
 			CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER, DocumentConstants.TEXT_TRIGGER);
 			CD<String> value = createCielCD(code, concept.getDisplayString());
-			entries.add(createObservationEntry(question, value, trigger.getDate(), trigger.getUuid()));
+			entries.add(createObservationEntry(question, value, trigger.getDate()));
 		}
 		
 		return entries;
@@ -655,7 +654,7 @@ public final class ClinicalDocumentGenerator {
 				        + " was deleted.");
 			}
 			Entry e = createEntryFromCielQuestionCodeAndCodedValue(CaseReportConstants.CIEL_CODE_CURRENT_ARVS,
-			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name, med.getUuid());
+			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name);
 			entries.add(e);
 		}
 		
@@ -708,17 +707,14 @@ public final class ClinicalDocumentGenerator {
 	 * @param value the ANY instance of the value
 	 * @param obsdatetime the date of occurrence of the observation
 	 * @param statusCode the ActStatus code
-	 * @param uuid the uuid of the instance from which the value was generated, for instance if the
-	 *            value was generated from a Visit object then it would be the visit's uuid in the
-	 *            database
 	 * @return an Observation object
 	 */
-	private Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime, ActStatus statusCode,
-	                                      String uuid) {
+	private Observation createObservation(CD<String> questionConcept, ANY value, Date obsdatetime, ActStatus statusCode) {
 		
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
-		observation.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), uuid)));
+		observation.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), new Long(System.currentTimeMillis())
+		        .toString())));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);
 		observation.setEffectiveTime(DocumentUtil.createTS(obsdatetime));

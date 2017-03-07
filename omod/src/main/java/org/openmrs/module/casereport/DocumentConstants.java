@@ -61,7 +61,9 @@ public final class DocumentConstants {
 	
 	//This template id ensures this document is processed by the 
 	//MedicalDocumentsDocumentProcessor in the shr-cdahandler module
-	public static final String TEMPLATE_ID_ROOT = "1.3.6.1.4.1.19376.1.5.3.1.1.1";
+	public static final String TEMPLATE_IHE_MED_DOC = "1.3.6.1.4.1.19376.1.5.3.1.1.1";
+	
+	public static final String TEMPLATE_HL7_GENERAL_HEADER = "2.16.840.1.113883.10.20.3";
 	
 	//This template id ensures this obs entries are processed by the
 	//CodedResultsSectionProcessor in the shr-cdahandler module
