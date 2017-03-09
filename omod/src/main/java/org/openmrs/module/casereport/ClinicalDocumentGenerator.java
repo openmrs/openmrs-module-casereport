@@ -66,7 +66,7 @@ import org.openmrs.ConceptMap;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.PersonName;
-import org.openmrs.User;
+import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
@@ -258,10 +258,25 @@ public final class ClinicalDocumentGenerator {
 		Author author = new Author();
 		author.setTime(Calendar.getInstance());
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
-		String systemId = form.getSubmitter().getValue().toString();
-		assignedAuthor.setId(SET.createSET(new II(form.getAssigningAuthorityId(), systemId)));
-		User user = Context.getUserService().getUserByUsername(systemId);
-		Person person = createPerson(user.getPersonName());
+		String identifier = form.getSubmitter().getValue().toString();
+		assignedAuthor.setId(SET.createSET(new II(form.getAssigningAuthorityId(), identifier)));
+		Provider provider = Context.getProviderService().getProviderByIdentifier(identifier);
+		PersonName personName = provider.getPerson().getPersonName();
+		if (personName == null) {
+			String[] names = StringUtils.split(provider.getName().trim());
+			String firstName = names[0];
+			String middleName = null;
+			String familyName;
+			if (names.length > 2) {
+				middleName = names[1];
+				familyName = names[2];
+			} else {
+				familyName = names[1];
+			}
+			personName = new PersonName(firstName, middleName, familyName);
+		}
+		
+		Person person = createPerson(personName);
 		assignedAuthor.setAssignedAuthorChoice(person);
 		assignedAuthor.setRepresentedOrganization(createOrganization(form.getAssigningAuthorityId(),
 		    form.getAssigningAuthorityName()));

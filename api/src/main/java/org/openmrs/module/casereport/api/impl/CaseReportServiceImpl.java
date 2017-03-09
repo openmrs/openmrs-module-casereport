@@ -25,6 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
 import org.openmrs.ImplementationId;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
@@ -225,7 +226,20 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (form.getSubmitter() == null || form.getSubmitter().getValue() == null
 		        || StringUtils.isBlank(form.getSubmitter().getValue().toString())) {
 			User user = Context.getAuthenticatedUser();
-			form.setSubmitter(new UuidAndValue(user.getUuid(), user.getSystemId()));
+			Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(user.getPerson(), false);
+			if (providers.isEmpty()) {
+				throw new APIException("A user needs to have a provider account to be able to submit case reports");
+			}
+			Provider provider = providers.iterator().next();
+			if (StringUtils.isBlank(provider.getIdentifier())) {
+				throw new APIException("A provider account of a case report submitter needs to have an identifier");
+			} else if (provider.getPerson() == null) {
+				if (provider.getName() == null || StringUtils.split(provider.getName().trim()).length < 2) {
+					throw new APIException("A provider account of a case report submitter has to be linked to a "
+					        + "person or should have a name with at list 2 name fields provided");
+				}
+			}
+			form.setSubmitter(new UuidAndValue(provider.getUuid(), provider.getIdentifier()));
 			requireImplementationId = true;
 		}
 		

@@ -112,6 +112,8 @@ public final class DocumentConstants {
 	
 	public static final String GP_ID_FORMAT = GP_PREFIX + "idFormat";
 	
+	public static final String GP_PROV_ID_FORMAT = GP_PREFIX + "providerIdFormat";
+	
 	public static final String GP_ORG_ID = GP_PREFIX + "organisationIdentifier";
 	
 	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFIX + "confidentialityCode";

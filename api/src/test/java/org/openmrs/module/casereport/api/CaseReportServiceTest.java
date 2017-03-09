@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
@@ -314,7 +315,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		service.submitCaseReport(cr);
 		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
 		assertEquals(implId, savedForm.getAssigningAuthorityId());
-		assertEquals(Context.getAuthenticatedUser().getUuid(), savedForm.getSubmitter().getUuid());
+		Provider provider = Context.getProviderService()
+		        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next();
+		assertEquals(provider.getUuid(), savedForm.getSubmitter().getUuid());
 	}
 	
 	/**
@@ -346,8 +349,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		service.submitCaseReport(cr);
 		assertTrue(cr.isSubmitted());
 		form = new ObjectMapper().readValue(cr.getReportForm(), CaseReportForm.class);
-		assertEquals(Context.getAuthenticatedUser().getUuid(), form.getSubmitter().getUuid());
-		assertEquals(Context.getAuthenticatedUser().getSystemId(), form.getSubmitter().getValue());
+		Provider provider = Context.getProviderService()
+		        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next();
+		assertEquals(provider.getUuid(), form.getSubmitter().getUuid());
+		assertEquals(provider.getIdentifier(), form.getSubmitter().getValue());
 		assertEquals(implId, form.getAssigningAuthorityId());
 		assertEquals(implName, form.getAssigningAuthorityName());
 	}

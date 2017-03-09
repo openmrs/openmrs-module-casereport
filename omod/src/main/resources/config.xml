@@ -83,8 +83,14 @@
     <globalProperty>
         <property>${project.parent.artifactId}.idFormat</property>
         <defaultValue>%2$s^^^&amp;%1$s&amp;ISO</defaultValue>
-        <description>Specifies the format to use for identifiers in the CDA document,
-            %1$s = Root (or domain) and %2$s = Extension (or identifier)</description>
+        <description>Specifies the format to use for identifiers in the CDA document, %1$s = Root (or domain)
+            and %2$s = Extension (or identifier), should match the one in the Client Registry</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.providerIdFormat</property>
+        <defaultValue>%2$s^^^^^^^^&amp;%1$s&amp;ISO</defaultValue>
+        <description>Specifies the format to use for author identifiers in the CDA document, %1$s = Root (or domain)
+            and %2$s = Extension (or identifier), should match the one in the Provider Registry</description>
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.confidentialityCode</property>

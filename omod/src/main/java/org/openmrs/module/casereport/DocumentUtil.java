@@ -79,7 +79,7 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the DocumentConstants.GP_ORG_ID global property
+	 * Gets the value of the organisation oid global property
 	 *
 	 * @return the organisation's OID
 	 */
@@ -88,12 +88,30 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the DocumentConstants.GP_CONFIDENTIALITY_CODE global property
+	 * Gets the value of the confidentiality code global property
 	 *
 	 * @return the confidentiality code
 	 */
 	public static String getConfidentialityCode() {
 		return getGlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE);
+	}
+	
+	/**
+	 * Gets the value of the id format format global property
+	 * 
+	 * @return the id format
+	 */
+	public static String getIdFormat() {
+		return getGlobalProperty(DocumentConstants.GP_ID_FORMAT);
+	}
+	
+	/**
+	 * Gets the value of the provider id format global property
+	 *
+	 * @return the id format
+	 */
+	public static String getProviderIdFormat() {
+		return getGlobalProperty(DocumentConstants.GP_PROV_ID_FORMAT);
 	}
 	
 	/**

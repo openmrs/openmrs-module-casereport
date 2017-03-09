@@ -95,9 +95,19 @@ public final class ProvideAndRegisterDocGenerator {
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_CREATION_TIME, reportDate);
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_LANGUAGE_CODE, DocumentConstants.LANGUAGE_CODE);
 		AdministrationService as = Context.getAdministrationService();
-		String patientId = String.format(as.getGlobalProperty(DocumentConstants.GP_ID_FORMAT), form.getIdentifierType()
-		        .getValue().toString(), form.getPatientIdentifier().getValue().toString());
+		String patientId = String.format(DocumentUtil.getIdFormat(), form.getIdentifierType().getValue().toString(), form
+		        .getPatientIdentifier().getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
+		
+		String authorId = String.format(DocumentUtil.getProviderIdFormat(), DocumentUtil.getOrganisationOID(), form
+		        .getSubmitter().getValue().toString());
+		ClassificationType authorClassification = new ClassificationType();
+		authorClassification.setId("id_" + idCounter++);
+		authorClassification.setClassifiedObject(extrinsicObj.getId());
+		authorClassification.setClassificationScheme(XDSConstants.UUID_XDSDocumentEntry_author);
+		authorClassification.setNodeRepresentation("");
+		InfosetUtil.addOrOverwriteSlot(authorClassification, XDSConstants.SLOT_NAME_AUTHOR_PERSON, authorId);
+		extrinsicObj.getClassification().add(authorClassification);
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
 		
