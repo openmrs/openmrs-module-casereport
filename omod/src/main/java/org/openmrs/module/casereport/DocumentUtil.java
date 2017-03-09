@@ -106,15 +106,6 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the provider id format global property
-	 *
-	 * @return the id format
-	 */
-	public static String getProviderIdFormat() {
-		return getGlobalProperty(DocumentConstants.GP_PROV_ID_FORMAT);
-	}
-	
-	/**
 	 * Convenience method that gets the value of the specified global property name
 	 * 
 	 * @param propertyName the global property name
