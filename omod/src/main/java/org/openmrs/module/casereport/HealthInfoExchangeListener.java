@@ -67,14 +67,14 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			
 			String url = Context.getAdministrationService().getGlobalProperty(DocumentConstants.GP_OPENHIM_URL);
 			Object response = webServiceTemplate.marshalSendAndReceive(url, rootElement, messageCallback);
-			
+			String lf = System.getProperty("line.separator");
 			RegistryResponseType regResp = ((JAXBElement<RegistryResponseType>) response).getValue();
 			if (!XDSConstants.XDS_B_STATUS_SUCCESS.equals(regResp.getStatus())) {
-				log.error("The case report was submitted but an error occurred on the remote server, "
-				        + "see below for more details.");
+				StringBuffer sb = new StringBuffer();
 				if (regResp.getRegistryErrorList() != null && regResp.getRegistryErrorList().getRegistryError() != null) {
 					for (RegistryError re : regResp.getRegistryErrorList().getRegistryError()) {
-						log.error("Case report submission failed with Severity: "
+						sb.append(lf
+						        + "Severity: "
 						        + (StringUtils.isNotBlank(re.getSeverity()) ? re.getSeverity().substring(
 						            re.getSeverity().lastIndexOf(":") + 1) : "?") + ", Code: "
 						        + (StringUtils.isNotBlank(re.getErrorCode()) ? re.getErrorCode() : "?") + ", Message: "
@@ -82,7 +82,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 					}
 				}
 				
-				return;
+				throw new APIException(sb.toString());
 			}
 			
 			if (log.isDebugEnabled()) {

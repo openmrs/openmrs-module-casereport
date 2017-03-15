@@ -63,21 +63,22 @@
 
     <!-- GPs -->
     <globalProperty>
-        <property>${project.parent.artifactId}.openhimUrl</property>
+        <property>${project.parent.artifactId}.openHIMUrl</property>
+        <defaultValue>http://openhim_server_ip:port/xdsrepository</defaultValue>
         <description>
             The URL to the OpenHIM server, typically the path should match the URL pattern
             of the channel for the OpenXDS mediator
         </description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.openhimClientId</property>
+        <property>${project.parent.artifactId}.openHIMClientId</property>
         <description>
             The OpenHIM client Id, to be set if basic authentication is required, the client must have
             access to the OpenXDS mediator
         </description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.openhimClientPassword</property>
+        <property>${project.parent.artifactId}.openHIMClientPassword</property>
         <description>The OpenHIM client password, to be set if basic authentication is required</description>
     </globalProperty>
     <globalProperty>

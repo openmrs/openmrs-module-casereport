@@ -15,11 +15,11 @@ public final class DocumentConstants {
 	
 	public static final String GP_PREFIX = MODULE_ID + ".";
 	
-	public static final String GP_OPENHIM_URL = MODULE_ID + ".openhimUrl";
+	public static final String GP_OPENHIM_URL = MODULE_ID + ".openHIMUrl";
 	
-	public static final String GP_OPENHIM_CLIENT_ID = MODULE_ID + ".openhimClientId";
+	public static final String GP_OPENHIM_CLIENT_ID = MODULE_ID + ".openHIMClientId";
 	
-	public static final String GP_OPENHIM_CLIENT_PASSWORD = MODULE_ID + ".openhimClientPassword";
+	public static final String GP_OPENHIM_CLIENT_PASSWORD = MODULE_ID + ".openHIMClientPassword";
 	
 	public static final String OID_PREFIX = "2.25.";
 	
