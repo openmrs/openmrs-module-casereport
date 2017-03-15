@@ -99,6 +99,15 @@ public final class ProvideAndRegisterDocGenerator {
 		        .getPatientIdentifier().getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		
+		String authorId = String.format(DocumentUtil.getProviderIdFormat(), DocumentUtil.getOrganisationOID(), form
+		        .getSubmitter().getValue().toString());
+		ClassificationType authorClassification = new ClassificationType();
+		authorClassification.setId("id_" + idCounter++);
+		authorClassification.setClassifiedObject(extrinsicObj.getId());
+		authorClassification.setClassificationScheme(XDSConstants.UUID_XDSDocumentEntry_author);
+		authorClassification.setNodeRepresentation("");
+		InfosetUtil.addOrOverwriteSlot(authorClassification, XDSConstants.SLOT_NAME_AUTHOR_PERSON, authorId);
+		extrinsicObj.getClassification().add(authorClassification);
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
 		
