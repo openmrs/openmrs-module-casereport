@@ -107,7 +107,7 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_IHE_MED_DOC), new II(
 		        DocumentConstants.TEMPLATE_HL7_GENERAL_HEADER)));
-		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
+		cdaDocument.setId(form.getAssigningAuthorityId(), form.getReportUuid());
 		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR, DocumentConstants.TEXT_DOCUMENT_NAME));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
@@ -713,7 +713,7 @@ public final class ClinicalDocumentGenerator {
 		
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
-		observation.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), new Long(System.currentTimeMillis())
+		observation.setId(SET.createSET(new II(form.getAssigningAuthorityId(), new Long(System.currentTimeMillis())
 		        .toString())));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);

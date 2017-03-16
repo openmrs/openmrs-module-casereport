@@ -14,7 +14,10 @@ import static org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequest
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
@@ -42,6 +45,7 @@ import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
 import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
 import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.marc.everest.rmim.uv.cdar2.vocabulary.AdministrativeGender;
 import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
@@ -100,9 +104,12 @@ public final class ProvideAndRegisterDocGenerator {
 		        .getPatientIdentifier().getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		
+		String[] sourcePatientInfo = createPatientInfo(patientId);
+		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_INFO, sourcePatientInfo);
+		
 		String providerId = form.getSubmitter().getValue().toString();
 		PersonName personName = DocumentUtil.getPersonNameForProvider(providerId);
-		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, DocumentUtil.getOrganisationOID(),
+		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, form.getAssigningAuthorityId(),
 		    personName.getGivenName(), personName.getFamilyName(), providerId);
 		ClassificationType authorClassification = new ClassificationType();
 		authorClassification.setId(DocumentConstants.DOC_ID_PREFIX + idCounter++);
@@ -208,6 +215,51 @@ public final class ProvideAndRegisterDocGenerator {
 		docRequest.getDocument().add(document);
 		
 		return docRequest;
+	}
+	
+	/**
+	 * Creates the source patient info that goes in the sourcePatientInfo slot of the provide and
+	 * register request
+	 * 
+	 * @param patientId the patient Id
+	 * @return an array of the patient info
+	 * @throws ParseException
+	 */
+	private String[] createPatientInfo(String patientId) throws ParseException {
+		List<String> patientInfoList = new ArrayList<>(4);
+		patientInfoList.add(String.format(DocumentConstants.PID_3_PATTERN, patientId));
+		String gName = "";
+		String fName = "";
+		String mName = "";
+		if (form.getGivenName() != null) {
+			gName = form.getGivenName();
+		}
+		if (form.getFamilyName() != null) {
+			fName = form.getFamilyName();
+		}
+		if (form.getMiddleName() != null) {
+			mName = form.getMiddleName();
+		}
+		patientInfoList.add(String.format(DocumentConstants.PID_5_PATTERN, fName, gName, mName));
+		if (form.getBirthdate() != null) {
+			Date bDate = CaseReportConstants.DATE_FORMATTER.parse(form.getBirthdate());
+			patientInfoList.add(String.format(DocumentConstants.PID_7_PATTERN, DocumentUtil.createTS(bDate)));
+		}
+		AdministrativeGender gender = AdministrativeGender.Undifferentiated;
+		if ("M".equals(form.getGender())) {
+			gender = AdministrativeGender.Male;
+		} else if ("F".equals(form.getGender())) {
+			gender = AdministrativeGender.Female;
+		}
+		patientInfoList.add(String.format(DocumentConstants.PID_8_PATTERN, gender));
+		String[] patientInfo = new String[patientInfoList.size()];
+		int index = 0;
+		for (String s : patientInfoList) {
+			patientInfo[index] = s;
+			index++;
+		}
+		
+		return patientInfo;
 	}
 	
 	/**

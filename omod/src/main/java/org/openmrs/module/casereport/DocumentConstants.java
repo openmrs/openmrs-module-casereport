@@ -31,7 +31,7 @@ public final class DocumentConstants {
 	
 	public static final String PID_3_PATTERN = "PID-3|%s";
 	
-	public static final String PID_5_PATTERN = "PID-5|%s^%s^^^";
+	public static final String PID_5_PATTERN = "PID-5|%s^%s^%s^^";
 	
 	public static final String PID_7_PATTERN = "PID-7|%s";
 	
