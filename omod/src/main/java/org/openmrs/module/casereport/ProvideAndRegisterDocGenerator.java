@@ -42,6 +42,7 @@ import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
 import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
 import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.openmrs.PersonName;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -99,15 +100,18 @@ public final class ProvideAndRegisterDocGenerator {
 		        .getPatientIdentifier().getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		
-		String authorId = String.format(DocumentUtil.getProviderIdFormat(), DocumentUtil.getOrganisationOID(), form
-		        .getSubmitter().getValue().toString());
+		String providerId = form.getSubmitter().getValue().toString();
+		PersonName personName = DocumentUtil.getPersonNameForProvider(providerId);
+		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, DocumentUtil.getOrganisationOID(),
+		    personName.getGivenName(), personName.getFamilyName(), providerId);
 		ClassificationType authorClassification = new ClassificationType();
-		authorClassification.setId("id_" + idCounter++);
+		authorClassification.setId(DocumentConstants.DOC_ID_PREFIX + idCounter++);
 		authorClassification.setClassifiedObject(extrinsicObj.getId());
 		authorClassification.setClassificationScheme(XDSConstants.UUID_XDSDocumentEntry_author);
 		authorClassification.setNodeRepresentation("");
 		InfosetUtil.addOrOverwriteSlot(authorClassification, XDSConstants.SLOT_NAME_AUTHOR_PERSON, authorId);
 		extrinsicObj.getClassification().add(authorClassification);
+		
 		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
 		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
 		
@@ -245,7 +249,7 @@ public final class ProvideAndRegisterDocGenerator {
 	private void addClassification(RegistryObjectType classifiedObj, String code, String codeSystem, String scheme,
 	                               String localizedString) throws JAXBException {
 		ClassificationType classification = new ClassificationType();
-		classification.setId("id_" + idCounter++);
+		classification.setId(DocumentConstants.DOC_ID_PREFIX + idCounter++);
 		classification.setClassifiedObject(classifiedObj.getId());
 		classification.setClassificationScheme(scheme);
 		classification.setNodeRepresentation(code);
@@ -269,7 +273,7 @@ public final class ProvideAndRegisterDocGenerator {
 		
 		ExternalIdentifierType extId = new ExternalIdentifierType();
 		extId.setRegistryObject(classifiedObj.getId());
-		extId.setId("id_" + idCounter++);
+		extId.setId(DocumentConstants.DOC_ID_PREFIX + idCounter++);
 		extId.setValue(value);
 		extId.setIdentificationScheme(scheme);
 		if (StringUtils.isNotBlank(localizedString)) {

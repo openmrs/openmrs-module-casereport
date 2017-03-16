@@ -16,8 +16,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.marc.everest.datatypes.NullFlavor;
 import org.marc.everest.datatypes.TS;
+import org.openmrs.PersonName;
+import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 
 /**
@@ -106,15 +109,6 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the provider id format global property
-	 *
-	 * @return the id format
-	 */
-	public static String getProviderIdFormat() {
-		return getGlobalProperty(DocumentConstants.GP_PROV_ID_FORMAT);
-	}
-	
-	/**
 	 * Convenience method that gets the value of the specified global property name
 	 * 
 	 * @param propertyName the global property name
@@ -122,5 +116,30 @@ public class DocumentUtil {
 	 */
 	private static String getGlobalProperty(String propertyName) {
 		return Context.getAdministrationService().getGlobalProperty(propertyName);
+	}
+	
+	/**
+	 * Gets the PersonName of the provider with the specified identifier
+	 * 
+	 * @param providerIdentifier the provider identifier to match against
+	 * @return the PersonName of the provider
+	 */
+	public static PersonName getPersonNameForProvider(String providerIdentifier) {
+		Provider provider = Context.getProviderService().getProviderByIdentifier(providerIdentifier);
+		PersonName personName = provider.getPerson().getPersonName();
+		if (personName == null) {
+			String[] names = StringUtils.split(provider.getName().trim());
+			String firstName = names[0];
+			String middleName = null;
+			String familyName;
+			if (names.length > 2) {
+				middleName = names[1];
+				familyName = names[2];
+			} else {
+				familyName = names[1];
+			}
+			personName = new PersonName(firstName, middleName, familyName);
+		}
+		return personName;
 	}
 }

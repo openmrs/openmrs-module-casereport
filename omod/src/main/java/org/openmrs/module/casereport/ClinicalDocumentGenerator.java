@@ -66,7 +66,6 @@ import org.openmrs.ConceptMap;
 import org.openmrs.Drug;
 import org.openmrs.Obs;
 import org.openmrs.PersonName;
-import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
@@ -242,7 +241,7 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private Organization createOrganization(String id, String name) {
 		Organization org = new Organization();
-		org.setId(SET.createSET(new II(id)));
+		org.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), id)));
 		org.setName(SET.createSET(new ON()));
 		org.getName().get(0).getParts().add(new ENXP(name));
 		
@@ -260,22 +259,7 @@ public final class ClinicalDocumentGenerator {
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String identifier = form.getSubmitter().getValue().toString();
 		assignedAuthor.setId(SET.createSET(new II(form.getAssigningAuthorityId(), identifier)));
-		Provider provider = Context.getProviderService().getProviderByIdentifier(identifier);
-		PersonName personName = provider.getPerson().getPersonName();
-		if (personName == null) {
-			String[] names = StringUtils.split(provider.getName().trim());
-			String firstName = names[0];
-			String middleName = null;
-			String familyName;
-			if (names.length > 2) {
-				middleName = names[1];
-				familyName = names[2];
-			} else {
-				familyName = names[1];
-			}
-			personName = new PersonName(firstName, middleName, familyName);
-		}
-		
+		PersonName personName = DocumentUtil.getPersonNameForProvider(identifier);
 		Person person = createPerson(personName);
 		assignedAuthor.setAssignedAuthorChoice(person);
 		assignedAuthor.setRepresentedOrganization(createOrganization(form.getAssigningAuthorityId(),
@@ -312,7 +296,8 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private Custodian createCustodian() {
 		CustodianOrganization custodianOrganization = new CustodianOrganization();
-		custodianOrganization.setId(SET.createSET(new II(form.getAssigningAuthorityId())));
+		custodianOrganization
+		        .setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), form.getAssigningAuthorityId())));
 		custodianOrganization.setName(new ON());
 		custodianOrganization.getName().getParts().add(new ENXP(form.getAssigningAuthorityName()));
 		AssignedCustodian assignedCustodian = new AssignedCustodian(custodianOrganization);

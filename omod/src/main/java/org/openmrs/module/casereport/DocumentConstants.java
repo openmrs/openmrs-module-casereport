@@ -110,9 +110,11 @@ public final class DocumentConstants {
 	
 	public static final String CIEL_CODE_DEAD = "160432";
 	
-	public static final String GP_ID_FORMAT = GP_PREFIX + "idFormat";
+	public static final String DOC_ID_PREFIX = "id_";
 	
-	public static final String GP_PROV_ID_FORMAT = GP_PREFIX + "providerIdFormat";
+	public static final String PROV_ID_FORMAT = "%4$s^%3$s^%2$s^^^^^^&%1$s&ISO";
+	
+	public static final String GP_ID_FORMAT = GP_PREFIX + "idFormat";
 	
 	public static final String GP_ORG_ID = GP_PREFIX + "organisationIdentifier";
 	
