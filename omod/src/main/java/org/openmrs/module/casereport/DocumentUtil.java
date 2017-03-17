@@ -54,10 +54,20 @@ public class DocumentUtil {
 	/**
 	 * Creates a TS object for the specified date
 	 * 
-	 * @param date the date object
-	 * @return the TS object
+	 * @see #createTS(Date, Integer)
 	 */
 	public static TS createTS(Date date) {
+		return createTS(date, null);
+	}
+	
+	/**
+	 * Creates a TS object for the specified date with the specified precision.
+	 *
+	 * @param date the date object
+	 * @param precision the date precision level as specified in the TS class
+	 * @return the TS object
+	 */
+	public static TS createTS(Date date, Integer precision) {
 		if (date == null) {
 			TS retVal = new TS();
 			retVal.setNullFlavor(NullFlavor.NoInformation);
@@ -65,7 +75,7 @@ public class DocumentUtil {
 		}
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		return new TS(calendar);
+		return (precision == null) ? new TS(calendar) : new TS(calendar, precision);
 	}
 	
 	/**

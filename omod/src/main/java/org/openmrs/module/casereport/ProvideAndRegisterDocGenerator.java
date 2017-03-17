@@ -41,6 +41,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.util.InfosetUtil;
+import org.marc.everest.datatypes.TS;
 import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
 import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
 import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
@@ -243,7 +244,8 @@ public final class ProvideAndRegisterDocGenerator {
 		patientInfoList.add(String.format(DocumentConstants.PID_5_PATTERN, fName, gName, mName));
 		if (form.getBirthdate() != null) {
 			Date bDate = CaseReportConstants.DATE_FORMATTER.parse(form.getBirthdate());
-			patientInfoList.add(String.format(DocumentConstants.PID_7_PATTERN, DocumentUtil.createTS(bDate)));
+			//The XDS repository expects birth date set to day precision
+			patientInfoList.add(String.format(DocumentConstants.PID_7_PATTERN, DocumentUtil.createTS(bDate, TS.DAY)));
 		}
 		AdministrativeGender gender = AdministrativeGender.Undifferentiated;
 		if ("M".equals(form.getGender())) {

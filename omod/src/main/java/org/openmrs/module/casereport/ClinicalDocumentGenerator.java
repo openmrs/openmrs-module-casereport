@@ -107,7 +107,7 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_IHE_MED_DOC), new II(
 		        DocumentConstants.TEMPLATE_HL7_GENERAL_HEADER)));
-		cdaDocument.setId(form.getAssigningAuthorityId(), form.getReportUuid());
+		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
 		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR, DocumentConstants.TEXT_DOCUMENT_NAME));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
