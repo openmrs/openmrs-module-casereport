@@ -9,12 +9,15 @@
  */
 package org.openmrs.module.casereport;
 
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.marc.everest.datatypes.NullFlavor;
@@ -27,6 +30,9 @@ import org.openmrs.api.context.Context;
  * Contains utility methods that are used by document generators
  */
 public class DocumentUtil {
+	
+	//The count of decimal numbers that can be represented with 128 bits, i.e. 2 power 128
+	private static final BigInteger DECIMAL_REP_COUNT = BigInteger.ONE.shiftLeft(128);
 	
 	//Formatter used to print dates in text sections that are human readable
 	public static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy h a zzz");
@@ -151,5 +157,23 @@ public class DocumentUtil {
 			personName = new PersonName(firstName, middleName, familyName);
 		}
 		return personName;
+	}
+	
+	/**
+	 * Converts the specified uuid to its decimal representation
+	 * 
+	 * @param uuid the uuid to convert
+	 * @return a string representation of the decimal number
+	 */
+	public static String convertToDecimal(UUID uuid) {
+		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+		bb.putLong(uuid.getMostSignificantBits());
+		bb.putLong(uuid.getLeastSignificantBits());
+		BigInteger bi = new BigInteger(bb.array());
+		//Get the unsigned representation for -ve numbers
+		if (bi.compareTo(BigInteger.ZERO) < 0) {
+			bi = DECIMAL_REP_COUNT.add(bi);
+		}
+		return bi.toString();
 	}
 }

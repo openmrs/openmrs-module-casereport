@@ -12,8 +12,6 @@ package org.openmrs.module.casereport;
 import static org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType.Document;
 
 import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -357,9 +355,6 @@ public final class ProvideAndRegisterDocGenerator {
 	 * @return the generated OID
 	 */
 	private String generateOIDFromUuid(UUID uuid) {
-		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-		bb.putLong(uuid.getMostSignificantBits());
-		bb.putLong(uuid.getLeastSignificantBits());
-		return DocumentConstants.OID_PREFIX + new BigInteger(bb.array()).abs().toString();
+		return DocumentConstants.OID_PREFIX + DocumentUtil.convertToDecimal(uuid);
 	}
 }
