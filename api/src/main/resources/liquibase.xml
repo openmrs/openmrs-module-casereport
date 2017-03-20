@@ -117,5 +117,17 @@
                                  referencedColumnNames="user_id" />
 
     </changeSet>
+
+    <changeSet id="${project.parent.artifactId}-20170320-1052" author="Wyclif">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="auto_submitted" tableName="${project.parent.artifactId}_case_report" />
+            </not>
+        </preConditions>
+        <comment>Add auto_submitted column to case_report table</comment>
+        <addColumn tableName="${project.parent.artifactId}_case_report">
+            <column name="auto_submitted" type="BOOLEAN" />
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>

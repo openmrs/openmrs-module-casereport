@@ -10,6 +10,7 @@
 package org.openmrs.module.casereport;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -18,15 +19,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.DrugOrder;
+import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
@@ -35,6 +38,7 @@ import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
@@ -225,7 +229,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_DATASET);
 		SqlCohortDefinition definition = CaseReportUtil.getSqlCohortDefinition("HIV Switched To Second Line");
 		assertNotNull(definition);
-		Assert.assertEquals("5b4f091e-4f28-4810-944b-4e4ccf9bfbb3", definition.getUuid());
+		assertEquals("5b4f091e-4f28-4810-944b-4e4ccf9bfbb3", definition.getUuid());
 	}
 	
 	/**
@@ -238,8 +242,8 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		final String name = "HIV Switched To Second Line";
 		final Integer patientId = 2;
 		CaseReport caseReport = service.getCaseReport(1);
-		Assert.assertEquals(patientId, caseReport.getPatient().getId());
-		Assert.assertEquals(2, caseReport.getReportTriggers().size());
+		assertEquals(patientId, caseReport.getPatient().getId());
+		assertEquals(2, caseReport.getReportTriggers().size());
 		int originalCaseReportCount = service.getCaseReports().size();
 		assertNotNull(caseReport.getCaseReportTriggerByName(name));
 		SqlCohortDefinition definition = CaseReportUtil.getSqlCohortDefinition(name);
@@ -247,8 +251,8 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		DefinitionContext.saveDefinition(definition);
 		
 		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
-		Assert.assertEquals(2, caseReport.getReportTriggers().size());
-		Assert.assertEquals(originalCaseReportCount, service.getCaseReports().size());
+		assertEquals(2, caseReport.getReportTriggers().size());
+		assertEquals(originalCaseReportCount, service.getCaseReports().size());
 	}
 	
 	/**
@@ -272,14 +276,14 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		int originalCount = service.getCaseReports().size();
 		int originalTriggerCount = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
 		        .getReportTriggers().size();
-		Assert.assertEquals(2, originalTriggerCount);
+		assertEquals(2, originalTriggerCount);
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 		
 		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
 		List<CaseReport> reports = service.getCaseReports();
 		int newCount = reports.size();
-		Assert.assertEquals(++originalCount, newCount);
-		Assert.assertEquals(++originalTriggerCount, service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
+		assertEquals(++originalCount, newCount);
+		assertEquals(++originalTriggerCount, service.getCaseReportByPatient(patientService.getPatient(patientIds[0]))
 		        .getReportTriggers().size());
 		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 	}
@@ -335,16 +339,15 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
 		List<CaseReport> reports = service.getCaseReports();
 		int newCount = reports.size();
-		Assert.assertEquals(originalCount + 2, newCount);
+		assertEquals(originalCount + 2, newCount);
 		CaseReport caseReport1 = service.getCaseReportByPatient(patientService.getPatient(patientIds[0]));
 		assertNotNull(caseReport1);
-		Assert.assertEquals(1, caseReport1.getReportTriggers().size());
-		Assert.assertEquals(name, caseReport1.getReportTriggers().iterator().next().getName());
+		assertEquals(1, caseReport1.getReportTriggers().size());
+		assertEquals(name, caseReport1.getReportTriggers().iterator().next().getName());
 		CaseReport caseReport2 = service.getCaseReportByPatient(patientService.getPatient(patientIds[1]));
 		assertNotNull(caseReport2);
-		Assert.assertEquals(1, caseReport2.getReportTriggers().size());
-		Assert.assertEquals(name, caseReport2.getReportTriggers().iterator().next().getName());
-		
+		assertEquals(1, caseReport2.getReportTriggers().size());
+		assertEquals(name, caseReport2.getReportTriggers().iterator().next().getName());
 	}
 	
 	/**
@@ -367,13 +370,13 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:25:57"));
 		CaseReportUtil.executeTask(taskDefinition);
 		List<CaseReport> reports = service.getCaseReports();
-		Assert.assertEquals(originalCount, reports.size());
+		assertEquals(originalCount, reports.size());
 		
 		taskDefinition.setLastExecutionTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2008-08-18 12:24:34"));
 		CaseReportUtil.executeTask(taskDefinition);
 		reports = service.getCaseReports();
 		int newCount = reports.size();
-		Assert.assertEquals(++originalCount, newCount);
+		assertEquals(++originalCount, newCount);
 		assertNotNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[0])));
 		assertNull(service.getCaseReportByPatient(patientService.getPatient(patientIds[1])));
 	}
@@ -387,7 +390,8 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_DATASET);
 		final String name = "HIV Patient Died";
 		final Integer patientId = 2;
-		CaseReport caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
+		Patient patient = patientService.getPatient(patientId);
+		CaseReport caseReport = service.getCaseReportByPatient(patient);
 		assertNotNull(caseReport);
 		int originalTriggerCount = caseReport.getReportTriggers().size();
 		SqlCohortDefinition def = CaseReportUtil.getSqlCohortDefinition(name);
@@ -395,8 +399,47 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		DefinitionContext.saveDefinition(def);
 		int originalCount = service.getCaseReports().size();
 		CaseReportUtil.executeTask(schedulerService.getTaskByName(name));
-		Assert.assertEquals(originalCount, service.getCaseReports().size());
-		caseReport = service.getCaseReportByPatient(patientService.getPatient(patientId));
-		Assert.assertEquals(++originalTriggerCount, caseReport.getReportTriggers().size());
+		assertEquals(originalCount, service.getCaseReports().size());
+		caseReport = service.getCaseReportByPatient(patient);
+		assertEquals(++originalTriggerCount, caseReport.getReportTriggers().size());
+	}
+	
+	/**
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
+	 * @throws Exception
+	 */
+	@Test
+	public void executeTask_shouldAutoSubmitANewReportItemForATriggerSetupToDoSo() throws Exception {
+		executeDataSet(XML_DATASET);
+		executeDataSet(XML_CONCEPT_DATASET);
+		executeDataSet(XML_OTHER_DATASET);
+		final String name = "New HIV Case";
+		//set the implementation id for test purposes
+		AdministrationService adminService = Context.getAdministrationService();
+		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"implId\">"
+		        + "   <passphrase id=\"2\"><![CDATA[Some passphrase]]></passphrase>"
+		        + "   <description id=\"3\"><![CDATA[Some descr]]></description>"
+		        + "   <name id=\"4\"><![CDATA[Some name]]></name>" + "</implementationId>";
+		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
+		adminService.saveGlobalProperty(gp);
+		
+		final Integer patientId = 8;
+		Patient patient = patientService.getPatient(patientId);
+		assertEquals(0, service.getSubmittedCaseReports(patient).size());
+		assertNull(service.getCaseReportByPatient(patient));
+		
+		SqlCohortDefinition def = CaseReportUtil.getSqlCohortDefinition(name);
+		def.setQuery("select patient_id from patient where patient_id = " + patientId);
+		DefinitionContext.saveDefinition(def);
+		TaskDefinition taskDefinition = schedulerService.getTaskByName(name);
+		taskDefinition.setProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY, "true");
+		
+		CaseReportUtil.executeTask(taskDefinition);
+		
+		assertNull(service.getCaseReportByPatient(patient));
+		List<CaseReport> reports = service.getSubmittedCaseReports(patient);
+		assertEquals(1, reports.size());
+		assertTrue(reports.get(0).getAutoSubmitted());
+		assertEquals(name, reports.get(0).getReportTriggers().iterator().next().getName());
 	}
 }

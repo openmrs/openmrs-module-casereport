@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Cohort;
 import org.openmrs.Concept;
 import org.openmrs.DrugOrder;
@@ -313,6 +314,7 @@ public class CaseReportUtil {
 		
 		PatientService ps = Context.getPatientService();
 		CaseReportService caseReportService = Context.getService(CaseReportService.class);
+		List<CaseReport> toAutoSubmitList = new ArrayList<>(cohort.getMemberIds().size());
 		for (Integer patientId : cohort.getMemberIds()) {
 			Patient patient = ps.getPatient(patientId);
 			if (patient == null) {
@@ -320,7 +322,28 @@ public class CaseReportUtil {
 			}
 			CaseReport caseReport = createReportIfNecessary(patient, triggerName);
 			if (caseReport != null) {
+				//We can't auto submit this report because the surveillance officer needs
+				//to take a look at the other triggers to be included in the existing report
+				if (caseReport.getId() == null) {
+					if ("true".equals(taskDefinition.getProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY))) {
+						toAutoSubmitList.add(caseReport);
+					}
+				}
 				caseReportService.saveCaseReport(caseReport);
+			}
+		}
+		
+		for (CaseReport caseReport : toAutoSubmitList) {
+			//TODO reports should be auto submitted in parallel
+			try {
+				CaseReportForm form = new CaseReportForm(caseReport);
+				caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
+				caseReportService.submitCaseReport(caseReport);
+				caseReport.setAutoSubmitted(true);
+				caseReportService.saveCaseReport(caseReport);
+			}
+			catch (Throwable t) {
+				log.warn("Failed to auto submit " + caseReport, t);
 			}
 		}
 	}

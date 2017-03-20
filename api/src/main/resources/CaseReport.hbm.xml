@@ -47,6 +47,8 @@
 
         <property name="reportForm" column="report_form" type="text" length="65535" />
 
+        <property name="autoSubmitted" column="auto_submitted" type="boolean" length="1" />
+
         <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
 
         <property name="dateCreated" column="date_created" type="java.util.Date" length="19" not-null="true" />

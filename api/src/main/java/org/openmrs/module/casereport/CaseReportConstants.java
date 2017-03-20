@@ -24,6 +24,8 @@ public class CaseReportConstants {
 	
 	public static final String CONCEPT_TASK_PROPERTY = "Concept";
 	
+	public static final String AUTO_SUBMIT_TASK_PROPERTY = "Auto Submit";
+	
 	public static final String PRIV_GET_CASE_REPORTS = "Get Case Reports";
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
