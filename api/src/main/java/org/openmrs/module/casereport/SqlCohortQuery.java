@@ -23,6 +23,8 @@ public class SqlCohortQuery {
 	
 	private String description;
 	
+	private Boolean autoSubmit;
+	
 	private List<String> conceptMappings;
 	
 	public String getName() {
@@ -63,6 +65,14 @@ public class SqlCohortQuery {
 	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public Boolean getAutoSubmit() {
+		return autoSubmit;
+	}
+	
+	public void setAutoSubmit(Boolean autoSubmit) {
+		this.autoSubmit = autoSubmit;
 	}
 	
 	public List<String> getConceptMappings() {

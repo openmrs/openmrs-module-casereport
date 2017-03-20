@@ -63,6 +63,14 @@
 
     <!-- GPs -->
     <globalProperty>
+        <property>${project.parent.artifactId}.autoSubmitProviderUuid</property>
+        <description>
+            The uuid of the provider to set as the submitter of automatically submitted case reports,
+            must be for a provider account that is either linked to a person record or has a name with
+            at least 2 name fields specified
+        </description>
+    </globalProperty>
+    <globalProperty>
         <property>${project.parent.artifactId}.openHIMUrl</property>
         <defaultValue>http://openhim_server_ip:port/xdsrepository</defaultValue>
         <description>

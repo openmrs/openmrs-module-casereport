@@ -126,7 +126,9 @@
         </preConditions>
         <comment>Add auto_submitted column to case_report table</comment>
         <addColumn tableName="${project.parent.artifactId}_case_report">
-            <column name="auto_submitted" type="BOOLEAN" />
+            <column name="auto_submitted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
         </addColumn>
     </changeSet>
     

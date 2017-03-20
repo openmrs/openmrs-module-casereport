@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,6 +27,7 @@ import org.openmrs.DrugOrder;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
@@ -422,7 +424,12 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		        + "   <name id=\"4\"><![CDATA[Some name]]></name>" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
-		
+		Provider provider = new Provider();
+		provider.setIdentifier("some provider id");
+		provider.setName("Some Name");
+		Context.getProviderService().saveProvider(provider);
+		gp = new GlobalProperty(CaseReportConstants.GP_AUTO_SUBMIT_PROVIDER_UUID, provider.getUuid());
+		adminService.saveGlobalProperty(gp);
 		final Integer patientId = 8;
 		Patient patient = patientService.getPatient(patientId);
 		assertEquals(0, service.getSubmittedCaseReports(patient).size());
@@ -439,7 +446,11 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		assertNull(service.getCaseReportByPatient(patient));
 		List<CaseReport> reports = service.getSubmittedCaseReports(patient);
 		assertEquals(1, reports.size());
-		assertTrue(reports.get(0).getAutoSubmitted());
-		assertEquals(name, reports.get(0).getReportTriggers().iterator().next().getName());
+		CaseReport report = reports.get(0);
+		assertTrue(report.getAutoSubmitted());
+		CaseReportForm submittedForm = new ObjectMapper().readValue(report.getReportForm(), CaseReportForm.class);
+		assertEquals(provider.getUuid(), submittedForm.getSubmitter().getUuid());
+		assertEquals(provider.getIdentifier(), submittedForm.getSubmitter().getValue());
+		assertEquals(name, report.getReportTriggers().iterator().next().getName());
 	}
 }

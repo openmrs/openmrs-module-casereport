@@ -224,21 +224,38 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		
 		boolean requireImplementationId = false;
 		if (form.getSubmitter() == null || form.getSubmitter().getValue() == null
-		        || StringUtils.isBlank(form.getSubmitter().getValue().toString())) {
-			User user = Context.getAuthenticatedUser();
-			Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(user.getPerson(), false);
-			if (providers.isEmpty()) {
-				throw new APIException("A user needs to have a provider account to be able to submit case reports");
+		        || StringUtils.isBlank(form.getSubmitter().getValue().toString()) || caseReport.getAutoSubmitted()) {
+			
+			Provider provider;
+			if (caseReport.getAutoSubmitted()) {
+				String uuid = Context.getAdministrationService().getGlobalProperty(
+				    CaseReportConstants.GP_AUTO_SUBMIT_PROVIDER_UUID);
+				if (StringUtils.isBlank(uuid)) {
+					throw new APIException(CaseReportConstants.GP_AUTO_SUBMIT_PROVIDER_UUID
+					        + " global property value is required to allow auto submission of case reports");
+				}
+				provider = Context.getProviderService().getProviderByUuid(uuid);
+				if (provider == null) {
+					throw new APIException("No provider account found with uuid: " + uuid);
+				}
+			} else {
+				User user = Context.getAuthenticatedUser();
+				Collection<Provider> providers = Context.getProviderService().getProvidersByPerson(user.getPerson(), false);
+				if (providers.isEmpty()) {
+					throw new APIException("A user needs to have a provider account to be able to submit case reports");
+				}
+				provider = providers.iterator().next();
 			}
-			Provider provider = providers.iterator().next();
+			
 			if (StringUtils.isBlank(provider.getIdentifier())) {
 				throw new APIException("A provider account of a case report submitter needs to have an identifier");
 			} else if (provider.getPerson() == null) {
 				if (provider.getName() == null || StringUtils.split(provider.getName().trim()).length < 2) {
 					throw new APIException("A provider account of a case report submitter has to be linked to a "
-					        + "person or should have a name with at list 2 name fields provided");
+					        + "person record or should have a name with at least 2 name fields specified");
 				}
 			}
+			
 			form.setSubmitter(new UuidAndValue(provider.getUuid(), provider.getIdentifier()));
 			requireImplementationId = true;
 		}

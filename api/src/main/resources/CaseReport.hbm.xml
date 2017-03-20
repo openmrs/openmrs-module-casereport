@@ -47,7 +47,7 @@
 
         <property name="reportForm" column="report_form" type="text" length="65535" />
 
-        <property name="autoSubmitted" column="auto_submitted" type="boolean" length="1" />
+        <property name="autoSubmitted" column="auto_submitted" type="boolean" length="1" not-null="true" />
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true" />
 

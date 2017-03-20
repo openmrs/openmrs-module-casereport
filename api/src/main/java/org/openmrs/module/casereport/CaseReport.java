@@ -38,7 +38,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	private String reportForm;
 	
-	private Boolean autoSubmitted;
+	private boolean autoSubmitted = Boolean.FALSE;
 	
 	public CaseReport() {
 	}
@@ -106,11 +106,11 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 		this.reportForm = reportForm;
 	}
 	
-	public Boolean getAutoSubmitted() {
+	public boolean getAutoSubmitted() {
 		return autoSubmitted;
 	}
 	
-	public void setAutoSubmitted(Boolean autoSubmitted) {
+	public void setAutoSubmitted(boolean autoSubmitted) {
 		this.autoSubmitted = autoSubmitted;
 	}
 	

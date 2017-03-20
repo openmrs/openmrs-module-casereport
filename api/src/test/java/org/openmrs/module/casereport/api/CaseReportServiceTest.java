@@ -583,6 +583,36 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
+	 */
+	@Test
+	public void submitCaseReport_shouldFailToAutoSubmitReportIfNoProviderIsConfigured() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo(CaseReportConstants.GP_AUTO_SUBMIT_PROVIDER_UUID
+		        + " global property value is required to allow auto submission of case reports"));
+		CaseReport cr = service.getCaseReport(1);
+		cr.setAutoSubmitted(true);
+		cr.setReportForm("{}");
+		service.submitCaseReport(cr);
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport)
+	 */
+	@Test
+	public void submitCaseReport_shouldFailToAutoSubmitReportIfNoProviderMatchesTheConfiguredUuid() throws Exception {
+		final String uuid = "Some fake uuid";
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(equalTo("No provider account found with uuid: " + uuid));
+		GlobalProperty gp = new GlobalProperty(CaseReportConstants.GP_AUTO_SUBMIT_PROVIDER_UUID, uuid);
+		Context.getAdministrationService().saveGlobalProperty(gp);
+		CaseReport cr = service.getCaseReport(1);
+		cr.setAutoSubmitted(true);
+		cr.setReportForm("{}");
+		service.submitCaseReport(cr);
+	}
+	
+	/**
+	 * @see CaseReportService#submitCaseReport(CaseReport)
 	 * @verifies fail for a query with an invalid concept mapping
 	 */
 	@Test

@@ -314,7 +314,7 @@ public class CaseReportUtil {
 		
 		PatientService ps = Context.getPatientService();
 		CaseReportService caseReportService = Context.getService(CaseReportService.class);
-		List<CaseReport> toAutoSubmitList = new ArrayList<>(cohort.getMemberIds().size());
+		List<CaseReport> autoSubmitReports = new ArrayList<>(cohort.getMemberIds().size());
 		for (Integer patientId : cohort.getMemberIds()) {
 			Patient patient = ps.getPatient(patientId);
 			if (patient == null) {
@@ -326,21 +326,20 @@ public class CaseReportUtil {
 				//to take a look at the other triggers to be included in the existing report
 				if (caseReport.getId() == null) {
 					if ("true".equals(taskDefinition.getProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY))) {
-						toAutoSubmitList.add(caseReport);
+						autoSubmitReports.add(caseReport);
 					}
 				}
 				caseReportService.saveCaseReport(caseReport);
 			}
 		}
 		
-		for (CaseReport caseReport : toAutoSubmitList) {
+		for (CaseReport caseReport : autoSubmitReports) {
 			//TODO reports should be auto submitted in parallel
 			try {
 				CaseReportForm form = new CaseReportForm(caseReport);
 				caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
-				caseReportService.submitCaseReport(caseReport);
 				caseReport.setAutoSubmitted(true);
-				caseReportService.saveCaseReport(caseReport);
+				caseReportService.submitCaseReport(caseReport);
 			}
 			catch (Throwable t) {
 				log.warn("Failed to auto submit " + caseReport, t);

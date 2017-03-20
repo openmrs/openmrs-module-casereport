@@ -124,11 +124,12 @@ public class CaseReportActivator extends BaseModuleActivator {
 				}
 			}
 			DefinitionContext.saveDefinition(definition);
-			addSchedulerTaskIfNecessary(cohortQuery.getName(), conceptStr, cohortQuery.getRepeatInterval());
+			addSchedulerTaskIfNecessary(cohortQuery.getName(), conceptStr, cohortQuery.getRepeatInterval(),
+			    cohortQuery.getAutoSubmit());
 		}
 	}
 	
-	private void addSchedulerTaskIfNecessary(String name, String concept, Long repeatInterval) {
+	private void addSchedulerTaskIfNecessary(String name, String concept, Long repeatInterval, Boolean autoSubmit) {
 		log.info("Creating Case Reports Task for: " + name);
 		
 		SchedulerService ss = Context.getSchedulerService();
@@ -142,6 +143,9 @@ public class CaseReportActivator extends BaseModuleActivator {
 			td.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
 			td.setProperty(CaseReportConstants.CONCEPT_TASK_PROPERTY, concept);
 			td.setRepeatInterval(repeatInterval);
+			if (Boolean.TRUE.equals(autoSubmit)) {
+				td.setProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY, "true");
+			}
 			if (td.getRepeatInterval() == null) {
 				td.setRepeatInterval(0L);
 			}
