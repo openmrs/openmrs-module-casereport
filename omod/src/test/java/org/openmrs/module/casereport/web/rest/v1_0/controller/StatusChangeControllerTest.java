@@ -16,21 +16,20 @@ import static org.junit.Assert.assertTrue;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openmrs.User;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportUtil;
-import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.StatusChange;
 import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest {
 	
@@ -39,6 +38,9 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
+	
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(5000);
 	
 	@Before
 	public void setup() throws Exception {
@@ -85,14 +87,13 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	}
 	
 	@Test
-	@Ignore
 	public void shouldSubmitTheCaseReport() throws Exception {
 		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
+		executeDataSet("moduleTestData-HIE.xml");
 		final String hivSwitchToSecondLine = "HIV Switched To Second Line";
 		final String newHivCase = "New HIV Case";
 		ObjectMapper mapper = new ObjectMapper();
-		User submitter = Context.getUserService().getUserByUuid("c98a1558-e131-11de-babe-001e378eb67e");
 		CaseReport cr = service.getCaseReportByUuid(getUuid());
 		assertTrue(StringUtils.isBlank(cr.getReportForm()));
 		CaseReportForm form = new CaseReportForm(cr);
@@ -101,10 +102,23 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		assertTrue(CaseReportUtil.collContainsItemWithValue(form.getTriggers(), newHivCase));
 		assertFalse(cr.isSubmitted());
 		
-		form.setSubmitter(new UuidAndValue(submitter.getUuid(), submitter.getSystemId()));
 		form.getTriggers().remove(form.getTriggerByName(newHivCase));
-		final String implementationId = "Test_Impl";
-		form.setAssigningAuthorityId(implementationId);
+		
+		final String successResponse = "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\""
+		        + "    xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">"
+		        + "    <s:Header>"
+		        + "        <wsa:Action s:mustUnderstand=\"true\">urn:ihe:iti:2007:RegisterDocumentSet-bResponse</wsa:Action>"
+		        + "        <wsa:RelatesTo>urn:uuid:1ec52e14-4aad-4ba1-b7d3-fc9812a21340</wsa:RelatesTo>" + "    </s:Header>"
+		        + "    <s:Body>" + "        <rs:RegistryResponse xmlns:rs=\"urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0\""
+		        + "            status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success\"/>" + "    </s:Body>"
+		        + "</s:Envelope>";
+		
+		WireMock.stubFor(WireMock
+		        .post(WireMock.urlEqualTo("/xdsrepository"))
+		        .withHeader("Accept", WireMock.containing("application/soap+xml"))
+		        .willReturn(
+		            WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/soap+xml")
+		                    .withBody(successResponse)));
 		
 		handle(newPostRequest(getURI(),
 		    "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"reportForm\":" + mapper.writeValueAsString(form) + "}"));
@@ -112,9 +126,6 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		assertTrue(cr.isSubmitted());
 		cr = service.getCaseReportByUuid(getUuid());
 		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-		assertEquals(submitter.getUuid(), savedForm.getSubmitter().getUuid());
-		assertEquals(submitter.getSystemId(), savedForm.getSubmitter().getValue());
-		assertEquals(implementationId, savedForm.getAssigningAuthorityId());
 		assertEquals(1, savedForm.getTriggers().size());
 		assertTrue(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), hivSwitchToSecondLine));
 		assertFalse(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), newHivCase));

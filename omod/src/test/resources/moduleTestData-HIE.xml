@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<dataset>
+    <global_property property="implementation_id" property_value="&lt;implementationId id=&quot;1&quot; implementationId=&quot;Test_Impl&quot;&gt; &lt;passphrase id=&quot;2&quot;&gt;&lt;![CDATA[Some passphrase]]&gt;&lt;/passphrase&gt; &lt;description id=&quot;3&quot;&gt;&lt;![CDATA[Some descr]]&gt;&lt;/description&gt; &lt;name id=&quot;4&quot;&gt;&lt;![CDATA[Test_Name]]&gt;&lt;/name&gt; &lt;/implementationId&gt;" uuid="0f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.openHIMUrl" property_value="http://localhost:5000/xdsrepository" uuid="1f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.openHIMClientId" property_value="" uuid="2f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.openHIMClientPassword" property_value="" uuid="3f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.idFormat" property_value="%2$s^^^&amp;%1$s&amp;ISO" uuid="4f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.confidentialityCode" property_value="N" uuid="5f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.healthCareFacilityTypeCode" property_value="Hospital Unit" uuid="6f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.healthCareFacilityTypeCodingSystem" property_value="Connect-a-thon healthcareFacilityTypeCodes" uuid="7f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.healthCareFacilityTypeDisplayName" property_value="Hospital Unit" uuid="8f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.practiceSettingCode" property_value="General Medicine" uuid="9f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.practiceSettingCodingSystem" property_value="Connect-a-thon practiceSettingCodes" uuid="0a55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.practiceSettingDisplayName" property_value="General Medicine" uuid="1a55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.organisationIdentifier" property_value="1.3.6.1.4.1.21367.2010.1.2" uuid="2a55827e-26fe-103b-80cb-0017a47871b3" />
+</dataset>

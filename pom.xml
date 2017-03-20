@@ -46,6 +46,7 @@
 	</modules>
 	
 	<properties>
+        <javaCompilerVersion>1.7</javaCompilerVersion>
 		<openMRSVersion>1.10.0</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <uiframeworkVersion>3.4</uiframeworkVersion>
@@ -60,7 +61,7 @@
         <everestVersion>1.1.0</everestVersion>
         <dcm4cheeVersion>2.0.6</dcm4cheeVersion>
         <springWsVersion>2.4.0.RELEASE</springWsVersion>
-        <javaCompilerVersion>1.7</javaCompilerVersion>
+        <wiremockVersion>2.5.1</wiremockVersion>
 	</properties>
 
 	<dependencyManagement>

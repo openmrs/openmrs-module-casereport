@@ -14,29 +14,17 @@ import static junit.framework.Assert.assertEquals;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
-import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
-import org.openmrs.ConceptReferenceTerm;
-import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.ClinicalDocumentGenerator;
-import org.openmrs.module.casereport.DocumentConstants;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
-import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
 @Ignore
@@ -51,65 +39,14 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
-		final String implId = "Test_Impl";
-		final String implName = "Test_Name";
-		PatientService ps = Context.getPatientService();
-		PatientIdentifierType idType = ps.getPatientIdentifierType(1);
-		idType.setName("1.3.6.1.4.1.21367.2010.1.2.301");
-		ps.savePatientIdentifierType(idType);
-		ps.getPatient(2).getPatientIdentifier().setIdentifier("12345");
-		//set the implementation id for test purposes
-		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">\n"
-		        + "   <passphrase id=\"2\"><![CDATA[Some passphrase]]></passphrase>\n"
-		        + "   <description id=\"3\"><![CDATA[Some descr]]></description>\n" + "   <name id=\"4\"><![CDATA["
-		        + implName + "]]></name>\n" + "</implementationId>";
-		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_OPENHIM_URL, "http://:/xdsrepository");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_CONFIDENTIALITY_CODE, "N");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_FACILITY_TYPE_CODE, "Hospital Unit");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_FACILITY_TYPE_CODING_SCHEME,
-		        "Connect-a-thon healthcareFacilityTypeCodes");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_FACILITY_TYPE_NAME, "Hospital Unit");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_ID_FORMAT, "%2$s^^^&%1$s&ISO");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_PRACTICE_CODE, "General Medicine");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_PRACTICE_CODING_SCHEME, "Connect-a-thon practiceSettingCodes");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_PRACTICE_NAME, "General Medicine");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_ORG_ID, "1.3.6.1.4.1.21367.2010.1.2");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_OPENHIM_CLIENT_ID, "");
-		adminService.saveGlobalProperty(gp);
-		gp = new GlobalProperty(DocumentConstants.GP_OPENHIM_CLIENT_PASSWORD, "");
-		adminService.saveGlobalProperty(gp);
+		executeDataSet("moduleTestData-HIE.xml");
 		
-		CaseReportService service = Context.getService(CaseReportService.class);
-		CaseReport caseReport = service.getCaseReport(1);
+		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReport(1);
 		Patient patient = caseReport.getPatient();
-		patient.setDead(true);
-		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-03-20T00:00:00.000-0400"));
-		ConceptService cs = Context.getConceptService();
-		Concept causeOfDeath = cs.getConcept(22);
-		causeOfDeath.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(cs
-		        .getConceptSourceByName(CaseReportConstants.SOURCE_CIEL_HL7_CODE), "1067", null), null));
-		patient.setCauseOfDeath(causeOfDeath);
 		CaseReportForm form = new CaseReportForm(caseReport);
-		form.setComments("Testing...");
-		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
-		service.submitCaseReport(caseReport);
-		if (true)
-			return;
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
+		
 		ClinicalDocument clinicalDocument = new ClinicalDocumentGenerator(form).generate();
 		SimpleObject so = null;
 		assertEquals("Composition", Util.getByPath(so, "resourceType"));
@@ -121,8 +58,8 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		assertEquals(patient.getPersonName().getFullName(), Util.getByPath(so, "subject/display"));
 		assertEquals(Context.getUserService().getUserByUuid(form.getSubmitter().getUuid()).getUsername(),
 		    Util.getByPath(so, "author[0]/display"));
-		assertEquals(implId, Util.getByPath(so, "custodian/reference"));
-		assertEquals(implName, Util.getByPath(so, "custodian/display"));
+		assertEquals("Test_Impl", Util.getByPath(so, "custodian/reference"));
+		assertEquals("Test_Name", Util.getByPath(so, "custodian/display"));
 		String patientPath = "contained[0]";
 		assertEquals("Patient", Util.getByPath(so, patientPath + "/resourceType"));
 		assertEquals("patient", Util.getByPath(so, patientPath + "/id"));

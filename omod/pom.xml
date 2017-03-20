@@ -258,6 +258,13 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${wiremockVersion}</version>
+            <scope>test</scope>
+        </dependency>
+
 	</dependencies>
 
 	<build>
