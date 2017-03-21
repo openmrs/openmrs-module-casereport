@@ -18,15 +18,23 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.Concept;
+import org.openmrs.ConceptClass;
+import org.openmrs.ConceptDatatype;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptMapType;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
 import org.openmrs.api.APIException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
@@ -42,6 +50,9 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	private static final String INVALID_FILE_DIR_NAME = "invalid_cohortqueries";
 	
 	@Autowired
+	private ConceptService conceptService;
+	
+	@Autowired
 	private DemoSqlCohortQueryLoader loader;
 	
 	private CaseReportActivator activator = new CaseReportActivator();
@@ -49,15 +60,28 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
-	@Before
-	public void setup() throws Exception {
-		executeDataSet("moduleTestData-initialConcepts.xml");
-	}
-	
 	@After
 	public void cleanup() {
 		//reset
 		loader.setPathPattern(DemoSqlCohortQueryLoader.DEFAULT_PATTERN);
+	}
+	
+	private void addConceptsWithCielMapping(String... codes) {
+		ConceptSource source = new ConceptSource();
+		source.setName(CaseReportConstants.SOURCE_CIEL_HL7_CODE);
+		source.setHl7Code(CaseReportConstants.SOURCE_CIEL_HL7_CODE);
+		conceptService.saveConceptSource(source);
+		ConceptMapType mapType = conceptService.getConceptMapType(1);
+		ConceptDatatype datatype = conceptService.getConceptDatatype(1);
+		ConceptClass conceptClass = conceptService.getConceptClass(1);
+		for (String code : codes) {
+			Concept concept = new Concept();
+			concept.setDatatype(datatype);
+			concept.setConceptClass(conceptClass);
+			concept.addName(new ConceptName("Some name for concept with code " + code, Locale.ENGLISH));
+			concept.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(source, code, null), mapType));
+			conceptService.saveConcept(concept);
+		}
 	}
 	
 	/**
@@ -158,6 +182,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class).getDefinitions(name, true);
 		assertEquals(1, matches.size());
 		int originalCount = DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, true).size();
+		addConceptsWithCielMapping("159");
 		
 		activator.contextRefreshed();
 		assertEquals(initialQuery, definition.getQuery());
@@ -186,6 +211,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		matches = DefinitionContext.getDefinitionService(SqlCohortDefinition.class).getDefinitions(name, true);
 		assertEquals(1, matches.size());
 		int originalCount = DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, true).size();
+		addConceptsWithCielMapping("162188", "159");
 		
 		activator.contextRefreshed();
 		assertEquals(originalCount + 2, DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, true).size());
@@ -198,6 +224,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void contextRefreshed_shouldLoadQueriesAndRegisterThemWithTheReportingModule() throws Exception {
 		int originalCount = DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, false).size();
+		addConceptsWithCielMapping("162188", "159");
 		
 		activator.contextRefreshed();
 		assertEquals(originalCount + 2, DefinitionContext.getAllDefinitions(SqlCohortDefinition.class, false).size());
@@ -244,6 +271,7 @@ public class CaseReportActivatorTest extends BaseModuleContextSensitiveTest {
 		for (String name : nameRepeatIntervalMap.keySet()) {
 			assertNull(ss.getTaskByName(name));
 		}
+		addConceptsWithCielMapping("162188", "159");
 		
 		activator.contextRefreshed();
 		for (Map.Entry<String, Long> entry : nameRepeatIntervalMap.entrySet()) {

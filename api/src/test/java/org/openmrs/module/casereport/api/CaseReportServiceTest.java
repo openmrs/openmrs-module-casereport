@@ -53,8 +53,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String XML_DATASET = "moduleTestData-initial.xml";
 	
-	private static final String XML_CONCEPT_DATASET = "moduleTestData-initialConcepts.xml";
-	
 	private static final String XML_OTHER_DATASET = "moduleTestData-other.xml";
 	
 	@Autowired
@@ -71,7 +69,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void setup() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		if (mapper == null) {
 			mapper = new ObjectMapper();
 		}

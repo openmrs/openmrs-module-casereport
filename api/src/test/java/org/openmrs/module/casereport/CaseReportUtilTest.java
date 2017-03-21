@@ -47,8 +47,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	
 	private static final String XML_DATASET = "moduleTestData-initial.xml";
 	
-	private static final String XML_CONCEPT_DATASET = "moduleTestData-initialConcepts.xml";
-	
 	private static final String XML_OTHER_DATASET = "moduleTestData-other.xml";
 	
 	@Autowired
@@ -81,7 +79,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getMostRecentViralLoads_shouldReturnThe3MostRecentViralLoadObservations() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		List<Obs> viralLoads = CaseReportUtil.getMostRecentViralLoads(patient);
@@ -99,7 +96,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	public void getMostRecentCD4counts_shouldReturnThe3MostRecentCd4CountObservations() throws Exception {
 		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		Patient patient = patientService.getPatient(2);
 		List<Obs> cd4counts = CaseReportUtil.getMostRecentCD4counts(patient);
 		assertEquals(3, cd4counts.size());
@@ -115,7 +111,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getMostRecentHIVTests_shouldReturnThe3MostRecentHIVTestObservations() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		List<Obs> hivTests = CaseReportUtil.getMostRecentHIVTests(patient);
@@ -132,7 +127,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getMostRecentWHOStage_shouldReturnTheMostRecentWHOStageObservation() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		assertEquals(8020, CaseReportUtil.getMostRecentWHOStage(patient).getId().intValue());
@@ -145,7 +139,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getActiveArvDrugOrders_shouldGetTheActiveARVDrugOrdersForTheSpecifiedPatient() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		Date asOfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2016-01-14 00:00:00.0");
@@ -171,7 +164,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	public void getMostRecentReasonARVsStopped_shouldReturnTheMostRecentObsForTheReasonWhyThePatientStoppedTakingARVs()
 	    throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		assertEquals(8024, CaseReportUtil.getMostRecentReasonARVsStopped(patient).getId().intValue());
@@ -264,7 +256,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void executeTask_shouldSetTheConceptMappingsInTheEvaluationContext() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		final String name = "HIV Patient Died";
 		Integer[] patientIds = { 2, 7 };
@@ -413,7 +404,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void executeTask_shouldAutoSubmitANewReportItemForATriggerSetupToDoSo() throws Exception {
 		executeDataSet(XML_DATASET);
-		executeDataSet(XML_CONCEPT_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		final String name = "New HIV Case";
 		//set the implementation id for test purposes

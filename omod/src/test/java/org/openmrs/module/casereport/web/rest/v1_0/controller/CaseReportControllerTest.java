@@ -42,7 +42,6 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 	}
 	

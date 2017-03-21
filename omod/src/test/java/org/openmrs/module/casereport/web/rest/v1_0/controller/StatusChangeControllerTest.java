@@ -88,7 +88,6 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Test
 	public void shouldSubmitTheCaseReport() throws Exception {
-		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
 		final String hivSwitchToSecondLine = "HIV Switched To Second Line";

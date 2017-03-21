@@ -37,7 +37,6 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 	@Test
 	public void generate_shouldGenerateACDADocument() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
 		

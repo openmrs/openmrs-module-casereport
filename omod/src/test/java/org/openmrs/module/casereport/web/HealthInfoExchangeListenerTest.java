@@ -36,7 +36,6 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 	@Test
 	public void onApplicationEvent_shouldSubmitTheDocument() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-initialConcepts.xml");
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
 		PatientService ps = Context.getPatientService();
