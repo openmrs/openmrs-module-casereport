@@ -267,27 +267,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
-	 * @verifies pass if submitter and authorityId are set and impl id GP is not set
-	 */
-	@Test
-	public void submitCaseReport_shouldPassIfSubmitterAndAuthorityIdAreSetAndImplIdGPIsNotSet() throws Exception {
-		executeDataSet(XML_OTHER_DATASET);
-		assertNull(Context.getAdministrationService().getImplementationId());
-		CaseReport cr = service.getCaseReport(1);
-		CaseReportForm form = new CaseReportForm(cr);
-		final String uuid = "some uuid";
-		final String implId = "some id";
-		form.setSubmitter(new UuidAndValue(uuid, "some system id"));
-		form.setAssigningAuthorityId(implId);
-		cr.setReportForm(mapper.writeValueAsString(form));
-		service.submitCaseReport(cr);
-		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-		assertEquals(implId, savedForm.getAssigningAuthorityId());
-		assertEquals(uuid, savedForm.getSubmitter().getUuid());
-	}
-	
-	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport)
 	 * @verifies overwrite the assigning authority id if submitter is set to authenticated user
 	 */
 	@Test

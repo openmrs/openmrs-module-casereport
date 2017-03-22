@@ -113,7 +113,6 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should fail if submitter and openmrs impl id GP are not set
 	 * @should fail if assigningAuthorityId and openmrs impl id GP are not set
 	 * @should overwrite the assigning authority id if submitter is set to authenticated user
-	 * @should pass if submitter and authorityId are set and impl id GP is not set
 	 * @should submit the specified case report
 	 * @should call the registered submit event listeners
 	 * @should fail if no concept is linked to the trigger
