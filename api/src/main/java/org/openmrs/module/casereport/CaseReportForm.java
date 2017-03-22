@@ -142,7 +142,8 @@ public class CaseReportForm {
 		List<Obs> mostRecentHivTests = CaseReportUtil.getMostRecentHIVTests(patient);
 		for (Obs o : mostRecentHivTests) {
 			getMostRecentHivTests().add(
-			    new DatedUuidAndValue(o.getUuid(), o.getValueAsString(null), DATE_FORMATTER.format(o.getObsDatetime())));
+			    new DatedUuidAndValue(o.getUuid(), o.getValueAsString(Context.getLocale()), DATE_FORMATTER.format(o
+			            .getObsDatetime())));
 		}
 		if (!getMostRecentHivTests().isEmpty()) {
 			setMostRecentHivTest(getMostRecentHivTests().get(0));
@@ -173,13 +174,13 @@ public class CaseReportForm {
 		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
 		if (mostRecentWHOStageObs != null) {
 			setCurrentHivWhoStage(new UuidAndValue(mostRecentWHOStageObs.getUuid(),
-			        mostRecentWHOStageObs.getValueAsString(null)));
+			        mostRecentWHOStageObs.getValueAsString(Context.getLocale())));
 		}
 		
 		Obs mostRecentArvStopReasonObs = CaseReportUtil.getMostRecentReasonARVsStopped(patient);
 		if (mostRecentArvStopReasonObs != null) {
 			setMostRecentArvStopReason(new UuidAndValue(mostRecentArvStopReasonObs.getUuid(),
-			        mostRecentArvStopReasonObs.getValueAsString(null)));
+			        mostRecentArvStopReasonObs.getValueAsString(Context.getLocale())));
 		}
 		
 		Visit visit = CaseReportUtil.getLastVisit(patient);
@@ -317,7 +318,7 @@ public class CaseReportForm {
 	
 	public List<DatedUuidAndValue> getTriggers() {
 		if (triggers == null) {
-			triggers = new ArrayList<DatedUuidAndValue>();
+			triggers = new ArrayList<>();
 		}
 		return triggers;
 	}
@@ -352,7 +353,7 @@ public class CaseReportForm {
 	
 	public List<DatedUuidAndValue> getMostRecentCd4Counts() {
 		if (mostRecentCd4Counts == null) {
-			mostRecentCd4Counts = new ArrayList<DatedUuidAndValue>(3);
+			mostRecentCd4Counts = new ArrayList<>(3);
 		}
 		return mostRecentCd4Counts;
 	}
@@ -363,7 +364,7 @@ public class CaseReportForm {
 	
 	public List<DatedUuidAndValue> getMostRecentHivTests() {
 		if (mostRecentHivTests == null) {
-			mostRecentHivTests = new ArrayList<DatedUuidAndValue>(3);
+			mostRecentHivTests = new ArrayList<>(3);
 		}
 		return mostRecentHivTests;
 	}
@@ -374,7 +375,7 @@ public class CaseReportForm {
 	
 	public List<DatedUuidAndValue> getMostRecentViralLoads() {
 		if (mostRecentViralLoads == null) {
-			mostRecentViralLoads = new ArrayList<DatedUuidAndValue>(3);
+			mostRecentViralLoads = new ArrayList<>(3);
 		}
 		return mostRecentViralLoads;
 	}
@@ -385,7 +386,7 @@ public class CaseReportForm {
 	
 	public List<DatedUuidAndValue> getCurrentHivMedications() {
 		if (currentHivMedications == null) {
-			currentHivMedications = new ArrayList<DatedUuidAndValue>();
+			currentHivMedications = new ArrayList<>();
 		}
 		return currentHivMedications;
 	}
@@ -461,7 +462,7 @@ public class CaseReportForm {
 	
 	public Map<String, List<DatedUuidAndValue>> getPreviousReportUuidTriggersMap() {
 		if (previousReportUuidTriggersMap == null) {
-			previousReportUuidTriggersMap = new HashMap<String, List<DatedUuidAndValue>>();
+			previousReportUuidTriggersMap = new HashMap<>();
 		}
 		return previousReportUuidTriggersMap;
 	}

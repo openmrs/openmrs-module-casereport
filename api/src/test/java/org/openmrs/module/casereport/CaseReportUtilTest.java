@@ -175,6 +175,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getLastVisit_shouldReturnTheLastVisitForTheSpecifiedPatient() throws Exception {
+		executeDataSet(XML_DATASET);
 		executeDataSet(XML_OTHER_DATASET);
 		Patient patient = patientService.getPatient(2);
 		assertEquals(101, CaseReportUtil.getLastVisit(patient).getId().intValue());
