@@ -14,5 +14,5 @@
     <h3>${ui.message('casereport.submitted.document')}</h3>
 </div>
 <div class="dialog-content">
-    <pre class="casereport-no-bg-color">{{ fhirDocument }}</pre>
+    <pre class="casereport-no-bg-color">{{ document }}</pre>
 </div>

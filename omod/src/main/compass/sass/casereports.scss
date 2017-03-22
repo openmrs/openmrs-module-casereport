@@ -49,6 +49,12 @@ a.casereport-no-underline:hover {
   width: 220px;
 }
 
+.casereport-identifier-column {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
 .casereport-row-separator {
   height: 30px;
 }

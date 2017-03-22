@@ -23,7 +23,7 @@ angular.module("submittedCaseReports", ["ngDialog"])
                     closeByEscape: true,
                     template: "templates/submittedDocumentDialog.page",
                     controller: function($scope){
-                        $scope.fhirDocument = uuidDocumentMap[reportUuid];
+                        $scope.document = uuidDocumentMap[reportUuid];
                     }
             });
         }

@@ -38,16 +38,16 @@
         <tr>
             <th>${ui.message('casereport.date')}</th>
             <th>${ui.message('Patient.identifier')}</th>
-            <th>${ui.message('general.name')}</th>
+            <th class="casereport-name-column">${ui.message('general.name')}</th>
             <th>${ui.message('Patient.gender')}</th>
-            <th>${ui.message('casereport.triggers')}</th>
+            <th class="casereport-trigger-column">${ui.message('casereport.triggers')}</th>
         </tr>
     </thead>
     <tbody>
         <% caseReports.each {  %>
         <tr ng-click="displayDocument('${it.uuid}')" title="${ui.message("casereport.clickToViewFhirDocument")}">
             <td valign="top">${ui.formatDatePretty(it.dateChanged)}</td>
-            <td valign="top">${it.patient.patientIdentifier.identifier}</td>
+            <td class="casereport-identifier-column" valign="top">${it.patient.patientIdentifier.identifier}</td>
             <td valign="top">${ui.format(it.patient)}</td>
             <td valign="top">${it.patient.person.gender}</td>
             <td valign="top">${reportUuidSubmittedTriggersMap[it.uuid]}</td>
@@ -56,4 +56,18 @@
     </tbody>
     </table>
 </div>
+
+<% if ( caseReports.size() > 0 ) { %>
+${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#casereport-submitted",
+          options: [
+                  bFilter: true,
+                  bJQueryUI: true,
+                  bLengthChange: false,
+                  iDisplayLength: 15,
+                  sPaginationType: '\'full_numbers\'',
+                  bSort: false,
+                  sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
+          ]
+]) }
+<% } %>
 
