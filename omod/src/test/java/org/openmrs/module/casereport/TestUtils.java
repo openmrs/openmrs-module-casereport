@@ -11,13 +11,20 @@ package org.openmrs.module.casereport;
 
 import java.io.IOException;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.openmrs.util.OpenmrsClassLoader;
+import org.w3c.dom.Document;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 
 public class TestUtils {
+	
+	private static XPath xpath = XPathFactory.newInstance().newXPath();
 	
 	private static final String CONTENT_TYPE = "application/soap+xml";
 	
@@ -41,6 +48,26 @@ public class TestUtils {
 		        .willReturn(
 		            WireMock.aResponse().withStatus(sc).withHeader("Content-Type", CONTENT_TYPE)
 		                    .withBody(getResponse(withSuccessResponse))));
+	}
+	
+	public static String getElement(Document doc, String path) throws XPathExpressionException {
+		return xpath.compile(path).evaluate(doc);
+	}
+	
+	public static int getCount(Document doc, String path) throws XPathExpressionException {
+		return Integer.valueOf(xpath.compile("count(" + path + ")").evaluate(doc));
+	}
+	
+	public static boolean elementExists(Document doc, String path) throws XPathExpressionException {
+		return Boolean.valueOf(xpath.compile("boolean(" + path + ")").evaluate(doc));
+	}
+	
+	public static boolean containsText(Document doc, String path, String search) throws XPathExpressionException {
+		return getElement(doc, path).contains(search);
+	}
+	
+	public static String getAttribute(Document doc, String path, String attribute) throws XPathExpressionException {
+		return xpath.compile(path + "/@" + attribute).evaluate(doc);
 	}
 	
 }

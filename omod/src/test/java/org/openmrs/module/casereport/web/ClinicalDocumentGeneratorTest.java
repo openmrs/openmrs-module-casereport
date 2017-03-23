@@ -10,24 +10,36 @@
 package org.openmrs.module.casereport.web;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-import org.junit.Ignore;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.Test;
+import org.marc.everest.formatters.xml.datatypes.r1.DatatypeFormatter;
+import org.marc.everest.formatters.xml.datatypes.r1.R1FormatterCompatibilityMode;
+import org.marc.everest.formatters.xml.its1.XmlIts1Formatter;
 import org.marc.everest.rmim.uv.cdar2.pocd_mt000040uv.ClinicalDocument;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.Provider;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.ClinicalDocumentGenerator;
+import org.openmrs.module.casereport.TestUtils;
+import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
-import org.openmrs.module.webservices.rest.SimpleObject;
-import org.openmrs.module.webservices.rest.test.Util;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+import org.w3c.dom.Document;
 
-@Ignore
 public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitiveTest {
 	
 	/**
@@ -39,55 +51,67 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
+		final String implId = "Test_Impl";
+		final String implName = "Test_Name";
 		
 		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReport(1);
 		Patient patient = caseReport.getPatient();
+		patient.setDead(true);
+		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-03-20T00:00:00.000-0400"));
+		ConceptService cs = Context.getConceptService();
+		Concept causeOfDeath = cs.getConcept(22);
+		causeOfDeath.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(cs
+		        .getConceptSourceByName(CaseReportConstants.SOURCE_CIEL_HL7_CODE), "1067", null), null));
+		patient.setCauseOfDeath(causeOfDeath);
 		CaseReportForm form = new CaseReportForm(caseReport);
+		final String comments = "Testing...";
+		form.setComments(comments);
 		form.setReportUuid(caseReport.getUuid());
 		form.setReportDate(caseReport.getDateCreated());
+		Provider provider = Context.getProviderService().getProvider(1);
+		UuidAndValue submitter = new UuidAndValue(provider.getUuid(), provider.getIdentifier());
+		form.setSubmitter(submitter);
+		form.setAssigningAuthorityId(implId);
+		form.setAssigningAuthorityName(implName);
 		
 		ClinicalDocument clinicalDocument = new ClinicalDocumentGenerator(form).generate();
-		SimpleObject so = null;
-		assertEquals("Composition", Util.getByPath(so, "resourceType"));
-		assertEquals(caseReport.getUuid(), Util.getByPath(so, "id"));
-		assertEquals("generated", Util.getByPath(so, "text/status"));
-		assertEquals(caseReport.getUuid(), Util.getByPath(so, "identifier/value"));
-		final String reportDate = "2016-03-30T00:00:00-04:00";
-		assertEquals(reportDate, Util.getByPath(so, "date"));
-		assertEquals(patient.getPersonName().getFullName(), Util.getByPath(so, "subject/display"));
-		assertEquals(Context.getUserService().getUserByUuid(form.getSubmitter().getUuid()).getUsername(),
-		    Util.getByPath(so, "author[0]/display"));
-		assertEquals("Test_Impl", Util.getByPath(so, "custodian/reference"));
-		assertEquals("Test_Name", Util.getByPath(so, "custodian/display"));
-		String patientPath = "contained[0]";
-		assertEquals("Patient", Util.getByPath(so, patientPath + "/resourceType"));
-		assertEquals("patient", Util.getByPath(so, patientPath + "/id"));
-		assertEquals(patient.getPatientIdentifier().getIdentifierType().getName(),
-		    Util.getByPath(so, patientPath + "/identifier[0]/system"));
-		assertEquals(patient.getPatientIdentifier().getIdentifier(),
-		    Util.getByPath(so, patientPath + "/identifier[0]/value"));
-		assertEquals(patient.getPersonName().getFullName(), Util.getByPath(so, patientPath + "/name[0]/text"));
-		assertEquals(patient.getPersonName().getGivenName(), Util.getByPath(so, patientPath + "/name[0]/given[0]"));
-		assertEquals(patient.getPersonName().getFamilyName(), Util.getByPath(so, patientPath + "/name[0]/family[0]"));
-		assertEquals(patient.getPersonName().getMiddleName(), Util.getByPath(so, patientPath + "/name[0]/given[1]"));
-		assertEquals("male", Util.getByPath(so, patientPath + "/gender"));
-		assertEquals(new SimpleDateFormat("yyyy-MM-dd").format(patient.getBirthdate()),
-		    Util.getByPath(so, patientPath + "/birthDate"));
-		assertEquals("2016-03-20T00:00:00-04:00", Util.getByPath(so, patientPath + "/deceasedDateTime"));
-		assertEquals(form.getTriggers().get(0).getValue(), Util.getByPath(so, "contained[1]/detail"));
-		assertEquals(form.getTriggers().get(1).getValue(), Util.getByPath(so, "contained[2]/detail"));
-		assertEquals(reportDate, Util.getByPath(so, "event[0]/period/start"));
-		assertEquals(reportDate, Util.getByPath(so, "event[0]/period/end"));
-		assertEquals(2, ((List) Util.getByPath(so, "event[0]/detail")).size());
-		assertEquals(form.getTriggers().get(0).getValue(), Util.getByPath(so, "event[0]/detail[0]/display"));
-		assertEquals(form.getTriggers().get(1).getValue(), Util.getByPath(so, "event[0]/detail[1]/display"));
-		assertEquals(7, ((List) Util.getByPath(so, "section")).size());
-		assertEquals(3, ((List) Util.getByPath(so, "section[0]/entry")).size());
-		assertEquals(3, ((List) Util.getByPath(so, "section[1]/entry")).size());
-		assertEquals(3, ((List) Util.getByPath(so, "section[2]/entry")).size());
-		assertEquals(1, ((List) Util.getByPath(so, "section[3]/entry")).size());
-		assertEquals(2, ((List) Util.getByPath(so, "section[4]/entry")).size());
-		assertEquals(1, ((List) Util.getByPath(so, "section[5]/entry")).size());
-		assertEquals(1, ((List) Util.getByPath(so, "section[6]/entry")).size());
+		
+		XmlIts1Formatter fmtr = new XmlIts1Formatter();
+		fmtr.getGraphAides().add(new DatatypeFormatter(R1FormatterCompatibilityMode.ClinicalDocumentArchitecture));
+		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream(8192);
+		fmtr.graph(cdaOutput, clinicalDocument);
+		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+		        .parse(new ByteArrayInputStream(cdaOutput.toByteArray()));
+		
+		final String orgOID = "1.3.6.1.4.1.21367.2010.1.2";
+		assertEquals(orgOID, TestUtils.getAttribute(doc, "ClinicalDocument/id", "root"));
+		assertEquals(caseReport.getUuid(), TestUtils.getAttribute(doc, "ClinicalDocument/id", "extension"));
+		assertEquals("20160330000000.000-0400", TestUtils.getAttribute(doc, "ClinicalDocument/effectiveTime", "value"));
+		assertEquals("N", TestUtils.getAttribute(doc, "//confidentialityCode", "code"));
+		PatientIdentifier pid = patient.getPatientIdentifier();
+		assertEquals(pid.getIdentifierType().getName(), TestUtils.getAttribute(doc, "//patientRole/id", "root"));
+		assertEquals(pid.getIdentifier(), TestUtils.getAttribute(doc, "//patientRole/id", "extension"));
+		assertEquals(patient.getFamilyName(), TestUtils.getElement(doc, "//patient/name/family"));
+		assertEquals(patient.getGivenName(), TestUtils.getElement(doc, "//patient/name/given[1]"));
+		assertEquals(patient.getMiddleName(), TestUtils.getElement(doc, "//patient/name/given[2]"));
+		assertEquals(patient.getGender(), TestUtils.getAttribute(doc, "//patient/administrativeGenderCode", "code"));
+		assertEquals("19750408000000.000-0500", TestUtils.getAttribute(doc, "//patient/birthTime", "value"));
+		assertEquals(orgOID, TestUtils.getAttribute(doc, "//providerOrganization/id", "root"));
+		assertEquals(implName, TestUtils.getElement(doc, "//providerOrganization/name"));
+		assertEquals(implId, TestUtils.getAttribute(doc, "//assignedAuthor/id", "root"));
+		assertEquals(provider.getIdentifier(), TestUtils.getAttribute(doc, "//assignedAuthor/id", "extension"));
+		assertEquals(provider.getPerson().getFamilyName(), TestUtils.getElement(doc, "//assignedPerson/name/family"));
+		assertEquals(provider.getPerson().getGivenName(), TestUtils.getElement(doc, "//assignedPerson/name/given"));
+		assertTrue(TestUtils.elementExists(doc, "//representedOrganization"));
+		assertEquals(orgOID, TestUtils.getAttribute(doc, "//representedCustodianOrganization/id", "root"));
+		assertEquals(implId, TestUtils.getAttribute(doc, "//representedCustodianOrganization/id", "extension"));
+		assertEquals(implName, TestUtils.getElement(doc, "//representedCustodianOrganization/name"));
+		assertEquals(5, TestUtils.getCount(doc, "//text/list/item"));
+		assertEquals(2, TestUtils.getCount(doc, "//text/list/item[1]/list/item"));
+		assertTrue(TestUtils.containsText(doc, "//text/list/item[2]", comments));
+		assertEquals(3, TestUtils.getCount(doc, "//text/list/item[3]/list/item"));
+		assertEquals(2, TestUtils.getCount(doc, "//text/list/item[4]/list/item"));
+		assertEquals(6, TestUtils.getCount(doc, "//text/list/item[5]/list/item"));
+		assertEquals(12, TestUtils.getCount(doc, "//entry"));
 	}
 }
