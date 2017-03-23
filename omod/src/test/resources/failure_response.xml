@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+    <env:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+        <wsa:To env:mustUnderstand="true">http://www.w3.org/2005/08/addressing/anonymous</wsa:To>
+        <wsa:Action>urn:ihe:iti:2007:ProvideAndRegisterDocumentSet-bResponse</wsa:Action>
+        <wsa:MessageID>urn:uuid:52abe4ce-53de-400c-adb2-a787f5a76c9b</wsa:MessageID>
+        <wsa:RelatesTo>urn:uuid:10de10fd-e5fa-4c37-9b29-be58efbc7d60</wsa:RelatesTo>
+    </env:Header>
+    <env:Body>
+        <ns3:RegistryResponse
+                xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+                status="urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Failure">
+            <ns3:RegistryErrorList>
+                <ns3:RegistryError codeContext="Document id 2.25.123 is duplicate"
+                                   errorCode="XDSDocumentUniqueIdError"
+                                   severity="urn:oasis:names:tc:ebxml-regrep:ErrorSeverityType:Error"/>
+            </ns3:RegistryErrorList>
+        </ns3:RegistryResponse>
+    </env:Body>
+</env:Envelope>

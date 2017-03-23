@@ -10,55 +10,86 @@
 package org.openmrs.module.casereport.web;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Ignore;
+import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
-import org.openmrs.ConceptReferenceTerm;
-import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.PatientService;
+import org.junit.rules.ExpectedException;
+import org.openmrs.Provider;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
+import org.openmrs.module.casereport.HealthInfoExchangeListener;
+import org.openmrs.module.casereport.TestUtils;
+import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Ignore
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
 public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiveTest {
+	
+	@Autowired
+	HealthInfoExchangeListener listener;
+	
+	@Rule
+	public WireMockRule wireMockRule = new WireMockRule(5000);
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 	
 	/**
 	 * @see org.openmrs.module.casereport.HealthInfoExchangeListener#onApplicationEvent(CaseReportSubmittedEvent)
 	 */
 	@Test
-	public void onApplicationEvent_shouldSubmitTheDocument() throws Exception {
+	public void onApplicationEvent_shouldSubmitTheDocumentSuccessfullyToTheConfiguredUrl() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
-		PatientService ps = Context.getPatientService();
-		PatientIdentifierType idType = ps.getPatientIdentifierType(1);
-		idType.setName("1.3.6.1.4.1.21367.2010.1.2.301");
-		ps.savePatientIdentifierType(idType);
-		ps.getPatient(2).getPatientIdentifier().setIdentifier("12345");
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
-		Patient patient = caseReport.getPatient();
-		patient.setDead(true);
-		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-03-20T00:00:00.000-0400"));
-		ConceptService cs = Context.getConceptService();
-		Concept causeOfDeath = cs.getConcept(22);
-		causeOfDeath.addConceptMapping(new ConceptMap(new ConceptReferenceTerm(cs
-		        .getConceptSourceByName(CaseReportConstants.SOURCE_CIEL_HL7_CODE), "1067", null), null));
-		patient.setCauseOfDeath(causeOfDeath);
 		CaseReportForm form = new CaseReportForm(caseReport);
-		form.setComments("Testing...");
+		Provider p = Context.getProviderService().getProvider(1);
+		form.setSubmitter(new UuidAndValue(p.getUuid(), p.getIdentifier()));
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
-		service.submitCaseReport(caseReport);
 		
-		//TODO Add assertion for the file contents
+		TestUtils.createPostStub(true);
+		
+		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
+		
+		final String path = "/xdsrepository";
+		String expectedUrl = "http://localhost:5000" + path;
+		WireMock.verify(1,
+		    WireMock.postRequestedFor(WireMock.urlEqualTo(path)).withRequestBody(WireMock.containing(expectedUrl)));
+	}
+	
+	/**
+	 * @see org.openmrs.module.casereport.HealthInfoExchangeListener#onApplicationEvent(CaseReportSubmittedEvent)
+	 */
+	@Test
+	public void onApplicationEvent_shouldFailForAResponseThatIsNotASuccess() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-other.xml");
+		executeDataSet("moduleTestData-HIE.xml");
+		
+		CaseReportService service = Context.getService(CaseReportService.class);
+		CaseReport caseReport = service.getCaseReport(1);
+		CaseReportForm form = new CaseReportForm(caseReport);
+		Provider p = Context.getProviderService().getProvider(1);
+		form.setSubmitter(new UuidAndValue(p.getUuid(), p.getIdentifier()));
+		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
+		
+		TestUtils.createPostStub(false);
+		
+		expectedException.expect(APIException.class);
+		String errorMsg = "Severity: Error, Code: XDSDocumentUniqueIdError, Message: Document id 2.25.123 is duplicate"
+		        + System.getProperty("line.separator");
+		expectedException.expectMessage(Matchers.equalTo(errorMsg));
+		
+		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
 	}
 }

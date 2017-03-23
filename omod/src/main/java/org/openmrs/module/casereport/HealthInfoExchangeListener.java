@@ -73,12 +73,11 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 				StringBuffer sb = new StringBuffer();
 				if (regResp.getRegistryErrorList() != null && regResp.getRegistryErrorList().getRegistryError() != null) {
 					for (RegistryError re : regResp.getRegistryErrorList().getRegistryError()) {
-						sb.append(lf
-						        + "Severity: "
+						sb.append("Severity: "
 						        + (StringUtils.isNotBlank(re.getSeverity()) ? re.getSeverity().substring(
 						            re.getSeverity().lastIndexOf(":") + 1) : "?") + ", Code: "
 						        + (StringUtils.isNotBlank(re.getErrorCode()) ? re.getErrorCode() : "?") + ", Message: "
-						        + (StringUtils.isNotBlank(re.getCodeContext()) ? re.getCodeContext() : "?"));
+						        + (StringUtils.isNotBlank(re.getCodeContext()) ? re.getCodeContext() : "?") + lf);
 					}
 				}
 				
@@ -90,8 +89,17 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			}
 		}
 		catch (Exception e) {
-			//TODO handle error properly
-			throw new APIException("An error occurred while submitting a case report document to the HIE", e);
+			
+			log.warn("An error occurred while submitting a case report document to the HIE");
+			
+			APIException rethrow;
+			if (e instanceof APIException) {
+				rethrow = (APIException) e;
+			} else {
+				rethrow = new APIException(e);
+			}
+			
+			throw rethrow;
 		}
 	}
 	

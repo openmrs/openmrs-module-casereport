@@ -22,13 +22,13 @@ import org.junit.rules.ExpectedException;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportUtil;
+import org.openmrs.module.casereport.TestUtils;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.StatusChange;
 import org.openmrs.module.casereport.web.rest.v1_0.resource.CaseReportResourceTest;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest {
@@ -102,22 +102,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		assertFalse(cr.isSubmitted());
 		
 		form.getTriggers().remove(form.getTriggerByName(newHivCase));
-		
-		final String successResponse = "<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\""
-		        + "    xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">"
-		        + "    <s:Header>"
-		        + "        <wsa:Action s:mustUnderstand=\"true\">urn:ihe:iti:2007:RegisterDocumentSet-bResponse</wsa:Action>"
-		        + "        <wsa:RelatesTo>urn:uuid:1ec52e14-4aad-4ba1-b7d3-fc9812a21340</wsa:RelatesTo>" + "    </s:Header>"
-		        + "    <s:Body>" + "        <rs:RegistryResponse xmlns:rs=\"urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0\""
-		        + "            status=\"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success\"/>" + "    </s:Body>"
-		        + "</s:Envelope>";
-		
-		WireMock.stubFor(WireMock
-		        .post(WireMock.urlEqualTo("/xdsrepository"))
-		        .withHeader("Accept", WireMock.containing("application/soap+xml"))
-		        .willReturn(
-		            WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/soap+xml")
-		                    .withBody(successResponse)));
+		TestUtils.createPostStub(true);
 		
 		handle(newPostRequest(getURI(),
 		    "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"reportForm\":" + mapper.writeValueAsString(form) + "}"));

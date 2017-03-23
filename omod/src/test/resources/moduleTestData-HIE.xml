@@ -15,8 +15,8 @@
 <dataset>
     <global_property property="implementation_id" property_value="&lt;implementationId id=&quot;1&quot; implementationId=&quot;Test_Impl&quot;&gt; &lt;passphrase id=&quot;2&quot;&gt;&lt;![CDATA[Some passphrase]]&gt;&lt;/passphrase&gt; &lt;description id=&quot;3&quot;&gt;&lt;![CDATA[Some descr]]&gt;&lt;/description&gt; &lt;name id=&quot;4&quot;&gt;&lt;![CDATA[Test_Name]]&gt;&lt;/name&gt; &lt;/implementationId&gt;" uuid="0f55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.openHIMUrl" property_value="http://localhost:5000/xdsrepository" uuid="1f55827e-26fe-103b-80cb-0017a47871b3" />
-    <global_property property="casereport.openHIMClientId" property_value="" uuid="2f55827e-26fe-103b-80cb-0017a47871b3" />
-    <global_property property="casereport.openHIMClientPassword" property_value="" uuid="3f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.openHIMClientId" property_value="fake user" uuid="2f55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.openHIMClientPassword" property_value="fake password" uuid="3f55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.idFormat" property_value="%2$s^^^&amp;%1$s&amp;ISO" uuid="4f55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.confidentialityCode" property_value="N" uuid="5f55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.healthCareFacilityTypeCode" property_value="Hospital Unit" uuid="6f55827e-26fe-103b-80cb-0017a47871b3" />
