@@ -32,7 +32,6 @@
         <require_module version="${uicommonsVersion}">${project.parent.groupId}.uicommons</require_module>
         <require_module version="${appuiVersion}">${project.parent.groupId}.appui</require_module>
         <require_module version="${reportingVersion}">${project.parent.groupId}.reporting</require_module>
-        <require_module version="${reportingRestVersion}">${project.parent.groupId}.reportingrest</require_module>
         <require_module version="${webservices.restVersion}">${project.parent.groupId}.webservices.rest</require_module>
 	</require_modules>
 	<!-- / Required Modules -->

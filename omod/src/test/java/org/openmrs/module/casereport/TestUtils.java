@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.w3c.dom.Document;
@@ -59,15 +60,28 @@ public class TestUtils {
 	}
 	
 	public static boolean elementExists(Document doc, String path) throws XPathExpressionException {
-		return Boolean.valueOf(xpath.compile("boolean(" + path + ")").evaluate(doc));
+		return getCount(doc, path) > 0;
 	}
 	
-	public static boolean containsText(Document doc, String path, String search) throws XPathExpressionException {
+	public static boolean elementContainsText(Document doc, String path, String search) throws XPathExpressionException {
 		return getElement(doc, path).contains(search);
+	}
+	
+	public static boolean attributeContainsText(Document doc, String path, String attribute, String search)
+	    throws XPathExpressionException {
+		return getAttribute(doc, path, attribute).contains(search);
 	}
 	
 	public static String getAttribute(Document doc, String path, String attribute) throws XPathExpressionException {
 		return xpath.compile(path + "/@" + attribute).evaluate(doc);
+	}
+	
+	public static boolean elementHasText(Document doc, String path) throws XPathExpressionException {
+		return StringUtils.isNotBlank(getElement(doc, path));
+	}
+	
+	public static boolean attributeHasText(Document doc, String path, String attribute) throws XPathExpressionException {
+		return StringUtils.isNotBlank(getAttribute(doc, path, attribute));
 	}
 	
 }

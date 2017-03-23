@@ -57,7 +57,7 @@ import org.springframework.http.MediaType;
  */
 public final class ProvideAndRegisterDocGenerator {
 	
-	protected static final Log log = LogFactory.getLog(ProvideAndRegisterDocGenerator.class);
+	protected final Log log = LogFactory.getLog(getClass());
 	
 	private int idCounter;
 	

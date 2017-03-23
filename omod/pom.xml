@@ -112,13 +112,6 @@
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>reportingrest-omod</artifactId>
-            <scope>provided</scope>
-            <version>${reportingRestVersion}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
             <artifactId>uicommons-scss</artifactId>
             <type>zip</type>
             <version>${uicommonsVersion}</version>

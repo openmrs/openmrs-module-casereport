@@ -54,7 +54,6 @@
         <appuiVersion>1.4</appuiVersion>
         <hapiPhirVersion>1.6</hapiPhirVersion>
         <reportingVersion>0.9.8.1</reportingVersion>
-        <reportingRestVersion>1.5</reportingRestVersion>
         <calculationVersion>1.1</calculationVersion>
         <serializationXstreamVersion>0.2.10</serializationXstreamVersion>
         <webservices.restVersion>2.14</webservices.restVersion>
