@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.casereport.web;
+package org.openmrs.module.casereport;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
