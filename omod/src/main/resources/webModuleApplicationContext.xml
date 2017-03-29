@@ -49,7 +49,7 @@
     <bean id="casereport-marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPath" value="org.dcm4chee.xds2.infoset.ihe:org.dcm4chee.xds2.infoset.rim"/>
         <!-- Enables marshalling of the outgoing message using MTOM/XOP -->
-        <property name="mtomEnabled" value="true" />
+        <property name="mtomEnabled" value="false" />
     </bean>
 
     <bean id="basicAuthInterceptor" class="org.openmrs.module.casereport.AuthenticatingInterceptor" />
