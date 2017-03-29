@@ -356,9 +356,13 @@ public class CaseReportUtil {
 		
 		int addedTriggerCount = 0;
 		for (String t : triggerNames) {
-			if (caseReport.getCaseReportTriggerByName(t) == null) {
-				caseReport.addTrigger(new CaseReportTrigger(t));
-				addedTriggerCount++;
+			if (StringUtils.isNotBlank(t)) {
+				if (caseReport.getCaseReportTriggerByName(t) == null) {
+					caseReport.addTrigger(new CaseReportTrigger(t));
+					addedTriggerCount++;
+				}
+			} else {
+				throw new APIException("Trigger name cannot be blank");
 			}
 		}
 		

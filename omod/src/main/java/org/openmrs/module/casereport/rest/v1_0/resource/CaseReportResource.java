@@ -13,13 +13,14 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.casereport.rest.CaseReportRestException;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -148,7 +149,8 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 		}
 		caseReport = CaseReportUtil.createReportIfNecessary(caseReport.getPatient(), triggerNames);
 		if (caseReport == null) {
-			throw new APIException("Patient already has a case report queue item with the specified trigger(s)");
+			throw new CaseReportRestException(CaseReportConstants.MODULE_ID + ".error.trigger.duplicate",
+			        new Object[] { triggerNames[0] });
 		}
 		
 		caseReport = save(caseReport);

@@ -55,7 +55,7 @@ public class CaseReportTriggerValidator implements Validator {
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport duplicate = service.getCaseReportByPatient(trigger.getCaseReport().getPatient());
-		if (duplicate != null && !duplicate.equals(trigger)) {
+		if (duplicate != null) {
 			CaseReportTrigger crt = duplicate.getCaseReportTriggerByName(trigger.getName());
 			if (crt != null && !crt.equals(trigger)) {
 				errors.rejectValue("name", "casereport.error.trigger.duplicate", new Object[] { trigger.getName() }, null);

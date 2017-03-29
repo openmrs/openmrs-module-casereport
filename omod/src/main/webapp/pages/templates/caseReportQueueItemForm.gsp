@@ -36,14 +36,17 @@
                 label: ui.message("casereport.trigger"),
                 options: triggerOptions,
                 otherAttributes: [
-                        "ng-model": "trigger"
+                        "ng-model": "trigger",
+                        "required": ""
                 ]
         ])}
     </p>
 
     <br />
     <p>
-        <button type="submit" class="right confirm">${ui.message("general.save")}</button>
+        <button type="submit" class="right confirm" ng-disabled="caseReportQueueItemForm.\$invalid">
+            ${ui.message("general.save")}
+        </button>
         <button type="button" class="cancel" ui-sref="list">${ui.message("general.cancel")}</button>
     </p>
 </form>
