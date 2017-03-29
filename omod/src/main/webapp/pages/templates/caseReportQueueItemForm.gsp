@@ -10,16 +10,6 @@
 
 -->
 
-<%
-    def triggerOptions = []
-    triggers.each { it ->
-        triggerOptions << [
-                label: it.name,
-                value: it.name
-        ]
-    }
-%>
-
 <h2>${ ui.message("casereport.caseReportQueueItemForm.title")}</h2>
 
 <form class="simple-form-ui" name="caseReportQueueItemForm" novalidate ng-submit="saveNewQueueItem()">
@@ -27,19 +17,27 @@
         <label>${ui.message("general.patient")}</label>
     </p>
     <p>
-        {{patient | omrsDisplay}}
+        <div class="casereport-margin-left">{{patient | omrsDisplay}}</div>
     </p>
     <p>
-        ${ui.includeFragment("uicommons", "field/dropDown", [
-                id: "casereport-triggers",
-                formFieldName: "reportTriggers",
-                label: ui.message("casereport.trigger"),
-                options: triggerOptions,
-                otherAttributes: [
-                        "ng-model": "trigger",
-                        "required": ""
-                ]
-        ])}
+        <label for="casereport-triggers">
+            ${ ui.message("casereport.trigger") }
+            <span>
+            (${ ui.message("emr.formValidation.messages.requiredField.label") })
+            </span>
+        </label>
+    </p>
+    <p>
+        <div class="casereport-margin-left">
+            <select id="casereport-triggers" name="trigger" ng-model="trigger" required>
+                <option value="">${ui.message("casereport.selectTrigger")}</option>
+                <% triggers.each { %>
+                <option value="${ it.name }" ${existingTriggers.contains(it.name) ? "disabled" : "" }>
+                    ${ it.name }
+                </option>
+             <% } %>
+            </select>
+        </div>
     </p>
 
     <br />

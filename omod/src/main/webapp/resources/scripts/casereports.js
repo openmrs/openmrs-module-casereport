@@ -21,7 +21,9 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
             })
             .state('caseReportQueueItemForm', {
                 url: "/caseReportQueueItemForm/:patientUuid",
-                templateUrl: "templates/caseReportQueueItemForm.page",
+                templateUrl: function($stateParams){
+                    return "templates/caseReportQueueItemForm.page?patient="+$stateParams.patientUuid;
+                },
                 controller: "CaseReportQueueItemFormController",
                 params:{
                     patientUuid: null

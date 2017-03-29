@@ -59,6 +59,10 @@ a.casereport-no-underline:hover {
   height: 30px;
 }
 
+.casereport-margin-left {
+  margin-left: 20px;
+}
+
 @mixin casereport-lozenge($textColor, $borderColor, $fontSize) {
   display: inline-block;
   vertical-align: text-bottom;
