@@ -11,17 +11,13 @@ package org.openmrs.module.casereport;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.casereport.CaseReport;
-import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.HealthInfoExchangeListener;
-import org.openmrs.module.casereport.TestUtils;
-import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.api.CaseReportSubmittedEvent;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
@@ -41,14 +37,18 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
+	@Before
+	public void setup() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-other.xml");
+		executeDataSet("moduleTestData-HIE.xml");
+	}
+	
 	/**
 	 * @see org.openmrs.module.casereport.HealthInfoExchangeListener#onApplicationEvent(CaseReportSubmittedEvent)
 	 */
 	@Test
 	public void onApplicationEvent_shouldSubmitTheDocumentSuccessfullyToTheConfiguredUrl() throws Exception {
-		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-other.xml");
-		executeDataSet("moduleTestData-HIE.xml");
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
@@ -72,9 +72,6 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 	 */
 	@Test
 	public void onApplicationEvent_shouldFailForAResponseThatIsNotASuccess() throws Exception {
-		executeDataSet("moduleTestData-initial.xml");
-		executeDataSet("moduleTestData-other.xml");
-		executeDataSet("moduleTestData-HIE.xml");
 		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		CaseReport caseReport = service.getCaseReport(1);
