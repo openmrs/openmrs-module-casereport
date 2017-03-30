@@ -271,12 +271,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		
 		//We use a publisher consumer approach to keep the web layer out of the api
 		//It also provides a hook for others to register custom listeners to take other actions.
-		try {
-			eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
-		}
-		catch (Throwable t) {
-			throw new APIException("An error occurred while publishing case report submission events", t);
-		}
+		eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);
 		return dao.saveCaseReport(caseReport);

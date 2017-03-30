@@ -45,7 +45,7 @@
     </thead>
     <tbody>
         <% caseReports.each {  %>
-        <tr ng-click="displayDocument('${it.uuid}')" title="${ui.message("casereport.clickToViewFhirDocument")}">
+        <tr ng-click="displayDocument('${it.uuid}')" title="${ui.message("casereport.clickToViewDocument")}">
             <td valign="top">${ui.formatDatePretty(it.dateChanged)}</td>
             <td class="casereport-identifier-column" valign="top">${it.patient.patientIdentifier.identifier}</td>
             <td valign="top">${ui.format(it.patient)}</td>

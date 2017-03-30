@@ -102,5 +102,4 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			throw rethrow;
 		}
 	}
-	
 }

@@ -95,7 +95,7 @@ public final class ClinicalDocumentGenerator {
 	 * @return ClinicalDocument object
 	 * @should generate a ClinicalDocument object
 	 */
-	public ClinicalDocument generate() throws Exception {
+	public ClinicalDocument generate() throws ParseException {
 		if (log.isDebugEnabled()) {
 			CaseReportService crs = Context.getService(CaseReportService.class);
 			CaseReport cr = crs.getCaseReportByUuid(form.getReportUuid());

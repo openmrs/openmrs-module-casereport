@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Super class for case report related exceptions in the rest api
+ * An instance of this exception is thrown by the rest api when an error is encountered.
  */
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class CaseReportRestException extends ResponseException {

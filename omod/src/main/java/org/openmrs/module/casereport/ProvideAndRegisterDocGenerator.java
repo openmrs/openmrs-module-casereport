@@ -79,7 +79,7 @@ public final class ProvideAndRegisterDocGenerator {
 	 * @return ProvideAndRegisterDocumentSetRequestType object
 	 * @throws Exception
 	 */
-	public ProvideAndRegisterDocumentSetRequestType generate() throws Exception {
+	public ProvideAndRegisterDocumentSetRequestType generate() throws JAXBException, ParseException {
 		if (log.isDebugEnabled()) {
 			CaseReportService crs = Context.getService(CaseReportService.class);
 			CaseReport cr = crs.getCaseReportByUuid(form.getReportUuid());

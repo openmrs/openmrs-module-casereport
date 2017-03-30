@@ -183,6 +183,8 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                 }).$promise.then(function() {
                     $state.go("list");
                     emr.successMessage("casereport.submitted");
+                }, function(error) {
+                    emr.errorMessage("casereport.seeLogs");
                 });
             }
 

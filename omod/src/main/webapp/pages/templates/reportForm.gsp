@@ -11,8 +11,7 @@
 -->
 
 <script type="text/javascript">
-    emr.loadMessages(["casereport.submitted"]);
-    emr.loadMessages(["casereport.report.form.title"]);
+    emr.loadMessages(["casereport.submitted", "casereport.report.form.title", "casereport.seeLogs"]);
 </script>
 
 <h2 id="casereport-reportTitle" />
