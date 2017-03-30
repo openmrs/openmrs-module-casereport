@@ -32,7 +32,7 @@
             <div id="casereport-prev-reports">
                 <ul>
                     <li ng-repeat="prevReport in previousReportDetails">
-                        {{ prevReport.datechanged | serverDate }} - {{ getValues(prevReport.triggers) | omrsDisplay }}
+                        {{ prevReport.datechanged | serverDate }} - {{ getValues(prevReport.triggers) | omrs.display }}
                     </li>
                 </ul>
             </div>
@@ -138,7 +138,7 @@
         </tr>
         <tr ng-show="caseReport.reportForm.currentHivMedications.length > 0">
             <th valign="top">${ui.message("casereport.arvs")}</th>
-            <td valign="top">{{ getValues(caseReport.reportForm.currentHivMedications) | omrsDisplay }}</td>
+            <td valign="top">{{ getValues(caseReport.reportForm.currentHivMedications) | omrs.display }}</td>
         </tr>
         <tr ng-show="caseReport.reportForm.mostRecentArvStopReason">
             <th valign="top">${ui.message("casereport.reasonArvsStopped")}</th>

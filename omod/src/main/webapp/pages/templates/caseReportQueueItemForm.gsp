@@ -17,7 +17,7 @@
         <label>${ui.message("general.patient")}</label>
     </p>
     <p>
-        <div class="casereport-margin-left">{{patient | omrsDisplay}}</div>
+        <div class="casereport-margin-left">{{patient | omrs.display}}</div>
     </p>
     <p>
         <label for="casereport-triggers">
