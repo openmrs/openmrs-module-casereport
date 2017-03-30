@@ -67,6 +67,9 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(3, reportForm.getMostRecentViralLoads().size());
 		assertEquals(3, reportForm.getMostRecentCd4Counts().size());
 		assertEquals(3, reportForm.getMostRecentHivTests().size());
+		assertEquals("77fb7f47-b80a-4056-9285-bd798be13c63", reportForm.getMostRecentViralLoad().getUuid());
+		assertEquals("7dfb7f47-c80a-4056-9285-bd767be13c63", reportForm.getMostRecentCd4Count().getUuid());
+		assertEquals("4afb7f47-d80a-4056-9285-bd767be13c63", reportForm.getMostRecentHivTest().getUuid());
 		assertEquals(2, reportForm.getCurrentHivMedications().size());
 		assertEquals("WHO HIV stage 2", reportForm.getCurrentHivWhoStage().getValue());
 		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason().getValue());
@@ -75,8 +78,8 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(patient.getCauseOfDeath().getName().getName(), reportForm.getCauseOfDeath().getValue());
 		Map<String, List<DatedUuidAndValue>> map = reportForm.getPreviousReportUuidTriggersMap();
 		assertEquals(2, map.size());
-		final String casereportUuid1 = "er7d57f0-9088-11e1-aaa4-00248140a5ec";
-		final String casereportUuid2 = "ui7d57f0-9188-11e1-aaa4-00248140a5ec";
+		final String casereportUuid1 = "e17d57f0-9088-11e1-aaa4-00248140a5ec";
+		final String casereportUuid2 = "e27d57f0-9188-11e1-aaa4-00248140a5ec";
 		assertTrue(map.containsKey(casereportUuid1));
 		assertTrue(map.containsKey(casereportUuid2));
 		assertEquals(2, map.get(casereportUuid1).size());

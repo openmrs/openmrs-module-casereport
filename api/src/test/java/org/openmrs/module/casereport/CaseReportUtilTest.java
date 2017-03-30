@@ -115,9 +115,9 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		Patient patient = patientService.getPatient(2);
 		List<Obs> hivTests = CaseReportUtil.getMostRecentHIVTests(patient);
 		assertEquals(3, hivTests.size());
-		assertEquals(8016, hivTests.get(0).getId().intValue());
-		assertEquals(8014, hivTests.get(1).getId().intValue());
-		assertEquals(8013, hivTests.get(2).getId().intValue());
+		assertEquals(8017, hivTests.get(0).getId().intValue());
+		assertEquals(8015, hivTests.get(1).getId().intValue());
+		assertEquals(8014, hivTests.get(2).getId().intValue());
 	}
 	
 	/**

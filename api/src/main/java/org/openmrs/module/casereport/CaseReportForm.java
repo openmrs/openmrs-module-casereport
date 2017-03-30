@@ -12,7 +12,10 @@ package org.openmrs.module.casereport;
 import static org.openmrs.module.casereport.CaseReportConstants.DATE_FORMATTER;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +38,8 @@ import org.openmrs.module.casereport.api.CaseReportService;
  * An instance of this class encapsulates the serialized report form data
  */
 public class CaseReportForm {
+	
+	Comparator<DatedUuidAndValue> comparator = new ValueByDateComparator();
 	
 	private String reportUuid;
 	
@@ -63,12 +68,6 @@ public class CaseReportForm {
 	private UuidAndValue causeOfDeath;
 	
 	private List<DatedUuidAndValue> triggers;
-	
-	private DatedUuidAndValue mostRecentCd4Count;
-	
-	private DatedUuidAndValue mostRecentHivTest;
-	
-	private DatedUuidAndValue mostRecentViralLoad;
 	
 	private List<DatedUuidAndValue> mostRecentCd4Counts;
 	
@@ -135,9 +134,6 @@ public class CaseReportForm {
 			getMostRecentCd4Counts().add(
 			    new DatedUuidAndValue(o.getUuid(), o.getValueNumeric(), DATE_FORMATTER.format(o.getObsDatetime())));
 		}
-		if (!getMostRecentCd4Counts().isEmpty()) {
-			setMostRecentCd4Count(getMostRecentCd4Counts().get(0));
-		}
 		
 		List<Obs> mostRecentHivTests = CaseReportUtil.getMostRecentHIVTests(patient);
 		for (Obs o : mostRecentHivTests) {
@@ -145,17 +141,11 @@ public class CaseReportForm {
 			    new DatedUuidAndValue(o.getUuid(), o.getValueAsString(Context.getLocale()), DATE_FORMATTER.format(o
 			            .getObsDatetime())));
 		}
-		if (!getMostRecentHivTests().isEmpty()) {
-			setMostRecentHivTest(getMostRecentHivTests().get(0));
-		}
 		
 		List<Obs> mostRecentViralLoads = CaseReportUtil.getMostRecentViralLoads(patient);
 		for (Obs o : mostRecentViralLoads) {
 			getMostRecentViralLoads().add(
 			    new DatedUuidAndValue(o.getUuid(), o.getValueNumeric(), DATE_FORMATTER.format(o.getObsDatetime())));
-		}
-		if (!getMostRecentViralLoads().isEmpty()) {
-			setMostRecentViralLoad(getMostRecentViralLoads().get(0));
 		}
 		
 		List<DrugOrder> arvOrders = CaseReportUtil.getActiveArvDrugOrders(patient, null);
@@ -327,28 +317,19 @@ public class CaseReportForm {
 		this.triggers = triggers;
 	}
 	
+	@JsonIgnore
 	public DatedUuidAndValue getMostRecentCd4Count() {
-		return mostRecentCd4Count;
+		return getMostRecentValue(getMostRecentCd4Counts());
 	}
 	
-	public void setMostRecentCd4Count(DatedUuidAndValue mostRecentCd4Count) {
-		this.mostRecentCd4Count = mostRecentCd4Count;
-	}
-	
+	@JsonIgnore
 	public DatedUuidAndValue getMostRecentHivTest() {
-		return mostRecentHivTest;
+		return getMostRecentValue(getMostRecentHivTests());
 	}
 	
-	public void setMostRecentHivTest(DatedUuidAndValue mostRecentHivTest) {
-		this.mostRecentHivTest = mostRecentHivTest;
-	}
-	
+	@JsonIgnore
 	public DatedUuidAndValue getMostRecentViralLoad() {
-		return mostRecentViralLoad;
-	}
-	
-	public void setMostRecentViralLoad(DatedUuidAndValue mostRecentViralLoad) {
-		this.mostRecentViralLoad = mostRecentViralLoad;
+		return getMostRecentValue(getMostRecentViralLoads());
 	}
 	
 	public List<DatedUuidAndValue> getMostRecentCd4Counts() {
@@ -480,5 +461,28 @@ public class CaseReportForm {
 			return true;
 		}
 		return false;
+	}
+	
+	private DatedUuidAndValue getMostRecentValue(List<DatedUuidAndValue> values) {
+		Collections.sort(values, Collections.reverseOrder(comparator));
+		return values.isEmpty() ? null : values.get(0);
+	}
+	
+	private class ValueByDateComparator implements Comparator<DatedUuidAndValue> {
+		
+		@Override
+		public int compare(DatedUuidAndValue o1, DatedUuidAndValue o2) {
+			if (StringUtils.isBlank(o1.getDate()) || StringUtils.isBlank(o2.getDate())) {
+				throw new APIException("Date fields are required by the comparator");
+			}
+			try {
+				Date date1 = DATE_FORMATTER.parse(o1.getDate());
+				Date date2 = DATE_FORMATTER.parse(o2.getDate());
+				return date1.compareTo(date2);
+			}
+			catch (ParseException e) {
+				throw new APIException(e);
+			}
+		}
 	}
 }
