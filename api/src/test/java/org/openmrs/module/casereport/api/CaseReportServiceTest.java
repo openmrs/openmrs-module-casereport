@@ -277,10 +277,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		final String implName = "Some name";
 		//set the implementation id for test purposes
 		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">"
-		        + "   <passphrase id=\"2\"><![CDATA[Some passphrase]]></passphrase>"
-		        + "   <description id=\"3\"><![CDATA[Some descr]]></description>" + "   <name id=\"4\"><![CDATA[" + implName
-		        + "]]></name>" + "</implementationId>";
+		String implementationIdGpValue = "<implementationId implementationId=\"" + implId + "\">"
+		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>" + "   <name>"
+		        + implName + "</name>" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
 		
@@ -306,10 +305,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		final String implName = "Some name";
 		//set the implementation id for test purposes
 		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">"
-		        + "   <passphrase id=\"2\"><![CDATA[Some passphrase]]></passphrase>"
-		        + "   <description id=\"3\"><![CDATA[Some descr]]></description>" + "   <name id=\"4\"><![CDATA[" + implName
-		        + "]]></name>" + "</implementationId>";
+		String implementationIdGpValue = "<implementationId implementationId=\"" + implId + "\">"
+		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>" + "   <name>"
+		        + implName + "</name>" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
 		
@@ -344,10 +342,9 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		final String implName = "Some name";
 		//set the implementation id for test purposes
 		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId id=\"1\" implementationId=\"" + implId + "\">"
-		        + "   <passphrase id=\"2\"><![CDATA[Some passphrase]]></passphrase>"
-		        + "   <description id=\"3\"><![CDATA[Some descr]]></description>" + "   <name id=\"4\"><![CDATA[" + implName
-		        + "]]></name>" + "</implementationId>";
+		String implementationIdGpValue = "<implementationId implementationId=\"" + implId + "\">"
+		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>" + "   <name>"
+		        + implName + "</name>" + "</implementationId>";
 		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
 		adminService.saveGlobalProperty(gp);
 		
