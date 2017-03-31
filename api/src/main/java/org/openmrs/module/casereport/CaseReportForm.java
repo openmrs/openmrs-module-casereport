@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.openmrs.DrugOrder;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -39,7 +41,11 @@ import org.openmrs.module.casereport.api.CaseReportService;
  */
 public class CaseReportForm {
 	
-	Comparator<DatedUuidAndValue> comparator = new ValueByDateComparator();
+	private Comparator<DatedUuidAndValue> comparator = new ValueByDateComparator();
+	
+	private static final String DEFAULT_DATA_SRC_CLASSNAME = DefaultDataSource.class.getName();
+	
+	private ObjectMapper mapper = new ObjectMapper();
 	
 	private String reportUuid;
 	
@@ -77,8 +83,6 @@ public class CaseReportForm {
 	
 	private List<DatedUuidAndValue> currentHivMedications;
 	
-	private UuidAndValue currentHivWhoStage;
-	
 	private UuidAndValue mostRecentArvStopReason;
 	
 	private UuidAndValue lastVisitDate;
@@ -90,6 +94,8 @@ public class CaseReportForm {
 	private String assigningAuthorityName;
 	
 	private String comments;
+	
+	private Map<String, ObjectNode> sourceClassnameOtherDataMap;
 	
 	private Map<String, List<DatedUuidAndValue>> previousReportUuidTriggersMap;
 	
@@ -161,10 +167,10 @@ public class CaseReportForm {
 			getCurrentHivMedications().add(new DatedUuidAndValue(drugOrder.getDrug().getUuid(), displayName, dateActivated));
 		}
 		
-		Obs mostRecentWHOStageObs = CaseReportUtil.getMostRecentWHOStage(patient);
-		if (mostRecentWHOStageObs != null) {
-			setCurrentHivWhoStage(new UuidAndValue(mostRecentWHOStageObs.getUuid(),
-			        mostRecentWHOStageObs.getValueAsString(Context.getLocale())));
+		List<DataSource> dataSources = Context.getRegisteredComponents(DataSource.class);
+		for (DataSource dataSource : dataSources) {
+			getSourceClassnameOtherDataMap().put(dataSource.getClass().getName(),
+			    dataSource.getData(caseReport.getPatient()));
 		}
 		
 		Obs mostRecentArvStopReasonObs = CaseReportUtil.getMostRecentReasonARVsStopped(patient);
@@ -180,7 +186,6 @@ public class CaseReportForm {
 		
 		List<CaseReport> submittedReports = Context.getService(CaseReportService.class).getSubmittedCaseReports(patient);
 		if (!submittedReports.isEmpty()) {
-			ObjectMapper mapper = new ObjectMapper();
 			for (CaseReport cr : submittedReports) {
 				//We need to get the triggers that were actually submitted in the final report
 				//instead of the report triggers that were directly set on the queue item
@@ -376,12 +381,10 @@ public class CaseReportForm {
 		this.currentHivMedications = currentHivMedications;
 	}
 	
+	@JsonIgnore
 	public UuidAndValue getCurrentHivWhoStage() {
-		return currentHivWhoStage;
-	}
-	
-	public void setCurrentHivWhoStage(UuidAndValue currentHivWhoStage) {
-		this.currentHivWhoStage = currentHivWhoStage;
+		return asUuidAndValue(getSourceClassnameOtherDataMap().get(DEFAULT_DATA_SRC_CLASSNAME).get(
+		    DefaultDataSource.CURRENT_HIV_WHO_STAGE));
 	}
 	
 	public UuidAndValue getMostRecentArvStopReason() {
@@ -432,6 +435,17 @@ public class CaseReportForm {
 		this.comments = comments;
 	}
 	
+	public Map<String, ObjectNode> getSourceClassnameOtherDataMap() {
+		if (sourceClassnameOtherDataMap == null) {
+			sourceClassnameOtherDataMap = new HashMap<>();
+		}
+		return sourceClassnameOtherDataMap;
+	}
+	
+	public void setSourceClassnameOtherDataMap(Map<String, ObjectNode> sourceClassnameOtherDataMap) {
+		this.sourceClassnameOtherDataMap = sourceClassnameOtherDataMap;
+	}
+	
 	public DatedUuidAndValue getTriggerByName(String trigger) {
 		for (DatedUuidAndValue uuidAndValue : getTriggers()) {
 			if (trigger.equalsIgnoreCase(uuidAndValue.getValue().toString())) {
@@ -461,6 +475,10 @@ public class CaseReportForm {
 			return true;
 		}
 		return false;
+	}
+	
+	private UuidAndValue asUuidAndValue(JsonNode jsonNode) {
+		return mapper.convertValue(jsonNode, UuidAndValue.class);
 	}
 	
 	private DatedUuidAndValue getMostRecentValue(List<DatedUuidAndValue> values) {
