@@ -11,7 +11,6 @@ package org.openmrs.module.casereport;
 
 import static org.openmrs.module.casereport.CaseReportConstants.DATE_FORMATTER;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +33,6 @@ import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.casereport.api.CaseReportService;
 
 /**
  * An instance of this class encapsulates the serialized report form data
@@ -96,8 +94,6 @@ public class CaseReportForm {
 	private String comments;
 	
 	private Map<String, ObjectNode> sourceClassnameOtherDataMap;
-	
-	private Map<String, List<DatedUuidAndValue>> previousReportUuidTriggersMap;
 	
 	public CaseReportForm() {
 	}
@@ -182,24 +178,6 @@ public class CaseReportForm {
 		Visit visit = CaseReportUtil.getLastVisit(patient);
 		if (visit != null) {
 			setLastVisitDate(new UuidAndValue(visit.getUuid(), DATE_FORMATTER.format(visit.getStartDatetime())));
-		}
-		
-		List<CaseReport> submittedReports = Context.getService(CaseReportService.class).getSubmittedCaseReports(patient);
-		if (!submittedReports.isEmpty()) {
-			for (CaseReport cr : submittedReports) {
-				//We need to get the triggers that were actually submitted in the final report
-				//instead of the report triggers that were directly set on the queue item
-				CaseReportForm prevForm;
-				if (StringUtils.isNotBlank(cr.getReportForm())) {
-					try {
-						prevForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-					}
-					catch (IOException e) {
-						throw new APIException("Failed to parse report form data for previous case report:" + cr, e);
-					}
-					getPreviousReportUuidTriggersMap().put(cr.getUuid(), prevForm.getTriggers());
-				}
-			}
 		}
 	}
 	
@@ -453,17 +431,6 @@ public class CaseReportForm {
 			}
 		}
 		return null;
-	}
-	
-	public Map<String, List<DatedUuidAndValue>> getPreviousReportUuidTriggersMap() {
-		if (previousReportUuidTriggersMap == null) {
-			previousReportUuidTriggersMap = new HashMap<>();
-		}
-		return previousReportUuidTriggersMap;
-	}
-	
-	public void setPreviousReportUuidTriggersMap(Map<String, List<DatedUuidAndValue>> previousReportUuidTriggersMap) {
-		this.previousReportUuidTriggersMap = previousReportUuidTriggersMap;
 	}
 	
 	public boolean containsDiagnosticData() {
