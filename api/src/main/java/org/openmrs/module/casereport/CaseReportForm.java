@@ -24,6 +24,7 @@ import org.openmrs.DrugOrder;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
@@ -114,7 +115,12 @@ public class CaseReportForm {
 				setDeathdate(DATE_FORMATTER.format(patient.getDeathDate()));
 			}
 		}
-		PatientIdentifier id = patient.getPatientIdentifier();
+		PatientIdentifierType pidType = CaseReportUtil.getCaseReportIdType();
+		PatientIdentifier id = patient.getPatientIdentifier(pidType);
+		if (id == null) {
+			throw new APIException("The patient is required to have an active identifier of type '" + pidType
+			        + "' to submit a case report for them");
+		}
 		setPatientIdentifier(new UuidAndValue(id.getUuid(), id.getIdentifier()));
 		setIdentifierType(new UuidAndValue(id.getIdentifierType().getUuid(), id.getIdentifierType().getName()));
 		

@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -50,10 +51,11 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(patient.getPersonName().getMiddleName(), reportForm.getMiddleName());
 		assertEquals(patient.getPersonName().getFamilyName(), reportForm.getFamilyName());
 		assertEquals(patient.getPersonName().getFullName(), reportForm.getFullName());
-		assertEquals(patient.getPatientIdentifier().getUuid(), reportForm.getPatientIdentifier().getUuid());
-		assertEquals(patient.getPatientIdentifier().getIdentifier(), reportForm.getPatientIdentifier().getValue());
-		assertEquals(patient.getPatientIdentifier().getIdentifierType().getUuid(), reportForm.getIdentifierType().getUuid());
-		assertEquals(patient.getPatientIdentifier().getIdentifierType().getName(), reportForm.getIdentifierType().getValue());
+		PatientIdentifier pid = patient.getPatientIdentifier("Old Identification Number");
+		assertEquals(pid.getUuid(), reportForm.getPatientIdentifier().getUuid());
+		assertEquals(pid.getIdentifier(), reportForm.getPatientIdentifier().getValue());
+		assertEquals(pid.getIdentifierType().getUuid(), reportForm.getIdentifierType().getUuid());
+		assertEquals(pid.getIdentifierType().getName(), reportForm.getIdentifierType().getValue());
 		assertEquals(patient.getGender(), reportForm.getGender());
 		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthdate());
 		assertEquals("2016-07-07T00:00:00.000-0400", reportForm.getDeathdate());

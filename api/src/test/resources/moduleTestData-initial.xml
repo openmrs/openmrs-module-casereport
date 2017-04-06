@@ -61,6 +61,8 @@
     <concept_reference_term concept_reference_term_id="402" concept_source_id="9000" code="703" name="New HIV case" description="New HIV case" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="86fb7f47-u80a-4086-9452-bd798be13c63" />
     <concept_reference_map concept_map_id="502" concept_id="102" concept_reference_term_id="402" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7b309489-49d8-61e0-8fed-18a905e044dc" />
 
+    <global_property property="casereport.identifierTypeUuid" property_value="2f470aa8-1d73-43b7-81b5-01f0c0dfa53c" uuid="3a55827e-26fe-103b-80cb-0017a47871b3" />
+
     <scheduler_task_config task_config_id="100" name="HIV Switched To Second Line" schedulable_class="org.openmrs.module.casereport.CaseReportTask" start_on_startup="0" started="0" repeat_interval="0" created_by="1" date_created="2016-11-15 21:08:30.0" uuid="450a5a99-b8e8-4379-8364-0d5fb9b1de6a" />
     <scheduler_task_config task_config_id="101" name="New HIV Case" schedulable_class="org.openmrs.module.casereport.CaseReportTask" start_on_startup="0" started="0" repeat_interval="0" created_by="1" date_created="2016-11-15 21:08:30.0" uuid="540a5a99-b8e8-4379-8364-0d5fb9b1de6b" />
     <scheduler_task_config task_config_id="102" name="HIV Patient Died" schedulable_class="org.openmrs.module.casereport.CaseReportTask" start_on_startup="0" started="0" repeat_interval="0" created_by="1" date_created="2016-11-15 21:08:30.0" uuid="640a5a99-b8e8-4379-8364-0d5fb9b1de6b" />

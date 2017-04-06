@@ -22,6 +22,7 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.marc.everest.datatypes.NullFlavor;
 import org.marc.everest.datatypes.TS;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;

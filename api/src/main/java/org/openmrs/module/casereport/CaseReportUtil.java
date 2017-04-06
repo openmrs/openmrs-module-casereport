@@ -30,6 +30,7 @@ import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
@@ -255,6 +256,24 @@ public class CaseReportUtil {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Gets the patient identifier type with a uuid that matches the value of the
+	 * CaseReportConstants.GP_REPORT_ID_TYPE global property
+	 *
+	 * @return a patient identifier type
+	 */
+	public static PatientIdentifierType getCaseReportIdType() {
+		String uuid = Context.getAdministrationService().getGlobalProperty(CaseReportConstants.GP_REPORT_ID_TYPE);
+		if (StringUtils.isBlank(uuid)) {
+			throw new APIException(CaseReportConstants.GP_REPORT_ID_TYPE + " global property value needs to be set");
+		}
+		PatientIdentifierType pidType = Context.getPatientService().getPatientIdentifierTypeByUuid(uuid);
+		if (pidType == null) {
+			throw new APIException("No patient identifier type was found with a uuid matching: " + uuid);
+		}
+		return pidType;
 	}
 	
 	/**

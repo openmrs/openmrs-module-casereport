@@ -422,6 +422,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		adminService.saveGlobalProperty(gp);
 		final Integer patientId = 8;
 		Patient patient = patientService.getPatient(patientId);
+		patient.getPatientIdentifier().setIdentifierType(CaseReportUtil.getCaseReportIdType());
 		assertEquals(0, service.getSubmittedCaseReports(patient).size());
 		assertNull(service.getCaseReportByPatient(patient));
 		

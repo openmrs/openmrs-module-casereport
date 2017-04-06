@@ -28,6 +28,8 @@ public class CaseReportConstants {
 	
 	public static final String GP_AUTO_SUBMIT_PROVIDER_UUID = MODULE_ID + ".autoSubmitProviderUuid";
 	
+	public static final String GP_REPORT_ID_TYPE = MODULE_ID + ".identifierTypeUuid";
+	
 	public static final String PRIV_GET_CASE_REPORTS = "Get Case Reports";
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
