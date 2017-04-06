@@ -16,12 +16,13 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.api.SearchConfig;
 import org.openmrs.module.webservices.rest.web.resource.api.SearchHandler;
 import org.openmrs.module.webservices.rest.web.resource.api.SearchQuery;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class SubmittedCaseReportsSearchHandler implements SearchHandler {
 	 */
 	@Override
 	public SearchConfig getSearchConfig() {
-		return new SearchConfig("default", RestConstants.VERSION_1 + "/casereport", SUPPORTED_VERSIONS, query);
+		return new SearchConfig("default", CaseReportRestConstants.REST_NAMESPACE + "/casereport", SUPPORTED_VERSIONS, query);
 	}
 	
 	/**
@@ -58,9 +59,8 @@ public class SubmittedCaseReportsSearchHandler implements SearchHandler {
 	public PageableResult search(RequestContext requestContext) throws ResponseException {
 		Patient patient = null;
 		if (StringUtils.isNotBlank(requestContext.getParameter(PARAM_PATIENT))) {
-			//patient = patientService.getPatientByUuid(requestContext.getParameter(PARAM_PATIENT));
+			patient = patientService.getPatientByUuid(requestContext.getParameter(PARAM_PATIENT));
 		}
-		return null;
-		//return new NeedsPaging(caseReportService.getSubmittedCaseReports(patient), requestContext);
+		return new NeedsPaging<>(caseReportService.getSubmittedCaseReports(patient), requestContext);
 	}
 }

@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -154,7 +153,6 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	}
 	
 	@Test
-	@Ignore
 	public void shouldFetchAllUnvoidedSubmittedCaseReports() throws Exception {
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
 		        RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "default"))));
@@ -162,7 +160,6 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	}
 	
 	@Test
-	@Ignore
 	public void shouldFetchAllUnvoidedSubmittedCaseReportsForTheSpecifiedPatient() throws Exception {
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
 		        RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "default"), new Parameter(
