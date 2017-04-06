@@ -15,4 +15,6 @@ public class CaseReportRestConstants {
 	
 	public static final String REST_NAMESPACE = RestConstants.VERSION_1 + "/casereport";
 	
+	public static final String QUEUE = "queue";
+	
 }

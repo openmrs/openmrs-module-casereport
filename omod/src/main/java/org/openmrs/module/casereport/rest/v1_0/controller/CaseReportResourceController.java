@@ -9,9 +9,19 @@
  */
 package org.openmrs.module.casereport.rest.v1_0.controller;
 
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openmrs.module.casereport.rest.CaseReportRestConstants;
+import org.openmrs.module.webservices.rest.SimpleObject;
+import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
+import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceController;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -24,5 +34,24 @@ public class CaseReportResourceController extends MainResourceController {
 	@Override
 	public String getNamespace() {
 		return CaseReportRestConstants.REST_NAMESPACE;
+	}
+	
+	/**
+	 * @see MainResourceController#get(java.lang.String, javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public SimpleObject get(@PathVariable("resource") String resource, HttpServletRequest request,
+	                        HttpServletResponse response) throws ResponseException {
+		
+		Set paramKeys = request.getParameterMap().keySet();
+		if (CaseReportRestConstants.QUEUE.equals(resource)) {
+			resource = "casereport";
+		} else if ("casereport".equals(resource) && !paramKeys.contains(RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID)) {
+			//Do not allow fetching all case reports
+			throw new ResourceDoesNotSupportOperationException();
+		}
+		
+		return super.get(resource, request, response);
 	}
 }

@@ -10,14 +10,14 @@
 package org.openmrs.module.casereport.rest.v1_0.resource;
 
 import org.openmrs.module.casereport.DatedUuidAndValue;
-import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 
-@Resource(name = RestConstants.VERSION_1 + "/casereport/dateduuidandvalue", supportedClass = DatedUuidAndValue.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
+@Resource(name = CaseReportRestConstants.REST_NAMESPACE + "/dateduuidandvalue", supportedClass = DatedUuidAndValue.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
 public class DatedUuidAndValueResource extends UuidAndValueResource {
 	
 	/**

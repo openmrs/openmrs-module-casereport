@@ -49,7 +49,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Override
 	public String getURI() {
-		return "queue/" + getUuid() + "/statuschange";
+		return "casereport/" + getUuid() + "/statuschange";
 	}
 	
 	@Override

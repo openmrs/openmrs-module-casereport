@@ -10,8 +10,8 @@
 package org.openmrs.module.casereport.rest.v1_0.resource;
 
 import org.openmrs.module.casereport.UuidAndValue;
+import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource;
@@ -19,7 +19,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceD
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + "/casereport/uuidandvalue", supportedClass = UuidAndValue.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
+@Resource(name = CaseReportRestConstants.REST_NAMESPACE + "/uuidandvalue", supportedClass = UuidAndValue.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
 public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 	
 	/**

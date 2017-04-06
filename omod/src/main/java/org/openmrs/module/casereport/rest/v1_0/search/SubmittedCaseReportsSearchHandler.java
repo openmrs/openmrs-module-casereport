@@ -48,7 +48,7 @@ public class SubmittedCaseReportsSearchHandler implements SearchHandler {
 	 */
 	@Override
 	public SearchConfig getSearchConfig() {
-		return new SearchConfig("default", RestConstants.VERSION_1 + "/casereport/queue", SUPPORTED_VERSIONS, query);
+		return new SearchConfig("default", RestConstants.VERSION_1 + "/casereport", SUPPORTED_VERSIONS, query);
 	}
 	
 	/**

@@ -20,6 +20,7 @@ import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.CaseReportUtil;
 import org.openmrs.module.casereport.api.CaseReportService;
+import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.casereport.rest.CaseReportRestException;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
@@ -39,7 +40,7 @@ import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + "/casereport/queue", supportedClass = CaseReport.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
+@Resource(name = CaseReportRestConstants.REST_NAMESPACE + "/casereport", supportedClass = CaseReport.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
 public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	
 	/**
@@ -170,8 +171,8 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	 */
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
-		return new NeedsPaging<CaseReport>(Context.getService(CaseReportService.class).getCaseReports(
-		    context.getIncludeAll(), false, false), context);
+		//This actually returns the case report queue and should never return all
+		return new NeedsPaging(Context.getService(CaseReportService.class).getCaseReports(false, false, false), context);
 	}
 	
 	/**
