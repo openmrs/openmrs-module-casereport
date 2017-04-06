@@ -17,8 +17,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResou
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 
-@Resource(name = RestConstants.VERSION_1 + "/casereport/dateduuidandvalue", supportedClass = DatedUuidAndValue.class, supportedOpenmrsVersions = {
-        "1.10.*", "1.11.*,1.12.*" })
+@Resource(name = RestConstants.VERSION_1 + "/casereport/dateduuidandvalue", supportedClass = DatedUuidAndValue.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
 public class DatedUuidAndValueResource extends UuidAndValueResource {
 	
 	/**

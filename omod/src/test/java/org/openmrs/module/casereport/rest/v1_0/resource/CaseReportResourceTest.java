@@ -20,7 +20,7 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 	public static final String CASE_REPORT_UUID = "5f7d57f0-9077-11e1-aaa4-00248140a5ef";
 	
 	@Autowired
-	CaseReportService service;
+	private CaseReportService service;
 	
 	@Override
 	public CaseReport newObject() {

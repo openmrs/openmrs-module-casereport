@@ -27,14 +27,16 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.v1_0.resource.CaseReportResourceTest;
+import org.openmrs.module.casereport.rest.v1_0.search.SubmittedCaseReportsSearchHandler;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
+import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	
 	@Autowired
-	CaseReportService service;
+	private CaseReportService service;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -116,5 +118,20 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		caseReport = service.getCaseReportByUuid(getUuid());
 		assertTrue(caseReport.isVoided());
 		assertEquals(reason, caseReport.getVoidReason());
+	}
+	
+	@Test
+	public void shouldFetchAllUnvoidedSubmittedCaseReports() throws Exception {
+		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
+		        RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "default"))));
+		assertEquals(4, Util.getResultsSize(responseData));
+	}
+	
+	@Test
+	public void shouldFetchAllUnvoidedSubmittedCaseReportsForTheSpecifiedPatient() throws Exception {
+		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
+		        RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "default"), new Parameter(
+		        SubmittedCaseReportsSearchHandler.PARAM_PATIENT, "5946f880-b197-400b-9caa-a3c661d23041"))));
+		assertEquals(2, Util.getResultsSize(responseData));
 	}
 }

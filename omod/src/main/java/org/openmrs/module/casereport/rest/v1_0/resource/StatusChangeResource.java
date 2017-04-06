@@ -27,8 +27,7 @@ import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@SubResource(parent = CaseReportResource.class, path = "statuschange", supportedClass = StatusChange.class, supportedOpenmrsVersions = {
-        "1.10.*", "1.11.*,1.12.*" })
+@SubResource(parent = CaseReportResource.class, path = "statuschange", supportedClass = StatusChange.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
 public class StatusChangeResource extends DelegatingSubResource<StatusChange, CaseReport, CaseReportResource> {
 	
 	/**
