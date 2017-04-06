@@ -9,17 +9,9 @@
  */
 package org.openmrs.module.casereport.rest.v1_0.resource;
 
-import java.util.List;
-import java.util.Map;
-
-import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportForm;
-import org.openmrs.module.casereport.CaseReportUtil;
-import org.openmrs.module.casereport.DatedUuidAndValue;
-import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
@@ -52,7 +44,6 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 		description.addProperty("identifierType");
 		description.addProperty("causeOfDeath");
 		description.addProperty("triggers");
-		description.addProperty("previousReportUuidTriggersMap");
 		description.addProperty("mostRecentViralLoads");
 		description.addProperty("mostRecentCd4Counts");
 		description.addProperty("mostRecentHivTests");
@@ -65,12 +56,6 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 		description.addProperty("assigningAuthorityName");
 		description.addProperty("comments");
 		return description;
-	}
-	
-	@PropertyGetter("previousReportUuidTriggersMap")
-	public Map<String, List<DatedUuidAndValue>> getPreviousReportUuidTriggersMap(CaseReportForm delegate) {
-		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReportByUuid(delegate.getReportUuid());
-		return CaseReportUtil.getPreviousReportUuidTriggersMap(caseReport.getPatient());
 	}
 	
 	/**

@@ -14,9 +14,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
@@ -76,16 +73,5 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals("2016-06-15T00:00:00.000-0400", reportForm.getLastVisitDate().getValue());
 		assertEquals(patient.getCauseOfDeath().getUuid(), reportForm.getCauseOfDeath().getUuid());
 		assertEquals(patient.getCauseOfDeath().getName().getName(), reportForm.getCauseOfDeath().getValue());
-		Map<String, List<DatedUuidAndValue>> map = CaseReportUtil.getPreviousReportUuidTriggersMap(patient);
-		assertEquals(2, map.size());
-		final String casereportUuid1 = "e17d57f0-9088-11e1-aaa4-00248140a5ec";
-		final String casereportUuid2 = "e27d57f0-9188-11e1-aaa4-00248140a5ec";
-		assertTrue(map.containsKey(casereportUuid1));
-		assertTrue(map.containsKey(casereportUuid2));
-		assertEquals(2, map.get(casereportUuid1).size());
-		assertEquals(1, map.get(casereportUuid2).size());
-		assertTrue(CaseReportUtil.collContainsItemWithValue(map.get(casereportUuid1), "Some weird trigger"));
-		assertTrue(CaseReportUtil.collContainsItemWithValue(map.get(casereportUuid1), "Some Unique Trigger"));
-		assertTrue(CaseReportUtil.collContainsItemWithValue(map.get(casereportUuid2), "Some weird trigger"));
 	}
 }

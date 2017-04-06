@@ -9,7 +9,6 @@
  */
 package org.openmrs.module.casereport;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -376,35 +375,5 @@ public class CaseReportUtil {
 		}
 		
 		return caseReport;
-	}
-	
-	/**
-	 * Returns the a serializable mapping between report uuids and the list of their respective
-	 * triggers for a given patient
-	 * 
-	 * @param patient the patient whose previous triggers to return
-	 * @return a report uuid to triggers map
-	 */
-	public static Map<String, List<DatedUuidAndValue>> getPreviousReportUuidTriggersMap(Patient patient) {
-		Map<String, List<DatedUuidAndValue>> previousReportUuidTriggersMap = new HashMap<>();
-		List<CaseReport> submittedReports = Context.getService(CaseReportService.class).getSubmittedCaseReports(patient);
-		if (!submittedReports.isEmpty()) {
-			for (CaseReport cr : submittedReports) {
-				//We need to get the triggers that were actually submitted in the final report
-				//instead of the report triggers that were directly set on the queue item
-				CaseReportForm prevForm;
-				if (StringUtils.isNotBlank(cr.getReportForm())) {
-					try {
-						prevForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-					}
-					catch (IOException e) {
-						throw new APIException("Failed to parse report form data for previous case report:" + cr, e);
-					}
-					previousReportUuidTriggersMap.put(cr.getUuid(), prevForm.getTriggers());
-				}
-			}
-		}
-		
-		return previousReportUuidTriggersMap;
 	}
 }
