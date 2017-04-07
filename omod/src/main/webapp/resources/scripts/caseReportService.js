@@ -10,8 +10,14 @@
 
 angular.module('caseReportService', ['ngResource', 'uicommons.common'])
 
+    .factory('CaseReportQueue', function($resource) {
+        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/queue", null,{
+            query: { method:'GET' }
+        });
+    })
+
     .factory('CaseReport', function($resource) {
-        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/queue/:uuid", {
+        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/casereport/:uuid", {
             uuid: '@uuid'
         },{
             query: { method:'GET' }
@@ -19,7 +25,7 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
     })
 
     .factory('StatusChange', function($resource) {
-        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/queue/:uuid/statuschange", {
+        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/casereport/:uuid/statuschange", {
             uuid: '@uuid'
         });
     })
@@ -40,10 +46,10 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
         $httpProvider.defaults.transformRequest.push(defaultTransformer);
     })
 
-    .factory("CaseReportService", function(CaseReport, RestService) {
+    .factory("CaseReportService", function(CaseReportQueue, RestService) {
         return {
             getCaseReports: function(params) {
-                return RestService.getAllResults(CaseReport, params);
+                return RestService.getAllResults(CaseReportQueue, params);
             }
         }
     });

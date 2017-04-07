@@ -95,6 +95,15 @@
             and %2$s = Extension (or identifier), should match the one in the Client Registry</description>
     </globalProperty>
     <globalProperty>
+        <property>${project.parent.artifactId}.identifierTypeUuid</property>
+        <description>
+            The uuid of the identifier type for the patient identifier to use when submitting a report, if the
+            report is getting submitted to the health information exchange, the name of the identifier type must
+            match a unique identifier of a patient identifier domain in the client registry e.g. a universal
+            identifier of a patient identifier domain in case of OpenEMPI
+        </description>
+    </globalProperty>
+    <globalProperty>
         <property>${project.parent.artifactId}.confidentialityCode</property>
         <defaultValue>N</defaultValue>
         <description>
