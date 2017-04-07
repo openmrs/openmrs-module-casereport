@@ -10,6 +10,15 @@
 
 -->
 
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: "/" + OPENMRS_CONTEXT_PATH + "/index.htm" },
+        { label: "${ ui.message('casereport.label')}" , link: '${ui.pageLink("casereport", "caseReports")}'},
+        {label: "${ ui.message("casereport.caseReportQueue.label")}" }
+    ];
+    emr.loadMessages(["casereport.dismissed", "casereport.save.success"]);
+</script>
+
 <h2>${ ui.message('casereport.caseReportQueue.label')}</h2>
 
 <div>
@@ -24,48 +33,48 @@
 <br />
 <table id="casereport-reports">
     <thead>
-        <tr>
-            <th>
-                ${ui.message('casereport.dateAdded')}
-                <a ng-click="sort('dateCreated')">
-                    <i ng-class="{'icon-sort edit-action' : propertyName != 'dateCreated',
+    <tr>
+        <th>
+            ${ui.message('casereport.dateAdded')}
+            <a ng-click="sort('dateCreated')">
+                <i ng-class="{'icon-sort edit-action' : propertyName != 'dateCreated',
                                 'icon-sort-up' : propertyName == 'dateCreated' && !reverse,
                                 'icon-sort-down' : propertyName == 'dateCreated' && reverse}" />
-                </a>
-            </th>
-            <th>
-                ${ui.message('Patient.identifier')}
-                <a ng-click="sort('patient.patientIdentifier.identifier')">
-                    <i ng-class="{'icon-sort edit-action' : propertyName != 'patient.patientIdentifier.identifier',
+            </a>
+        </th>
+        <th>
+            ${ui.message('Patient.identifier')}
+            <a ng-click="sort('patient.patientIdentifier.identifier')">
+                <i ng-class="{'icon-sort edit-action' : propertyName != 'patient.patientIdentifier.identifier',
                                 'icon-sort-up' : propertyName == 'patient.patientIdentifier.identifier' && !reverse,
                                 'icon-sort-down' : propertyName == 'patient.patientIdentifier.identifier' && reverse}" />
-                </a>
-            </th>
-            <th class="casereport-name-column">
-                ${ui.message('general.name')}
-                <a ng-click="sort('patient.person.personName.display')">
-                    <i ng-class="{'icon-sort edit-action' : propertyName != 'patient.person.personName.display',
+            </a>
+        </th>
+        <th class="casereport-name-column">
+            ${ui.message('general.name')}
+            <a ng-click="sort('patient.person.personName.display')">
+                <i ng-class="{'icon-sort edit-action' : propertyName != 'patient.person.personName.display',
                                 'icon-sort-up' : propertyName == 'patient.person.personName.display' && !reverse,
                                 'icon-sort-down' : propertyName == 'patient.person.personName.display' && reverse}" />
-                </a>
-            </th>
-            <th>${ui.message('Patient.gender')}
-                <a ng-click="sort('patient.person.gender')">
-                    <i  ng-class="{'icon-sort edit-action' : propertyName != 'patient.person.gender',
+            </a>
+        </th>
+        <th>${ui.message('Patient.gender')}
+            <a ng-click="sort('patient.person.gender')">
+                <i  ng-class="{'icon-sort edit-action' : propertyName != 'patient.person.gender',
                                 'icon-sort-up' : propertyName == 'patient.person.gender' && !reverse,
                                 'icon-sort-down' : propertyName == 'patient.person.gender' && reverse}" />
-                </a>
-            </th>
-            <th>${ui.message('Person.age')}
-                <a ng-click="sort('patient.person.age')">
-                    <i  ng-class="{'icon-sort edit-action' : propertyName != 'patient.person.age',
+            </a>
+        </th>
+        <th>${ui.message('Person.age')}
+            <a ng-click="sort('patient.person.age')">
+                <i  ng-class="{'icon-sort edit-action' : propertyName != 'patient.person.age',
                                 'icon-sort-up' : propertyName == 'patient.person.age' && !reverse,
                                 'icon-sort-down' : propertyName == 'patient.person.age' && reverse}" />
-                </a>
-            </th>
-            <th class="casereport-trigger-column">${ui.message('casereport.triggers')}</th>
-            <th>${ui.message('casereport.actions')}</th>
-        </tr>
+            </a>
+        </th>
+        <th class="casereport-trigger-column">${ui.message('casereport.triggers')}</th>
+        <th>${ui.message('casereport.actions')}</th>
+    </tr>
     </thead>
     <tbody>
     <tr id="e" ng-repeat="caseReport in caseReports | mainFilter:this">

@@ -45,6 +45,6 @@
         <button type="submit" class="right confirm" ng-disabled="caseReportQueueItemForm.\$invalid">
             ${ui.message("general.save")}
         </button>
-        <button type="button" class="cancel" ui-sref="list">${ui.message("general.cancel")}</button>
+        <button type="button" class="cancel" ui-sref="queue">${ui.message("general.cancel")}</button>
     </p>
 </form>

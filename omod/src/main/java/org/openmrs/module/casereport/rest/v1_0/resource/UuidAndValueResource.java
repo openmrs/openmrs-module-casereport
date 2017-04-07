@@ -12,6 +12,7 @@ package org.openmrs.module.casereport.rest.v1_0.resource;
 import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.webservices.rest.web.RequestContext;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource;
@@ -30,6 +31,7 @@ public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addRequiredProperty("uuid");
 		description.addRequiredProperty("value");
+		description.addProperty("display");
 		return description;
 	}
 	
@@ -47,6 +49,11 @@ public class UuidAndValueResource extends DelegatingCrudResource<UuidAndValue> {
 	@Override
 	public UuidAndValue newDelegate() {
 		return new UuidAndValue();
+	}
+	
+	@PropertyGetter("display")
+	public String getDisplayString(UuidAndValue delegate) {
+		return delegate.getValue().toString();
 	}
 	
 	/**

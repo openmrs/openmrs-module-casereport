@@ -161,7 +161,7 @@
             <td valign="top">
                 ${ui.format(context.authenticatedUser)}
                 <span class="right">
-                    <button type="button" class="cancel" ui-sref="list">${ui.message('general.cancel')}</button>
+                    <button type="button" class="cancel" ui-sref="queue">${ui.message('general.cancel')}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <button type="submit" class="right">${ui.message('general.submit')}</button>
                 </span>

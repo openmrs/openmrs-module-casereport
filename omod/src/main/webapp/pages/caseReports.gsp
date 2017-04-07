@@ -12,6 +12,24 @@
 
 <%
     ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("casereport.label") ])
+
+    ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("uicommons", "angular-resource.min.js")
+    ui.includeJavascript("uicommons", "angular-ui/angular-ui-router.min.js")
+    ui.includeJavascript("uicommons", "angular-app.js")
+    ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
+    ui.includeJavascript("uicommons", "angular-common.js")
+    ui.includeJavascript("uicommons", "angular-common-error.js")
+    ui.includeJavascript("uicommons", "filters/display.js")
+    ui.includeJavascript("uicommons", "filters/serverDate.js")
+    ui.includeJavascript("uicommons", "services/personService.js")
+    ui.includeJavascript("casereport", "lib/bootstrap/ui-bootstrap-tpls-2.2.0.min.js")
+    ui.includeJavascript("casereport", "caseReportService.js")
+    ui.includeJavascript("casereport", "casereports.js")
+
+    ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
+    ui.includeCss("casereport", "lib/bootstrap/bootstrap.min.css")
+    ui.includeCss("casereport", "casereports.css")
 %>
 
 <script type="text/javascript">
@@ -21,17 +39,10 @@
     ];
 </script>
 
-<div id="tasks">
-    <a class="button app big" href="${ ui.pageLink("casereport", "caseReportQueue") }">
-        <div class="task">
-            <i class="icon-item"></i>
-            ${ ui.message("casereport.caseReportQueue.label") }
-        </div>
-    </a>
-    <a class="button app big" href="${ ui.pageLink("casereport", "submittedCaseReports") }">
-        <div class="task">
-            <i class="icon-item"></i>
-            ${ ui.message("casereport.submittedCaseReports.label") }
-        </div>
-    </a>
+<div id="manage-casereports">
+    <ui-view/>
 </div>
+
+<script type="text/javascript">
+    angular.bootstrap("#manage-casereports", [ "manageCaseReports" ])
+</script>

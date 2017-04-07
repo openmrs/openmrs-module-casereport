@@ -4,7 +4,7 @@
     "instanceOf": "coreapps.template.findPatient",
     "order": 3,
     "config": {
-      "afterSelectedUrl": "/${project.parent.artifactId}/caseReportQueue.page#/caseReportQueueItemForm/{{patientId}}",
+      "afterSelectedUrl": "/${project.parent.artifactId}/caseReports.page#/queueItemForm/{{patientId}}",
       "label": "${project.parent.artifactId}.addNewQueueItem.label",
       "heading": "${project.parent.artifactId}.selectPatient.label"
     },

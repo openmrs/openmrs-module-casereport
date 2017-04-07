@@ -46,10 +46,13 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
         $httpProvider.defaults.transformRequest.push(defaultTransformer);
     })
 
-    .factory("CaseReportService", function(CaseReportQueue, RestService) {
+    .factory("CaseReportService", function(RestService, CaseReportQueue, CaseReport) {
         return {
             getCaseReports: function(params) {
                 return RestService.getAllResults(CaseReportQueue, params);
+            },
+            getSubmittedCaseReports: function(params) {
+                return RestService.getAllResults(CaseReport, params);
             }
         }
     });

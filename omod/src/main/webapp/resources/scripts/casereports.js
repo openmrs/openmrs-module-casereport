@@ -11,20 +11,26 @@
 angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.otherwise("/list");
+
+        $urlRouterProvider.otherwise("/home");
 
         $stateProvider
-            .state('list', {
-                url: "/list",
-                templateUrl: "templates/list.page",
-                controller: "ViewCaseReportsController"
+            .state('home', {
+                url: "/home",
+                templateUrl: "templates/home.page",
+                controller: "HomeController"
             })
-            .state('caseReportQueueItemForm', {
-                url: "/caseReportQueueItemForm/:patientUuid",
+            .state('queue', {
+                url: "/queue",
+                templateUrl: "templates/queue.page",
+                controller: "ViewQueueController"
+            })
+            .state('queueItemForm', {
+                url: "/queueItemForm/:patientUuid",
                 templateUrl: function($stateParams){
-                    return "templates/caseReportQueueItemForm.page?patient="+$stateParams.patientUuid;
+                    return "templates/queueItemForm.page?patient="+$stateParams.patientUuid;
                 },
-                controller: "CaseReportQueueItemFormController",
+                controller: "QueueItemFormController",
                 params:{
                     patientUuid: null
                 },
@@ -47,9 +53,22 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                     }
                 }
             })
+            .state('submitted', {
+                url: "/submitted",
+                templateUrl: "templates/submitted.page",
+                controller: "ViewSubmittedCaseReportsController"
+            })
     }])
 
-    .controller("ViewCaseReportsController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
+    .controller("HomeController", ["$rootScope",
+        function ($rootScope) {
+            $rootScope.$on('$stateChangeSuccess', function(){
+                emr.updateBreadcrumbs();
+            });
+        }
+    ])
+
+    .controller("ViewQueueController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
         function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
             $scope.caseReports = [];
             $scope.patientSearchText = null;
@@ -110,7 +129,7 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
             loadCaseReports();
     }])
 
-    .controller("CaseReportQueueItemFormController", ["$scope", "$state", "CaseReport", "patient",
+    .controller("QueueItemFormController", ["$scope", "$state", "CaseReport", "patient",
         function ($scope, $state, CaseReport, patient) {
             $scope.patient = patient;
             $scope.trigger;
@@ -124,7 +143,7 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                 }
 
                 CaseReport.save(newItem).$promise.then(function() {
-                    $state.go("list");
+                    $state.go("queue");
                     emr.successMessage("casereport.save.success");
                 });
             }
@@ -181,7 +200,7 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                     action: "SUBMIT",
                     reportForm: $scope.caseReport.reportForm
                 }).$promise.then(function() {
-                    $state.go("list");
+                    $state.go("queue");
                     emr.successMessage("casereport.submitted");
                 }, function(error) {
                     emr.errorMessage("casereport.seeLogs");
@@ -210,6 +229,18 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                 }
             }
     }])
+
+    .controller("ViewSubmittedCaseReportsController", ["$scope", "CaseReportService",
+        function ($scope, CaseReportService) {
+            $scope.caseReports = [];
+            var customRep = 'custom:(dateChanged,uuid,patient:(patientIdentifier:(identifier),' +
+                'person:(gender,age,personName:(display))),reportForm:(triggers:(display)))';
+
+            CaseReportService.getSubmittedCaseReports({s: 'default', v: customRep}).then(function(results) {
+                $scope.caseReports = results;
+            });
+        }
+    ])
 
     .filter('mainFilter', function ($filter) {
         return function (caseReports, $scope) {
