@@ -11,12 +11,7 @@
 -->
 
 <script type="text/javascript">
-    var breadcrumbs = [
-        { icon: "icon-home", link: "/" + OPENMRS_CONTEXT_PATH + "/index.htm" },
-        { label: "${ ui.message('casereport.label')}" , link: '${ui.pageLink("casereport", "caseReports")}'},
-        {label: "${ ui.message("casereport.caseReportQueue.label")}" }
-    ];
-    emr.loadMessages(["casereport.dismissed", "casereport.save.success"]);
+   emr.loadMessages(["casereport.dismissed"]);
 </script>
 
 <h2>${ ui.message('casereport.caseReportQueue.label')}</h2>

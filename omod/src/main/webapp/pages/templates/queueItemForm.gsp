@@ -10,6 +10,10 @@
 
 -->
 
+<script type="text/javascript">
+    emr.loadMessages(["casereport.save.success"]);
+</script>
+
 <h2>${ ui.message("casereport.caseReportQueueItemForm.title")}</h2>
 
 <form class="simple-form-ui" name="caseReportQueueItemForm" novalidate ng-submit="saveNewQueueItem()">
@@ -45,6 +49,6 @@
         <button type="submit" class="right confirm" ng-disabled="caseReportQueueItemForm.\$invalid">
             ${ui.message("general.save")}
         </button>
-        <button type="button" class="cancel" ui-sref="queue">${ui.message("general.cancel")}</button>
+        <button type="button" class="cancel" ui-sref="list">${ui.message("general.cancel")}</button>
     </p>
 </form>

@@ -8,21 +8,16 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
+angular.module("manageCaseReportQueue", [ "caseReportService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
 
-        $urlRouterProvider.otherwise("/home");
+        $urlRouterProvider.otherwise("/list");
 
         $stateProvider
-            .state('home', {
-                url: "/home",
-                templateUrl: "templates/home.page",
-                controller: "HomeController"
-            })
-            .state('queue', {
-                url: "/queue",
-                templateUrl: "templates/queue.page",
+            .state('list', {
+                url: "/list",
+                templateUrl: "templates/queueList.page",
                 controller: "ViewQueueController"
             })
             .state('queueItemForm', {
@@ -53,20 +48,7 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                     }
                 }
             })
-            .state('submitted', {
-                url: "/submitted",
-                templateUrl: "templates/submitted.page",
-                controller: "ViewSubmittedCaseReportsController"
-            })
     }])
-
-    .controller("HomeController", ["$rootScope",
-        function ($rootScope) {
-            $rootScope.$on('$stateChangeSuccess', function(){
-                emr.updateBreadcrumbs();
-            });
-        }
-    ])
 
     .controller("ViewQueueController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
         function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
@@ -143,7 +125,7 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                 }
 
                 CaseReport.save(newItem).$promise.then(function() {
-                    $state.go("queue");
+                    $state.go("list");
                     emr.successMessage("casereport.save.success");
                 });
             }
@@ -200,7 +182,7 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                     action: "SUBMIT",
                     reportForm: $scope.caseReport.reportForm
                 }).$promise.then(function() {
-                    $state.go("queue");
+                    $state.go("list");
                     emr.successMessage("casereport.submitted");
                 }, function(error) {
                     emr.errorMessage("casereport.seeLogs");
@@ -229,18 +211,6 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
                 }
             }
     }])
-
-    .controller("ViewSubmittedCaseReportsController", ["$scope", "CaseReportService",
-        function ($scope, CaseReportService) {
-            $scope.caseReports = [];
-            var customRep = 'custom:(dateChanged,uuid,patient:(patientIdentifier:(identifier),' +
-                'person:(gender,age,personName:(display))),reportForm:(triggers))';
-
-            CaseReportService.getSubmittedCaseReports({v: customRep}).then(function(results) {
-                $scope.caseReports = results;
-            });
-        }
-    ])
 
     .filter('mainFilter', function ($filter) {
         return function (caseReports, $scope) {
