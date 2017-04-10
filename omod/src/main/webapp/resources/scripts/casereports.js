@@ -234,9 +234,9 @@ angular.module("manageCaseReports", [ "caseReportService", "personService", "ui.
         function ($scope, CaseReportService) {
             $scope.caseReports = [];
             var customRep = 'custom:(dateChanged,uuid,patient:(patientIdentifier:(identifier),' +
-                'person:(gender,age,personName:(display))),reportForm:(triggers:(display)))';
+                'person:(gender,age,personName:(display))),reportForm:(triggers))';
 
-            CaseReportService.getSubmittedCaseReports({s: 'default', v: customRep}).then(function(results) {
+            CaseReportService.getSubmittedCaseReports({v: customRep}).then(function(results) {
                 $scope.caseReports = results;
             });
         }

@@ -124,7 +124,7 @@
         force-ellipses="true"
         rotate="true" />
     <span id="casereport-showing" class="left">
-        ${ui.message("casereport.showingLabel").replace('{0}', '{{start + 1}}')
+        ${ui.message("casereport.showingLabel").replace('{0}', '{{effectiveCaseReportCount > 0 ? (start + 1) : start}}')
                 .replace('{1}', '{{end}}').replace('{2}', '{{effectiveCaseReportCount}}')}
     </span>
 </div>
