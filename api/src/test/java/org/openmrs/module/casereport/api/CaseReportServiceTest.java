@@ -15,6 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.openmrs.module.casereport.CaseReport.Status;
 
 import java.util.Iterator;
 import java.util.List;
@@ -121,13 +122,13 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(boolean,boolean,boolean)
-	 * @verifies return all case reports in the database if all arguments are set to true
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
 	 */
 	@Test
-	public void getCaseReports_shouldReturnAllCaseReportsInTheDatabaseIfAllArgumentsAreSetToTrue() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(true, true, true);
-		assertEquals(9, reports.size());
+	public void getCaseReports_shouldReturnAllCaseReportsInTheDatabase() throws Exception {
+		List<CaseReport> reports = service.getCaseReports(null, true, Status.values());
+		final int expectedCount = 9;
+		assertEquals(expectedCount, reports.size());
 		//Should be ordered by date created with latest first
 		assertEquals(9, reports.get(0).getId().intValue());
 		assertEquals(4, reports.get(7).getId().intValue());
@@ -135,48 +136,85 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(boolean,boolean,boolean)
-	 * @verifies include dismissed reports in the database if includeDismissed is set to true
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
 	 */
 	@Test
-	public void getCaseReports_shouldIncludeDismissedReportsInTheDatabaseIfIncludeDismissedIsSetToTrue() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(false, false, true);
-		assertEquals(4, reports.size());
+	public void getCaseReports_shouldReturnAllCaseReportsForThePatientInTheDatabase() throws Exception {
+		Patient patient = Context.getPatientService().getPatient(2);
+		List<CaseReport> reports = service.getCaseReports(patient, true, Status.values());
+		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 1));
-		assertTrue(TestUtil.containsId(reports, 2));
-		assertTrue(TestUtil.containsId(reports, 4));
-		assertTrue(TestUtil.containsId(reports, 6));
+		assertTrue(TestUtil.containsId(reports, 3));
 		
+		patient = Context.getPatientService().getPatient(7);
+		reports = service.getCaseReports(patient, true, Status.values());
+		assertEquals(3, reports.size());
+		assertTrue(TestUtil.containsId(reports, 5));
+		assertTrue(TestUtil.containsId(reports, 8));
+		assertTrue(TestUtil.containsId(reports, 9));
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(boolean,boolean,boolean)
-	 * @verifies include submitted reports in the database if includeSubmitted is set to true
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
 	 */
 	@Test
-	public void getCaseReports_shouldIncludeSubmittedReportsInTheDatabaseIfIncludeSubmittedIsSetToTrue() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(false, true, false);
-		assertEquals(5, reports.size());
-		assertTrue(TestUtil.containsId(reports, 1));
-		assertTrue(TestUtil.containsId(reports, 2));
-		assertTrue(TestUtil.containsId(reports, 4));
+	public void getCaseReports_shouldReturnAllUnvoidedCaseReportsForThePatientInTheDatabase() throws Exception {
+		Patient patient = Context.getPatientService().getPatient(2);
+		List<CaseReport> reports = service.getCaseReports(patient, false, Status.values());
+		assertEquals(1, reports.size());
+		assertEquals(1, reports.get(0).getId().intValue());
+		
+		patient = Context.getPatientService().getPatient(7);
+		reports = service.getCaseReports(patient, false, Status.values());
+		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 5));
 		assertTrue(TestUtil.containsId(reports, 8));
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(boolean,boolean,boolean)
-	 * @verifies include voided reports in the database if includeVoided is set to true
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
 	 */
 	@Test
-	public void getCaseReports_shouldIncludeVoidedReportsInTheDatabaseIfIncludeVoidedIsSetToTrue() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(true, false, false);
-		assertEquals(5, reports.size());
+	public void getCaseReports_shouldReturnNewUnVoidedCaseReports() throws Exception {
+		List<CaseReport> reports = service.getCaseReports(null, false, Status.NEW);
+		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 1));
-		assertTrue(TestUtil.containsId(reports, 2));
 		assertTrue(TestUtil.containsId(reports, 4));
-		assertTrue(TestUtil.containsId(reports, 3));
-		assertTrue(TestUtil.containsId(reports, 7));
+		
+	}
+	
+	/**
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 */
+	@Test
+	public void getCaseReports_shouldReturnDraftUnVoidedCaseReports() throws Exception {
+		List<CaseReport> reports = service.getCaseReports(null, false, Status.DRAFT);
+		assertEquals(1, reports.size());
+		assertEquals(2, reports.get(0).getId().intValue());
+		
+	}
+	
+	/**
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 */
+	@Test
+	public void getCaseReports_shouldReturnSubmittedUnVoidedCaseReports() throws Exception {
+		List<CaseReport> reports = service.getCaseReports(null, false, Status.SUBMITTED);
+		assertEquals(2, reports.size());
+		assertTrue(TestUtil.containsId(reports, 5));
+		assertTrue(TestUtil.containsId(reports, 8));
+		
+	}
+	
+	/**
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 */
+	@Test
+	public void getCaseReports_shouldReturnDismissedUnVoidedCaseReports() throws Exception {
+		List<CaseReport> reports = service.getCaseReports(null, false, Status.DISMISSED);
+		assertEquals(1, reports.size());
+		assertEquals(6, reports.get(0).getId().intValue());
+		
 	}
 	
 	/**

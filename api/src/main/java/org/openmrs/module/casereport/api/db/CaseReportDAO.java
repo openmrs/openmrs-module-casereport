@@ -20,20 +20,23 @@ import org.openmrs.module.casereport.api.CaseReportService;
  */
 public interface CaseReportDAO {
 	
+	/**
+	 * @see CaseReportService#getCaseReport(Integer)
+	 */
 	CaseReport getCaseReport(Integer caseReportId);
 	
+	/**
+	 * @see CaseReportService#getCaseReportByUuid(String)
+	 */
 	CaseReport getCaseReportByUuid(String uuid);
 	
 	/**
-	 * Gets case reports from the database that match the specified arguments.
-	 * 
-	 * @param patient the patient to match against
-	 * @param statusesToExclude specifies the list statuses of the reports to exclude
-	 * @param includeVoided specifies whether voided reports should be included
-	 * @return the case reports in the database including voided ones if includeVoided is set to
-	 *         true otherwise they will be excluded
+	 * @see CaseReportService#getCaseReports(Patient, boolean, CaseReport.Status...)
 	 */
-	List<CaseReport> getCaseReports(Patient patient, List<CaseReport.Status> statusesToExclude, boolean includeVoided);
+	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, CaseReport.Status... statuses);
 	
+	/**
+	 * @see CaseReportService#saveCaseReport(CaseReport)
+	 */
 	CaseReport saveCaseReport(CaseReport caseReport);
 }

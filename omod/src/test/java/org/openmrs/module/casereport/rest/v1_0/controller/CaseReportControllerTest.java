@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,11 +29,9 @@ import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.CaseReportRestConstants;
 import org.openmrs.module.casereport.rest.v1_0.resource.CaseReportResourceTest;
-import org.openmrs.module.casereport.rest.v1_0.search.SubmittedCaseReportsSearchHandler;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
@@ -54,10 +53,6 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		return "casereport";
 	}
 	
-	public String getQueueURI() {
-		return CaseReportRestConstants.QUEUE;
-	}
-	
 	@Override
 	public String getUuid() {
 		return CaseReportResourceTest.CASE_REPORT_UUID;
@@ -66,12 +61,6 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	@Override
 	public long getAllCount() {
 		return service.getCaseReports().size();
-	}
-	
-	@Override
-	public void shouldGetAll() throws Exception {
-		expectedException.expect(ResourceDoesNotSupportOperationException.class);
-		super.shouldGetAll();
 	}
 	
 	@Test
@@ -93,22 +82,27 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	public void shouldGetACaseReportByUuid() throws Exception {
 		SimpleObject result = deserialize(handle(newGetRequest(getURI() + "/" + getUuid())));
 		assertEquals(getUuid(), Util.getByPath(result, "uuid"));
-		assertEquals(service.getCaseReportByUuid(getUuid()).getPatient().getUuid(), Util.getByPath(result, "patient/uuid"));
+		final String patientUuid = service.getCaseReportByUuid(getUuid()).getPatient().getUuid();
+		assertEquals(patientUuid, Util.getByPath(result, "patient/uuid"));
 		assertNull(Util.getByPath(result, "reportForm"));
 	}
 	
 	@Test
 	public void shouldGetACaseReportByUuidWithTheReportFormForFullRepresentation() throws Exception {
-		SimpleObject result = deserialize(handle(newGetRequest(getURI() + "/" + getUuid(), new Parameter("v", "full"))));
+		final String uri = getURI() + "/" + getUuid();
+		SimpleObject result = deserialize(handle(newGetRequest(uri, new Parameter("v", "full"))));
 		assertEquals(getUuid(), Util.getByPath(result, "uuid"));
-		assertEquals(service.getCaseReportByUuid(getUuid()).getPatient().getUuid(), Util.getByPath(result, "patient/uuid"));
+		final String patientUuid = service.getCaseReportByUuid(getUuid()).getPatient().getUuid();
+		assertEquals(patientUuid, Util.getByPath(result, "patient/uuid"));
 		assertNotNull(Util.getByPath(result, "reportForm"));
 	}
 	
 	@Test
-	public void shouldFailToGetAllCaseReports() throws Exception {
-		expectedException.expect(ResourceDoesNotSupportOperationException.class);
-		handle(newGetRequest(getURI()));
+	public void shouldGetAllCaseReportsIncludingVoidedButExcludingSubmittedAndDismissed() throws Exception {
+		SimpleObject result = deserialize(handle(newGetRequest(getURI(), new Parameter(
+		        RestConstants.REQUEST_PROPERTY_FOR_INCLUDE_ALL, "true"))));
+		assertNotNull(result);
+		assertEquals(5, Util.getResultsSize(result));
 	}
 	
 	@Test
@@ -129,7 +123,8 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	@Test
 	public void shouldGenerateAndIncludeAndNotSaveTheReportFormWhenRequested() throws Exception {
 		assertNull(service.getCaseReportByUuid(getUuid()).getReportForm());
-		SimpleObject result = deserialize(handle(newGetRequest(getURI() + "/" + getUuid(), new Parameter("v", "full"))));
+		final String uri = getURI() + "/" + getUuid();
+		SimpleObject result = deserialize(handle(newGetRequest(uri, new Parameter("v", "full"))));
 		assertNotNull(Util.getByPath(result, "reportForm"));
 		assertNull(service.getCaseReportByUuid(getUuid()).getReportForm());
 	}
@@ -147,23 +142,39 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	
 	@Test
 	public void shouldGetTheCaseReportQueue() throws Exception {
-		SimpleObject result = deserialize(handle(newGetRequest(getQueueURI())));
+		SimpleObject result = deserialize(handle(newGetRequest(getURI())));
 		assertNotNull(result);
-		assertEquals(service.getCaseReports(false, false, false).size(), Util.getResultsSize(result));
+		assertEquals(getAllCount(), Util.getResultsSize(result));
 	}
 	
 	@Test
 	public void shouldFetchAllUnvoidedSubmittedCaseReports() throws Exception {
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
-		        RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "default"))));
+		        CaseReportRestConstants.PARAM_STATUS, CaseReport.Status.SUBMITTED.name()))));
 		assertEquals(4, Util.getResultsSize(responseData));
 	}
 	
 	@Test
 	public void shouldFetchAllUnvoidedSubmittedCaseReportsForTheSpecifiedPatient() throws Exception {
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
-		        RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "default"), new Parameter(
-		        SubmittedCaseReportsSearchHandler.PARAM_PATIENT, "5946f880-b197-400b-9caa-a3c661d23041"))));
+		        CaseReportRestConstants.PARAM_STATUS, CaseReport.Status.SUBMITTED.name()), new Parameter(
+		        CaseReportRestConstants.PARAM_PATIENT, "5946f880-b197-400b-9caa-a3c661d23041"))));
 		assertEquals(2, Util.getResultsSize(responseData));
+	}
+	
+	@Test
+	public void shouldFetchAllUnvoidedCaseReports() throws Exception {
+		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
+		        CaseReportRestConstants.PARAM_STATUS, StringUtils.join(CaseReport.Status.values(), ",")))));
+		assertEquals(8, Util.getResultsSize(responseData));
+	}
+	
+	@Test
+	public void shouldFetchAllCaseReports() throws Exception {
+		final String statuses = StringUtils.join(CaseReport.Status.values(), ",");
+		Parameter[] params = new Parameter[] { new Parameter(RestConstants.REQUEST_PROPERTY_FOR_INCLUDE_ALL, "true"),
+		        new Parameter(CaseReportRestConstants.PARAM_STATUS, statuses) };
+		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), params)));
+		assertEquals(11, Util.getResultsSize(responseData));
 	}
 }

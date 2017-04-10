@@ -9,10 +9,13 @@
  */
 package org.openmrs.module.casereport.rest.v1_0.resource;
 
+import static org.openmrs.module.casereport.CaseReport.Status;
+
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.CaseReportConstants;
@@ -29,6 +32,7 @@ import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
+import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
@@ -39,6 +43,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.GenericRestException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.PatientResource1_9;
 
 @Resource(name = CaseReportRestConstants.REST_NAMESPACE + "/casereport", supportedClass = CaseReport.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
 public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
@@ -167,12 +172,37 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	}
 	
 	/**
+	 * @see DataDelegatingCrudResource#doSearch(RequestContext)
+	 */
+	@Override
+	protected PageableResult doSearch(RequestContext context) {
+		Patient patient = null;
+		Status[] statuses = null;
+		if (StringUtils.isNotBlank(context.getParameter(CaseReportRestConstants.PARAM_STATUS))) {
+			String[] values = StringUtils.split(context.getParameter(CaseReportRestConstants.PARAM_STATUS).trim(), ",");
+			statuses = new Status[values.length];
+			for (int i = 0; i < statuses.length; i++) {
+				statuses[i] = Status.valueOf(values[i]);
+			}
+		}
+		CaseReportService service = Context.getService(CaseReportService.class);
+		RestService rs = Context.getService(RestService.class);
+		if (StringUtils.isNotBlank(context.getParameter(CaseReportRestConstants.PARAM_PATIENT))) {
+			String uuid = context.getParameter(CaseReportRestConstants.PARAM_PATIENT);
+			patient = ((PatientResource1_9) rs.getResourceBySupportedClass(Patient.class)).getByUniqueId(uuid);
+		}
+		
+		return new NeedsPaging<>(service.getCaseReports(patient, context.getIncludeAll(), statuses), context);
+	}
+	
+	/**
 	 * @see DataDelegatingCrudResource#doGetAll(RequestContext)
 	 */
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		//This actually returns the case report queue and should never return all
-		return new NeedsPaging(Context.getService(CaseReportService.class).getCaseReports(false, false, false), context);
+		return new NeedsPaging(Context.getService(CaseReportService.class).getCaseReports(null, context.getIncludeAll()
+		    ), context);
 	}
 	
 	/**

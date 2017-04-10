@@ -9,9 +9,11 @@
  */
 package org.openmrs.module.casereport.api.db.hibernate;
 
+import static org.openmrs.module.casereport.CaseReport.Status;
+
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -68,21 +70,24 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 	}
 	
 	/**
-	 * @see CaseReportDAO#getCaseReports(Patient, List, boolean)
+	 * @see CaseReportDAO#getCaseReports(Patient, boolean, Status...)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(Patient patient, List<CaseReport.Status> statusesToExclude, boolean includeVoided) {
+	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, Status... statuses) {
 		
 		Criteria criteria = getCurrentSession().createCriteria(CaseReport.class);
 		if (patient != null) {
 			criteria.add(Restrictions.eq("patient", patient));
 		}
-		if (CollectionUtils.isNotEmpty(statusesToExclude)) {
-			criteria.add(Restrictions.not(Restrictions.in("status", statusesToExclude)));
+		
+		if (ArrayUtils.isNotEmpty(statuses)) {
+			criteria.add(Restrictions.in("status", statuses));
 		}
+		
 		if (!includeVoided) {
 			criteria.add(Restrictions.eq("voided", false));
 		}
+		
 		criteria.addOrder(Order.desc("dateCreated"));
 		
 		return criteria.list();

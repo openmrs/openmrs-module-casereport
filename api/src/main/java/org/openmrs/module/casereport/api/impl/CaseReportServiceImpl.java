@@ -14,11 +14,11 @@ import static org.openmrs.module.casereport.CaseReport.Status;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -120,8 +120,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (patient == null) {
 			throw new APIException("patient is required");
 		}
-		List<Status> statusesToExclude = Arrays.asList(Status.SUBMITTED, Status.DISMISSED);
-		List<CaseReport> caseReports = dao.getCaseReports(patient, statusesToExclude, false);
+		
+		List<CaseReport> caseReports = getCaseReports(patient, false);
 		if (caseReports.size() == 0) {
 			return null;
 		} else if (caseReports.size() > 1) {
@@ -137,28 +137,18 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getCaseReports() throws APIException {
-		List<Status> statusesToExclude = Arrays.asList(Status.SUBMITTED, Status.DISMISSED);
-		return dao.getCaseReports(null, statusesToExclude, false);
+		return getCaseReports(null, false);
 	}
 	
 	/**
-	 * @See CaseReportService#getCaseReports(boolean,boolean, boolean)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(boolean includeVoided, boolean includeSubmitted, boolean includeDismissed)
-	    throws APIException {
-		List<Status> statusesToExclude = null;
-		if (!includeSubmitted || !includeDismissed) {
-			statusesToExclude = new ArrayList<Status>();
-			if (!includeSubmitted) {
-				statusesToExclude.add(Status.SUBMITTED);
-			}
-			if (!includeDismissed) {
-				statusesToExclude.add(Status.DISMISSED);
-			}
+	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, Status... statuses) {
+		if (ArrayUtils.isEmpty(statuses)) {
+			statuses = new Status[] { Status.NEW, Status.DRAFT };
 		}
-		
-		return dao.getCaseReports(null, statusesToExclude, includeVoided);
+		return dao.getCaseReports(patient, includeVoided, statuses);
 	}
 	
 	/**
@@ -318,14 +308,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException {
-		List<Status> statusesToExclude = new ArrayList<Status>(Status.values().length);
-		for (Status status : Status.values()) {
-			if (status != Status.SUBMITTED) {
-				statusesToExclude.add(status);
-			}
-		}
-		
-		return dao.getCaseReports(patient, statusesToExclude, false);
+		return dao.getCaseReports(patient, false, Status.SUBMITTED);
 	}
 	
 	/**
@@ -334,7 +317,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	public List<Trigger> getTriggers() {
 		if (triggers == null) {
-			triggers = new ArrayList<Trigger>();
+			triggers = new ArrayList<>();
 			for (TaskDefinition td : getCaseReportTaskDefinitions()) {
 				triggers.add(new Trigger(td.getProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY)));
 			}
