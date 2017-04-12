@@ -20,23 +20,22 @@ import org.openmrs.module.casereport.api.CaseReportService;
  */
 public interface CaseReportDAO {
 	
-	/**
-	 * @see CaseReportService#getCaseReport(Integer)
-	 */
 	CaseReport getCaseReport(Integer caseReportId);
 	
-	/**
-	 * @see CaseReportService#getCaseReportByUuid(String)
-	 */
 	CaseReport getCaseReportByUuid(String uuid);
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, CaseReport.Status...)
+	 * Fetches the case reports match the specified criteria from the DB
+	 * 
+	 * @param patient the patient to match
+	 * @param includeVoided specifies whether voided reports should be returned
+	 * @param orderBy The column to use to sort the results
+	 * @param asc The ordering to use, true implies ascending otherwise descending
+	 * @param statuses The statuses to match against
+	 * @return a list of case reports
 	 */
-	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, CaseReport.Status... statuses);
+	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, String orderBy, Boolean asc,
+	                                CaseReport.Status... statuses);
 	
-	/**
-	 * @see CaseReportService#saveCaseReport(CaseReport)
-	 */
 	CaseReport saveCaseReport(CaseReport caseReport);
 }

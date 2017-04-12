@@ -351,15 +351,17 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		
 		CaseReport cr = service.getCaseReport(2);
 		CaseReportForm form = new ObjectMapper().readValue(cr.getReportForm(), CaseReportForm.class);
-		assertNull(null, form.getSubmitter());
-		assertNull(null, form.getSubmitter());
-		assertNull(null, form.getSubmitter());
-		assertNull(null, form.getAssigningAuthorityId());
-		assertNull(null, form.getAssigningAuthorityName());
+		assertNull(form.getSubmitter());
+		assertNull(form.getSubmitter());
+		assertNull(form.getSubmitter());
+		assertNull(form.getAssigningAuthorityId());
+		assertNull(form.getAssigningAuthorityName());
+		assertNull(cr.getResolutionDate());
 		assertFalse(cr.isSubmitted());
 		
 		service.submitCaseReport(cr);
 		assertTrue(cr.isSubmitted());
+		assertNotNull(cr.getResolutionDate());
 		form = new ObjectMapper().readValue(cr.getReportForm(), CaseReportForm.class);
 		Provider provider = Context.getProviderService()
 		        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next();
@@ -446,8 +448,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	public void dismissCaseReport_shouldDismissTheSpecifiedCaseReport() throws Exception {
 		CaseReport cr = service.getCaseReport(4);
 		assertFalse(cr.isDismissed());
+		assertNull(cr.getResolutionDate());
 		service.dismissCaseReport(cr);
 		assertTrue(cr.isDismissed());
+		assertNotNull(cr.getResolutionDate());
 	}
 	
 	/**
@@ -535,10 +539,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void getSubmittedCaseReports_shouldReturnAllThePreviouslySubmittedCaseReportsForTheSpecifiedPatient()
 	    throws Exception {
-		List<CaseReport> caseReports = service.getSubmittedCaseReports(patientService.getPatient(7));
-		assertEquals(2, caseReports.size());
-		assertTrue(TestUtil.containsId(caseReports, 5));
-		assertTrue(TestUtil.containsId(caseReports, 8));
+		List<CaseReport> submittedReports = service.getSubmittedCaseReports(patientService.getPatient(7));
+		assertEquals(2, submittedReports.size());
+		assertEquals(8, submittedReports.get(0).getId().intValue());
+		assertEquals(5, submittedReports.get(1).getId().intValue());
 	}
 	
 	/**
@@ -551,10 +555,10 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(XML_OTHER_DATASET);
 		List<CaseReport> submittedReports = service.getSubmittedCaseReports(null);
 		assertEquals(4, submittedReports.size());
-		assertTrue(TestUtil.containsId(submittedReports, 5));
-		assertTrue(TestUtil.containsId(submittedReports, 8));
-		assertTrue(TestUtil.containsId(submittedReports, 200));
-		assertTrue(TestUtil.containsId(submittedReports, 201));
+		assertEquals(201, submittedReports.get(0).getId().intValue());
+		assertEquals(8, submittedReports.get(1).getId().intValue());
+		assertEquals(5, submittedReports.get(2).getId().intValue());
+		assertEquals(200, submittedReports.get(3).getId().intValue());
 	}
 	
 	/**

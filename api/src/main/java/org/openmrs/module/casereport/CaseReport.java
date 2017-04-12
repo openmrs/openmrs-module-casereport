@@ -10,6 +10,7 @@
 package org.openmrs.module.casereport;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -40,6 +41,8 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	private boolean autoSubmitted = Boolean.FALSE;
 	
+	private Date resolutionDate;
+	
 	public CaseReport() {
 	}
 	
@@ -49,7 +52,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	}
 	
 	public enum Status {
-		NEW, DRAFT, SUBMITTED, DISMISSED;
+		NEW, DRAFT, SUBMITTED, DISMISSED
 	}
 	
 	@Override
@@ -88,7 +91,7 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	public Set<CaseReportTrigger> getReportTriggers() {
 		if (reportTriggers == null) {
-			reportTriggers = new LinkedHashSet<CaseReportTrigger>();
+			reportTriggers = new LinkedHashSet<>();
 		}
 		return reportTriggers;
 	}
@@ -112,6 +115,14 @@ public class CaseReport extends BaseOpenmrsData implements Serializable {
 	
 	public void setAutoSubmitted(boolean autoSubmitted) {
 		this.autoSubmitted = autoSubmitted;
+	}
+	
+	public Date getResolutionDate() {
+		return resolutionDate;
+	}
+	
+	protected void setResolutionDate(Date resolutionDate) {
+		this.resolutionDate = resolutionDate;
 	}
 	
 	public boolean isSubmitted() {

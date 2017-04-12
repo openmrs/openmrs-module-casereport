@@ -13,6 +13,7 @@ import static org.openmrs.module.casereport.CaseReport.Status;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,10 +71,11 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 	}
 	
 	/**
-	 * @see CaseReportDAO#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportDAO#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, Status... statuses) {
+	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, String orderBy, Boolean asc,
+	                                       Status... statuses) {
 		
 		Criteria criteria = getCurrentSession().createCriteria(CaseReport.class);
 		if (patient != null) {
@@ -88,7 +90,15 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 			criteria.add(Restrictions.eq("voided", false));
 		}
 		
-		criteria.addOrder(Order.desc("dateCreated"));
+		String orderColumn = orderBy;
+		if (StringUtils.isBlank(orderBy)) {
+			orderColumn = "dateCreated";
+		}
+		if (asc == null) {
+			asc = false;
+		}
+		Order order = asc ? Order.asc(orderColumn) : Order.desc(orderColumn);
+		criteria.addOrder(order);
 		
 		return criteria.list();
 	}

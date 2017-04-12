@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -148,7 +149,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		if (ArrayUtils.isEmpty(statuses)) {
 			statuses = new Status[] { Status.NEW, Status.DRAFT };
 		}
-		return dao.getCaseReports(patient, includeVoided, statuses);
+		return dao.getCaseReports(patient, includeVoided, null, null, statuses);
 	}
 	
 	/**
@@ -253,17 +254,22 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		form.setAssigningAuthorityName(implId.getName());
 		
 		try {
-			setProperty(caseReport, "reportForm", getObjectMapper().writeValueAsString(form));
+			caseReport.setReportForm(getObjectMapper().writeValueAsString(form));
 		}
 		catch (IOException e) {
 			throw new APIException("Failed to serialize case report form data", e);
 		}
+		
+		//Capture the date now so that it's independent of how long the next call takes
+		Date resolutionDate = new Date();
 		
 		//We use a publisher consumer approach to keep the web layer out of the api
 		//It also provides a hook for others to register custom listeners to take other actions.
 		eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
 		
 		setProperty(caseReport, "status", Status.SUBMITTED);
+		setProperty(caseReport, "resolutionDate", resolutionDate);
+		
 		return dao.saveCaseReport(caseReport);
 	}
 	
@@ -282,6 +288,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		
 		setProperty(caseReport, "status", Status.DISMISSED);
+		setProperty(caseReport, "resolutionDate", new Date());
+		
 		return dao.saveCaseReport(caseReport);
 	}
 	
@@ -308,7 +316,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException {
-		return dao.getCaseReports(patient, false, Status.SUBMITTED);
+		return dao.getCaseReports(patient, false, "resolutionDate", null, Status.SUBMITTED);
 	}
 	
 	/**

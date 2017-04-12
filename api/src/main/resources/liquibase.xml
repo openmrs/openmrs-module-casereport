@@ -131,5 +131,17 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="${project.parent.artifactId}-20170411-1252" author="Wyclif">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="resolution_date" tableName="${project.parent.artifactId}_case_report" />
+            </not>
+        </preConditions>
+        <comment>Add resolution_date column to case_report table</comment>
+        <addColumn tableName="${project.parent.artifactId}_case_report">
+            <column name="resolution_date" type="DATETIME" />
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
