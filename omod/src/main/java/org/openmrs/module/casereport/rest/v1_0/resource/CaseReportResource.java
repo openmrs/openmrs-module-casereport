@@ -193,7 +193,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			patient = ((PatientResource1_9) rs.getResourceBySupportedClass(Patient.class)).getByUniqueId(uuid);
 		}
 		
-		return new NeedsPaging<>(service.getCaseReports(patient, context.getIncludeAll(), statuses), context);
+		return new NeedsPaging<>(service.getCaseReports(patient, context.getIncludeAll(), null, null, statuses), context);
 	}
 	
 	/**
@@ -203,8 +203,9 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		//This actually returns the case report queue and should never return all
 		Status[] statuses = new Status[] { Status.NEW, Status.DRAFT };
-		return new NeedsPaging(Context.getService(CaseReportService.class).getCaseReports(null, context.getIncludeAll(),
-		    statuses), context);
+		CaseReportService service = Context.getService(CaseReportService.class);
+		
+		return new NeedsPaging(service.getCaseReports(null, context.getIncludeAll(), "dateCreated", true, statuses), context);
 	}
 	
 	/**

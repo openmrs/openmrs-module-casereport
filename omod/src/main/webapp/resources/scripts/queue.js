@@ -56,7 +56,7 @@ angular.module("manageCaseReportQueue", [ "caseReportService", "ui.router", "ngD
             $scope.patientSearchText = null;
             $scope.triggerSearchText = null;
             $scope.propertyName = 'dateCreated';
-            $scope.reverse = true;
+            $scope.reverse = false;
             $scope.currentPage = 1;
             $scope.itemsPerPage = 10;
             $scope.start = 0;

@@ -24,16 +24,6 @@ public interface CaseReportDAO {
 	
 	CaseReport getCaseReportByUuid(String uuid);
 	
-	/**
-	 * Fetches the case reports match the specified criteria from the DB
-	 * 
-	 * @param patient the patient to match
-	 * @param includeVoided specifies whether voided reports should be returned
-	 * @param orderBy The column to use to sort the results
-	 * @param asc The ordering to use, true implies ascending otherwise descending
-	 * @param statuses The statuses to match against
-	 * @return a list of case reports
-	 */
 	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, String orderBy, Boolean asc,
 	                                CaseReport.Status... statuses);
 	

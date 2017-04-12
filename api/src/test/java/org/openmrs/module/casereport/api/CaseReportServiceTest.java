@@ -127,28 +127,28 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllCaseReportsInTheDatabase() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(null, true, Status.values());
+		List<CaseReport> reports = service.getCaseReports(null, true, null, null, Status.values());
 		final int expectedCount = 9;
 		assertEquals(expectedCount, reports.size());
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllCaseReportsForThePatientInTheDatabase() throws Exception {
 		Patient patient = Context.getPatientService().getPatient(2);
-		List<CaseReport> reports = service.getCaseReports(patient, true, Status.values());
+		List<CaseReport> reports = service.getCaseReports(patient, true, null, null, Status.values());
 		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 1));
 		assertTrue(TestUtil.containsId(reports, 3));
 		
 		patient = Context.getPatientService().getPatient(7);
-		reports = service.getCaseReports(patient, true, Status.values());
+		reports = service.getCaseReports(patient, true, null, null, Status.values());
 		assertEquals(3, reports.size());
 		assertTrue(TestUtil.containsId(reports, 5));
 		assertTrue(TestUtil.containsId(reports, 8));
@@ -156,28 +156,28 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllUnvoidedCaseReportsForThePatientInTheDatabase() throws Exception {
 		Patient patient = Context.getPatientService().getPatient(2);
-		List<CaseReport> reports = service.getCaseReports(patient, false, Status.values());
+		List<CaseReport> reports = service.getCaseReports(patient, false, null, null, Status.values());
 		assertEquals(1, reports.size());
 		assertEquals(1, reports.get(0).getId().intValue());
 		
 		patient = Context.getPatientService().getPatient(7);
-		reports = service.getCaseReports(patient, false, Status.values());
+		reports = service.getCaseReports(patient, false, null, null, Status.values());
 		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 5));
 		assertTrue(TestUtil.containsId(reports, 8));
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnNewUnVoidedCaseReports() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(null, false, Status.NEW);
+		List<CaseReport> reports = service.getCaseReports(null, false, null, null, Status.NEW);
 		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 1));
 		assertTrue(TestUtil.containsId(reports, 4));
@@ -185,22 +185,22 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnDraftUnVoidedCaseReports() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(null, false, Status.DRAFT);
+		List<CaseReport> reports = service.getCaseReports(null, false, null, null, Status.DRAFT);
 		assertEquals(1, reports.size());
 		assertEquals(2, reports.get(0).getId().intValue());
 		
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnSubmittedUnVoidedCaseReports() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(null, false, Status.SUBMITTED);
+		List<CaseReport> reports = service.getCaseReports(null, false, null, null, Status.SUBMITTED);
 		assertEquals(2, reports.size());
 		assertTrue(TestUtil.containsId(reports, 5));
 		assertTrue(TestUtil.containsId(reports, 8));
@@ -208,11 +208,11 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Test
 	public void getCaseReports_shouldReturnDismissedUnVoidedCaseReports() throws Exception {
-		List<CaseReport> reports = service.getCaseReports(null, false, Status.DISMISSED);
+		List<CaseReport> reports = service.getCaseReports(null, false, null, null, Status.DISMISSED);
 		assertEquals(1, reports.size());
 		assertEquals(6, reports.get(0).getId().intValue());
 		

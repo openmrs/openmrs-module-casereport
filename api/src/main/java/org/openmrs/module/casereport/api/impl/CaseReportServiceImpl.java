@@ -121,7 +121,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("patient is required");
 		}
 		
-		List<CaseReport> caseReports = getCaseReports(patient, false, getQueueStatuses());
+		List<CaseReport> caseReports = getCaseReports(patient, false, null, null, getQueueStatuses());
 		if (caseReports.size() == 0) {
 			return null;
 		} else if (caseReports.size() > 1) {
@@ -141,11 +141,12 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	}
 	
 	/**
-	 * @see CaseReportService#getCaseReports(Patient, boolean, Status...)
+	 * @see CaseReportService#getCaseReports(Patient, boolean, String, Boolean, Status...)
 	 */
 	@Override
-	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, Status... statuses) {
-		return dao.getCaseReports(patient, includeVoided, null, null, statuses);
+	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, String orderBy, Boolean asc,
+	                                       Status... statuses) {
+		return dao.getCaseReports(patient, includeVoided, orderBy, asc, statuses);
 	}
 	
 	/**

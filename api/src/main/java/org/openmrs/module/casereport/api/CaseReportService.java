@@ -69,12 +69,15 @@ public interface CaseReportService extends OpenmrsService {
 	 *
 	 * @param patient the patient to match against
 	 * @param includeVoided specifies whether voided reports should be included
+	 * @param orderBy The property to use for sorting the results
+	 * @param asc The ordering to use, true implies ascending otherwise descending
 	 * @param statuses specifies the statuses of the reports to match against
 	 * @return the case reports in the database including voided ones if includeVoided is set to
 	 *         true otherwise they will be excluded
 	 */
 	@Authorized(CaseReportConstants.PRIV_GET_CASE_REPORTS)
-	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, CaseReport.Status... statuses);
+	List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, String orderBy, Boolean asc,
+	                                CaseReport.Status... statuses);
 	
 	/**
 	 * Saves a case report to the database.
