@@ -25,7 +25,7 @@ angular.module("submittedCaseReports", [ "caseReportService", "ui.router", "uico
     .controller("SubmittedCaseReportsController", ["$scope", "CaseReportService",
         function ($scope, CaseReportService) {
             $scope.caseReports = [];
-            var customRep = 'custom:(dateChanged,uuid,patient:(patientIdentifier:(identifier),' +
+            var customRep = 'custom:(resolutionDate,uuid,patient:(patientIdentifier:(identifier),' +
                 'person:(gender,age,personName:(display))),reportForm:(triggers))';
 
             CaseReportService.getSubmittedCaseReports({v: customRep}).then(function(results) {

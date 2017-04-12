@@ -50,6 +50,7 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 		assertPropEquals("status", getObject().getStatus());
 		assertPropEquals("voided", getObject().getVoided());
 		assertPropPresent("patient");
+		assertPropPresent("resolutionDate");
 		assertPropPresent("reportTriggers");
 		assertPropNotPresent("reportForm");
 		assertPropNotPresent("auditInfo");
@@ -62,6 +63,7 @@ public class CaseReportResourceTest extends BaseDelegatingResourceTest<CaseRepor
 		assertPropEquals("voided", getObject().getVoided());
 		assertPropPresent("reportForm");
 		assertPropPresent("patient");
+		assertPropPresent("resolutionDate");
 		assertPropPresent("reportTriggers");
 		assertPropPresent("auditInfo");
 	}

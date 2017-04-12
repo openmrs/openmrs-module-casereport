@@ -31,8 +31,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="cr in caseReports" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
-        <td valign="top">{{ cr.dateChanged | serverDate }}</td>
+    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
+        <td valign="top">{{ cr.resolutionDate | serverDate }}</td>
         <td class="casereport-identifier-column" valign="top">{{ cr.patient.patientIdentifier.identifier }}</td>
         <td valign="top">{{ cr.patient.person.personName.display }}</td>
         <td valign="top">{{ cr.patient.person.gender }}</td>
