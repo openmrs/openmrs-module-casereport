@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("casereport.pagination", [])
+angular.module("casereport.filters", [])
 
     .filter('pagination', function () {
         return function (caseReports, $scope) {
@@ -21,3 +21,22 @@ angular.module("casereport.pagination", [])
             return caseReports.slice($scope.start, $scope.end);
         }
     })
+
+    .filter('searchReportsByPatient', function () {
+        return function (caseReports, searchText) {
+            if(!searchText) {
+                return caseReports;
+            }
+
+            var matches = [];
+            var regex = new RegExp(searchText, 'i');
+            for (var i = 0; i < caseReports.length; i++) {
+                var caseReport = caseReports[i];
+                if (regex.test(caseReport.patient.person.personName.display)) {
+                    matches.push(caseReport);
+                }
+            }
+
+            return matches;
+        }
+    });

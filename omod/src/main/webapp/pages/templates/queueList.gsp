@@ -15,11 +15,12 @@
 </script>
 
 <h2>${ ui.message('casereport.caseReportQueue.label')}</h2>
+<br />
 
 <div>
     <button ng-click="openNewItemForm()">${ ui.message('casereport.addNewQueueItem.label')}</button>
 </div>
-</br>
+<br />
 
 <input ng-model="patientSearchText" placeholder="${ui.message('casereport.searchByPatient')}" />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

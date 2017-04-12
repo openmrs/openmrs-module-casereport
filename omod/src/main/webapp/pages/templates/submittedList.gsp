@@ -19,7 +19,11 @@
 </script>
 
 <h2>${ ui.message('casereport.submittedCaseReports.label')}</h2>
+<br />
 
+<input ng-model="searchText" placeholder="${ui.message('casereport.searchByPatient')}" />
+<br />
+<br />
 <table id="casereport-submitted">
     <thead>
     <tr>
@@ -31,7 +35,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true | pagination:this" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
+    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true | mainFilter:this" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
         <td valign="top">{{ cr.resolutionDate | serverDate }}</td>
         <td class="casereport-identifier-column" valign="top">{{ cr.patient.patientIdentifier.identifier }}</td>
         <td valign="top">{{ cr.patient.person.personName.display }}</td>
@@ -40,4 +44,5 @@
     </tr>
     </tbody>
 </table>
+<br>
 ${ ui.includeFragment("casereport", "pagination") }

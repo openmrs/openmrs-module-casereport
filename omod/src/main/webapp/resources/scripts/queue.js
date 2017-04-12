@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReportQueue", ["caseReportService", "casereport.pagination", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
+angular.module("manageCaseReportQueue", ["caseReportService", "casereport.filters", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
 
@@ -229,25 +229,6 @@ angular.module("manageCaseReportQueue", ["caseReportService", "casereport.pagina
             $scope.effectiveCount = matches.length;
             //apply paging so that we only see a single page of results
             return $filter('pagination')(matches, $scope);
-        }
-    })
-
-    .filter('searchReportsByPatient', function () {
-        return function (caseReports, searchText) {
-            if(!searchText) {
-                return caseReports;
-            }
-
-            var matches = [];
-            var regex = new RegExp(searchText, 'i');
-            for (var i = 0; i < caseReports.length; i++) {
-                var caseReport = caseReports[i];
-                if (regex.test(caseReport.patient.person.personName.display)) {
-                    matches.push(caseReport);
-                }
-            }
-
-            return matches;
         }
     })
 
