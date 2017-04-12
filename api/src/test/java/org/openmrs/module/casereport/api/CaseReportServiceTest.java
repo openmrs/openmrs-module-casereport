@@ -118,7 +118,12 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getCaseReports_shouldReturnAllNonVoidedCaseReportsInTheDatabase() throws Exception {
-		assertEquals(3, service.getCaseReports().size());
+		List<CaseReport> reports = service.getCaseReports();
+		assertEquals(3, reports.size());
+		//Should be ordered by date created with earliest first
+		assertEquals(1, reports.get(0).getId().intValue());
+		assertEquals(4, reports.get(1).getId().intValue());
+		assertEquals(2, reports.get(2).getId().intValue());
 	}
 	
 	/**
@@ -129,10 +134,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		List<CaseReport> reports = service.getCaseReports(null, true, Status.values());
 		final int expectedCount = 9;
 		assertEquals(expectedCount, reports.size());
-		//Should be ordered by date created with latest first
-		assertEquals(9, reports.get(0).getId().intValue());
-		assertEquals(4, reports.get(7).getId().intValue());
-		assertEquals(1, reports.get(8).getId().intValue());
 	}
 	
 	/**

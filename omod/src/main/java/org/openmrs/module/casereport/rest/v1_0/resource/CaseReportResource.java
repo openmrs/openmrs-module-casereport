@@ -185,6 +185,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 				statuses[i] = Status.valueOf(values[i]);
 			}
 		}
+		
 		CaseReportService service = Context.getService(CaseReportService.class);
 		RestService rs = Context.getService(RestService.class);
 		if (StringUtils.isNotBlank(context.getParameter(CaseReportRestConstants.PARAM_PATIENT))) {
@@ -201,8 +202,9 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	@Override
 	protected PageableResult doGetAll(RequestContext context) throws ResponseException {
 		//This actually returns the case report queue and should never return all
-		return new NeedsPaging(Context.getService(CaseReportService.class).getCaseReports(null, context.getIncludeAll()
-		    ), context);
+		Status[] statuses = new Status[] { Status.NEW, Status.DRAFT };
+		return new NeedsPaging(Context.getService(CaseReportService.class).getCaseReports(null, context.getIncludeAll(),
+		    statuses), context);
 	}
 	
 	/**

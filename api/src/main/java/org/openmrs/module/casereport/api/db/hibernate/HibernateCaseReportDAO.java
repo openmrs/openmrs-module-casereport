@@ -90,15 +90,10 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 			criteria.add(Restrictions.eq("voided", false));
 		}
 		
-		String orderColumn = orderBy;
-		if (StringUtils.isBlank(orderBy)) {
-			orderColumn = "dateCreated";
+		if (StringUtils.isNotBlank(orderBy) && asc != null) {
+			Order order = asc ? Order.asc(orderBy) : Order.desc(orderBy);
+			criteria.addOrder(order);
 		}
-		if (asc == null) {
-			asc = false;
-		}
-		Order order = asc ? Order.asc(orderColumn) : Order.desc(orderColumn);
-		criteria.addOrder(order);
 		
 		return criteria.list();
 	}

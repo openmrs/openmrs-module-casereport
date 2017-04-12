@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -122,7 +121,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("patient is required");
 		}
 		
-		List<CaseReport> caseReports = getCaseReports(patient, false);
+		List<CaseReport> caseReports = getCaseReports(patient, false, getQueueStatuses());
 		if (caseReports.size() == 0) {
 			return null;
 		} else if (caseReports.size() > 1) {
@@ -138,7 +137,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getCaseReports() throws APIException {
-		return getCaseReports(null, false);
+		return dao.getCaseReports(null, false, "dateCreated", true, getQueueStatuses());
 	}
 	
 	/**
@@ -146,9 +145,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getCaseReports(Patient patient, boolean includeVoided, Status... statuses) {
-		if (ArrayUtils.isEmpty(statuses)) {
-			statuses = new Status[] { Status.NEW, Status.DRAFT };
-		}
 		return dao.getCaseReports(patient, includeVoided, null, null, statuses);
 	}
 	
@@ -316,7 +312,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException {
-		return dao.getCaseReports(patient, false, "resolutionDate", null, Status.SUBMITTED);
+		return dao.getCaseReports(patient, false, "resolutionDate", false, Status.SUBMITTED);
 	}
 	
 	/**
@@ -343,5 +339,14 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			}
 		}
 		return taskDefinitions;
+	}
+	
+	/**
+	 * Returns the statuses that constitute queue items
+	 * 
+	 * @return an array of statuses
+	 */
+	private Status[] getQueueStatuses() {
+		return new Status[] { Status.NEW, Status.DRAFT };
 	}
 }

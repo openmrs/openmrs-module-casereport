@@ -55,6 +55,8 @@ public interface CaseReportService extends OpenmrsService {
 	
 	/**
 	 * Gets all non voided case reports from the database that are not yet submitted nor dismissed
+	 * ordered by date created. Basically it fetches the case report queue with the earliest coming
+	 * first.
 	 * 
 	 * @return all non voided case reports in the database
 	 * @should return all non voided case reports in the database

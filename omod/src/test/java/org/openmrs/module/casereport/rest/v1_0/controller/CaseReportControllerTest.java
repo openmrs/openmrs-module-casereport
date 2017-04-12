@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.CaseReportService;
@@ -151,15 +152,17 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	public void shouldFetchAllUnvoidedSubmittedCaseReports() throws Exception {
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
 		        CaseReportRestConstants.PARAM_STATUS, CaseReport.Status.SUBMITTED.name()))));
-		assertEquals(4, Util.getResultsSize(responseData));
+		assertEquals(service.getSubmittedCaseReports(null).size(), Util.getResultsSize(responseData));
 	}
 	
 	@Test
 	public void shouldFetchAllUnvoidedSubmittedCaseReportsForTheSpecifiedPatient() throws Exception {
+		final String patientUuid = "5946f880-b197-400b-9caa-a3c661d23041";
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), new Parameter(
 		        CaseReportRestConstants.PARAM_STATUS, CaseReport.Status.SUBMITTED.name()), new Parameter(
-		        CaseReportRestConstants.PARAM_PATIENT, "5946f880-b197-400b-9caa-a3c661d23041"))));
-		assertEquals(2, Util.getResultsSize(responseData));
+		        CaseReportRestConstants.PARAM_PATIENT, patientUuid))));
+		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+		assertEquals(service.getSubmittedCaseReports(patient).size(), Util.getResultsSize(responseData));
 	}
 	
 	@Test
