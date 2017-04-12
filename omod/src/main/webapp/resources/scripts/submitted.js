@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("submittedCaseReports", [ "caseReportService", "ui.router", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
+angular.module("submittedCaseReports", ["caseReportService", "casereport.pagination", "ui.router", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
 
@@ -25,11 +25,18 @@ angular.module("submittedCaseReports", [ "caseReportService", "ui.router", "uico
     .controller("SubmittedCaseReportsController", ["$scope", "CaseReportService",
         function ($scope, CaseReportService) {
             $scope.caseReports = [];
+            $scope.searchText = null;
+            $scope.currentPage = 1;
+            $scope.itemsPerPage = 10;
+            $scope.start = 0;
+            $scope.end = 0;
+
             var customRep = 'custom:(resolutionDate,uuid,patient:(patientIdentifier:(identifier),' +
                 'person:(gender,age,personName:(display))),reportForm:(triggers))';
 
             CaseReportService.getSubmittedCaseReports({v: customRep}).then(function(results) {
                 $scope.caseReports = results;
+                $scope.effectiveCount = $scope.caseReports.length;
             });
         }
     ]);

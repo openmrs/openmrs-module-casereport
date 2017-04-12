@@ -31,7 +31,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
+    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true | pagination:this" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
         <td valign="top">{{ cr.resolutionDate | serverDate }}</td>
         <td class="casereport-identifier-column" valign="top">{{ cr.patient.patientIdentifier.identifier }}</td>
         <td valign="top">{{ cr.patient.person.personName.display }}</td>
@@ -40,3 +40,4 @@
     </tr>
     </tbody>
 </table>
+${ ui.includeFragment("casereport", "pagination") }

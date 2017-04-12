@@ -25,6 +25,7 @@
     ui.includeJavascript("uicommons", "services/personService.js")
     ui.includeJavascript("casereport", "lib/bootstrap/ui-bootstrap-tpls-2.2.0.min.js")
     ui.includeJavascript("casereport", "caseReportService.js")
+    ui.includeJavascript("casereport", "casereport-pagination.js")
     ui.includeJavascript("casereport", "submitted.js")
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")

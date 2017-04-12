@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReportQueue", [ "caseReportService", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
+angular.module("manageCaseReportQueue", ["caseReportService", "casereport.pagination", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
 
@@ -68,7 +68,7 @@ angular.module("manageCaseReportQueue", [ "caseReportService", "ui.router", "ngD
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {
                     $scope.caseReports = results;
-                    $scope.effectiveCaseReportCount = $scope.caseReports.length;
+                    $scope.effectiveCount = $scope.caseReports.length;
                 });
             }
 
@@ -226,21 +226,9 @@ angular.module("manageCaseReportQueue", [ "caseReportService", "ui.router", "ngD
                 }
             }
 
-            $scope.effectiveCaseReportCount = matches.length;
+            $scope.effectiveCount = matches.length;
             //apply paging so that we only see a single page of results
             return $filter('pagination')(matches, $scope);
-        }
-    })
-
-    .filter('pagination', function () {
-        return function (caseReports, $scope) {
-            $scope.start = ($scope.currentPage - 1) * $scope.itemsPerPage;
-            $scope.end = $scope.start + $scope.itemsPerPage;
-            if($scope.end > $scope.effectiveCaseReportCount){
-                $scope.end = $scope.effectiveCaseReportCount;
-            }
-
-            return caseReports.slice($scope.start, $scope.end);
         }
     })
 
