@@ -3,25 +3,22 @@
   "concept": "CIEL_159",
   "description": "HIV patients who have died",
   "repeatInterval": 604800, /* 7 days (in seconds) */
-  "conceptMappings": [],
   "sql": "
 
-  /**
-  * Name:HIV Patient Died
-  * Query Type: SQL Cohort Query
-  * Description: HIV patients who have died
-  * Assumption: Database has only HIV patients
-  * HIV Case Reporting Module has already excluded patients previously added to the list.
-  **/
+  /*
+   * Name:HIV Patient Died
+   * Query Type: SQL Cohort Query
+   * Description: HIV patients who have died
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
 
   SELECT person_id
   FROM person
-  WHERE
-  dead = 1
-  AND
-  (
-  date_created >= date(:lastExecutionTime)
-  OR date_changed >= date(:lastExecutionTime)
+  WHERE dead = 1
+  AND(
+    date_created >= date(:lastExecutionTime)
+    OR date_changed >= date(:lastExecutionTime)
   )
   AND not voided;
 "

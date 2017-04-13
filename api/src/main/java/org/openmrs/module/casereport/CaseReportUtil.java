@@ -351,6 +351,8 @@ public class CaseReportUtil {
 					}
 				}
 				caseReportService.saveCaseReport(caseReport);
+			} else {
+				log.debug(patient + " already has an item in the queue with the trigger " + triggerName);
 			}
 		}
 		

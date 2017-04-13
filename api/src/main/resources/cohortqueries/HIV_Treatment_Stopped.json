@@ -14,27 +14,22 @@
     "CIEL_1754"   /* Medications unavailable */
   ],
   "sql": "
-  /**
-  * Name:HIV Treatment Stopped
-  * Query Type: SQL Cohort Query
-  * Description: HIV patients who have reported treatment stopped or interrupted
-  * Assumption: Database has only HIV patients
-  * HIV Case Reporting Module has already excluded patients previously added to the list.
-  **/
+
+  /*
+   * Name:HIV Treatment Stopped
+   * Query Type: SQL Cohort Query
+   * Description: HIV patients who have reported treatment stopped or interrupted
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
 
   SELECT person_id
   FROM obs
   WHERE
-  date(date_created) >= date(:lastExecutionTime)
-  AND
-  (
-  concept_id = :CIEL_1252
-  AND value_coded IN
-  (
-  :CIEL_983, :CIEL_102, :CIEL_159598,
-  :CIEL_160018, :CIEL_127750, :CIEL_819,
-  :CIEL_1754
-  )
+    date(date_created) >= date(:lastExecutionTime)
+  AND (
+    concept_id = :CIEL_1252
+    AND value_coded IN (:CIEL_983, :CIEL_102, :CIEL_159598, :CIEL_160018, :CIEL_127750, :CIEL_819,:CIEL_1754)
   )
   AND not voided;
 "

@@ -4,30 +4,27 @@
   "description": "HIV patients for whom a viral load has not been done for at least 12 months",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [
-    "CIEL_1040", /* HIV RAPID TEST 1, QUALITATIVE */
-    "CIEL_703",  /* POSITIVE */
-    "CIEL_856"   /* VIRAL LOAD */
+    "CIEL_856"   /* HIV VIRAL LOAD */
   ],
   "sql": "
+
   /*
-  * Name:HIV Patient Not Tested
-  * Query Type: SQL Cohort Query
-  * Description: HIV patients for whom a viral load has not been done for at least 12 months
-  * Assumption: Database has only HIV patients
-  * HIV Case Reporting Module has already excluded patients previously added to the list.
-  */
+   * Name:HIV Patient Not Tested
+   * Query Type: SQL Cohort Query
+   * Description: HIV patients for whom a viral load has not been done for at least 12 months
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
+
   SELECT o2.person_id
-  FROM
-  (
-  SELECT
-  o1.person_id,
-  max(o1.obs_datetime) as latest_viral_load_date
-  FROM obs o1
-  WHERE o1.concept_id = :CIEL_856
-  AND not o1.voided
-  GROUP BY o1.person_id
+  FROM (
+    SELECT o1.person_id, max(o1.obs_datetime) as latest_viral_load_date
+    FROM obs o1
+    WHERE o1.concept_id = :CIEL_856
+    AND not o1.voided
+    GROUP BY o1.person_id
   ) as o2
   WHERE
-  o2.latest_viral_load_date <= DATE_SUB(date(:lastExecutionTime), INTERVAL 12 MONTH);
+    date(o2.latest_viral_load_date) <= DATE_SUB(date(:lastExecutionTime), INTERVAL 12 MONTH);
 "
 }

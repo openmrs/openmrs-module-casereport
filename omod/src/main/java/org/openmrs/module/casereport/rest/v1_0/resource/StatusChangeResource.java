@@ -37,7 +37,6 @@ public class StatusChangeResource extends DelegatingSubResource<StatusChange, Ca
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		description.addRequiredProperty("action");
-		description.addProperty("submitter");
 		description.addProperty("reportForm");
 		return description;
 	}

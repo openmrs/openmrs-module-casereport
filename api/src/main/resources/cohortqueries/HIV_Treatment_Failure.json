@@ -9,23 +9,24 @@
     "CIEL_856"   /* HIV VIRAL LOAD */
   ],
   "sql": "
+
   /*
-  * Name:HIV Treatment Failure
-  * Query Type: SQL Cohort Query
-  * Description: HIV patients who have reported treatment failure or have viral load > 5000
-  * Assumption: Database has only HIV patients
-  * HIV Case Reporting Module has already excluded patients previously added to the list.
-  */
+   * Name:HIV Treatment Failure
+   * Query Type: SQL Cohort Query
+   * Description: HIV patients who have reported treatment failure or have viral load > 5000
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
+
   SELECT person_id
   FROM obs
   WHERE
-  date(date_created) >= date(:lastExecutionTime)
-  AND
-  ((concept_id = :CIEL_1252
-  AND value_coded = :CIEL_843)
-  OR
-  (concept_id = :CIEL_856
-  AND value_numeric > 5000))
+    date(date_created) >= date(:lastExecutionTime)
+  AND (
+    (concept_id = :CIEL_1252 AND value_coded = :CIEL_843)
+    OR
+    (concept_id = :CIEL_856 AND value_numeric > 5000)
+  )
   AND not voided;
 "
 }

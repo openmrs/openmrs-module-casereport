@@ -7,13 +7,15 @@
     "CIEL_160568" /* Reason antiretrovirals changed to second line therapy */
   ],
   "sql": "
+
   /*
-  * Name:HIV Switched To Second Line
-  * Query Type: SQL Cohort Query
-  * Description: HIV patients who have been switched to a second line regimen
-  * Assumption: Database has only HIV patients
-  * HIV Case Reporting Module has already excluded patients previously added to the list.
-  */
+   * Name:HIV Switched To Second Line
+   * Query Type: SQL Cohort Query
+   * Description: HIV patients who have been switched to a second line regimen
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
+
   SELECT person_id
   FROM obs
   WHERE date(date_created) >= date(:lastExecutionTime)

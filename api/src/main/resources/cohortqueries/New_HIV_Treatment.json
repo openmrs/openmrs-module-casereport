@@ -4,35 +4,29 @@
   "description": "HIV patients for starting treatment",
   "repeatInterval": 604800, /* 7 days (in seconds) */
   "conceptMappings": [
-    "CIEL_1225", /* ARV Plan */
+    "CIEL_1255", /* ARV Plan */
     "CIEL_1256", /* START DRUGS */
     "CIEL_1251", /* REASON ANTIRETROVIRALS STARTED */
     "CIEL_1185" /* TREATMENT */
   ],
   "sql": "
+
   /*
-  * Name:New HIV Treatment
-  * Query Type: SQL Cohort Query
-  * Description: HIV patients for starting treatment
-  * Assumption: Database has only HIV patients
-  * HIV Case Reporting Module has already excluded patients previously added to the list.
-  */
+   * Name:New HIV Treatment
+   * Query Type: SQL Cohort Query
+   * Description: HIV patients for starting treatment
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
 
   SELECT person_id
   FROM obs
   WHERE
-  date(date_created) >= date(:lastExecutionTime)
-  AND
-  (
-  (
-  concept_id = :CIEL_1255
-  AND value_coded = :CIEL_1256
-  )
-  OR
-  (
-  concept_id = :CIEL_1251
-  AND value_coded = :CIEL_1185
-  )
+    date(date_created) >= date(:lastExecutionTime)
+  AND (
+    (concept_id = :CIEL_1255 AND value_coded = :CIEL_1256)
+    OR
+    (concept_id = :CIEL_1251 AND value_coded = :CIEL_1185)
   )
   AND not voided;
 "
