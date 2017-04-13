@@ -50,8 +50,6 @@ public class CaseReportUtil {
 	
 	protected static final Log log = LogFactory.getLog(CaseReportUtil.class);
 	
-	private static ObjectMapper mapper = new ObjectMapper();
-	
 	private static Concept getCeilConceptByCode(String code) {
 		Concept concept = Context.getConceptService().getConceptByMapping(code, CaseReportConstants.SOURCE_CIEL_HL7_CODE);
 		if (concept == null) {
@@ -134,7 +132,7 @@ public class CaseReportUtil {
 	 * Gets the active ARV drug orders for the specified patient
 	 *
 	 * @param patient the patient to match against
-	 * @param asOfDate
+	 * @param asOfDate reference date
 	 * @return a list of active ARV drug orders
 	 * @should get the active ARV drug orders for the specified patient
 	 */
@@ -143,7 +141,7 @@ public class CaseReportUtil {
 		OrderService os = Context.getOrderService();
 		OrderType orderType = os.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
 		List<Order> orders = os.getActiveOrders(patient, orderType, null, asOfDate);
-		List<DrugOrder> arvDrugOrders = new ArrayList<DrugOrder>();
+		List<DrugOrder> arvDrugOrders = new ArrayList<>();
 		for (Order order : orders) {
 			DrugOrder drugOrder = (DrugOrder) order;
 			if (arvMedset.getSetMembers().contains(order.getConcept())) {
@@ -306,7 +304,7 @@ public class CaseReportUtil {
 			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
 		}
 		EvaluationContext evaluationContext = new EvaluationContext();
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		if (definition.getParameter(CaseReportConstants.LAST_EXECUTION_TIME) != null) {
 			Date lastExecutionTime = taskDefinition.getLastExecutionTime();
 			if (lastExecutionTime == null && taskDefinition.getRepeatInterval() != null
