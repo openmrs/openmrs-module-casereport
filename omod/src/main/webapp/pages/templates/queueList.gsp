@@ -24,20 +24,12 @@
 
 <input ng-model="patientSearchText" placeholder="${ui.message('casereport.searchByPatient')}" />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input ng-model="triggerSearchText" placeholder="${ui.message('casereport.filterByTriggers')}" />
+<input ng-model="triggerSearchText" placeholder="${ui.message('casereport.searchByTrigger')}" />
 <br />
 <br />
 <table id="casereport-reports">
     <thead>
     <tr>
-        <th>
-            ${ui.message('casereport.dateAdded')}
-            <a ng-click="sort('dateCreated')">
-                <i ng-class="{'icon-sort edit-action' : propertyName != 'dateCreated',
-                                'icon-sort-up' : propertyName == 'dateCreated' && !reverse,
-                                'icon-sort-down' : propertyName == 'dateCreated' && reverse}" />
-            </a>
-        </th>
         <th>
             ${ui.message('Patient.identifier')}
             <a ng-click="sort('patient.patientIdentifier.identifier')">
@@ -69,12 +61,19 @@
             </a>
         </th>
         <th class="casereport-trigger-column">${ui.message('casereport.triggers')}</th>
+        <th>
+            ${ui.message('casereport.dateAdded')}
+            <a ng-click="sort('dateCreated')">
+                <i ng-class="{'icon-sort edit-action' : propertyName != 'dateCreated',
+                                'icon-sort-up' : propertyName == 'dateCreated' && !reverse,
+                                'icon-sort-down' : propertyName == 'dateCreated' && reverse}" />
+            </a>
+        </th>
         <th>${ui.message('casereport.actions')}</th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="caseReport in caseReports | mainFilter:this">
-        <td valign="top">{{caseReport.dateCreated | serverDate}}</td>
         <td class="casereport-identifier-column" valign="top" title="{{caseReport.patient.patientIdentifier.identifier}}">
             {{caseReport.patient.patientIdentifier.identifier}}
         </td>
@@ -96,6 +95,7 @@
                 </tr>
             </table>
         </td>
+        <td valign="top">{{caseReport.dateCreated | serverDate}}</td>
         <td valign="top">
             <a ui-sref="reportForm({uuid: caseReport.uuid})">
                 <i class="icon-circle-arrow-right edit-action" title="${ui.message("casereport.submit")}"></i>

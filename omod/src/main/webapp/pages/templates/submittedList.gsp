@@ -27,20 +27,20 @@
 <table id="casereport-submitted">
     <thead>
     <tr>
-        <th>${ui.message('casereport.date')}</th>
         <th>${ui.message('Patient.identifier')}</th>
         <th class="casereport-name-column">${ui.message('general.name')}</th>
         <th>${ui.message('Patient.gender')}</th>
         <th class="casereport-trigger-column">${ui.message('casereport.triggers')}</th>
+        <th>${ui.message('casereport.date')}</th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true | mainFilter:this" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
-        <td valign="top">{{ cr.resolutionDate | serverDate }}</td>
         <td class="casereport-identifier-column" valign="top">{{ cr.patient.patientIdentifier.identifier }}</td>
         <td valign="top">{{ cr.patient.person.personName.display }}</td>
         <td valign="top">{{ cr.patient.person.gender }}</td>
         <td valign="top">{{ cr.reportForm.triggers | omrs.display }}</td>
+        <td valign="top">{{ cr.resolutionDate | serverDate }}</td>
     </tr>
     </tbody>
 </table>
