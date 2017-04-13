@@ -25,6 +25,8 @@
     GROUP BY o1.person_id
   ) as o2
   WHERE
-    date(o2.latest_viral_load_date) <= DATE_SUB(date(:lastExecutionTime), INTERVAL 12 MONTH);
+    date(o2.latest_viral_load_date) <= DATE_SUB(now(), INTERVAL 12 MONTH);
+  AND
+    date(o2.latest_viral_load_date) > DATE_SUB(date(:lastExecutionTime), INTERVAL 12 MONTH);
 "
 }

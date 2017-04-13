@@ -15,12 +15,14 @@
 
   SELECT e2.patient_id
   FROM (
-    SELECT e1.patient_id, max(date(e1.encounter_datetime)) as latest_encounter_date
+    SELECT e1.patient_id, max(e1.encounter_datetime) as latest_encounter_date
     FROM encounter e1
     WHERE not e1.voided
     GROUP BY e1.patient_id
   ) as e2
   WHERE
-    e2.latest_encounter_date <= DATE_SUB(:lastExecutionTime, INTERVAL 18 MONTH);
+    date(e2.latest_encounter_date) <= DATE_SUB(now(), INTERVAL 18 MONTH)
+  AND
+    date(e2.latest_encounter_date) > DATE_SUB(:lastExecutionTime, INTERVAL 18 MONTH);
 "
 }
