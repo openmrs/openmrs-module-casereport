@@ -13,6 +13,7 @@
 $orange: #F26522;
 $darkGrey: #636363;
 $lighterGrey: #f0f0f0;
+$processingWidth: 380px !important;
 
 #casereport-reports {
   font-size: 85%;
@@ -27,9 +28,22 @@ $lighterGrey: #f0f0f0;
 }
 
 .ngdialog-content {
-  width: 980px !important;
-  height: 550px !important;
-  overflow: scroll !important;
+  width: $processingWidth;
+  height: 64px !important;
+  padding-top: 8px !important;
+}
+
+#casereport-processing {
+  width: $processingWidth;
+  height: 26px !important;
+}
+
+#casereport-sending {
+  margin-left: 18px !important;
+}
+
+#casereport-blinker {
+  animation: blinker 0.7s linear infinite;
 }
 
 a.casereport-no-underline:hover {

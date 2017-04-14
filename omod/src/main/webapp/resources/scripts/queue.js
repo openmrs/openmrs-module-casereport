@@ -100,8 +100,6 @@ angular.module("manageCaseReportQueue", [
             $scope.dismiss = function(caseReport){
                 ngDialog.openConfirm({
                     showClose: false,
-                    closeByEscape: true,
-                    closeByDocument: true,
                     template:"templates/dismissCaseReportDialog.page",
                     controller: function($scope) {
                         $scope.caseReport = caseReport;
@@ -141,8 +139,8 @@ angular.module("manageCaseReportQueue", [
         }
     ])
 
-    .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "orderByFilter", "CaseReport", "StatusChange", "caseReport",
-        function($scope, $state, $filter, orderBy, CaseReport, StatusChange, caseReport) {
+    .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "orderByFilter", "ngDialog", "CaseReport", "StatusChange", "caseReport",
+        function($scope, $state, $filter, orderBy, ngDialog, CaseReport, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
             $scope.previousReportDetails = [];
             $scope.showPreviousReports = false;
@@ -186,6 +184,13 @@ angular.module("manageCaseReportQueue", [
             }
 
             $scope.submitCaseReport = function() {
+                var id = ngDialog.open({
+                    showClose: false,
+                    closeByEscape: false,
+                    closeByDocument: false,
+                    template: "casereport-template-processing"
+                });
+
                 StatusChange.save({
                     uuid: caseReport.uuid,
                     action: "SUBMIT",
@@ -195,6 +200,8 @@ angular.module("manageCaseReportQueue", [
                     emr.successMessage("casereport.submitted");
                 }, function(error) {
                     emr.errorMessage("casereport.seeLogs");
+                }).finally(function(){
+                    ngDialog.close(id);
                 });
             }
 

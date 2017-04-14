@@ -14,6 +14,19 @@
     emr.loadMessages(["casereport.submitted", "casereport.report.form.title", "casereport.seeLogs"]);
 </script>
 
+<script type="text/ng-template" id="casereport-template-processing">
+    <span id="casereport-sending">
+        ${ui.message("casereport.sending")}<span id="casereport-blinker">...</span>
+    </span>
+    <img id="casereport-processing" src="${ui.resourceLink("casereport", "images/processing.gif")}" />
+</script>
+
+<style type="text/css">
+    @keyframes blinker {
+        75% { opacity: 0; }
+    }
+</style>
+
 <h2 id="casereport-reportTitle" />
 
 <form class="simple-form-ui" name="caseReportForm" novalidate ng-submit="submitCaseReport()">
@@ -163,7 +176,7 @@
                 <span class="right">
                     <button type="button" class="cancel" ui-sref="list">${ui.message('general.cancel')}</button>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="submit" class="right">${ui.message('general.submit')}</button>
+                    <button type="submit" class="confirm right">${ui.message('general.submit')}</button>
                 </span>
             </td>
         </tr>
