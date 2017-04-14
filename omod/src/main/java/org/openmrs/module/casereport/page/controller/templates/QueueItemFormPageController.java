@@ -20,7 +20,7 @@ import org.openmrs.ui.framework.Model;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public class CaseReportQueueItemFormPageController {
+public class QueueItemFormPageController {
 	
 	public void get(Model model, @RequestParam("patient") Patient patient,
 	                @SpringBean("caseReportService") CaseReportService caseReportService) {

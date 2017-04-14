@@ -8,7 +8,16 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReportQueue", ["caseReportService", "casereport.filters", "ui.router", "ngDialog", "uicommons.filters", "uicommons.common.error", "ui.bootstrap"])
+angular.module("manageCaseReportQueue", [
+        "caseReportService",
+        "personService",
+        "casereport.filters",
+        "ui.router",
+        "ngDialog",
+        "uicommons.filters",
+        "uicommons.common.error",
+        "ui.bootstrap"
+    ])
 
     .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
 
