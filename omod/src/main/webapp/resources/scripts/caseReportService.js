@@ -11,6 +11,7 @@
 angular.module('caseReportService', ['ngResource', 'uicommons.common'])
 
     .factory('CaseReport', function($resource) {
+
         return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/casereport/:uuid", {
             uuid: '@uuid'
         },{
@@ -19,9 +20,15 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
     })
 
     .factory('StatusChange', function($resource) {
+
         return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/casereport/:uuid/statuschange", {
             uuid: '@uuid'
         });
+
+    })
+
+    .factory('Trigger', function($resource) {
+        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/trigger", {});
     })
 
     .config(function($httpProvider) {
@@ -40,15 +47,43 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
         $httpProvider.defaults.transformRequest.push(defaultTransformer);
     })
 
-    .factory("CaseReportService", function(RestService, CaseReport) {
+    .factory("CaseReportService", function(RestService, CaseReport, Trigger) {
+
         return {
             getCaseReports: function(parameters) {
                 return RestService.getAllResults(CaseReport, parameters);
             },
+
             getSubmittedCaseReports: function(parameters) {
                 var params = _.clone(parameters);
                 params['status'] = 'SUBMITTED';
+
                 return RestService.getAllResults(CaseReport, params);
+            },
+
+            getTriggers: function() {
+                return Trigger.get().$promise.then(function(response){
+                    return response.results;
+                });
+            },
+
+            getExistingQueueItem: function(patientUuid, representation){
+                var params = {
+                    s: "forPatient",
+                    patient: patientUuid
+                }
+                if(representation){
+                    params['v'] = representation
+                }
+
+                return this.getCaseReports(params).then(function(reports){
+                    if(reports.length > 0){
+                        return reports[0];
+                    }
+
+                    return null;
+                });
             }
         }
+
     });

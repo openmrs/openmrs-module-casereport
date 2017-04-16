@@ -180,4 +180,15 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), params)));
 		assertEquals(11, Util.getResultsSize(responseData));
 	}
+	
+	@Test
+	public void shouldFetchTheCaseReportForTheSpecifiedPatient() throws Exception {
+		Patient patient = Context.getPatientService().getPatient(2);
+		Parameter[] params = new Parameter[] { new Parameter(RestConstants.REQUEST_PROPERTY_FOR_SEARCH_ID, "forPatient"),
+		        new Parameter(CaseReportRestConstants.PARAM_PATIENT, patient.getUuid()) };
+		SimpleObject responseData = deserialize(handle(newGetRequest(getURI(), params)));
+		assertEquals(1, Util.getResultsSize(responseData));
+		assertEquals("5f7d57f0-9077-11e1-aaa4-00248140a5ef",
+		    Util.getByPath(Util.getResultsList(responseData).get(0), "uuid"));
+	}
 }

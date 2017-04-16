@@ -11,6 +11,7 @@
 angular.module("casereport.filters", [])
 
     .filter('pagination', function () {
+
         return function (caseReports, $scope) {
             $scope.start = ($scope.currentPage - 1) * $scope.itemsPerPage;
             $scope.end = $scope.start + $scope.itemsPerPage;
@@ -20,9 +21,11 @@ angular.module("casereport.filters", [])
 
             return caseReports.slice($scope.start, $scope.end);
         }
+
     })
 
     .filter('searchReportsByPatient', function () {
+
         return function (caseReports, searchText) {
             if(!searchText) {
                 return caseReports;
@@ -39,4 +42,5 @@ angular.module("casereport.filters", [])
 
             return matches;
         }
+
     });

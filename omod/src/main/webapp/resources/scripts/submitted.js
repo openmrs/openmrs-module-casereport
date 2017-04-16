@@ -30,6 +30,7 @@ angular.module("submittedCaseReports", [
     }])
 
     .controller("SubmittedCaseReportsController", ["$scope", "CaseReportService",
+
         function ($scope, CaseReportService) {
             $scope.caseReports = [];
             $scope.searchText = null;
@@ -46,9 +47,11 @@ angular.module("submittedCaseReports", [
                 $scope.effectiveCount = $scope.caseReports.length;
             });
         }
+
     ])
 
     .filter('mainFilter', function ($filter) {
+
         return function (caseReports, $scope) {
 
             var matches = [];
@@ -62,4 +65,5 @@ angular.module("submittedCaseReports", [
             //apply paging so that we only see a single page of results
             return $filter('pagination')(matches, $scope);
         }
+
     });

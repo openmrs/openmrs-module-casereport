@@ -49,11 +49,15 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Override
 	public String getURI() {
-		return "casereport/" + getUuid() + "/statuschange";
+		return "casereport/" + getParentUuid() + "/statuschange";
 	}
 	
 	@Override
 	public String getUuid() {
+		return null;
+	}
+	
+	public String getParentUuid() {
 		return CaseReportResourceTest.CASE_REPORT_UUID;
 	}
 	
@@ -93,7 +97,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		final String hivSwitchToSecondLine = "HIV Switched To Second Line";
 		final String newHivCase = "New HIV Case";
 		ObjectMapper mapper = new ObjectMapper();
-		CaseReport cr = service.getCaseReportByUuid(getUuid());
+		CaseReport cr = service.getCaseReportByUuid(getParentUuid());
 		assertTrue(StringUtils.isBlank(cr.getReportForm()));
 		CaseReportForm form = new CaseReportForm(cr);
 		assertEquals(2, form.getTriggers().size());
@@ -108,7 +112,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 		    "{\"action\":\"" + StatusChange.Action.SUBMIT + "\",\"reportForm\":" + mapper.writeValueAsString(form) + "}"));
 		
 		assertTrue(cr.isSubmitted());
-		cr = service.getCaseReportByUuid(getUuid());
+		cr = service.getCaseReportByUuid(getParentUuid());
 		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
 		assertEquals(1, savedForm.getTriggers().size());
 		assertTrue(CaseReportUtil.collContainsItemWithValue(savedForm.getTriggers(), hivSwitchToSecondLine));
@@ -117,7 +121,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	
 	@Test
 	public void shouldDismissTheCaseReport() throws Exception {
-		CaseReport cr = service.getCaseReportByUuid(getUuid());
+		CaseReport cr = service.getCaseReportByUuid(getParentUuid());
 		assertFalse(cr.isDismissed());
 		handle(newPostRequest(getURI(), "{\"action\":\"" + StatusChange.Action.DISMISS + "\"}"));
 		assertTrue(cr.isDismissed());

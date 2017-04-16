@@ -21,7 +21,7 @@
         <label>${ui.message("general.patient")}</label>
     </p>
     <p>
-        <div class="casereport-margin-left">{{patient | omrs.display}}</div>
+        <div class="casereport-margin-left">{{ patient | omrs.display }}</div>
     </p>
     <p>
         <label for="casereport-triggers">
@@ -35,11 +35,9 @@
         <div class="casereport-margin-left">
             <select id="casereport-triggers" name="trigger" ng-model="trigger" required>
                 <option value="">${ui.message("casereport.selectTrigger")}</option>
-                <% triggers.each { %>
-                <option value="${ it.name }" ${existingTriggers.contains(it.name) ? "disabled" : "" }>
-                    ${ it.name }
+                <option ng-repeat="t in triggers" value="{{ t.name }}" ng-disabled="hasItemWithTrigger(t)">
+                    {{ t.name }}
                 </option>
-             <% } %>
             </select>
         </div>
     </p>

@@ -31,8 +31,8 @@ angular.module("manageCaseReportQueue", [
             })
             .state('queueItemForm', {
                 url: "/queueItemForm/:patientUuid",
-                templateUrl: function($stateParams){
-                    return "templates/queueItemForm.page?patient="+$stateParams.patientUuid;
+                templateUrl: function(){
+                    return "templates/queueItemForm.page";
                 },
                 controller: "QueueItemFormController",
                 params:{
@@ -40,7 +40,16 @@ angular.module("manageCaseReportQueue", [
                 },
                 resolve: {
                     patient: function($stateParams, Person) {
-                       return Person.get({uuid: $stateParams.patientUuid, v: "custom:(display,uuid)"});
+                        return Person.get({uuid: $stateParams.patientUuid, v: "custom:(display,uuid)"});
+                    },
+
+                    triggers: function(CaseReportService) {
+                        return CaseReportService.getTriggers();
+                    },
+
+                    existingQueueItem: function($stateParams, CaseReportService) {
+                        var rep = "custom:(reportTriggers:(name))";
+                        return CaseReportService.getExistingQueueItem($stateParams.patientUuid, rep);
                     }
                 }
             })
@@ -60,6 +69,7 @@ angular.module("manageCaseReportQueue", [
     }])
 
     .controller("ViewQueueController", [ "$scope", "orderByFilter", "ngDialog", "StatusChange", "CaseReportService",
+
         function($scope, orderBy, ngDialog, StatusChange, CaseReportService) {
             $scope.caseReports = [];
             $scope.patientSearchText = null;
@@ -116,11 +126,15 @@ angular.module("manageCaseReportQueue", [
             }
 
             loadCaseReports();
-    }])
+        }
+    ])
 
-    .controller("QueueItemFormController", ["$scope", "$state", "CaseReport", "patient",
-        function ($scope, $state, CaseReport, patient) {
+    .controller("QueueItemFormController", ["$scope", "$state", "CaseReport", "patient", "triggers", "existingQueueItem",
+
+        function ($scope, $state, CaseReport, patient, triggers, existingQueueItem) {
             $scope.patient = patient;
+            $scope.triggers = triggers;
+            $scope.existingQueueItem = existingQueueItem;
             $scope.trigger;
 
             $scope.saveNewQueueItem = function(){
@@ -136,10 +150,24 @@ angular.module("manageCaseReportQueue", [
                     emr.successMessage("casereport.save.success");
                 });
             }
+
+            $scope.hasItemWithTrigger = function(trigger){
+                if($scope.existingQueueItem) {
+                    for (var i in $scope.existingQueueItem.reportTriggers) {
+                        if (trigger.name == $scope.existingQueueItem.reportTriggers[i].name) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
         }
+
     ])
 
     .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "orderByFilter", "ngDialog", "CaseReport", "StatusChange", "caseReport",
+
         function($scope, $state, $filter, orderBy, ngDialog, CaseReport, StatusChange, caseReport) {
             $scope.caseReport = caseReport;
             $scope.previousReportDetails = [];
@@ -226,9 +254,11 @@ angular.module("manageCaseReportQueue", [
                     $scope.showPreviousReports = !$scope.showPreviousReports;
                 }
             }
-    }])
+        }
+    ])
 
     .filter('mainFilter', function ($filter) {
+
         return function (caseReports, $scope) {
 
             var matches = [];
@@ -246,9 +276,11 @@ angular.module("manageCaseReportQueue", [
             //apply paging so that we only see a single page of results
             return $filter('pagination')(matches, $scope);
         }
+
     })
 
     .filter('searchReportsByTrigger', function () {
+
         return function (caseReports, searchText) {
             if(!searchText) {
                 return caseReports;
@@ -269,9 +301,11 @@ angular.module("manageCaseReportQueue", [
 
             return matches;
         }
+
     })
 
     .filter('searchTriggers', function () {
+
         return function (caseReportTriggers, searchText) {
             if(!searchText) {
                 return caseReportTriggers;
@@ -288,4 +322,5 @@ angular.module("manageCaseReportQueue", [
 
             return matches;
         }
+
     });
