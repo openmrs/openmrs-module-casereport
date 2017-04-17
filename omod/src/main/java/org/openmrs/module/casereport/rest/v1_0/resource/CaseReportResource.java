@@ -59,7 +59,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			description.addProperty("display");
 			description.addProperty("patient", Representation.DEFAULT);
 			description.addProperty("status");
-            description.addProperty("resolutionDate");
+			description.addProperty("resolutionDate");
 			description.addProperty("reportTriggers", Representation.DEFAULT);
 			description.addProperty("voided");
 			description.addSelfLink();
@@ -71,7 +71,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			description.addProperty("display");
 			description.addProperty("patient", Representation.DEFAULT);
 			description.addProperty("status");
-            description.addProperty("resolutionDate");
+			description.addProperty("resolutionDate");
 			description.addProperty("reportForm");
 			description.addProperty("reportTriggers", Representation.DEFAULT);
 			description.addProperty("voided");
@@ -161,8 +161,8 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 		}
 		
 		caseReport = save(caseReport);
-		return ConversionUtil.convertToRepresentation(caseReport, Representation.DEFAULT);
 		
+		return ConversionUtil.convertToRepresentation(caseReport, Representation.DEFAULT);
 	}
 	
 	/**

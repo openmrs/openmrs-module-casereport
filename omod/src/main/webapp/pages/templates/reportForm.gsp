@@ -31,8 +31,8 @@
 
 <form class="simple-form-ui" name="caseReportForm" novalidate ng-submit="submitCaseReport()">
     {{ updateFormTitle(caseReport.reportForm.fullName) }}
-    <div ng-show="getMapSize(caseReport.reportForm.previousReportUuidTriggersMap) > 0">
-        <a ng-click="togglePreviousReports()" class="casereport-pointer casereport-no-underline">
+    <div ng-show="previousCaseReports.length > 0">
+        <a ng-click="showPreviousReports = !showPreviousReports" class="casereport-pointer casereport-no-underline">
             <span ng-show="!showPreviousReports">
                 <i class="icon-angle-down" /> ${ui.message("casereport.showPreviousReports")}
             </span>
@@ -44,8 +44,8 @@
             <br>
             <div id="casereport-prev-reports">
                 <ul>
-                    <li ng-repeat="prevReport in previousReportDetails">
-                        {{ prevReport.datechanged | serverDate }} - {{ getValues(prevReport.triggers) | omrs.display }}
+                    <li ng-repeat="prevReport in previousCaseReports | orderBy:'resolutionDate':true">
+                        {{ prevReport.resolutionDate | serverDate }} - {{ prevReport.reportForm.triggers | omrs.display }}
                     </li>
                 </ul>
             </div>

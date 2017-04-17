@@ -97,7 +97,7 @@
         </td>
         <td valign="top">{{caseReport.dateCreated | serverDate}}</td>
         <td valign="top">
-            <a ui-sref="reportForm({uuid: caseReport.uuid})">
+            <a ui-sref="reportForm({uuid: caseReport.uuid, patientUuid: caseReport.patient.person.uuid})">
                 <i class="icon-circle-arrow-right edit-action" title="${ui.message("casereport.submit")}"></i>
             </a>
             <a ng-click="dismiss(caseReport)">

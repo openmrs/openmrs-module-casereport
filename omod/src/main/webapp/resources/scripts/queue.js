@@ -54,15 +54,27 @@ angular.module("manageCaseReportQueue", [
                 }
             })
             .state('reportForm', {
-                url: "/reportForm/:uuid",
+                url: "/reportForm/:uuid/:patientUuid",
                 templateUrl: "templates/reportForm.page",
-                controller: "SubmitCaseReportController",
+                controller: "ReportFormController",
                 params: {
-                    uuid: null
+                    uuid: null,
+                    patientUuid: null
                 },
                 resolve: {
                     caseReport: function($stateParams, CaseReport) {
                         return CaseReport.get({ uuid: $stateParams.uuid, v: "full" });
+                    },
+                    previousCaseReports: function($stateParams, CaseReportService){
+                        var customRep = 'custom:(resolutionDate,reportForm)';
+                        var params = {
+                            patient: $stateParams.patientUuid,
+                            v: customRep
+                        };
+
+                        return CaseReportService.getSubmittedCaseReports(params).then(function(results){
+                            return results;
+                        });
                     }
                 }
             })
@@ -82,7 +94,7 @@ angular.module("manageCaseReportQueue", [
             $scope.end = 0;
 
             var customRep = 'custom:(dateCreated,uuid,status,patient:(patientIdentifier:(identifier),' +
-                'person:(gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
+                'person:(uuid,gender,age,personName:(display))),reportTriggers:(display,auditInfo))';
 
             function loadCaseReports() {
                 CaseReportService.getCaseReports({v: customRep}).then(function(results) {
@@ -129,7 +141,8 @@ angular.module("manageCaseReportQueue", [
         }
     ])
 
-    .controller("QueueItemFormController", ["$scope", "$state", "CaseReport", "patient", "triggers", "existingQueueItem",
+    .controller("QueueItemFormController", ["$scope", "$state", "CaseReport", "patient",
+        "triggers", "existingQueueItem",
 
         function ($scope, $state, CaseReport, patient, triggers, existingQueueItem) {
             $scope.patient = patient;
@@ -166,37 +179,21 @@ angular.module("manageCaseReportQueue", [
 
     ])
 
-    .controller("SubmitCaseReportController", [ "$scope", "$state", "$filter", "orderByFilter", "ngDialog", "CaseReport", "StatusChange", "caseReport",
+    .controller("ReportFormController", [ "$scope", "$state", "$filter", "orderByFilter",
+        "ngDialog", "CaseReport", "StatusChange", "caseReport", "previousCaseReports",
 
-        function($scope, $state, $filter, orderBy, ngDialog, CaseReport, StatusChange, caseReport) {
+        function($scope, $state, $filter, orderBy, ngDialog, CaseReport, StatusChange, caseReport, previousCaseReports) {
             $scope.caseReport = caseReport;
-            $scope.previousReportDetails = [];
+            $scope.previousCaseReports = previousCaseReports;
             $scope.showPreviousReports = false;
 
-            function getKeys(obj){
-                if(obj) {
-                    return Object.keys(obj);
-                }
-                return [];
-            }
-
             $scope.updateFormTitle = function(personName){
-                jq("#casereport-reportTitle").text(emr.message('casereport.report.form.title').replace("{0}", personName));
+                var text = emr.message('casereport.report.form.title').replace("{0}", personName);
+                jq("#casereport-reportTitle").text(text);
             }
 
             $scope.formatDate = function(date){
                 return $filter('serverDate')(date, 'dd-MMM-yyyy');
-            }
-
-            $scope.getObjectKeys = function(obj){
-                if(obj) {
-                    return getKeys(obj);
-                }
-                return [];
-            }
-
-            $scope.getMapSize = function(obj){
-                return getKeys(obj).length;
             }
 
             $scope.getValues = function(list){
@@ -231,28 +228,6 @@ angular.module("manageCaseReportQueue", [
                 }).finally(function(){
                     ngDialog.close(id);
                 });
-            }
-
-            $scope.togglePreviousReports = function(){
-                if($scope.getMapSize($scope.previousReportDetails) == 0) {
-                    var prevReportCount = $scope.getMapSize($scope.caseReport.reportForm.previousReportUuidTriggersMap);
-                    _.map($scope.caseReport.reportForm.previousReportUuidTriggersMap, function (triggers, reportUuid) {
-                        CaseReport.get({uuid: reportUuid, v: "full"}).$promise.then(function (cr) {
-                            var item = {};
-                            //We're using dateChanged as the date the report was submitted
-                            item.datechanged = cr.auditInfo.dateChanged;
-                            item.triggers = triggers;
-                            $scope.previousReportDetails.push(item);
-                            //When all the previous report details are fetched
-                            if ($scope.previousReportDetails.length == prevReportCount) {
-                                $scope.previousReportDetails = orderBy($scope.previousReportDetails, 'datechanged', true);
-                                $scope.showPreviousReports = true;
-                            }
-                        });
-                    });
-                } else{
-                    $scope.showPreviousReports = !$scope.showPreviousReports;
-                }
             }
         }
     ])

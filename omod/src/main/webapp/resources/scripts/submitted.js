@@ -40,7 +40,7 @@ angular.module("submittedCaseReports", [
             $scope.end = 0;
 
             var customRep = 'custom:(resolutionDate,uuid,patient:(patientIdentifier:(identifier),' +
-                'person:(gender,age,personName:(display))),reportForm:(triggers))';
+                'person:(gender,age,personName:(display))),reportForm)';
 
             CaseReportService.getSubmittedCaseReports({v: customRep}).then(function(results) {
                 $scope.caseReports = results;
