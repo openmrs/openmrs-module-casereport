@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("submittedCaseReports", [
+angular.module("casereports.submitted", [
         "caseReportService",
         "casereport.filters",
         "ui.router",

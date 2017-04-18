@@ -24,14 +24,20 @@
 <div id="tasks">
     <a class="button app big" href="${ ui.pageLink("casereport", "queue") }">
         <div class="task">
-            <i class="icon-item"></i>
+            <i class="icon-list"></i>
             ${ ui.message("casereport.caseReportQueue.label") }
         </div>
     </a>
     <a class="button app big" href="${ ui.pageLink("casereport", "submitted") }">
         <div class="task">
-            <i class="icon-item"></i>
+            <i class="icon-list-ul"></i>
             ${ ui.message("casereport.submittedCaseReports.label") }
+        </div>
+    </a>
+    <a class="button app big" href="${ ui.pageLink("casereport", "configure") }">
+        <div class="task">
+            <i class="icon-cog"></i>
+            ${ ui.message("casereport.configure.label") }
         </div>
     </a>
 </div>

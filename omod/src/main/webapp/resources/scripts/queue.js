@@ -8,7 +8,7 @@
  * graphic logo is a trademark of OpenMRS Inc.
  */
 
-angular.module("manageCaseReportQueue", [
+angular.module("casereports.queue", [
         "caseReportService",
         "personService",
         "casereport.filters",
@@ -31,9 +31,7 @@ angular.module("manageCaseReportQueue", [
             })
             .state('queueItemForm', {
                 url: "/queueItemForm/:patientUuid",
-                templateUrl: function(){
-                    return "templates/queueItemForm.page";
-                },
+                templateUrl: "templates/queueItemForm.page",
                 controller: "QueueItemFormController",
                 params:{
                     patientUuid: null
@@ -72,7 +70,7 @@ angular.module("manageCaseReportQueue", [
                             v: customRep
                         };
 
-                        return CaseReportService.getSubmittedCaseReports(params).then(function(results){
+                        CaseReportService.getSubmittedCaseReports(params).then(function(results){
                             return results;
                         });
                     }
@@ -160,7 +158,7 @@ angular.module("manageCaseReportQueue", [
 
                 CaseReport.save(newItem).$promise.then(function() {
                     $state.go("list");
-                    emr.successMessage("casereport.save.success");
+                    emr.successMessage("casereport.item.save.success");
                 });
             }
 

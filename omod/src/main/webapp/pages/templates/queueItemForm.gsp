@@ -11,7 +11,7 @@
 -->
 
 <script type="text/javascript">
-    emr.loadMessages(["casereport.save.success"]);
+    emr.loadMessages(["casereport.item.save.success"]);
 </script>
 
 <h2>${ ui.message("casereport.caseReportQueueItemForm.title")}</h2>

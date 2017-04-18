@@ -23,7 +23,7 @@ $processingWidth: 380px !important;
   cursor: pointer;
 }
 
-#casereport-submitted tr:hover{
+#casereport-submitted tr:hover {
   @extend .casereport-pointer;
 }
 
@@ -100,15 +100,15 @@ a.casereport-no-underline:hover {
   border: 1px;
 }
 
-.casereport-text-left{
+.casereport-text-left {
   text-align: left;
 }
 
-.casereport-label{
+.casereport-label {
   font-weight: bold;
 }
 
-.casereport-shrink-column{
+.casereport-shrink-column {
   white-space: nowrap;
 }
 
@@ -128,7 +128,7 @@ a.casereport-no-underline:hover {
   background-color: white;
 }
 
-.casereport-no-border-no-bg-color{
+.casereport-no-border-no-bg-color {
   @extend .casereport-no-border, .casereport-no-bg-color;
 }
 

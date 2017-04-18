@@ -30,7 +30,7 @@
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
     ui.includeCss("casereport", "lib/bootstrap/bootstrap.min.css")
-    ui.includeCss("casereport", "casereports.css")
+    ui.includeCss("casereport", "casereport.css")
 %>
 
 <script type="text/javascript">
@@ -39,7 +39,7 @@
         { label: "${ ui.message('casereport.label')}" , link: '${ui.pageLink("casereport", "caseReports")}'},
         {label: "${ ui.message("casereport.caseReportQueue.label")}" }
     ];
-    emr.loadMessages(["casereport.dismissed", "casereport.save.success"]);
+    emr.loadMessages(["casereport.dismissed"]);
 </script>
 
 <div id="casereports-queue">
@@ -47,5 +47,5 @@
 </div>
 
 <script type="text/javascript">
-    angular.bootstrap("#casereports-queue", [ "manageCaseReportQueue" ])
+    angular.bootstrap("#casereports-queue", [ "casereports.queue" ])
 </script>
