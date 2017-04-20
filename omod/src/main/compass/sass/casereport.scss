@@ -23,6 +23,10 @@ $processingWidth: 380px !important;
   cursor: pointer;
 }
 
+.casereport-red {
+  color: #ff0000;
+}
+
 #casereport-submitted tr:hover {
   @extend .casereport-pointer;
 }

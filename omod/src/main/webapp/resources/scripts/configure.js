@@ -9,8 +9,9 @@
  */
 
 angular.module("casereports.configure", [
-        "caseReportService",
         "systemSettingService",
+        "patientIdentifierTypeService",
+        "providerService",
         "ui.router",
         "uicommons.filters",
         "uicommons.common.error"
@@ -24,15 +25,57 @@ angular.module("casereports.configure", [
             .state('view', {
                 url: "/view",
                 templateUrl: "templates/viewConfig.page",
-                controller: "ConfigController"
+                controller: "ConfigController",
+                resolve: {
+                    identifierTypes: function(PatientIdentifierTypeService) {
+                        return PatientIdentifierTypeService.getPatientIdentifierTypes();
+                    },
+                    providers: function(ProviderService) {
+                        return ProviderService.getProviders();
+                    }
+                }
             })
     }])
 
-    .controller("ConfigController", ["$scope", "CaseReportService", "SystemSettingService",
+    .controller("ConfigController", ["$scope", "SystemSettingService", "SystemSetting", "identifierTypes", "providers",
 
-        function ($scope, CaseReportService, SystemSettingService) {
+        function ($scope, SystemSettingService, SystemSetting, identifierTypes, providers) {
             $scope.settings;
+            $scope.identifierTypes = identifierTypes;
+            $scope.providers = providers;
+            $scope.optionsSettings = [
+                'casereport.autoSubmitProviderUuid',
+                'casereport.healthCareFacilityTypeDisplayName',
+                'casereport.practiceSettingDisplayName',
+                'casereport.openHIMClientId',
+                'casereport.openHIMClientPassword'
+            ];
+                $scope.confidentialityCodes = [
+                {label:'Normal', value:'N'},
+                {label:'Restricted', value:'R'},
+                {label:'Very Restricted', value:'V'}
+            ];
             var params = {q: "casereport", v: "custom:(property,value,description,uuid)"};
+            var settingPropertyMap = {
+                'casereport.autoSubmitProviderUuid': 'Auto Submit Provider',
+                'casereport.identifierTypeUuid': 'Enterprise Identifier Type',
+                'casereport.openHIMClientId': 'OpenHIM Client Id',
+                'casereport.openHIMClientPassword': 'OpenHIM Client Password',
+                'casereport.openHIMUrl': 'OpenHIM URL '
+            };
+
+            var settingDescrMap = {
+                'casereport.autoSubmitProviderUuid': 'The provider to set as the submitter of automatically ' +
+                    'submitted case reports, must be for a provider account that is either linked to a person ' +
+                    'record or has a name with at least 2 name fields specified ',
+
+                'casereport.confidentialityCode': 'The code specifying the level of confidentiality of the CDA document',
+
+                'casereport.identifierTypeUuid': 'The identifier type for the patient identifier to use when ' +
+                    'submitting a report, if the report is getting submitted to the health information exchange, ' +
+                    'the name of the identifier type must match a unique identifier of a patient identifier domain in ' +
+                    'the client registry e.g. a universal identifier of a patient identifier domain in case of OpenEMPI'
+            };
 
             SystemSettingService.getSystemSettings(params).then(function(results){
                 var ret = [];
@@ -41,26 +84,45 @@ angular.module("casereports.configure", [
                     if('casereport.mandatory' == r.property || 'casereport.started' == r.property) {
                         continue;
                     }
-                    ret.push(results[i]);
+                    ret.push(r);
                 }
                 $scope.settings = ret;
             });
 
-            $scope.getDisplay = function(setting) {
-                var ret =  setting.substr(setting.indexOf('.') + 1);
-                ret = ret.charAt(0).toUpperCase() + ret.substring(1);
-                //hack to make sure we split between OpenHIM and the word after it
-                var openHimIndex = ret.indexOf('OpenHIM');
-                if(openHimIndex == 0){
-                    ret = ret.replace('OpenHIM', '');
+            $scope.save = function() {
+                var savedCount = 0;
+                for(var i in $scope.settings){
+                    SystemSetting.save($scope.settings[i]).$promise.then(function(){
+                        savedCount++;
+                        if(savedCount == $scope.settings.length){
+                            emr.successMessage('casereport.save.success');
+                        }
+                    });
                 }
-                ret = ret.replace(/([a-z](?=[A-Z]))/g, '$1 ');
-                if(openHimIndex == 0){
-                    ret = 'OpenHIM '+ret;
-                }
-                ret = ret.replace(/uuid$/i, '');
+            }
 
-                return ret;
+            $scope.isRequired = function(setting){
+                return !_.contains($scope.optionsSettings, setting.property);
+            }
+
+            $scope.printProperty = function(setting) {
+                if(settingPropertyMap[setting.property]){
+                    return settingPropertyMap[setting.property];
+                }
+
+                var ret =  setting.property.substr(setting.property.indexOf('.') + 1);
+                //capitalize the first letter
+                ret = ret.charAt(0).toUpperCase() + ret.substring(1);
+                //split on carmel case i.e 'IdentifierUuid' gets transformed to 'Identifier Uuid'
+                return  ret.replace(/([a-z](?=[A-Z]))/g, '$1 ');
+            }
+
+            $scope.printDescription = function(setting) {
+                if(!settingDescrMap[setting.property]){
+                    return setting.description;
+                }
+
+                return settingDescrMap[setting.property];
             }
         }
 

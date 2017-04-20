@@ -20,9 +20,8 @@
     ui.includeJavascript("uicommons", "angular-common-error.js")
     ui.includeJavascript("uicommons", "filters/display.js")
     ui.includeJavascript("uicommons", "services/systemSettingService.js")
-    //ui.includeJavascript("uicommons", "services/providerService.js")
-    //ui.includeJavascript("uicommons", "services/patientIdentifierTypeService.js")
-    ui.includeJavascript("casereport", "caseReportService.js")
+    ui.includeJavascript("uicommons", "services/providerService.js")
+    ui.includeJavascript("uicommons", "services/patientIdentifierTypeService.js")
     ui.includeJavascript("casereport", "configure.js");
 
     ui.includeCss("casereport", "casereport.css");
