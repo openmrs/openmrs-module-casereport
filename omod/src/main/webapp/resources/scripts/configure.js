@@ -12,37 +12,17 @@ angular.module("casereports.configure", [
         "systemSettingService",
         "patientIdentifierTypeService",
         "providerService",
-        "ui.router",
         "uicommons.filters",
         "uicommons.common.error"
     ])
 
-    .config([ "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
+    .controller("ConfigController", ["$scope", "SystemSettingService", "SystemSetting",
+        "PatientIdentifierTypeService", "ProviderService",
 
-        $urlRouterProvider.otherwise("/view");
-
-        $stateProvider
-            .state('view', {
-                url: "/view",
-                templateUrl: "templates/viewConfig.page",
-                controller: "ConfigController",
-                resolve: {
-                    identifierTypes: function(PatientIdentifierTypeService) {
-                        return PatientIdentifierTypeService.getPatientIdentifierTypes();
-                    },
-                    providers: function(ProviderService) {
-                        return ProviderService.getProviders();
-                    }
-                }
-            })
-    }])
-
-    .controller("ConfigController", ["$scope", "SystemSettingService", "SystemSetting", "identifierTypes", "providers",
-
-        function ($scope, SystemSettingService, SystemSetting, identifierTypes, providers) {
+        function ($scope, SystemSettingService, SystemSetting, PatientIdentifierTypeService, ProviderService) {
             $scope.settings;
-            $scope.identifierTypes = identifierTypes;
-            $scope.providers = providers;
+            $scope.identifierTypes;
+            $scope.providers;
             $scope.optionsSettings = [
                 'casereport.autoSubmitProviderUuid',
                 'casereport.healthCareFacilityTypeDisplayName',
@@ -76,6 +56,14 @@ angular.module("casereports.configure", [
                     'the name of the identifier type must match a unique identifier of a patient identifier domain in ' +
                     'the client registry e.g. a universal identifier of a patient identifier domain in case of OpenEMPI'
             };
+
+            PatientIdentifierTypeService.getPatientIdentifierTypes().then(function(results){
+                $scope.identifierTypes = results;
+            });
+
+            ProviderService.getProviders().then(function(results){
+                $scope.providers = results;
+            });
 
             SystemSettingService.getSystemSettings(params).then(function(results){
                 var ret = [];
