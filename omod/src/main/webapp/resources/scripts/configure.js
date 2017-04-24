@@ -23,6 +23,7 @@ angular.module("casereports.configure", [
             $scope.settings;
             $scope.identifierTypes;
             $scope.providers;
+
             $scope.optionsSettings = [
                 'casereport.autoSubmitProviderUuid',
                 'casereport.healthCareFacilityTypeDisplayName',
@@ -30,12 +31,15 @@ angular.module("casereports.configure", [
                 'casereport.openHIMClientId',
                 'casereport.openHIMClientPassword'
             ];
-                $scope.confidentialityCodes = [
+
+            $scope.confidentialityCodes = [
                 {label:'Normal', value:'N'},
                 {label:'Restricted', value:'R'},
                 {label:'Very Restricted', value:'V'}
             ];
+
             var params = {q: "casereport", v: "custom:(property,value,description,uuid)"};
+
             var settingPropertyMap = {
                 'casereport.autoSubmitProviderUuid': 'Auto Submit Provider',
                 'casereport.identifierTypeUuid': 'Enterprise Identifier Type',
