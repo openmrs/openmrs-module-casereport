@@ -22,7 +22,7 @@
         for a list of supported elements and attributes
     -->
     
-    <changeSet id="${project.parent.artifactId}-20160518-1302" author="Wyclif">
+    <changeSet id="${project.parent.artifactId}-20160518-1303" author="Wyclif">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="${project.parent.artifactId}_case_report"/>
@@ -37,6 +37,10 @@
                 <constraints nullable="false" />
             </column>
             <column name="status" type="varchar(50)" defaultValue="NEW">
+                <constraints nullable="false" />
+            </column>
+            <column name="resolution_date" type="DATETIME" />
+            <column name="auto_submitted" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false" />
             </column>
             <column name="report_form" type="text" />
@@ -116,32 +120,6 @@
                                  referencedTableName="users"
                                  referencedColumnNames="user_id" />
 
-    </changeSet>
-
-    <changeSet id="${project.parent.artifactId}-20170320-1052" author="Wyclif">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists columnName="auto_submitted" tableName="${project.parent.artifactId}_case_report" />
-            </not>
-        </preConditions>
-        <comment>Add auto_submitted column to case_report table</comment>
-        <addColumn tableName="${project.parent.artifactId}_case_report">
-            <column name="auto_submitted" type="BOOLEAN" defaultValueBoolean="false">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="${project.parent.artifactId}-20170411-1252" author="Wyclif">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists columnName="resolution_date" tableName="${project.parent.artifactId}_case_report" />
-            </not>
-        </preConditions>
-        <comment>Add resolution_date column to case_report table</comment>
-        <addColumn tableName="${project.parent.artifactId}_case_report">
-            <column name="resolution_date" type="DATETIME" />
-        </addColumn>
     </changeSet>
     
 </databaseChangeLog>
