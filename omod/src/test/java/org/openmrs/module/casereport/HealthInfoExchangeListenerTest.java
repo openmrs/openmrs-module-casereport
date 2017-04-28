@@ -9,6 +9,15 @@
  */
 package org.openmrs.module.casereport;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -27,6 +36,8 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiveTest {
+	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Autowired
 	HealthInfoExchangeListener listener;
@@ -56,7 +67,8 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		Provider p = Context.getProviderService().getProvider(1);
 		form.setSubmitter(new UuidAndValue(p.getUuid(), p.getIdentifier()));
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
-		
+		Date resolutionDate = DATE_FORMAT.parse("2017-04-26");
+		caseReport.setResolutionDate(resolutionDate);
 		TestUtils.createPostStub(true);
 		
 		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
@@ -65,6 +77,13 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		String expectedUrl = "http://localhost:5000" + path;
 		WireMock.verify(1,
 		    WireMock.postRequestedFor(WireMock.urlEqualTo(path)).withRequestBody(WireMock.containing(expectedUrl)));
+		
+		//Should have cached a copy in the filesystem
+		File documentFile = DocumentUtil.getCaseReportFile(caseReport);
+		assertTrue(documentFile.exists());
+		String docContents = FileUtils.readFileToString(documentFile, DocumentConstants.ENCODING);
+		assertTrue(StringUtils.isNotBlank(docContents));
+		assertTrue(docContents.indexOf("ProvideAndRegisterDocumentSetRequest") > -1);
 	}
 	
 	/**
@@ -79,7 +98,8 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		Provider p = Context.getProviderService().getProvider(1);
 		form.setSubmitter(new UuidAndValue(p.getUuid(), p.getIdentifier()));
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
-		
+		Date resolutionDate = DATE_FORMAT.parse("2017-04-26");
+		caseReport.setResolutionDate(resolutionDate);
 		TestUtils.createPostStub(false);
 		
 		expectedException.expect(APIException.class);

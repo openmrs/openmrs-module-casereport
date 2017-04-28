@@ -12,9 +12,15 @@ package org.openmrs.module.casereport;
 import static org.junit.Assert.assertEquals;
 import static org.openmrs.module.casereport.DocumentUtil.convertToDecimal;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
+import org.openmrs.util.OpenmrsUtil;
 
 public class DocumentUtilTest {
 	
@@ -26,5 +32,23 @@ public class DocumentUtilTest {
 		//Should be the unsigned representation for negative numbers 
 		String uuid = "e2687878-fb18-4dda-85c4-eb451bbb765e";
 		assertEquals("300947969394920668599875792303032071774", convertToDecimal(UUID.fromString(uuid)));
+	}
+	
+	@Test
+	public void getCaseReportFile_shouldGetTheDocumentFileForTheSpecifiedCaseReport() throws Exception {
+		
+		CaseReport cr = new CaseReport();
+		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		final String year = "2016";
+		final String month = "11";
+		final String day = "2";
+		Date resolutionDate = dateFormat.parse(year + "-" + month + "-" + day);
+		cr.setResolutionDate(resolutionDate);
+		String sep = SystemUtils.FILE_SEPARATOR;
+		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", SystemUtils.JAVA_IO_TMPDIR);
+		File file = DocumentUtil.getCaseReportFile(cr);
+		String expected = OpenmrsUtil.getApplicationDataDirectory() + CaseReportConstants.MODULE_ID + sep + year + sep
+		        + month + sep + day + sep + cr.getUuid() + DocumentConstants.DOC_FILE_EXT;
+		assertEquals(expected, file.getAbsolutePath());
 	}
 }

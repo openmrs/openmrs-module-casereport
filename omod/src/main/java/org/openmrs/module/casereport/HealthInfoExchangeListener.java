@@ -9,9 +9,14 @@
  */
 package org.openmrs.module.casereport;
 
-import javax.xml.bind.JAXBElement;
+import java.io.File;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.transform.Result;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,6 +34,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.xml.transform.StringResult;
 
 /***
  * An instance of this class listens for event fired when a case report is submitted so that it can
@@ -62,12 +68,25 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			JAXBElement rootElement = objectFactory.createProvideAndRegisterDocumentSetRequest(docRequest);
 			
 			if (log.isDebugEnabled()) {
+				log.debug("Saving Case report document to the file system.....");
+			}
+			
+			File docFile = DocumentUtil.getCaseReportFile(caseReport);
+			Result out = new StringResult();
+			webServiceTemplate.getMarshaller().marshal(rootElement, out);
+			FileUtils.writeStringToFile(docFile, out.toString(), DocumentConstants.ENCODING);
+			
+			if (log.isDebugEnabled()) {
+				log.debug("Case report document successfully saved to the file system");
+			}
+			
+			if (log.isDebugEnabled()) {
 				log.debug("Sending Case report document.....");
 			}
 			
 			String url = Context.getAdministrationService().getGlobalProperty(DocumentConstants.GP_OPENHIM_URL);
 			Object response = webServiceTemplate.marshalSendAndReceive(url, rootElement, messageCallback);
-			String lf = System.getProperty("line.separator");
+			String lf = SystemUtils.LINE_SEPARATOR;
 			RegistryResponseType regResp = ((JAXBElement<RegistryResponseType>) response).getValue();
 			if (!XDSConstants.XDS_B_STATUS_SUCCESS.equals(regResp.getStatus())) {
 				StringBuffer sb = new StringBuffer();
@@ -85,7 +104,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 			}
 			
 			if (log.isDebugEnabled()) {
-				log.debug("Case report document successfully sent!");
+				log.debug("Case report document successfully sent");
 			}
 		}
 		catch (Exception e) {

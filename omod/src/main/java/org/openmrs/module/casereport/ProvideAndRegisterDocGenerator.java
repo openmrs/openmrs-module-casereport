@@ -204,8 +204,8 @@ public final class ProvideAndRegisterDocGenerator {
 		//This instructs the XML ITS1 Formatter we want to use CDA datatypes
 		fmtr.getGraphAides().add(new DatatypeFormatter(R1FormatterCompatibilityMode.ClinicalDocumentArchitecture));
 		//The cda is ~8KB, might as well initialize the
-		//byte array to a fairly large size
-		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream(8192);
+		//byte array to a fairly larger size
+		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream(10240);
 		fmtr.graph(cdaOutput, cdaDocument);
 		
 		Document document = new Document();

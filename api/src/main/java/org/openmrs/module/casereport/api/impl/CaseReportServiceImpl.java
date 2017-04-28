@@ -249,6 +249,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		}
 		form.setAssigningAuthorityId(implId.getImplementationId());
 		form.setAssigningAuthorityName(implId.getName());
+		setProperty(caseReport, "status", Status.SUBMITTED);
+		setProperty(caseReport, "resolutionDate", new Date());
 		
 		try {
 			caseReport.setReportForm(getObjectMapper().writeValueAsString(form));
@@ -257,15 +259,9 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("Failed to serialize case report form data", e);
 		}
 		
-		//Capture the date now so that it's independent of how long the next call takes
-		Date resolutionDate = new Date();
-		
 		//We use a publisher consumer approach to keep the web layer out of the api
 		//It also provides a hook for others to register custom listeners to take other actions.
 		eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
-		
-		setProperty(caseReport, "status", Status.SUBMITTED);
-		setProperty(caseReport, "resolutionDate", resolutionDate);
 		
 		return dao.saveCaseReport(caseReport);
 	}

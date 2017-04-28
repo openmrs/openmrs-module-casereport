@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.casereport;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
@@ -20,12 +21,14 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.marc.everest.datatypes.NullFlavor;
 import org.marc.everest.datatypes.TS;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.OpenmrsUtil;
 
 /**
  * Contains utility methods that are used by document generators
@@ -176,5 +179,23 @@ public class DocumentUtil {
 			bi = DECIMAL_REP_COUNT.add(bi);
 		}
 		return bi.toString();
+	}
+	
+	public static File getCaseReportFile(CaseReport caseReport) {
+		Date date = caseReport.getResolutionDate();
+		if (date == null) {
+			throw new APIException("A case report must have a resolution date to get its document file");
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH) + 1;
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		String sep = SystemUtils.FILE_SEPARATOR;
+		File dir = OpenmrsUtil.getDirectoryInApplicationDataDirectory(CaseReportConstants.MODULE_ID + sep + year + sep
+		        + month + sep + day);
+		
+		return new File(dir, caseReport.getUuid() + DocumentConstants.DOC_FILE_EXT);
 	}
 }

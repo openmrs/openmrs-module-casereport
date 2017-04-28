@@ -12,6 +12,10 @@ package org.openmrs.module.casereport;
 import static org.openmrs.module.casereport.CaseReportConstants.MODULE_ID;
 
 public final class DocumentConstants {
+
+	public static final String ENCODING = "UTF-8";
+	
+	public static final String DOC_FILE_EXT = ".xml";
 	
 	public static final String GP_PREFIX = MODULE_ID + ".";
 	
