@@ -10,6 +10,7 @@
 package org.openmrs.module.casereport;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.marc.everest.datatypes.NullFlavor;
@@ -181,7 +183,7 @@ public class DocumentUtil {
 		return bi.toString();
 	}
 	
-	public static File getCaseReportFile(CaseReport caseReport) {
+	public static File getSubmittedCaseReportFile(CaseReport caseReport) {
 		Date date = caseReport.getResolutionDate();
 		if (date == null) {
 			throw new APIException("A case report must have a resolution date to get its document file");
@@ -197,5 +199,25 @@ public class DocumentUtil {
 		        + month + sep + day);
 		
 		return new File(dir, caseReport.getUuid() + DocumentConstants.DOC_FILE_EXT);
+	}
+	
+	/**
+	 * Retrieves the contents of the saved document for the specified submitted case report
+	 * 
+	 * @param caseReport the submitted case report object
+	 * @return the contents of the saved document for the case report
+	 */
+	public static String getSubmittedDocumentContents(CaseReport caseReport) {
+		if (!caseReport.isSubmitted()) {
+			throw new APIException(caseReport + " is not submitted");
+		}
+		
+		File docFile = getSubmittedCaseReportFile(caseReport);
+		try {
+			return FileUtils.readFileToString(docFile, DocumentConstants.ENCODING);
+		}
+		catch (IOException e) {
+			throw new APIException(e);
+		}
 	}
 }

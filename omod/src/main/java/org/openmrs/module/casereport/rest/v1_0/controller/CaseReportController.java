@@ -9,14 +9,26 @@
  */
 package org.openmrs.module.casereport.rest.v1_0.controller;
 
+import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.CaseReportConstants;
+import org.openmrs.module.casereport.DocumentUtil;
+import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.CaseReportRestConstants;
+import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/rest/" + CaseReportRestConstants.REST_NAMESPACE)
 public class CaseReportController extends MainResourceController {
+	
+	@Autowired
+	private CaseReportService service;
 	
 	/**
 	 * @see MainResourceController#getNamespace()
@@ -24,6 +36,18 @@ public class CaseReportController extends MainResourceController {
 	@Override
 	public String getNamespace() {
 		return CaseReportRestConstants.REST_NAMESPACE;
+	}
+	
+	@RequestMapping(value = "/" + CaseReportConstants.MODULE_ID + "/{uuid}/document", method = RequestMethod.GET)
+	@ResponseBody
+	public String getSubmittedDocumentContents(@PathVariable("uuid") String uuid) {
+		
+		CaseReport cr = service.getCaseReportByUuid(uuid);
+		if (cr == null) {
+			throw new ObjectNotFoundException();
+		}
+		
+		return DocumentUtil.getSubmittedDocumentContents(cr);
 	}
 	
 }

@@ -71,7 +71,7 @@ public class HealthInfoExchangeListener implements ApplicationListener<CaseRepor
 				log.debug("Saving Case report document to the file system.....");
 			}
 			
-			File docFile = DocumentUtil.getCaseReportFile(caseReport);
+			File docFile = DocumentUtil.getSubmittedCaseReportFile(caseReport);
 			Result out = new StringResult();
 			webServiceTemplate.getMarshaller().marshal(rootElement, out);
 			FileUtils.writeStringToFile(docFile, out.toString(), DocumentConstants.ENCODING);

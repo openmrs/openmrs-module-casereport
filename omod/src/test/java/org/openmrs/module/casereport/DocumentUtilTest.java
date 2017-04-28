@@ -35,7 +35,7 @@ public class DocumentUtilTest {
 	}
 	
 	@Test
-	public void getCaseReportFile_shouldGetTheDocumentFileForTheSpecifiedCaseReport() throws Exception {
+	public void getSubmittedCaseReportFile_shouldGetTheDocumentFileForTheSpecifiedCaseReport() throws Exception {
 		
 		CaseReport cr = new CaseReport();
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -46,7 +46,7 @@ public class DocumentUtilTest {
 		cr.setResolutionDate(resolutionDate);
 		String sep = SystemUtils.FILE_SEPARATOR;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", SystemUtils.JAVA_IO_TMPDIR);
-		File file = DocumentUtil.getCaseReportFile(cr);
+		File file = DocumentUtil.getSubmittedCaseReportFile(cr);
 		String expected = OpenmrsUtil.getApplicationDataDirectory() + CaseReportConstants.MODULE_ID + sep + year + sep
 		        + month + sep + day + sep + cr.getUuid() + DocumentConstants.DOC_FILE_EXT;
 		assertEquals(expected, file.getAbsolutePath());

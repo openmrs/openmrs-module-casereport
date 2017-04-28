@@ -11,12 +11,10 @@ package org.openmrs.module.casereport;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -40,7 +38,7 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Autowired
-	HealthInfoExchangeListener listener;
+	private HealthInfoExchangeListener listener;
 	
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(5000);
@@ -69,6 +67,7 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
 		Date resolutionDate = DATE_FORMAT.parse("2017-04-26");
 		caseReport.setResolutionDate(resolutionDate);
+		caseReport.setStatus(CaseReport.Status.SUBMITTED);
 		TestUtils.createPostStub(true);
 		
 		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
@@ -78,10 +77,8 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		WireMock.verify(1,
 		    WireMock.postRequestedFor(WireMock.urlEqualTo(path)).withRequestBody(WireMock.containing(expectedUrl)));
 		
-		//Should have cached a copy in the filesystem
-		File documentFile = DocumentUtil.getCaseReportFile(caseReport);
-		assertTrue(documentFile.exists());
-		String docContents = FileUtils.readFileToString(documentFile, DocumentConstants.ENCODING);
+		//Should have saved a copy to the filesystem
+		String docContents = DocumentUtil.getSubmittedDocumentContents(caseReport);
 		assertTrue(StringUtils.isNotBlank(docContents));
 		assertTrue(docContents.indexOf("ProvideAndRegisterDocumentSetRequest") > -1);
 	}
