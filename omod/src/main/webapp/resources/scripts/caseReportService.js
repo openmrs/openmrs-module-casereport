@@ -28,7 +28,19 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
     })
 
     .factory('Trigger', function($resource) {
-        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/trigger", {});
+        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/trigger", {},{
+            query: { method:'GET' }
+        });
+    })
+
+    .factory('SubmittedDocument', function($resource) {
+
+        return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/casereport/casereport/:uuid/document", {
+            uuid: '@uuid'
+        },{
+            query: { method:'GET', isArray:false }
+        });
+
     })
 
     .config(function($httpProvider) {
@@ -47,7 +59,7 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
         $httpProvider.defaults.transformRequest.push(defaultTransformer);
     })
 
-    .factory("CaseReportService", function(RestService, CaseReport, Trigger) {
+    .factory("CaseReportService", function(RestService, CaseReport, Trigger, SubmittedDocument) {
 
         return {
             getCaseReports: function(parameters) {
@@ -83,7 +95,13 @@ angular.module('caseReportService', ['ngResource', 'uicommons.common'])
 
                     return null;
                 });
+            },
+
+            getSubmittedDocument: function(caseReportUuid){
+                return SubmittedDocument.get({uuid: caseReportUuid}).$promise;
             }
         }
 
     });
+
+

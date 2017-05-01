@@ -25,6 +25,25 @@
     @keyframes blinker {
         75% { opacity: 0; }
     }
+
+    .ngdialog-content {
+         width: 380px !important;
+         height: 64px !important;
+         padding-top: 8px !important;
+    }
+
+    #casereport-processing {
+        width: 380px !important;
+        height: 26px !important;
+    }
+
+    #casereport-sending {
+        margin-left: 18px !important;
+    }
+
+    #casereport-blinker {
+        animation: blinker 0.7s linear infinite;
+    }
 </style>
 
 <h2 id="casereport-reportTitle" />

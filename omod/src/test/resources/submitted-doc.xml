@@ -1,28 +1,18 @@
---MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323
-        Content-Type: application/xop+xml; charset=UTF-8; type="application/soap+xml"
-        Content-Transfer-Encoding: binary
-        Content-ID: <0.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<soap:Envelope xmlns="urn:ihe:iti:xds-b:2007"
-               xmlns:a="http://www.w3.org/2005/08/addressing"
-               xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
-               xmlns:urn1="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0"
-               xmlns:urn2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
-               xmlns:urn3="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0">
-<soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
-    <wsa:Action xmlns="http://www.w3.org/2005/08/addressing" xmlns:env="http://www.w3.org/2003/05/soap-envelope" env:mustUnderstand="true">
-        urn:ihe:iti:2007:ProvideAndRegisterDocumentSet-b
-    </wsa:Action>
-    <wsa:To env:mustUnderstand="true" xmlns="http://www.w3.org/2005/08/addressing" xmlns:env="http://www.w3.org/2003/05/soap-envelope">
-        https://192.168.1.80:5000/xdsrepository
-    </wsa:To>
-    <wsa:MessageID>urn:uuid:#{randomUUID}</wsa:MessageID>
-    <wsa:ReplyTo env:mustUnderstand="true" xmlns="http://www.w3.org/2005/08/addressing" xmlns:env="http://www.w3.org/2003/05/soap-envelope">
-        <wsa:Address>http://www.w3.org/2005/08/addressing/anonymous</wsa:Address>
-    </wsa:ReplyTo>
-</soap:Header>
-<soap:Body>
-    <ns4:ProvideAndRegisterDocumentSetRequest xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+<!--
+
+    This Source Code Form is subject to the terms of the Mozilla Public License,
+    v. 2.0. If a copy of the MPL was not distributed with this file, You can
+    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
+
+    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+    graphic logo is a trademark of OpenMRS Inc.
+
+-->
+
+<ns4:ProvideAndRegisterDocumentSetRequest xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
                                               xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0"
                                               xmlns:ns4="urn:ihe:iti:xds-b:2007"
                                               xmlns:ns5="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
@@ -32,7 +22,7 @@
                 <ns5:ExtrinsicObject id="Document01" mimeType="text/plain" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1">
                     <ns5:Slot name="creationTime">
                         <ns5:ValueList>
-                            <ns5:Value>#{reportDate}</ns5:Value>
+                            <ns5:Value>20130104</ns5:Value>
                         </ns5:ValueList>
                     </ns5:Slot>
                     <ns5:Slot name="languageCode">
@@ -42,31 +32,19 @@
                     </ns5:Slot>
                     <ns5:Slot name="sourcePatientId">
                         <ns5:ValueList>
-                            <ns5:Value>#{sourcePatId}^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO</ns5:Value>
+                            <ns5:Value>2.25.320545411710899496227746967045938431899^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO</ns5:Value>
                         </ns5:ValueList>
                     </ns5:Slot>
                     <ns5:Slot name="sourcePatientInfo">
                         <ns5:ValueList>
-                            <ns5:Value>PID-3|#{sourcePatId}^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO</ns5:Value>
-                            <ns5:Value>PID-5|#{familyName}^#{givenName}^^^</ns5:Value>
-                            <ns5:Value>PID-8|#{gender}</ns5:Value>
+                            <ns5:Value>PID-3|2.25.320545411710899496227746967045938431899^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO</ns5:Value>
+                            <ns5:Value>PID-5|Patient^Kerry^^^</ns5:Value>
+                            <ns5:Value>PID-8|F</ns5:Value>
                         </ns5:ValueList>
                     </ns5:Slot>
                     <ns5:Name>
                         <ns5:LocalizedString value="Case Report"/>
                     </ns5:Name>
-                    <ns5:Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d" classifiedObject="Document1" id="urn:uuid:dd3d77a7-62e2-43c2-9135-0e28a5d44f8b" nodeRepresentation="">
-                        <ns5:Slot name="authorPerson">
-                            <ns5:ValueList>
-                                <ns5:Value>556677^^^^^^^^&amp;2.25.309768652999692686176651983274504471835.646.3.4&amp;ISO</ns5:Value>
-                            </ns5:ValueList>
-                        </ns5:Slot>
-                        <ns5:Slot name="authorInstitution">
-                            <ns5:ValueList>
-                                <ns5:Value>Some Hospital^^^^^&amp;1.2.3.4.5.6.7.8.9.1789&amp;ISO^^^^45</ns5:Value>
-                            </ns5:ValueList>
-                        </ns5:Slot>
-                    </ns5:Classification>
                     <ns5:Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a" classifiedObject="Document01"
                                         id="urn:uuid:#{randomUUID}" nodeRepresentation="51851-4">
                         <ns5:Slot name="codingScheme">
@@ -134,7 +112,7 @@
                         </ns5:Name>
                     </ns5:Classification>
                     <ns5:ExternalIdentifier id="urn:uuid:#{randomUUID}" identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
-                                            registryObject="Document01" value="#{sourcePatId}^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO">
+                                            registryObject="Document01" value="2.25.320545411710899496227746967045938431899^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO">
                         <ns5:Name>
                             <ns5:LocalizedString value="XDSDocumentEntry.patientId"/>
                         </ns5:Name>
@@ -149,7 +127,7 @@
                 <ns5:RegistryPackage id="SubmissionSet01" objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage">
                     <ns5:Slot name="submissionTime">
                         <ns5:ValueList>
-                            <ns5:Value>#{dateSubmitted}</ns5:Value>
+                            <ns5:Value>20130104</ns5:Value>
                         </ns5:ValueList>
                     </ns5:Slot>
                     <ns5:Classification classificationScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500" classifiedObject="SubmissionSet01"
@@ -164,13 +142,13 @@
                         </ns5:Name>
                     </ns5:Classification>
                     <ns5:ExternalIdentifier id="urn:uuid:#{randomUUID}" identificationScheme="urn:uuid:6b5aea1a-874d-4603-a4bc-96a0a7b38446"
-                                            registryObject="Document01" value="#{sourcePatId}^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO">
+                                            registryObject="Document01" value="2.25.320545411710899496227746967045938431899^^^&amp;1.3.6.1.4.1.21367.2010.1.2.300&amp;ISO">
                         <ns5:Name>
                             <ns5:LocalizedString value="XDSSubmissionSet.patientId"/>
                         </ns5:Name>
                     </ns5:ExternalIdentifier>
                     <ns5:ExternalIdentifier id="urn:uuid:#{randomUUID}" identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
-                                            registryObject="Document01" value="#{subUniqueId}">
+                                            registryObject="Document01" value="2.25.93994725324056645512658890603905032831736586825841584819815211018161125276449699620154">
                         <ns5:Name>
                             <ns5:LocalizedString value="XDSSubmissionSet.uniqueId"/>
                         </ns5:Name>
@@ -195,15 +173,5 @@
                 </ns5:Association>
             </ns5:RegistryObjectList>
         </ns3:SubmitObjectsRequest>
-        <ns4:Document id="Document01">
-            <xop:Include href="cid:1.urn:uuid:DCD262C64C22DB97351256303951324@apache.org" xmlns:xop="http://www.w3.org/2004/08/xop/include"/>
-        </ns4:Document>
-    </ns4:ProvideAndRegisterDocumentSetRequest>
-</soap:Body>
-</soap:Envelope>
-        --MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323
-        Content-Type: text/xml
-        Content-Transfer-Encoding: binary
-        Content-ID: <1.urn:uuid:DCD262C64C22DB97351256303951324@apache.org>
-
-        --MIMEBoundaryurn_uuid_DCD262C64C22DB97351256303951323--
+        <ns4:Document id="Document01">PENsaW5pY2FsRG9jdW1lbnQvPg==</ns4:Document>
+</ns4:ProvideAndRegisterDocumentSetRequest>

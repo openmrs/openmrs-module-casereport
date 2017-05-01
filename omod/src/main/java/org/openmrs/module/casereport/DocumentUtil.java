@@ -195,8 +195,8 @@ public class DocumentUtil {
 		int month = cal.get(Calendar.MONTH) + 1;
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 		String sep = SystemUtils.FILE_SEPARATOR;
-		File dir = OpenmrsUtil.getDirectoryInApplicationDataDirectory(CaseReportConstants.MODULE_ID + sep + year + sep
-		        + month + sep + day);
+		String appDataDir = OpenmrsUtil.getApplicationDataDirectory();
+		File dir = new File(appDataDir, CaseReportConstants.MODULE_ID + sep + year + sep + month + sep + day);
 		
 		return new File(dir, caseReport.getUuid() + DocumentConstants.DOC_FILE_EXT);
 	}

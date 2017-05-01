@@ -12,6 +12,7 @@ angular.module("casereports.submitted", [
         "caseReportService",
         "casereport.filters",
         "ui.router",
+        "ngDialog",
         "uicommons.filters",
         "uicommons.common.error",
         "ui.bootstrap"
@@ -29,9 +30,9 @@ angular.module("casereports.submitted", [
             })
     }])
 
-    .controller("SubmittedCaseReportsController", ["$scope", "CaseReportService",
+    .controller("SubmittedCaseReportsController", ["$scope", "ngDialog", "CaseReportService",
 
-        function ($scope, CaseReportService) {
+        function ($scope, ngDialog, CaseReportService) {
             $scope.caseReports = [];
             $scope.searchText = null;
             $scope.currentPage = 1;
@@ -46,6 +47,21 @@ angular.module("casereports.submitted", [
                 $scope.caseReports = results;
                 $scope.effectiveCount = $scope.caseReports.length;
             });
+
+            $scope.showSubmittedDocument = function(caseReport){
+
+                CaseReportService.getSubmittedDocument(caseReport.uuid).then(function(response){
+                    ngDialog.open({
+                        showClose: true,
+                        closeByEscape: true,
+                        closeByDocument: true,
+                        template: "casereport-template-document",
+                        controller: function($scope){
+                            $scope.submittedDocument = response;
+                        }
+                    });
+                });
+            }
         }
 
     ])

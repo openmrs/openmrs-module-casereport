@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,6 +30,7 @@ import org.junit.rules.ExpectedException;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
+import org.openmrs.module.casereport.DocumentConstants;
 import org.openmrs.module.casereport.DocumentUtil;
 import org.openmrs.module.casereport.api.CaseReportService;
 import org.openmrs.module.casereport.rest.CaseReportRestConstants;
@@ -36,6 +38,7 @@ import org.openmrs.module.casereport.rest.v1_0.resource.CaseReportResourceTest;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.test.Util;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -199,13 +202,13 @@ public class CaseReportControllerTest extends BaseCaseReportRestControllerTest {
 	@Test
 	public void shouldFetchTheSavedDocumentOfAGivenCaseReport() throws Exception {
 		final String uuid = "5e7d57f0-9077-11e1-aaa4-00248140a5ec";
-		final String expected = "Testing..";
 		CaseReport cr = service.getCaseReportByUuid(uuid);
+		String contents = IOUtils.toString(OpenmrsClassLoader.getInstance().getResourceAsStream("submitted-doc.xml"));
 		File file = DocumentUtil.getSubmittedCaseReportFile(cr);
-		FileUtils.writeStringToFile(file, expected);
+		FileUtils.writeStringToFile(file, contents, DocumentConstants.ENCODING);
 		
 		MockHttpServletResponse resp = handle(newGetRequest(getURI() + "/" + uuid + "/document"));
 		assertTrue(StringUtils.isNotBlank(resp.getContentAsString()));
-		assertEquals(expected, resp.getContentAsString());
+		assertTrue(resp.getContentAsString().indexOf("<ClinicalDocument/>") > -1);
 	}
 }

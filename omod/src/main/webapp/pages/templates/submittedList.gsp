@@ -18,6 +18,33 @@
     ];
 </script>
 
+<script type="text/ng-template" id="casereport-template-document">
+    <div class="dialog-header">
+        <h3>${ui.message('casereport.submitted.document')}</h3>
+    </div>
+    <div class="dialog-content">
+        <pre class="casereport-no-bg-colors casereport-panel">{{ submittedDocument.contents }}</pre>
+    </div>
+</script>
+
+<style type="text/css">
+    .ngdialog-content {
+        width: inherit !important;
+    }
+
+    .dialog-content {
+        overflow: auto;
+        height: 540px !important;
+    }
+
+    .casereport-panel {
+        border: 1px inset gray;
+        background-color: #f2f2f2;
+        color: brown;
+        font-family: "Courier New", "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", monospace;
+    }
+</style>
+
 <h2>${ ui.message('casereport.submittedCaseReports.label')}</h2>
 <br />
 
@@ -35,7 +62,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true | mainFilter:this" ng-click="" title="${ui.message("casereport.clickToViewDocument")}">
+    <tr ng-repeat="cr in caseReports | orderBy:'resolutionDate':true | mainFilter:this"
+        ng-click="showSubmittedDocument(cr)" title="${ui.message("casereport.clickToViewDocument")}">
         <td class="casereport-identifier-column" valign="top">{{ cr.patient.patientIdentifier.identifier }}</td>
         <td valign="top">{{ cr.patient.person.personName.display }}</td>
         <td valign="top">{{ cr.patient.person.gender }}</td>
