@@ -28,11 +28,26 @@ angular.module("casereports.submitted", [
                 templateUrl: "templates/submittedList.page",
                 controller: "SubmittedCaseReportsController"
             })
+            .state('document', {
+                url: "/document/:uuid",
+                templateUrl: "templates/viewDocument.page",
+                controller: "ViewDocumentController",
+                params: {
+                    uuid: null
+                },
+                resolve: {
+                    submittedDocument: function($stateParams, CaseReportService){
+                        return CaseReportService.getSubmittedDocument($stateParams.uuid).then(function(response){
+                            return response;
+                        });
+                    }
+                }
+            })
     }])
 
-    .controller("SubmittedCaseReportsController", ["$scope", "ngDialog", "CaseReportService",
+    .controller("SubmittedCaseReportsController", ["$scope", "$state", "ngDialog", "CaseReportService",
 
-        function ($scope, ngDialog, CaseReportService) {
+        function ($scope, $state, ngDialog, CaseReportService) {
             $scope.caseReports = [];
             $scope.searchText = null;
             $scope.currentPage = 1;
@@ -49,21 +64,18 @@ angular.module("casereports.submitted", [
             });
 
             $scope.showSubmittedDocument = function(caseReport){
-
-                CaseReportService.getSubmittedDocument(caseReport.uuid).then(function(response){
-                    ngDialog.open({
-                        showClose: true,
-                        closeByEscape: true,
-                        closeByDocument: true,
-                        template: "casereport-template-document",
-                        controller: function($scope){
-                            $scope.submittedDocument = response;
-                        }
-                    });
+                $state.go('document', {
+                    uuid: caseReport.uuid
                 });
             }
         }
 
+    ])
+
+    .controller("ViewDocumentController", ["$scope", "submittedDocument",
+        function($scope, submittedDocument){
+            $scope.submittedDocument = submittedDocument;
+        }
     ])
 
     .filter('mainFilter', function ($filter) {

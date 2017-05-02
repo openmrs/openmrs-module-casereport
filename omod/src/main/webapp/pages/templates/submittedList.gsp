@@ -10,41 +10,6 @@
 
 -->
 
-<script type="text/javascript">
-    var breadcrumbs = [
-        { icon: "icon-home", link: "/" + OPENMRS_CONTEXT_PATH + "/index.htm" },
-        { label: "${ ui.message('casereport.label')}" , link: '${ui.pageLink("casereport", "caseReports")}'},
-        {label: "${ ui.message("casereport.submittedCaseReports.label")}" }
-    ];
-</script>
-
-<script type="text/ng-template" id="casereport-template-document">
-    <div class="dialog-header">
-        <h3>${ui.message('casereport.submitted.document')}</h3>
-    </div>
-    <div class="dialog-content">
-        <pre class="casereport-no-bg-colors casereport-panel">{{ submittedDocument.contents }}</pre>
-    </div>
-</script>
-
-<style type="text/css">
-    .ngdialog-content {
-        width: inherit !important;
-    }
-
-    .dialog-content {
-        overflow: auto;
-        height: 540px !important;
-    }
-
-    .casereport-panel {
-        border: 1px inset gray;
-        background-color: #f2f2f2;
-        color: brown;
-        font-family: "Courier New", "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", monospace;
-    }
-</style>
-
 <h2>${ ui.message('casereport.submittedCaseReports.label')}</h2>
 <br />
 

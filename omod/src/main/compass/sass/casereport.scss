@@ -194,6 +194,14 @@ td.casereport-focus-element {
   margin-top: 25px;
 }
 
+#casereport-document-panel {
+   border: 1px inset gray;
+   background-color: #f2f2f2;
+   color: brown;
+   white-space: pre;
+   font-family: "Courier New", "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", monospace;
+}
+
 /*
  * Apparently the bootstrap.css file duplicates some CSS classes in the RA
  * which can mess up the rendering of a page when we include it, we need to override
