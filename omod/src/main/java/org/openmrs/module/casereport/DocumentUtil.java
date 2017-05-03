@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,6 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.marc.everest.datatypes.NullFlavor;
 import org.marc.everest.datatypes.TS;
 import org.openmrs.PersonName;
@@ -191,12 +191,11 @@ public class DocumentUtil {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		int year = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH) + 1;
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		String sep = SystemUtils.FILE_SEPARATOR;
+		String year = new Integer(cal.get(Calendar.YEAR)).toString();
+		String month = new Integer(cal.get(Calendar.MONTH) + 1).toString();
+		String day = new Integer(cal.get(Calendar.DAY_OF_MONTH)).toString();
 		String appDataDir = OpenmrsUtil.getApplicationDataDirectory();
-		File dir = new File(appDataDir, CaseReportConstants.MODULE_ID + sep + year + sep + month + sep + day);
+		File dir = Paths.get(appDataDir, CaseReportConstants.MODULE_ID, year, month, day).toFile();
 		
 		return new File(dir, caseReport.getUuid() + DocumentConstants.DOC_FILE_EXT);
 	}

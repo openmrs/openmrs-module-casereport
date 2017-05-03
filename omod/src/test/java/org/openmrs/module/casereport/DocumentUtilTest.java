@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.openmrs.module.casereport.DocumentUtil.convertToDecimal;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,11 +45,10 @@ public class DocumentUtilTest {
 		final String day = "2";
 		Date resolutionDate = dateFormat.parse(year + "-" + month + "-" + day);
 		cr.setResolutionDate(resolutionDate);
-		String sep = SystemUtils.FILE_SEPARATOR;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", SystemUtils.JAVA_IO_TMPDIR);
 		File file = DocumentUtil.getSubmittedCaseReportFile(cr);
-		String expected = OpenmrsUtil.getApplicationDataDirectory() + CaseReportConstants.MODULE_ID + sep + year + sep
-		        + month + sep + day + sep + cr.getUuid() + DocumentConstants.DOC_FILE_EXT;
+		String expected = Paths.get(OpenmrsUtil.getApplicationDataDirectory(), CaseReportConstants.MODULE_ID, year, month,
+		    day, cr.getUuid() + DocumentConstants.DOC_FILE_EXT).toString();
 		assertEquals(expected, file.getAbsolutePath());
 	}
 }
