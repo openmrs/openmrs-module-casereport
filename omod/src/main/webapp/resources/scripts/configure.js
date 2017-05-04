@@ -9,6 +9,7 @@
  */
 
 angular.module("casereports.configure", [
+        "ngSanitize",
         "systemSettingService",
         "patientIdentifierTypeService",
         "providerService",
@@ -16,10 +17,10 @@ angular.module("casereports.configure", [
         "uicommons.common.error"
     ])
 
-    .controller("ConfigController", ["$scope", "SystemSettingService", "SystemSetting",
+    .controller("ConfigController", ["$scope", "$sce", "SystemSettingService", "SystemSetting",
         "PatientIdentifierTypeService", "ProviderService",
 
-        function ($scope, SystemSettingService, SystemSetting, PatientIdentifierTypeService, ProviderService) {
+        function ($scope, $sce, SystemSettingService, SystemSetting, PatientIdentifierTypeService, ProviderService) {
             $scope.settings;
             $scope.identifierTypes;
             $scope.providers;

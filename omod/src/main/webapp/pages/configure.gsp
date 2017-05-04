@@ -17,6 +17,7 @@
     ui.includeJavascript("uicommons", "angular-app.js")
     ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "angular-common-error.js")
+    ui.includeJavascript("uicommons", "angular-sanitize.min.js")
     ui.includeJavascript("uicommons", "filters/display.js")
     ui.includeJavascript("uicommons", "services/systemSettingService.js")
     ui.includeJavascript("uicommons", "services/providerService.js")
@@ -51,8 +52,16 @@
                     {{ printProperty(setting) }}
                     <span class="casereport-red" ng-show="isRequired(setting)">*</span>
                     <br />
-                    <span class="casereport-small-faint">
-                        {{ printDescription(setting) }}
+                    <span class="casereport-small-faint" ng-switch="setting.property">
+                        <span ng-switch-when="casereport.healthCareFacilityTypeCode"
+                            ng-bind-html="setting.description">
+                        </span>
+                        <span ng-switch-when="casereport.practiceSettingCode"
+                              ng-bind-html="setting.description">
+                        </span>
+                        <span ng-switch-default>
+                            {{ printDescription(setting) }}
+                        </span>
                     </span>
                 </td>
                 <td class="casereport-text-left" valign="top">

@@ -115,8 +115,10 @@
         <property>${project.parent.artifactId}.healthCareFacilityTypeCode</property>
         <description>
             This code represents the type of organizational setting of the facility submitting case
-            report documents, the allowed values are predefined in the repository where the reports
-            are submitted, see <a href="https://wiki.openmrs.org/x/IxXfBQ">documentation</a> for more details.
+            report documents, the allowed codes are predefined in the
+            <b>/PATH-TO-OpenSHR-INSTALL-DIR/openxds/conf/actors/XdsCodes.xml</b> file on the machine where OpenSHR
+            is installed, for more details see <a href="https://wiki.openmrs.org/x/IxXfBQ">documentation</a> under
+            'Install the SHR' sub section.
         </description>
     </globalProperty>
     <globalProperty>
@@ -131,8 +133,10 @@
         <property>${project.parent.artifactId}.practiceSettingCode</property>
         <description>
             The code specifying the clinical specialty of the facility submitting case report documents
-            (e.g. Family Practice, Laboratory, Radiology), the allowed values are predefined in the repository where
-            the reports are submitted, see <a href="https://wiki.openmrs.org/x/IxXfBQ">documentation</a> for more details.
+            (e.g. Family Practice, Laboratory, Radiology), the allowed codes are predefined in the
+            <b>/PATH-TO-OpenSHR-INSTALL-DIR/openxds/conf/actors/XdsCodes.xml</b> file on the machine where OpenSHR
+            is installed, for more details see <a href="https://wiki.openmrs.org/x/IxXfBQ">documentation</a> under
+            'Install the SHR' sub section.
         </description>
     </globalProperty>
     <globalProperty>
