@@ -9,6 +9,7 @@
  */
 
 angular.module("casereports.submitted", [
+        "ngSanitize",
         "caseReportService",
         "casereport.filters",
         "ui.router",
@@ -73,8 +74,84 @@ angular.module("casereports.submitted", [
     ])
 
     .controller("ViewDocumentController", ["$scope", "submittedDocument",
+
         function($scope, submittedDocument){
-            $scope.submittedDocument = submittedDocument;
+
+            $scope.cdaDocument = beautifyXml(submittedDocument);
+
+            function beautifyXml(xmlDoc){
+                //Getting fancy with some cool decoration of the xml doc
+                var cda = "";
+                var tokens = xmlDoc.contents.split(" ");
+                for(var i in tokens){
+                    var token = tokens[i];
+                    if(token.indexOf('<') == 0) {
+                        //This is a token that starts with a tag
+                        var tagName = token.substring(1);
+                        if(token.indexOf('</') == -1 && token.indexOf('>') == -1){
+                            //Start tag with attributes e.g <ClinicalDocument
+                            cda += ("<span class='casereport-element'>&lt;" + tagName + "</span> ");
+                        }else {
+                            var tagAndText = token.split(">");
+                            var tagName = tagAndText[0].substring(1);
+                            if(token.indexOf('</') == 0){
+                                //This is a closing tag e.g </name>
+                                tagName = tagName.substring(1);
+                                cda += ("<span class='casereport-element'>&lt;/" + tagName + "&gt;</span>\n");
+                            }else {
+                                //Token is a start tag with no attributes, e.g <name>, <name>Super, <name>Super</name>
+                                var startTag = "<" + tagName + ">";
+                                var startTagIndex = token.indexOf(startTag);
+                                var encodedStartTag = "<span class='casereport-element'>&lt;" + tagName + "&gt;</span>";
+                                var endTagIndex = token.indexOf("</" + tagName + ">");
+                                if(endTagIndex == -1 ){
+                                    //Token start tag followed by text e.g <name>Super
+                                    cda += (encodedStartTag + tagAndText[1] + " ");
+                                }else {
+                                    //Token contains text inside a tag e.g <given>Wilhelmine</given>
+                                    var tagContent = token.substring(startTagIndex + startTag.length, endTagIndex);
+                                    var encodedEndTag = "<span class='casereport-element'>&lt;/" + tagName + "&gt;</span>\n";
+                                    cda += (encodedStartTag + tagContent + encodedEndTag);
+                                }
+                            }
+                        }
+                    }else if(token.indexOf('="') > 0) {
+                        //This is an attribute e.g code="UV", code="UV">, code="UV"/>
+                        var closingTag = "";
+                        var closingTagReplace = "";
+                        if(token.endsWith('>\n') || token.endsWith('/>\n')){
+                            closingTagReplace += "<span class='casereport-element'>";
+                            if(token.endsWith('/>\n')){
+                                closingTag = "/>\n";
+                                closingTagReplace += "/>\n";
+                            }else{
+                                closingTag = ">\n";
+                                closingTagReplace += ">\n";
+                            }
+                            closingTagReplace += "</span>";
+                        }
+
+                        var attribAndValue = token.split("=");
+                        var attribute = "<span class='casereport-attribute'>"+attribAndValue[0]+"</span>";
+                        var value = "="+attribAndValue[1].replace(closingTag, '');
+
+                        cda += (attribute + value + closingTagReplace+" ");
+
+                    }else if(token.indexOf('</') > 0 && token.endsWith('>\n')) {
+                        //Token ends with text and a closing tag e.g Super</given>
+                        var textAndClosingTag = token.split("</");
+                        var closingTag = textAndClosingTag[1];
+                        var tagName = closingTag.substring(0, closingTag.indexOf('>\n'));
+                        var encodedEndTag = "<span class='casereport-element'>&lt;/" + tagName + "&gt;</span>\n";
+
+                        cda += (textAndClosingTag[0] + encodedEndTag+" ");
+                    }else {
+                        cda += (token+" ");
+                    }
+                }
+
+                return cda;
+            }
         }
     ])
 

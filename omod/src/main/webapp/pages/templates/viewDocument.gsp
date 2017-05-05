@@ -16,4 +16,4 @@
 <a ui-sref="list">${ui.message('general.back')}</a>
 <br />
 <br />
- <pre id="casereport-document-panel">{{ submittedDocument.contents }}</pre>
+<pre id="casereport-document-panel" ng-bind-html="cdaDocument"></pre>

@@ -195,11 +195,19 @@ td.casereport-focus-element {
 }
 
 #casereport-document-panel {
-   border: 1px inset gray;
-   background-color: #f2f2f2;
-   color: brown;
-   white-space: pre;
-   font-family: "Courier New", "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", monospace;
+ border: 1px inset gray;
+ background-color: #FFFFFF;
+ color: #0548FB;
+ white-space: pre;
+ font-family: "Courier New", "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", monospace;
+}
+
+.casereport-element {
+  color: #09AE0C;
+}
+
+.casereport-attribute {
+  color: #A52A2A;
 }
 
 /*
