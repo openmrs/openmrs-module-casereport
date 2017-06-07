@@ -53,10 +53,10 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	private CaseReportService service;
 	
 	@Autowired
-	PatientService patientService;
+	private PatientService patientService;
 	
 	@Autowired
-	SchedulerService schedulerService;
+    private SchedulerService schedulerService;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
