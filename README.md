@@ -1,5 +1,5 @@
 # Case Report
-Provides functionality for generating and submitting case reports for patients
+Provides functionality for generating and submitting case reports for patients.
 
 #### Table of Contents
 
@@ -12,9 +12,9 @@ Provides functionality for generating and submitting case reports for patients
 
 #### Java
 
-The module is a Java application which is why you need to install a Java JDK
+The module is a Java application which is why you need to install a Java JDK.
 
-If you want to build the master branch you will need a Java JDK of minimum version 6 but you'll need Java 7 to run the OpenMRS instance in which you're running the module.
+If you want to build the master branch you will need Java 7.
 
 #### Maven
 

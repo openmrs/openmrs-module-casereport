@@ -66,7 +66,7 @@ public class ProvideAndRegisterDocGeneratorTest extends BaseModuleWebContextSens
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 		        .parse(new ByteArrayInputStream(out.toByteArray()));
 		
-		assertEquals("20160330000000.000-0400", getElement(doc, "//Slot[@name='creationTime']/ValueList/Value"));
+		assertEquals(0, getElement(doc, "//Slot[@name='creationTime']/ValueList/Value").indexOf("20160330000000.000-"));
 		final String patientId = "101^^^&Old Identification Number&ISO";
 		assertEquals(patientId, getElement(doc, "//ExtrinsicObject/Slot[@name='sourcePatientId']/ValueList/Value"));
 		assertEquals("PID-3|" + patientId, getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[1]"));

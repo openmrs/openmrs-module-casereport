@@ -71,7 +71,7 @@
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.openHIMUrl</property>
-        <defaultValue>http://openhim_server_ip:port/xdsrepository</defaultValue>
+        <defaultValue>http://openhim_server_ip:5001/xdsrepository</defaultValue>
         <description>
             The URL to the OpenHIM server, typically the path should match the URL pattern
             of the channel for the OpenXDS mediator

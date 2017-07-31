@@ -57,8 +57,8 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(pid.getIdentifierType().getUuid(), reportForm.getIdentifierType().getUuid());
 		assertEquals(pid.getIdentifierType().getName(), reportForm.getIdentifierType().getValue());
 		assertEquals(patient.getGender(), reportForm.getGender());
-		assertEquals("1975-04-08T00:00:00.000-0500", reportForm.getBirthdate());
-		assertEquals("2016-07-07T00:00:00.000-0400", reportForm.getDeathdate());
+		assertEquals(0, reportForm.getBirthdate().indexOf("1975-04-08T00:00:00.000-"));
+		assertEquals(0, reportForm.getDeathdate().indexOf("2016-07-07T00:00:00.000-"));
 		assertEquals(patient.isDead(), reportForm.getDead());
 		assertEquals(2, reportForm.getTriggers().size());
 		assertTrue(CaseReportUtil.collContainsItemWithValue(reportForm.getTriggers(), "HIV Switched To Second Line"));
@@ -72,7 +72,7 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, reportForm.getCurrentHivMedications().size());
 		assertEquals("WHO HIV stage 2", reportForm.getCurrentHivWhoStage().getValue());
 		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason().getValue());
-		assertEquals("2016-06-15T00:00:00.000-0400", reportForm.getLastVisitDate().getValue());
+		assertEquals(0, reportForm.getLastVisitDate().getValue().toString().indexOf("2016-06-15T00:00:00.000-"));
 		assertEquals(patient.getCauseOfDeath().getUuid(), reportForm.getCauseOfDeath().getUuid());
 		assertEquals(patient.getCauseOfDeath().getName().getName(), reportForm.getCauseOfDeath().getValue());
 	}
