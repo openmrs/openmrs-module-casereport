@@ -84,7 +84,7 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		final String orgOID = "1.3.6.1.4.1.21367.2010.1.2";
 		assertEquals(orgOID, getAttribute(doc, "ClinicalDocument/id", "root"));
 		assertEquals(caseReport.getUuid(), getAttribute(doc, "ClinicalDocument/id", "extension"));
-		assertEquals("20160330000000.000-0400", getAttribute(doc, "ClinicalDocument/effectiveTime", "value"));
+		assertEquals(0, getAttribute(doc, "ClinicalDocument/effectiveTime", "value").indexOf("20160330000000.000"));
 		assertEquals("N", getAttribute(doc, "//confidentialityCode", "code"));
 		assertTrue(attributeHasText(doc, "ClinicalDocument/effectiveTime", "value"));
 		PatientIdentifier pid = patient.getPatientIdentifier("Old Identification Number");
@@ -94,7 +94,7 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		assertEquals(patient.getGivenName(), getElement(doc, "//patient/name/given[1]"));
 		assertEquals(patient.getMiddleName(), getElement(doc, "//patient/name/given[2]"));
 		assertEquals(patient.getGender(), getAttribute(doc, "//patient/administrativeGenderCode", "code"));
-		assertEquals("19750408000000.000-0500", getAttribute(doc, "//patient/birthTime", "value"));
+		assertEquals(0, getAttribute(doc, "//patient/birthTime", "value").indexOf("19750408000000.000"));
 		assertEquals(orgOID, getAttribute(doc, "//providerOrganization/id", "root"));
 		assertEquals(implName, getElement(doc, "//providerOrganization/name"));
 		assertEquals(implId, getAttribute(doc, "//assignedAuthor/id", "root"));

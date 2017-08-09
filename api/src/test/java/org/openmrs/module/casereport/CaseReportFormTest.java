@@ -14,6 +14,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 
+import java.util.Date;
+
 import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
@@ -40,7 +42,8 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		Patient patient = ps.getPatient(2);
 		patient.setDead(true);
 		patient.setCauseOfDeath(Context.getConceptService().getConcept(22));
-		patient.setDeathDate(CaseReportConstants.DATE_FORMATTER.parse("2016-07-07T00:00:00.000-0400"));
+		Date deathDate = new Date();
+		patient.setDeathDate(deathDate);
 		ps.savePatient(patient);
 		CaseReport caseReport = service.getCaseReport(1);
 		assertEquals(patient, caseReport.getPatient());
@@ -57,8 +60,8 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(pid.getIdentifierType().getUuid(), reportForm.getIdentifierType().getUuid());
 		assertEquals(pid.getIdentifierType().getName(), reportForm.getIdentifierType().getValue());
 		assertEquals(patient.getGender(), reportForm.getGender());
-		assertEquals(0, reportForm.getBirthdate().indexOf("1975-04-08T00:00:00.000-"));
-		assertEquals(0, reportForm.getDeathdate().indexOf("2016-07-07T00:00:00.000-"));
+		assertEquals(0, reportForm.getBirthdate().indexOf("1975-04-08T00:00:00.000"));
+		assertEquals(CaseReportConstants.DATE_FORMATTER.format(deathDate), reportForm.getDeathdate());
 		assertEquals(patient.isDead(), reportForm.getDead());
 		assertEquals(2, reportForm.getTriggers().size());
 		assertTrue(CaseReportUtil.collContainsItemWithValue(reportForm.getTriggers(), "HIV Switched To Second Line"));
@@ -72,7 +75,7 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, reportForm.getCurrentHivMedications().size());
 		assertEquals("WHO HIV stage 2", reportForm.getCurrentHivWhoStage().getValue());
 		assertEquals("Regimen failure", reportForm.getMostRecentArvStopReason().getValue());
-		assertEquals(0, reportForm.getLastVisitDate().getValue().toString().indexOf("2016-06-15T00:00:00.000-"));
+		assertEquals(0, reportForm.getLastVisitDate().getValue().toString().indexOf("2016-06-15T00:00:00.000"));
 		assertEquals(patient.getCauseOfDeath().getUuid(), reportForm.getCauseOfDeath().getUuid());
 		assertEquals(patient.getCauseOfDeath().getName().getName(), reportForm.getCauseOfDeath().getValue());
 	}
