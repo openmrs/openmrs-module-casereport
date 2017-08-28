@@ -10,6 +10,7 @@
 package org.openmrs.module.casereport;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
@@ -18,6 +19,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
+import org.openmrs.GlobalProperty;
+import org.openmrs.api.APIException;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.w3c.dom.Document;
 
@@ -82,6 +87,28 @@ public class TestUtils {
 	
 	public static boolean attributeHasText(Document doc, String path, String attribute) throws XPathExpressionException {
 		return StringUtils.isNotBlank(getAttribute(doc, path, attribute));
+	}
+	
+	public static Integer getAvailablePort() {
+		for (int i = 1024; i < 49151; i++) {
+			try {
+				new ServerSocket(i).close();
+				return i;
+			}
+			catch (IOException e) {
+				//Port is not available for use
+			}
+		}
+		
+		//Really! No port is available?
+		throw new APIException("No available port found");
+	}
+	
+	public static void setOpenHIMPort(Integer port) {
+		AdministrationService as = Context.getAdministrationService();
+		GlobalProperty gp = as.getGlobalPropertyObject(DocumentConstants.GP_OPENHIM_URL);
+		gp.setPropertyValue(StringUtils.replaceOnce(gp.getPropertyValue(), "{{PORT}}", port.toString()));
+		as.saveGlobalProperty(gp);
 	}
 	
 }

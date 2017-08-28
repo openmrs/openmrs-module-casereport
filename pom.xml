@@ -52,6 +52,7 @@
         <uiframeworkVersion>3.4</uiframeworkVersion>
         <uicommonsVersion>1.7</uicommonsVersion>
         <appuiVersion>1.4</appuiVersion>
+        <appframeworkVersion>1.4</appframeworkVersion>
         <hapiPhirVersion>1.6</hapiPhirVersion>
         <reportingVersion>0.9.8.1</reportingVersion>
         <calculationVersion>1.1</calculationVersion>

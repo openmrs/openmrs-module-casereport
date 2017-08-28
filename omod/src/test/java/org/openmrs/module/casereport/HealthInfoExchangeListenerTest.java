@@ -37,11 +37,13 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 	
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	
+	private static final Integer OpenHIM_PORT = TestUtils.getAvailablePort();
+	
 	@Autowired
 	private HealthInfoExchangeListener listener;
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(5000);
+	public WireMockRule wireMockRule = new WireMockRule(OpenHIM_PORT);
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -69,11 +71,12 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		caseReport.setResolutionDate(resolutionDate);
 		caseReport.setStatus(CaseReport.Status.SUBMITTED);
 		TestUtils.createPostStub(true);
+		TestUtils.setOpenHIMPort(OpenHIM_PORT);
 		
 		listener.onApplicationEvent(new CaseReportSubmittedEvent(caseReport));
 		
 		final String path = "/xdsrepository";
-		String expectedUrl = "http://localhost:5000" + path;
+		String expectedUrl = "http://localhost:" + OpenHIM_PORT + path;
 		WireMock.verify(1,
 		    WireMock.postRequestedFor(WireMock.urlEqualTo(path)).withRequestBody(WireMock.containing(expectedUrl)));
 		
@@ -98,6 +101,7 @@ public class HealthInfoExchangeListenerTest extends BaseModuleWebContextSensitiv
 		Date resolutionDate = DATE_FORMAT.parse("2017-04-26");
 		caseReport.setResolutionDate(resolutionDate);
 		TestUtils.createPostStub(false);
+		TestUtils.setOpenHIMPort(OpenHIM_PORT);
 		
 		expectedException.expect(APIException.class);
 		String errorMsg = "Severity: Error, Code: XDSDocumentUniqueIdError, Message: Document id 2.25.123 is duplicate"

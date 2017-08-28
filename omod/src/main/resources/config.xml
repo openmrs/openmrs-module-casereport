@@ -33,7 +33,8 @@
         <require_module version="${appuiVersion}">${project.parent.groupId}.appui</require_module>
         <require_module version="${reportingVersion}">${project.parent.groupId}.reporting</require_module>
         <require_module version="${webservices.restVersion}">${project.parent.groupId}.webservices.rest</require_module>
-	</require_modules>
+        <require_module version="${appframeworkVersion}">${project.parent.groupId}.appframework</require_module>
+    </require_modules>
 	<!-- / Required Modules -->
 	
 	<!-- Module Activator -->

@@ -36,11 +36,13 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	@Autowired
 	private CaseReportService service;
 	
+	private static final Integer OpenHIM_PORT = TestUtils.getAvailablePort();
+	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(5000);
+	public WireMockRule wireMockRule = new WireMockRule(OpenHIM_PORT);
 	
 	@Before
 	public void setup() throws Exception {
@@ -94,6 +96,7 @@ public class StatusChangeControllerTest extends BaseCaseReportRestControllerTest
 	public void shouldSubmitTheCaseReport() throws Exception {
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
+		TestUtils.setOpenHIMPort(OpenHIM_PORT);
 		final String hivSwitchToSecondLine = "HIV Switched To Second Line";
 		final String newHivCase = "New HIV Case";
 		ObjectMapper mapper = new ObjectMapper();
