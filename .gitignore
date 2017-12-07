@@ -15,6 +15,7 @@
 /omod/.settings
 /omod/.project
 /omod/target
+/deploy.sh
 
 ### Sass ###
 omod/src/main/compass/sass-external/
