@@ -33,15 +33,32 @@ angular.module("casereport.simulator", ["simulationService", "systemSettingServi
         });
     })
 
-    .controller("SimulatorController", ["$scope", "SimulationService", "Patient",
+    .run(function($rootScope, SimulationService){
+        SimulationService.getGlobalProperty('casereport.simulatorPatientsCreated').then(function(value){
+            if(!value){
+                SimulationService.getGlobalProperty('casereport.identifierTypeUuid').then(function(gp){
+                    if(gp) {
+                        $rootScope.identifierType = gp.value;
+                    }
+                });
+            }else {
+                $rootScope.patientsCreated = true;
+            }
+        });
+    })
 
-        function($scope, SimulationService, Patient){
+    .controller("SimulatorController", ["$scope", "SimulationService", "Patient", "$rootScope",
+
+        function($scope, SimulationService, Patient, $rootScope){
             $scope.eventIndex = null;
-            $scope.identifierType = null;
             $scope.dataset = dataset;
 
             $scope.run = function(){
                 //alert($scope.eventIndex);
+            }
+
+            $scope.patientsCreated = function(){
+                return $rootScope.patientsCreated;
             }
 
             $scope.buildPatient = function(patientData){
@@ -61,7 +78,7 @@ angular.module("casereport.simulator", ["simulationService", "systemSettingServi
 
                 var identifier =  {
                     identifier: patientData.identifier,
-                    identifierType: $scope.identifierType
+                    identifierType: $rootScope.identifierType
                 }
 
                 return {
@@ -72,25 +89,9 @@ angular.module("casereport.simulator", ["simulationService", "systemSettingServi
             }
 
             $scope.createPatients = function(){
-                SimulationService.getGlobalProperty('casereport.simulator.patientsCreated').then(function(value){
-                    if(!value){
-                        SimulationService.getGlobalProperty('casereport.identifierTypeUuid').then(function(gp){
-                            if(gp) {
-                                $scope.identifierType = gp.value;
-                                createPatientsInternal();
-                            }
-                        });
-                    }
-                });
-            }
-
-            $scope.createObs = function() {
-
-            }
-
-            function createPatientsInternal(){
                 var savedCount = 0;
                 var patients = $scope.dataset.patients;
+                $rootScope.patientsCreated = true;
                 for(var i in patients){
                     var patient = $scope.buildPatient(patients[i]);
                     Patient.save(patient).$promise.then(function(){
@@ -102,6 +103,9 @@ angular.module("casereport.simulator", ["simulationService", "systemSettingServi
                         }
                     });
                 }
+            }
+
+            $scope.createObs = function() {
 
             }
 

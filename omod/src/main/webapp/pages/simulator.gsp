@@ -45,11 +45,11 @@
 </div>
 
 <div id="casereport-simulator" ng-controller="SimulatorController">
-    
+
     <form class="simple-form-ui" name="simulatorForm" novalidate ng-submit="run()">
 
         <p>
-            <button type="button" ng-click="createPatients()">Create Patients</button>
+            <button ng-disabled="patientsCreated()" type="button" ng-click="createPatients()">Create Patients</button>
         </p>
 
         <p ng-repeat="event in dataset.timeline track by \$index">
