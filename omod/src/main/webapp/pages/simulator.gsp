@@ -52,8 +52,8 @@
 
         <p ng-repeat="event in dataset.timeline track by \$index">
             <input id="{{ \$index }}" type="radio" name="eventIndex" ng-model="\$parent.eventIndex"
-                   ng-value="{{ \$index }}" ng-disabled="\$index <= getEndEventIndex()" />
-            <label for="{{ \$index }}" ng-class="{ retired : \$index <= getEndEventIndex() }">
+                   ng-value="{{ \$index }}" ng-hide="\$index <= getEndEventIndex()" />
+            <label for="{{ \$index }}" ng-hide="\$index <= getEndEventIndex()">
                 {{ displayEvent(event) }}
             </label>
         </p>
