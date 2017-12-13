@@ -48,15 +48,15 @@ angular.module("casereport.simulator", [
                     if(results2[0]) {
                         $rootScope.identifierType = results2[0].value;
                     }
-                    var params3 = {q: 'casereport.simulatorEndEventIndex', v: 'full'};
-                    SystemSettingService.getSystemSettings(params2).then(function(results3){
-                        if(results3[0]) {
-                            $rootScope.endEventIndex = results3[0].value;
-                        }
-                    });
                 });
             }else {
                 $rootScope.patientsCreated = true;
+                var params3 = {q: 'casereport.simulatorEndEventIndex', v: 'full'};
+                SystemSettingService.getSystemSettings(params3).then(function(results3){
+                    if(results3[0]) {
+                        $rootScope.endEventIndex = results3[0].value;
+                    }
+                });
             }
         });
 
@@ -70,8 +70,11 @@ angular.module("casereport.simulator", [
             $scope.artStartUuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
             $scope.startDrugsUuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
             $scope.idPatientUuidMap = {};
-            $scope.endEventIndex = $rootScope.endEventIndex;
-            
+
+            $scope.getEndEventIndex = function(){
+                return $rootScope.endEventIndex;
+            }
+
             $scope.run = function(){
                 if($scope.eventIndex < 0){
                     return;
@@ -186,7 +189,7 @@ angular.module("casereport.simulator", [
                         savedCount++;
                         if(savedCount == observations.length){
                             SimulationService.saveGlobalProperty('casereport.simulatorEndEventIndex', $scope.eventIndex+"").then(function(){
-                                $scope.endEventIndex = $scope.eventIndex;
+                                $rootScope.endEventIndex = $scope.eventIndex;
                                 $scope.eventIndex = -1;
                                 emr.successMessage('Created events successfully');
                             });
