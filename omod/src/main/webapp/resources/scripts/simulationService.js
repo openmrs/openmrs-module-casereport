@@ -2,47 +2,16 @@ angular.module('simulationService', ['ngResource','uicommons.common'])
     .factory('Patient', function($resource) {
         return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/patient/:uuid", {
         },{
-            query: { method:'GET' }     // override query method to specify that it isn't an array that is returned
+            query: { method:'GET' }
         });
     })
     .factory('SimulationService', function(Patient, SystemSettingService, SystemSetting) {
 
         return {
 
-            getPatientByIdentifier: function(identifier) {
-
-                return Patient.get().$promise.then(function(results){
-                    var candidates = [];
-                    for(var i in results){
-                        if(results[i].uuid == null) {
-                            candidates.push(results[i]);
-                        }
-                    }
-                    
-                    if(candidates.length > 0){
-                        throw Error("Found multiple patients with the identifier: "+identifier);
-                    }else if(candidates.length == 0){
-                        throw candidates[0];
-                    }
-
-                    return null;
-                });
-                
-            },
-
-            getGlobalProperty: function(property){
-                var params = {q: property, v: 'full'};
-                return SystemSettingService.getSystemSettings(params).then(function(results){
-                    var gp = null;
-                    for(var i in results){
-                        if(results[i].property == property) {
-                            gp = results[i];
-                            break;
-                        }
-                    }
-
-                    return  gp;
-                });
+            getPatientByIdentifier: function(id) {
+                var params = {s: "patientByIdentifier", identifier: id, v: "custom:(uuid,patientIdentifier:(identifier))"};
+                return Patient.get(params).$promise;
             },
 
             saveGlobalProperty: function(name, propertyValue){

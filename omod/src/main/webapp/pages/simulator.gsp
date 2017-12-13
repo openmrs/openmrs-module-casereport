@@ -16,13 +16,10 @@
     ui.includeJavascript("uicommons", "angular-resource.min.js")
     ui.includeJavascript("uicommons", "angular-app.js")
     ui.includeJavascript("uicommons", "angular-common.js")
-    //ui.includeJavascript("uicommons", "angular-common-error.js")
-    //ui.includeJavascript("uicommons", "angular-sanitize.min.js")
-    //ui.includeJavascript("uicommons", "filters/display.js")
+    ui.includeJavascript("uicommons", "angular-common-error.js")
     ui.includeJavascript("uicommons", "filters/serverDate.js")
     ui.includeJavascript("uicommons", "services/systemSettingService.js")
-    //ui.includeJavascript("uicommons", "services/providerService.js")
-    //ui.includeJavascript("uicommons", "services/patientIdentifierTypeService.js")
+    ui.includeJavascript("uicommons", "services/obsService.js")
     ui.includeJavascript("uicommons", "moment.js")
     ui.includeJavascript("casereport", "simulator.js")
     ui.includeJavascript("casereport", "simulator-dataset-short.js")
@@ -54,7 +51,7 @@
         </p>
 
         <p ng-repeat="event in dataset.timeline track by \$index">
-            <input id="{{ \$index }}" type="radio" name="eventIndex" ng-model="\$parent.eventIndex" value="{{ \$index }}" />
+            <input id="{{ \$index }}" type="radio" name="eventIndex" ng-model="\$parent.eventIndex" ng-value="{{ \$index }}" />
             <label for="{{ \$index }}">{{ displayEvent(event) }}</label>
         </p>
 

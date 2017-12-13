@@ -24,7 +24,12 @@ angular.module("casereport.simulator.boot", [])
 
     ]);
 
-angular.module("casereport.simulator", ["uicommons.filters", "simulationService", "systemSettingService"])
+angular.module("casereport.simulator", [
+        "uicommons.filters",
+        "simulationService",
+        "systemSettingService",
+        "obsService"
+    ])
 
     .factory('Patient', function($resource) {
         return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/patient/:uuid", {
@@ -33,39 +38,66 @@ angular.module("casereport.simulator", ["uicommons.filters", "simulationService"
         });
     })
 
-    .run(function($rootScope, SimulationService){
-        SimulationService.getGlobalProperty('casereport.simulatorPatientsCreated').then(function(value){
-            if(!value){
-                SimulationService.getGlobalProperty('casereport.identifierTypeUuid').then(function(gp){
-                    if(gp) {
-                        $rootScope.identifierType = gp.value;
+    .run(function($rootScope, SystemSettingService){
+        var params1 = {q: 'casereport.simulatorPatientsCreated', v: 'full'};
+        SystemSettingService.getSystemSettings(params1).then(function(results1){
+            if(!results1[0]){
+                var params2 = {q: 'casereport.identifierTypeUuid', v: 'full'};
+                SystemSettingService.getSystemSettings(params2).then(function(results2){
+                    if(results2[0]) {
+                        $rootScope.identifierType = results2[0].value;
                     }
                 });
             }else {
                 $rootScope.patientsCreated = true;
             }
         });
+
     })
 
-    .controller("SimulatorController", ["$scope", "$filter", "SimulationService", "Patient", "$rootScope",
+    .controller("SimulatorController", ["$rootScope", "$scope", "$filter", "SimulationService", "Patient", "Obs",
 
-        function($scope, $filter, SimulationService, Patient, $rootScope){
+        function($rootScope, $scope, $filter, SimulationService, Patient, Obs){
             $scope.eventIndex = null;
             $scope.dataset = dataset;
+            $scope.artStartUuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+            $scope.startDrugsUuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+            $scope.idPatientUuidMap = {};
 
             $scope.run = function(){
-                alert($scope.eventIndex);
+                var start = 0;
+                var end = $scope.eventIndex+1;
+                var events = $scope.dataset.timeline.slice(start, end);
+                var count = 0;
+                for(var i in events){
+                    var identifier = events[i].identifier;
+                    SimulationService.getPatientByIdentifier(identifier).then(function(response){
+                        var results = response.results;
+                        if(results.length == 0){
+                            throw Error("No patient found with the identifier: "+id);
+                        }else if(results.length > 1){
+                            throw Error("Found multiple patients with the identifier: "+id);
+                        }
+
+                        count++;
+                        var patient = results[0];
+                        $scope.idPatientUuidMap[patient.patientIdentifier.identifier] = patient.uuid;
+                        if(count == events.length){
+                            createObservations(events);
+                        }
+                    });
+                }
             }
 
             $scope.displayEvent = function(event){
                 var patient = getPatientById(event.identifier);
                 var name = patient.givenName+" "+patient.middleName+" "+patient.familyName;
-                var date = $scope.formatDate(convertToDate(event.date, 'dd-MMM-yyyy HH:mm'));
+                var date = $scope.formatDate(convertToDate(event.date), 'dd-MMM-yyyy');
                 return event.event+" for "+name+" on "+date;
             }
 
             function getPatientById(id){
-                for (var i in dataset.patients){
+                for (var i in $scope.dataset.patients){
                     var patient = $scope.dataset.patients[i];
                     if(id == patient.identifier){
                         return patient;
@@ -83,7 +115,7 @@ angular.module("casereport.simulator", ["uicommons.filters", "simulationService"
             }
 
             function convertToDate(offSetInDays){
-                return moment().add(offSetInDays, 'days').format('YYYY-MM-DD')
+                return moment().add(offSetInDays, 'days').format('YYYY-MM-DD');
             }
 
             $scope.patientsCreated = function(){
@@ -91,7 +123,7 @@ angular.module("casereport.simulator", ["uicommons.filters", "simulationService"
             }
 
             $scope.buildPatient = function(patientData){
-                var birthDateStr = convertToDate(patientData.birthdate);
+                var birthDateStr = $scope.formatDate(convertToDate(patientData.birthdate), 'yyyy-MM-dd');
 
                 var person = {
                     birthdate: birthDateStr,
@@ -134,8 +166,52 @@ angular.module("casereport.simulator", ["uicommons.filters", "simulationService"
                 }
             }
 
-            $scope.createObs = function() {
+            function createObservations(observations){
+                var savedCount = 0;
+                for(var i in observations){
+                    var obsData = observations[i];
+                    var obs = buildObs(obsData, $scope.idPatientUuidMap[obsData.identifier]);
+                    Obs.save(obs).$promise.then(function(){
+                        savedCount++;
+                        if(savedCount == observations.length){
+                            SimulationService.saveGlobalProperty('casereport.endEventIndex', $scope.eventIndex+"").then(function(){
+                                emr.successMessage('Created events successfully');
+                            });
+                        }
+                    });
+                }
+            }
 
+            function buildObs(obsData, patientUuid) {
+                var obsDate = $scope.formatDate(convertToDate(obsData.date), 'yyyy-MM-dd');
+                var questionConcept = getObsConcept(obsData);
+                var obsValue = obsData.value;
+                if(questionConcept == $scope.artStartUuid){
+                    obsValue = $scope.startDrugsUuid;
+                }
+
+                return {
+                    person : patientUuid,
+                    concept: questionConcept,
+                    value: obsValue,
+                    obsDatetime: obsDate
+                }
+            }
+
+            function getObsConcept(obsData){
+                switch(obsData.event){
+                    case 'artStartDate': {
+                        return $scope.artStartUuid;
+                    }
+                    case 'cd4Count': {
+                        return '5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+                    }
+                    case 'viralLoad': {
+                        return '856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+                    }
+                }
+                
+                throw Error("Unknown concept for event "+$scope.displayEvent(obsData));;
             }
 
         }
