@@ -19,6 +19,7 @@
     //ui.includeJavascript("uicommons", "angular-common-error.js")
     //ui.includeJavascript("uicommons", "angular-sanitize.min.js")
     //ui.includeJavascript("uicommons", "filters/display.js")
+    ui.includeJavascript("uicommons", "filters/serverDate.js")
     ui.includeJavascript("uicommons", "services/systemSettingService.js")
     //ui.includeJavascript("uicommons", "services/providerService.js")
     //ui.includeJavascript("uicommons", "services/patientIdentifierTypeService.js")
@@ -53,8 +54,8 @@
         </p>
 
         <p ng-repeat="event in dataset.timeline track by \$index">
-            <input id="{{ \$index }}" type="radio" name="event" ng-model="eventIndex" value="{{ \$index }}" />
-            <label for="{{ \$index }}">{{ \$index }}. {{ event.date }} - {{ event.event }}</label>
+            <input id="{{ \$index }}" type="radio" name="eventIndex" ng-model="\$parent.eventIndex" value="{{ \$index }}" />
+            <label for="{{ \$index }}">{{ displayEvent(event) }}</label>
         </p>
 
         <br />

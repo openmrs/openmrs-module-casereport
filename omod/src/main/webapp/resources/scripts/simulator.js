@@ -24,7 +24,7 @@ angular.module("casereport.simulator.boot", [])
 
     ]);
 
-angular.module("casereport.simulator", ["simulationService", "systemSettingService"])
+angular.module("casereport.simulator", ["uicommons.filters", "simulationService", "systemSettingService"])
 
     .factory('Patient', function($resource) {
         return $resource("/" + OPENMRS_CONTEXT_PATH  + "/ws/rest/v1/patient/:uuid", {
@@ -47,14 +47,43 @@ angular.module("casereport.simulator", ["simulationService", "systemSettingServi
         });
     })
 
-    .controller("SimulatorController", ["$scope", "SimulationService", "Patient", "$rootScope",
+    .controller("SimulatorController", ["$scope", "$filter", "SimulationService", "Patient", "$rootScope",
 
-        function($scope, SimulationService, Patient, $rootScope){
+        function($scope, $filter, SimulationService, Patient, $rootScope){
             $scope.eventIndex = null;
             $scope.dataset = dataset;
 
             $scope.run = function(){
-                //alert($scope.eventIndex);
+                alert($scope.eventIndex);
+            }
+
+            $scope.displayEvent = function(event){
+                var patient = getPatientById(event.identifier);
+                var name = patient.givenName+" "+patient.middleName+" "+patient.familyName;
+                var date = $scope.formatDate(convertToDate(event.date, 'dd-MMM-yyyy HH:mm'));
+                return event.event+" for "+name+" on "+date;
+            }
+
+            function getPatientById(id){
+                for (var i in dataset.patients){
+                    var patient = $scope.dataset.patients[i];
+                    if(id == patient.identifier){
+                        return patient;
+                    }
+                }
+                
+                throw Error("No Patient found with id: "+id);
+            }
+
+            $scope.formatDate = function(date, format){
+                if(!format){
+                    format = 'dd-MMM-yyyy';
+                }
+                return $filter('serverDate')(date, format);
+            }
+
+            function convertToDate(offSetInDays){
+                return moment().add(offSetInDays, 'days').format('YYYY-MM-DD')
             }
 
             $scope.patientsCreated = function(){
@@ -62,7 +91,7 @@ angular.module("casereport.simulator", ["simulationService", "systemSettingServi
             }
 
             $scope.buildPatient = function(patientData){
-                var birthDateStr = moment().add(patientData.birthdate, 'days').format('YYYY-MM-DD');
+                var birthDateStr = convertToDate(patientData.birthdate);
 
                 var person = {
                     birthdate: birthDateStr,

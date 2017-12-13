@@ -20,7 +20,7 @@ angular.module('simulationService', ['ngResource','uicommons.common'])
                     }
                     
                     if(candidates.length > 0){
-                        throw error("Found multiple patients with the identifier:"+identifier);
+                        throw Error("Found multiple patients with the identifier: "+identifier);
                     }else if(candidates.length == 0){
                         throw candidates[0];
                     }
