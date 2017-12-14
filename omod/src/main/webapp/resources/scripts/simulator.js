@@ -107,7 +107,21 @@ angular.module("casereport.simulator", [
                 var patient = getPatientById(event.identifier);
                 var name = patient.givenName+" "+patient.middleName+" "+patient.familyName;
                 var date = $scope.formatDate(convertToDate(event.date), 'dd-MMM-yyyy');
-                return event.event+" for "+name+" on "+date;
+                return getEventLabel(event)+" for "+name+" on "+date;
+            }
+
+            function getEventLabel(event){
+                switch(event.event){
+                    case 'artStartDate': {
+                        return "Start ART";
+                    }
+                    case 'cd4Count': {
+                        return "CD4 Count of "+event.value;
+                    }
+                    case 'viralLoad': {
+                        return "Viral Load of "+event.value;
+                    }
+                }
             }
 
             function getPatientById(id){

@@ -22,7 +22,7 @@
     ui.includeJavascript("uicommons", "services/obsService.js")
     ui.includeJavascript("uicommons", "moment.js")
     ui.includeJavascript("casereport", "simulator.js")
-    ui.includeJavascript("casereport", "simulator-dataset-short.js")
+    ui.includeJavascript("casereport", "simulator-dataset.js")
     ui.includeJavascript("casereport", "simulationService.js")
 
     ui.includeCss("casereport", "simulator.css");
