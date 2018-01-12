@@ -67,8 +67,8 @@
                 <td class="casereport-text-left" valign="top">
                     <div ng-switch="setting.property">
                         <select ng-switch-when="casereport.autoSubmitProviderUuid"
-                                name="{{ setting.property }}"
-                                ng-model="settings[\$index].value" ng-required="isRequired(setting)">
+                                name="{{ setting.property }}" ng-model="settings[\$index].value"
+                                ng-required="isRequired(setting)">
                             <option value=""></option>
                             <option ng-repeat="p in providers" value="{{ p.uuid }}"
                                     ng-selected="p.uuid == setting.value">
@@ -76,8 +76,7 @@
                             </option>
                         </select>
                         <select ng-switch-when="casereport.confidentialityCode"
-                                name="{{ setting.property }}"
-                                ng-model="settings[\$index].value"
+                                name="{{ setting.property }}" ng-model="settings[\$index].value"
                                 ng-required="isRequired(setting)">
                             <option value="" ng-disabled="true"></option>
                             <option ng-repeat="conf in confidentialityCodes" value="{{ conf.value }}"
@@ -86,8 +85,7 @@
                             </option>
                         </select>
                         <select ng-switch-when="casereport.identifierTypeUuid"
-                                name="{{ setting.property }}"
-                                ng-model="settings[\$index].value"
+                                name="{{ setting.property }}" ng-model="settings[\$index].value"
                                 ng-required="isRequired(setting)">
                             <option value="" ng-disabled="true"></option>
                             <option ng-repeat="iType in identifierTypes" value="{{ iType.uuid }}"
@@ -95,6 +93,9 @@
                                 {{ iType | omrs.display }}
                             </option>
                         </select>
+                        <input ng-switch-when="casereport.openHIMClientPassword" name="{{ setting.property }}"
+                               value="{{ setting.value }}" type="password"
+                               ng-model="settings[\$index].value" size="43" ng-required="isRequired(setting)" />
                         <input ng-switch-default name="{{ setting.property }}" value="{{ setting.value }}"
                                ng-model="settings[\$index].value" size="43" ng-required="isRequired(setting)" />
                     </div>
