@@ -73,7 +73,7 @@ angular.module("casereport.simulator", [
             $scope.idPatientUuidMap = {};
             $scope.effectiveCount = $scope.dataset.timeline.length;
             $scope.currentPage = 1;
-            $scope.itemsPerPage = 5;
+            $scope.itemsPerPage = 10;
             $scope.start = 0;
             $scope.end = 0;
 
