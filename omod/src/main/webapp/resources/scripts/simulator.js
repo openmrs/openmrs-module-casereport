@@ -28,7 +28,8 @@ angular.module("casereport.simulator", [
         "uicommons.filters",
         "simulationService",
         "systemSettingService",
-        "obsService"
+        "obsService",
+        "ui.bootstrap"
     ])
 
     .factory('Patient', function($resource) {
@@ -70,6 +71,11 @@ angular.module("casereport.simulator", [
             $scope.artStartUuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
             $scope.startDrugsUuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
             $scope.idPatientUuidMap = {};
+            $scope.effectiveCount = $scope.dataset.timeline.length;
+            $scope.currentPage = 1;
+            $scope.itemsPerPage = 5;
+            $scope.start = 0;
+            $scope.end = 0;
 
             $scope.getEndEventIndex = function(){
                 return $rootScope.endEventIndex;
@@ -246,4 +252,18 @@ angular.module("casereport.simulator", [
 
         }
 
-    ]);
+    ])
+
+    .filter('pagination', function ($filter) {
+
+        return function (timelineEvents, $scope) {
+            $scope.start = ($scope.currentPage - 1) * $scope.itemsPerPage;
+            $scope.end = $scope.start + $scope.itemsPerPage;
+            if($scope.end > $scope.effectiveCount){
+                $scope.end = $scope.effectiveCount;
+            }
+
+            return timelineEvents.slice($scope.start, $scope.end);
+        }
+
+});
