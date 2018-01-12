@@ -121,7 +121,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 			throw new APIException("patient is required");
 		}
 		
-		List<CaseReport> caseReports = getCaseReports(patient, false, null, null, getQueueStatuses());
+		CaseReportService crs = Context.getService(CaseReportService.class);
+		List<CaseReport> caseReports = crs.getCaseReports(patient, false, null, null, getQueueStatuses());
 		if (caseReports.size() == 0) {
 			return null;
 		} else if (caseReports.size() > 1) {
@@ -137,7 +138,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getCaseReports() throws APIException {
-		return dao.getCaseReports(null, false, "dateCreated", true, getQueueStatuses());
+		return Context.getService(CaseReportService.class).getCaseReports(null, false, "dateCreated", true,
+		    getQueueStatuses());
 	}
 	
 	/**
@@ -263,7 +265,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		//It also provides a hook for others to register custom listeners to take other actions.
 		eventPublisher.publishEvent(new CaseReportSubmittedEvent(caseReport));
 		
-		return dao.saveCaseReport(caseReport);
+		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -283,7 +285,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		setProperty(caseReport, "status", Status.DISMISSED);
 		setProperty(caseReport, "resolutionDate", new Date());
 		
-		return dao.saveCaseReport(caseReport);
+		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -292,7 +294,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	@Override
 	@Transactional(readOnly = false)
 	public CaseReport voidCaseReport(CaseReport caseReport, String voidReason) throws APIException {
-		return dao.saveCaseReport(caseReport);
+		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
 	
 	/**
@@ -309,7 +311,8 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 */
 	@Override
 	public List<CaseReport> getSubmittedCaseReports(Patient patient) throws APIException {
-		return dao.getCaseReports(patient, false, "resolutionDate", false, Status.SUBMITTED);
+		return Context.getService(CaseReportService.class).getCaseReports(patient, false, "resolutionDate", false,
+		    Status.SUBMITTED);
 	}
 	
 	/**
