@@ -14,7 +14,7 @@ angular.module("casereport.simulator.boot", [])
 
         function($scope){
             window.setTimeout(function(){
-                
+
                 angular.bootstrap("#casereport-simulator", ["casereport.simulator"]);
                 $("#casereport-simulator-boot").hide();
                 $("#casereport-simulator").show();
@@ -113,19 +113,25 @@ angular.module("casereport.simulator", [
                 var patient = getPatientById(event.identifier);
                 var name = patient.givenName+" "+patient.middleName+" "+patient.familyName;
                 var date = $scope.formatDate(convertToDate(event.date), 'dd-MMM-yyyy');
-                return getEventLabel(event)+" for "+name+" on "+date;
+                return getEventLabel(event)+" "+name+" on "+date;
             }
 
             function getEventLabel(event){
                 switch(event.event){
                     case 'artStartDate': {
-                        return "Start ART";
+                        return "Start ART for";
                     }
                     case 'cd4Count': {
-                        return "CD4 Count of "+event.value;
+                        return "CD4 Count of "+event.value+" for";
                     }
                     case 'viralLoad': {
-                        return "Viral Load of "+event.value;
+                        return "Viral Load of "+event.value+" for";
+                    }
+                    case 'artStop': {
+                        return "Stop ART for";
+                    }
+                    case 'deathDate': {
+                        return "Death of";
                     }
                 }
             }
@@ -137,7 +143,7 @@ angular.module("casereport.simulator", [
                         return patient;
                     }
                 }
-                
+
                 throw Error("No Patient found with id: "+id);
             }
 
@@ -245,8 +251,14 @@ angular.module("casereport.simulator", [
                     case 'viralLoad': {
                         return '856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
                     }
+                    case 'artStop': {
+                        return '1252AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+                    }
+                    case 'deathDate': {
+                        return '159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+                    }
                 }
-                
+
                 throw Error("Unknown concept for event "+$scope.displayEvent(obsData));;
             }
 

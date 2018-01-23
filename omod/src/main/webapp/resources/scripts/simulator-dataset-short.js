@@ -93,10 +93,26 @@ var dataset = {
             "value": "602"
         },
         {
-            "date": -1823,
+            "date": -1733,
             "event": "viralLoad",
             "identifier": "8AEUX",
-            "value": "698859"
+            "value": "4999"
+        },
+        {
+            "date": -1763,
+            "event": "artStop",
+            "identifier": "8AEUX"
+        },
+        {
+            "date": -1793,
+            "event": "viralLoad",
+            "identifier": "8AEUX",
+            "value": "5001"
+        },
+        {
+            "date": -1823,
+            "event": "deathDate",
+            "identifier": "8AEUX"
         },
         {
             "date": -1818,
