@@ -29,6 +29,7 @@ angular.module("casereport.simulator", [
         "simulationService",
         "systemSettingService",
         "obsService",
+        "personService",
         "ui.bootstrap"
     ])
 
@@ -63,13 +64,15 @@ angular.module("casereport.simulator", [
 
     })
 
-    .controller("SimulatorController", ["$rootScope", "$scope", "$filter", "SimulationService", "Patient", "Obs",
+    .controller("SimulatorController", ["$rootScope", "$scope", "$filter", "SimulationService", "Person", "Patient", "Obs",
 
-        function($rootScope, $scope, $filter, SimulationService, Patient, Obs){
+        function($rootScope, $scope, $filter, SimulationService, Person, Patient, Obs){
             $scope.eventIndex = -1;
             $scope.dataset = dataset;
-            $scope.artStartUuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-            $scope.startDrugsUuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+            $scope.artStartConceptUuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+            $scope.startDrugsConceptUuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+            $scope.reasonArtStoppedConceptUuid = '1252AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+            $scope.weightChangeConceptUuid = '983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
             $scope.idPatientUuidMap = {};
             $scope.effectiveCount = $scope.dataset.timeline.length;
             $scope.currentPage = 1;
@@ -103,7 +106,7 @@ angular.module("casereport.simulator", [
                         var patient = results[0];
                         $scope.idPatientUuidMap[patient.patientIdentifier.identifier] = patient.uuid;
                         if(count == events.length){
-                            createObservations(events);
+                            createEvents(events);
                         }
                     });
                 }
@@ -127,10 +130,10 @@ angular.module("casereport.simulator", [
                     case 'viralLoad': {
                         return "Viral Load of "+event.value+" for";
                     }
-                    case 'artStop': {
-                        return "Stop ART for";
+                    case 'reasonArtStopped': {
+                        return "Stop ART because of weight change for";
                     }
-                    case 'deathDate': {
+                    case 'death': {
                         return "Death of";
                     }
                 }
@@ -206,30 +209,47 @@ angular.module("casereport.simulator", [
                 }
             }
 
-            function createObservations(observations){
+            function createEvents(observations){
                 var savedCount = 0;
                 for(var i in observations){
                     var obsData = observations[i];
-                    var obs = buildObs(obsData, $scope.idPatientUuidMap[obsData.identifier]);
-                    Obs.save(obs).$promise.then(function(){
-                        savedCount++;
-                        if(savedCount == observations.length){
-                            SimulationService.saveGlobalProperty('casereport.simulatorEndEventIndex', $scope.eventIndex+"").then(function(){
-                                $rootScope.endEventIndex = $scope.eventIndex;
-                                $scope.eventIndex = -1;
-                                emr.successMessage('Created events successfully');
-                            });
+                    if ($scope.event == 'death'){
+                        var person =  {
+                            uuid: $scope.idPatientUuidMap[obsData.identifier],
+                            dead: true,
+                            deathDate: getFormattedDate(obsData.date),
+                            causeOfDeath: '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                         }
-                    });
+                        Person.save(person).$promise.then(function(){
+                            savedCount++;
+                            if (savedCount == observations.length) {
+                                updateEndIndexGlobalproperty();
+                            }
+                        });
+                    } else {
+                        var obs = buildObs(obsData, $scope.idPatientUuidMap[obsData.identifier]);
+                        Obs.save(obs).$promise.then(function () {
+                            savedCount++;
+                            if (savedCount == observations.length) {
+                                updateEndIndexGlobalproperty();
+                            }
+                        });
+                    }
                 }
             }
 
+            function getFormattedDate(dateStr){
+                return $scope.formatDate(convertToDate(dateStr), 'yyyy-MM-dd');
+            }
+
             function buildObs(obsData, patientUuid) {
-                var obsDate = $scope.formatDate(convertToDate(obsData.date), 'yyyy-MM-dd');
+                var obsDate = getFormattedDate(obsData.date);
                 var questionConcept = getObsConcept(obsData);
                 var obsValue = obsData.value;
-                if(questionConcept == $scope.artStartUuid){
-                    obsValue = $scope.startDrugsUuid;
+                if (questionConcept == $scope.artStartConceptUuid){
+                    obsValue = $scope.startDrugsConceptUuid;
+                }else if (questionConcept == $scope.reasonArtStoppedConceptUuid){
+                    obsValue = $scope.weightChangeConceptUuid;
                 }
 
                 return {
@@ -243,7 +263,7 @@ angular.module("casereport.simulator", [
             function getObsConcept(obsData){
                 switch(obsData.event){
                     case 'artStartDate': {
-                        return $scope.artStartUuid;
+                        return $scope.artStartConceptUuid;
                     }
                     case 'cd4Count': {
                         return '5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
@@ -251,15 +271,20 @@ angular.module("casereport.simulator", [
                     case 'viralLoad': {
                         return '856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
                     }
-                    case 'artStop': {
-                        return '1252AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-                    }
-                    case 'deathDate': {
-                        return '159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+                    case 'reasonArtStopped': {
+                        return $scope.reasonArtStoppedConceptUuid;
                     }
                 }
 
                 throw Error("Unknown concept for event "+$scope.displayEvent(obsData));;
+            }
+
+            function updateEndIndexGlobalproperty(){
+                SimulationService.saveGlobalProperty('casereport.simulatorEndEventIndex', $scope.eventIndex + "").then(function () {
+                    $rootScope.endEventIndex = $scope.eventIndex;
+                    $scope.eventIndex = -1;
+                    emr.successMessage('Created events successfully');
+                });
             }
 
         }

@@ -100,7 +100,7 @@ var dataset = {
         },
         {
             "date": -1763,
-            "event": "artStop",
+            "event": "reasonArtStopped",
             "identifier": "8AEUX"
         },
         {
@@ -111,7 +111,7 @@ var dataset = {
         },
         {
             "date": -1823,
-            "event": "deathDate",
+            "event": "death",
             "identifier": "8AEUX"
         },
         {

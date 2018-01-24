@@ -20,6 +20,7 @@
     ui.includeJavascript("uicommons", "filters/serverDate.js")
     ui.includeJavascript("uicommons", "services/systemSettingService.js")
     ui.includeJavascript("uicommons", "services/obsService.js")
+    ui.includeJavascript("uicommons", "services/personService.js")
     ui.includeJavascript("uicommons", "moment.js")
     ui.includeJavascript("casereport", "simulator.js")
     ui.includeJavascript("casereport", "simulator-dataset-short.js")
