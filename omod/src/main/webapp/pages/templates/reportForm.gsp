@@ -98,7 +98,7 @@
         </tr>
         <tr ng-show="caseReport.reportForm.dead && caseReport.reportForm.causeOfDeath">
             <th valign="top">${ui.message("casereport.causeOfDeath")}</th>
-            <td valign="top">{{ formatDate(caseReport.reportForm.causeOfDeath.value) }}</td>
+            <td valign="top">{{ caseReport.reportForm.causeOfDeath | omrs.display }}</td>
         </tr>
         <tr>
             <th valign="top">${ui.message("casereport.triggers")}</th>

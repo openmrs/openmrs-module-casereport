@@ -213,12 +213,12 @@ angular.module("casereport.simulator", [
                 var savedCount = 0;
                 for(var i in observations){
                     var obsData = observations[i];
-                    if ($scope.event == 'death'){
+                    if (obsData.event == "death"){
                         var person =  {
                             uuid: $scope.idPatientUuidMap[obsData.identifier],
                             dead: true,
                             deathDate: getFormattedDate(obsData.date),
-                            causeOfDeath: '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+                            causeOfDeath: '125574AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                         }
                         Person.save(person).$promise.then(function(){
                             savedCount++;

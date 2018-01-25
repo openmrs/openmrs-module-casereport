@@ -54,29 +54,13 @@
             <button ng-disabled="patientsCreated()" type="button" ng-click="createPatients()">Create Patients</button>
         </p>
 
-        <table id="casereport-simulator-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th style="text-align: center">Events</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="event in dataset.timeline | pagination:this track by \$index">
-                    <td style="width:50px !important;" valign="middle">
-                        <input id="{{ \$index }}" type="radio" name="eventIndex" ng-model="\$parent.eventIndex"
-                            ng-value="{{ \$index }}" ng-hide="\$index <= getEndEventIndex()" />
-                    </td>
-                    <td>
-                        <label for="{{ \$index }}" ng-hide="\$index <= getEndEventIndex()">
-                            {{ displayEvent(event) }}
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        ${ ui.includeFragment("casereport", "pagination") }
+        <p ng-repeat="event in dataset.timeline track by \$index">
+            <input id="{{ \$index }}" type="radio" name="eventIndex" ng-model="\$parent.eventIndex"
+                   ng-value="{{ \$index }}" ng-hide="\$index <= getEndEventIndex()" />
+            <label for="{{ \$index }}" ng-hide="\$index <= getEndEventIndex()">
+                {{ displayEvent(event) }}
+            </label>
+        </p>
 
         <br>
         <p>
