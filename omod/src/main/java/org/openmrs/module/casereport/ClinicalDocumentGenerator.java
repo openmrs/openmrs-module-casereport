@@ -459,11 +459,11 @@ public final class ClinicalDocumentGenerator {
 		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
 		if (form.getCurrentHivWhoStage() != null) {
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_WHO_STAGE
-			        + form.getCurrentHivWhoStage().getValue().toString());
+			        + form.getCurrentHivWhoStage().getValue());
 		}
 		if (form.getMostRecentArvStopReason() != null) {
 			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_ARV_STOP_REASON
-			        + form.getMostRecentArvStopReason().getValue().toString());
+			        + form.getMostRecentArvStopReason().getValue());
 		}
 		if (form.getLastVisitDate() != null) {
 			String dateStr = DocumentUtil.getDisplayDate(form.getLastVisitDate().getValue().toString());
