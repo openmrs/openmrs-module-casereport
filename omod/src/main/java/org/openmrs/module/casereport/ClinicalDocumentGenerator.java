@@ -152,12 +152,13 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates a CD instance with LOINC as the code system
+	 * Creates a CE instance with LOINC as the code system
 	 *
 	 * @see #createCD(String, String, String, String)
 	 */
 	private CE<String> createLoincCE(String code, String displayName) {
-		return createCD(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, displayName);
+		return new CE<>(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, null,
+		        displayName, null);
 	}
 	
 	/**
