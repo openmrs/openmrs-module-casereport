@@ -40,7 +40,7 @@
 
     <!-- Current WHO HIV Stage concept -->
     <concept concept_id="1003" datatype_id="2" class_id="5" is_set="false" retired="false" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c09ab2c5-878e-5905-b25d-5784167d0214" />
-    <concept_name concept_name_id="2003" concept_id="1003" name="" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="8f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
+    <concept_name concept_name_id="2003" concept_id="1003" name="Current WHO HIV Stage" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="8f88e374-18b1-4ec6-8ed4-4152a5a7d621" />
     <concept_description concept_description_id="3003" concept_id="1003" description="WHO HIV stage" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" uuid="1888rc71-9580-4d91-b18f-0a63a1840aa6" />
     <concept_reference_term concept_reference_term_id="4003" concept_source_id="9000" code="5356" name="Current WHO HIV Stage" description="WHO HIV stage" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="98fb7f47-f80a-4086-9285-bd798be13c63" />
     <concept_reference_map concept_map_id="5003" concept_id="1003" concept_reference_term_id="4003" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="8i309478-49d8-61e0-8fed-18a905e044dc" />

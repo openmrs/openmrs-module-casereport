@@ -26,4 +26,53 @@
     <global_property property="casereport.practiceSettingCodingSystem" property_value="Connect-a-thon practiceSettingCodes" uuid="0a55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.practiceSettingDisplayName" property_value="General Medicine" uuid="1a55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.organisationIdentifier" property_value="1.3.6.1.4.1.21367.2010.1.2" uuid="2a55827e-26fe-103b-80cb-0017a47871b3" />
+
+    <!-- Public health Case report -->
+    <concept concept_id="10000" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="a09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20000" concept_id="10000" name="Public health Case report" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="0e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40000" concept_source_id="9001" code="55751-2" name="Public health Case report" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="06fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50000" concept_id="10000" concept_reference_term_id="40000" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="0b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Trigger -->
+    <concept concept_id="10001" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="b09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20001" concept_id="10001" name="Trigger" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="1e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40001" concept_source_id="9002" code="410658008" name="Trigger" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="16fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50001" concept_id="10001" concept_reference_term_id="40001" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="1b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Patient health status -->
+    <concept concept_id="10002" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20002" concept_id="10002" name="Patient health status" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="2e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40002" concept_source_id="9000" code="159640" name="Patient health status" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="26fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50002" concept_id="10002" concept_reference_term_id="40002" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="2b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Cause of death -->
+    <concept concept_id="10003" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="d09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20003" concept_id="10003" name="Cause of death" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="3e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40003" concept_source_id="9001" code="79378-6" name="Cause of death" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="36fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50003" concept_id="10003" concept_reference_term_id="40003" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="3b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Dead -->
+    <concept concept_id="10004" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="e09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20004" concept_id="10004" name="Dead" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="4e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40004" concept_source_id="9000" code="160432" name="Dead" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="46fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50004" concept_id="10004" concept_reference_term_id="40004" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="4b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Current antiretroviral drugs used for treatment -->
+    <concept concept_id="10005" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="f09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20005" concept_id="10005" name="Current antiretroviral drugs used for treatment" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="5e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40005" concept_source_id="9000" code="1088" name="Current antiretroviral drugs used for treatment" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="56fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50005" concept_id="10005" concept_reference_term_id="40005" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="5b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Date of last patient visit -->
+    <concept concept_id="10006" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="g09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20006" concept_id="10006" name="Date of last patient visit" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="6e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40006" concept_source_id="9000" code="164093" name="Date of last patient visit" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="66fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50006" concept_id="10006" concept_reference_term_id="40006" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="6b309489-49d8-61e8-8fed-18a905e044dc" />
+
+    <!-- Relevant diagnostic tests and/or laboratory data -->
+    <concept concept_id="10007" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="h09ab2c5-567e-4808-b25d-5784167d0214" />
+    <concept_name concept_name_id="20007" concept_id="10007" name="Relevant diagnostic tests and/or laboratory data" locale="en" creator="1" date_created="2016-01-12 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="7e77e825-18a1-4ec8-8ed4-4152a5a7d621" />
+    <concept_reference_term concept_reference_term_id="40007" concept_source_id="9001" code="30954-2" name="Relevant diagnostic tests and/or laboratory data" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="76fb7f47-u80a-4088-9452-bd798be13c63" />
+    <concept_reference_map concept_map_id="50007" concept_id="10007" concept_reference_term_id="40007" concept_map_type_id="2" creator="1" date_created="2016-01-12 00:00:00.0" uuid="7b309489-49d8-61e8-8fed-18a905e044dc" />
+
 </dataset>

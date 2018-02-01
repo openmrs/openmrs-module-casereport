@@ -142,12 +142,6 @@ public final class DocumentConstants {
 	
 	public static final String ELEMENT_ITEM = "item";
 	
-	public static final String TEXT_HIV_TREATMENT = "Current antiretroviral drugs used for treatment";
-	
-	public static final String TEXT_TRIGGER = "Trigger";
-	
-	public static final String TEXT_DIAGNOSTICS = "Relevant diagnostic tests and/or laboratory data";
-	
 	public static final String TEXT_CODE_HEALTH_STATUS = "Patient health status";
 	
 	public static final String TEXT_DEAD = "Dead";
@@ -177,18 +171,6 @@ public final class DocumentConstants {
 	public static final String LABEL_HIV_RECENT_TEST = "Most Recent HIV Test: ";
 	
 	public static final String LABEL_RECENT_VIRAL_LOAD = "Most Recent Viral Load: ";
-	
-	public static final String TEXT_CURRENT_WHO_STAGE = "Current WHO HIV Stage";
-	
-	public static final String TEXT_REASON_ARVS_STOPPED = "Reason antiretrovirals stopped";
-	
-	public static final String TEXT_DATE_OF_LAST_VISIT = "Date of last patient visit";
-	
-	public static final String TEXT_CD4_COUNT = "CD4 count";
-	
-	public static final String TEXT_HIV_TEST = "HIV rapid test 1, qualitative";
-	
-	public static final String TEXT_VIRAL_LOAD = "HIV Viral Load";
 	
 	public static final String TEXT_FORMAT = "XDS Medical Summaries";
 	

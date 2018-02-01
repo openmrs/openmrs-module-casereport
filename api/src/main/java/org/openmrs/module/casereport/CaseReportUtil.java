@@ -224,6 +224,22 @@ public class CaseReportUtil {
 	}
 	
 	/**
+	 * Looks up a concept with a concept mapping to the specified source and code
+	 *
+	 * @param code the code to match
+	 * @param source the name of the concept source to match
+	 * @return the concept
+	 */
+	public static Concept getConceptByMapping(String code, String source) {
+		Concept concept = Context.getConceptService().getConceptByMapping(code, source);
+		if (concept == null) {
+			throw new APIException("No concept found with a mapping to source: " + source + " and code: " + code);
+		}
+		
+		return concept;
+	}
+	
+	/**
 	 * Gets the SqlCohortDefinition that matches the specified trigger name, will throw an
 	 * APIException if multiple cohort queries are found that match the trigger name
 	 *
@@ -368,6 +384,16 @@ public class CaseReportUtil {
 		}
 	}
 	
+	/**
+	 * Creates a case report the specified patient with the specified triggers, if the parent
+	 * already has an existing case report then no new one is created instead the unique triggers
+	 * are added to the existing case report. If the patient already has a case report with all the
+	 * specified triggers then nothing happens.
+	 * 
+	 * @param patient the patient to create a case report for
+	 * @param triggerNames the triggers to add
+	 * @return the created trigger or none was created or if all the triggers are duplicates
+	 */
 	public static CaseReport createReportIfNecessary(Patient patient, String... triggerNames) {
 		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReportByPatient(patient);
 		if (caseReport == null) {

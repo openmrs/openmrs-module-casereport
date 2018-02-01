@@ -99,7 +99,7 @@ public final class ClinicalDocumentGenerator {
 		if (log.isDebugEnabled()) {
 			CaseReportService crs = Context.getService(CaseReportService.class);
 			CaseReport cr = crs.getCaseReportByUuid(form.getReportUuid());
-			log.debug("Generating ClinicalDocument for: " + cr);
+			log.debug("Generating ClinicalDocument: " + cr);
 		}
 		
 		ClinicalDocument cdaDocument = new ClinicalDocument();
@@ -107,7 +107,7 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_IHE_MED_DOC)));
 		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
-		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR, DocumentConstants.TEXT_DOCUMENT_NAME));
+		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(form.getReportDate());
@@ -154,30 +154,34 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates a CE instance with LOINC as the code system
 	 *
-	 * @see #createCD(String, String, String, String)
+	 * @see #createCD(String, String, String, String, String)
 	 */
-	private CE<String> createLoincCE(String code, String displayName) {
+	private CE<String> createLoincCE(String code) {
+		Concept c = CaseReportUtil.getConceptByMapping(code, DocumentConstants.CODE_SYSTEM_NAME_LOINC);
 		return new CE<>(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, null,
-		        displayName, null);
+		        c.getDisplayString(), null);
 	}
 	
 	/**
 	 * Creates a CD instance with CIEL as the code system
 	 *
-	 * @see #createCD(String, String, String, String)
+	 * @see #createCD(String, String, String, String, String)
 	 */
-	private CD<String> createCielCD(String code, String displayName) {
-		return createCD(code, DocumentConstants.CODE_SYSTEM_CIEL, DocumentConstants.CODE_SYSTEM_NAME_CIEL, displayName);
+	private CD<String> createCielCD(String code) {
+		Concept c = CaseReportUtil.getConceptByMapping(code, DocumentConstants.CODE_SYSTEM_NAME_CIEL);
+		return createCD(code, DocumentConstants.CODE_SYSTEM_CIEL, DocumentConstants.CODE_SYSTEM_NAME_CIEL,
+		    c.getDisplayString(), null);
 	}
 	
 	/**
-	 * Creates a CD instance with SNOMEDCT as the code system
+	 * Creates a CD instance with SNOMED_CT as the code system
 	 *
-	 * @see #createCD(String, String, String, String)
+	 * @see #createCD(String, String, String, String, String)
 	 */
-	private CD<String> createSnomedCD(String code, String displayName) {
+	private CD<String> createSnomedCD(String code) {
+		Concept c = CaseReportUtil.getConceptByMapping(code, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT);
 		return createCD(code, DocumentConstants.CODE_SYSTEM_SNOMEDCT, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT,
-		    displayName);
+		    c.getDisplayString(), null);
 	}
 	
 	/**
@@ -187,10 +191,12 @@ public final class ClinicalDocumentGenerator {
 	 * @param codeSystem the coding system of the code
 	 * @param codeSystemName the name of the coding system
 	 * @param displayName the display text to set on the CD object
+	 * @param originalText the original text
 	 * @return a CD object
 	 */
-	private CD<String> createCD(String code, String codeSystem, String codeSystemName, String displayName) {
-		return new CD<>(code, codeSystem, codeSystemName, null, displayName, null);
+	private CD<String> createCD(String code, String codeSystem, String codeSystemName, String displayName,
+	                            String originalText) {
+		return new CD<>(code, codeSystem, codeSystemName, null, displayName, originalText);
 	}
 	
 	/**
@@ -316,18 +322,16 @@ public final class ClinicalDocumentGenerator {
 		ArrayList<Entry> entries = new ArrayList<>();
 		if (form.getCurrentHivWhoStage() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithCodedValue(CaseReportConstants.CIEL_CODE_WHO_STAGE,
-			    DocumentConstants.TEXT_CURRENT_WHO_STAGE, form.getCurrentHivWhoStage());
+			    form.getCurrentHivWhoStage());
 			entries.add(e);
 		}
 		if (form.getMostRecentArvStopReason() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithCodedValue(
-			    CaseReportConstants.CIEL_CODE_REASON_FOR_STOPPING_ARVS, DocumentConstants.TEXT_REASON_ARVS_STOPPED,
-			    form.getMostRecentArvStopReason());
+			    CaseReportConstants.CIEL_CODE_REASON_FOR_STOPPING_ARVS, form.getMostRecentArvStopReason());
 			entries.add(e);
 		}
 		if (form.getLastVisitDate() != null) {
-			CD<String> question = createCielCD(CaseReportConstants.CIEL_CODE_DATE_OF_LAST_VISIT,
-			    DocumentConstants.TEXT_DATE_OF_LAST_VISIT);
+			CD<String> question = createCielCD(CaseReportConstants.CIEL_CODE_DATE_OF_LAST_VISIT);
 			UuidAndValue uValue = form.getLastVisitDate();
 			Date visitDate = CaseReportConstants.DATE_FORMATTER.parse(uValue.getValue().toString());
 			TS visitDateTS = DocumentUtil.createTS(visitDate);
@@ -335,17 +339,17 @@ public final class ClinicalDocumentGenerator {
 		}
 		if (form.getMostRecentCd4Count() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithNumericValue(CaseReportConstants.CIEL_CODE_CD4_COUNT,
-			    DocumentConstants.TEXT_CD4_COUNT, form.getMostRecentCd4Count());
+			    form.getMostRecentCd4Count());
 			entries.add(e);
 		}
 		if (form.getMostRecentHivTest() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithCodedValue(CaseReportConstants.CIEL_CODE_HIV_TEST,
-			    DocumentConstants.TEXT_HIV_TEST, form.getMostRecentHivTest());
+			    form.getMostRecentHivTest());
 			entries.add(e);
 		}
 		if (form.getMostRecentViralLoad() != null) {
 			Entry e = createEntryFromCielQuestionCodeAndObsWithNumericValue(CaseReportConstants.CIEL_CODE_VIRAL_LOAD,
-			    DocumentConstants.TEXT_VIRAL_LOAD, form.getMostRecentViralLoad());
+			    form.getMostRecentViralLoad());
 			entries.add(e);
 		}
 		
@@ -357,17 +361,16 @@ public final class ClinicalDocumentGenerator {
 	 * qnCielCode argument value must be a CIEL code
 	 *
 	 * @param cielQuestionCode CIEL dictionary code for the Obs question
-	 * @param qnText the text for the question concept
 	 * @param numericObsValue a DatedUuidAndValue representation of the observation's value, must be
 	 *            numeric
 	 * @return Entry Object
 	 * @throws ParseException
 	 */
-	private Entry createEntryFromCielQuestionCodeAndObsWithNumericValue(String cielQuestionCode, String qnText,
+	private Entry createEntryFromCielQuestionCodeAndObsWithNumericValue(String cielQuestionCode,
 	                                                                    DatedUuidAndValue numericObsValue)
 	    throws ParseException {
 		
-		CD<String> question = createCielCD(cielQuestionCode, qnText);
+		CD<String> question = createCielCD(cielQuestionCode);
 		//TODO REAL should be the correct datatype however the shr's cdahandler doesn't support it
 		//but the only numerical concepts are cd4 count and viral load which are always integers anyway
 		return createObservationEntry(question, new INT(Double.valueOf(numericObsValue.getValue().toString()).intValue()),
@@ -380,14 +383,13 @@ public final class ClinicalDocumentGenerator {
 	 * and uses its obsDatetime as the value. The qnCielCode argument value must be a CIEL code
 	 *
 	 * @param cielQuestionCode CIEL dictionary code for the Obs question
-	 * @param qnText the text for the question concept
 	 * @param codedObsValue a UuidAndValue representation of the observation's value, must be a
 	 *            coded value
 	 * @return an Entry Object
 	 * @throws ParseException
 	 */
-	private Entry createEntryFromCielQuestionCodeAndObsWithCodedValue(String cielQuestionCode, String qnText,
-	                                                                  UuidAndValue codedObsValue) throws ParseException {
+	private Entry createEntryFromCielQuestionCodeAndObsWithCodedValue(String cielQuestionCode, UuidAndValue codedObsValue)
+	    throws ParseException {
 		
 		Obs obs = Context.getObsService().getObsByUuid(codedObsValue.getUuid());
 		if (obs == null) {
@@ -403,15 +405,13 @@ public final class ClinicalDocumentGenerator {
 		}
 		String name = dValue.getValue().toString();
 		
-		return createEntryFromCielQuestionCodeAndCodedValue(cielQuestionCode, qnText, obs.getValueCoded(), dValue.getDate(),
-		    name);
+		return createEntryFromCielQuestionCodeAndCodedValue(cielQuestionCode, obs.getValueCoded(), dValue.getDate(), name);
 	}
 	
 	/**
 	 * Creates an Entry instance from the specified parameter values
 	 * 
 	 * @param cielQuestionCode the question code from the CIEL dictionary
-	 * @param questionText the display text
 	 * @param value the observation's coded value
 	 * @param obsDatetime the date of occurrence of the observation as a string
 	 * @param originalTextValue the serialized text value
@@ -419,11 +419,10 @@ public final class ClinicalDocumentGenerator {
 	 * @throws ParseException
 	 * @see #createObservationEntry(CD, ANY, String)
 	 */
-	private Entry createEntryFromCielQuestionCodeAndCodedValue(String cielQuestionCode, String questionText, Concept value,
-	                                                           String obsDatetime, String originalTextValue)
-	    throws ParseException {
+	private Entry createEntryFromCielQuestionCodeAndCodedValue(String cielQuestionCode, Concept value, String obsDatetime,
+	                                                           String originalTextValue) throws ParseException {
 		
-		CD<String> question = createCielCD(cielQuestionCode, questionText);
+		CD<String> question = createCielCD(cielQuestionCode);
 		CD<String> val = createCD(value, originalTextValue);
 		return createObservationEntry(question, val, obsDatetime);
 	}
@@ -545,17 +544,16 @@ public final class ClinicalDocumentGenerator {
 				deathInfoList.add(new UuidAndValue(null, DocumentConstants.LABEL_DATE_OF_DEATH + date));
 			}
 			
-			CD<String> heathStatusQuestion = createCielCD(DocumentConstants.CIEL_CODE_HEALTH_STATUS,
-			    DocumentConstants.TEXT_CODE_HEALTH_STATUS);
-			CD<String> deadValue = createCielCD(DocumentConstants.CIEL_CODE_DEAD, DocumentConstants.TEXT_DEAD);
+			CD<String> heathStatusQuestion = createCielCD(DocumentConstants.CIEL_CODE_HEALTH_STATUS);
+			CD<String> deadValue = createCielCD(DocumentConstants.CIEL_CODE_DEAD);
 			entries.add(createObservationEntry(heathStatusQuestion, deadValue, deathDateStr));
 			
 			if (form.getCauseOfDeath() != null) {
 				String cause = form.getCauseOfDeath().getValue().toString();
 				deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_CAUSE_OF_DEATH + ": " + cause));
-				CD<String> question = createCD(DocumentConstants.LOINC_CODE_CAUSE_OF_DEATH,
-				    DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC,
-				    DocumentConstants.TEXT_CAUSE_OF_DEATH);
+				Concept c = CaseReportUtil.getConceptByMapping(DocumentConstants.LOINC_CODE_CAUSE_OF_DEATH,
+				    DocumentConstants.CODE_SYSTEM_NAME_LOINC);
+				CD<String> question = createCD(c, null);
 				Concept concept = Context.getConceptService().getConceptByUuid(form.getCauseOfDeath().getUuid());
 				CD<String> value = createCD(concept, cause);
 				entries.add(createObservationEntry(question, value, deathDateStr));
@@ -579,7 +577,7 @@ public final class ClinicalDocumentGenerator {
 		
 		Section section = new Section();
 		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
-		section.setCode(createLoincCE(DocumentConstants.LOINC_CODE_DIAGNOSTICS, DocumentConstants.TEXT_DIAGNOSTICS));
+		section.setCode(createLoincCE(DocumentConstants.LOINC_CODE_DIAGNOSTICS));
 		section.setText(new SD(rootListNode));
 		section.setEntry(entries);
 		
@@ -626,10 +624,9 @@ public final class ClinicalDocumentGenerator {
 				throw new APIException("The scheduled task associated to the " + triggerName
 				        + " trigger has an invalid value for the concept property");
 			}
-			Concept concept = CaseReportUtil.getConceptByMappingString(conceptMap, true);
 			String code = StringUtils.split(conceptMap, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR)[1];
-			CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER, DocumentConstants.TEXT_TRIGGER);
-			CD<String> value = createCielCD(code, concept.getDisplayString());
+			CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER);
+			CD<String> value = createCielCD(code);
 			entries.add(createObservationEntry(question, value, trigger.getDate()));
 		}
 		
@@ -654,7 +651,7 @@ public final class ClinicalDocumentGenerator {
 				        + " was deleted.");
 			}
 			Entry e = createEntryFromCielQuestionCodeAndCodedValue(CaseReportConstants.CIEL_CODE_CURRENT_ARVS,
-			    DocumentConstants.TEXT_HIV_TREATMENT, drug.getConcept(), med.getDate(), name);
+			    drug.getConcept(), med.getDate(), name);
 			entries.add(e);
 		}
 		
@@ -693,7 +690,7 @@ public final class ClinicalDocumentGenerator {
 		
 		if (StringUtils.isNotBlank(code) && StringUtils.isNotBlank(codeSystem)) {
 			String origText = concept.getDisplayString().equalsIgnoreCase(originalText) ? null : originalText;
-			return new CD<>(code, codeSystem, codeSystemName, null, concept.getDisplayString(), origText);
+			return createCD(code, codeSystem, codeSystemName, concept.getDisplayString(), origText);
 		}
 		
 		throw new APIException("No valid mapping found for the concept with id " + concept.getId()
