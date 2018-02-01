@@ -162,8 +162,6 @@ public final class ClinicalDocumentGenerator {
 	
 	/**
 	 * Creates a CE instance with LOINC as the code system
-	 *
-	 * @see #createCD(String, String, String, String, String)
 	 */
 	private CE<String> createLoincCE(String code) {
 		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_LOINC);
@@ -173,7 +171,7 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates a CD instance with CIEL as the code system
 	 *
-	 * @see #createCD(String, String, String, String, String)
+	 * @see #createCD(Concept, String)
 	 */
 	private CD<String> createCielCD(String code) {
 		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_CIEL);
@@ -183,26 +181,11 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates a CD instance with SNOMED_CT as the code system
 	 *
-	 * @see #createCD(String, String, String, String, String)
+	 * @see #createCD(Concept, String)
 	 */
 	private CD<String> createSnomedCD(String code) {
 		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_SNOMEDCT);
 		return createCD(c, null);
-	}
-	
-	/**
-	 * Creates a CD instance
-	 * 
-	 * @param code the code of CD instance
-	 * @param codeSystem the coding system of the code
-	 * @param codeSystemName the name of the coding system
-	 * @param displayName the display text to set on the CD object
-	 * @param originalText the original text
-	 * @return a CD object
-	 */
-	private CD<String> createCD(String code, String codeSystem, String codeSystemName, String displayName,
-	                            String originalText) {
-		return new CD<>(code, codeSystem, codeSystemName, null, displayName, originalText);
 	}
 	
 	/**
@@ -694,7 +677,7 @@ public final class ClinicalDocumentGenerator {
 		
 		if (StringUtils.isNotBlank(code) && StringUtils.isNotBlank(codeSystem)) {
 			String origText = concept.getDisplayString().equalsIgnoreCase(originalText) ? null : originalText;
-			return createCD(code, codeSystem, codeSystemName, concept.getDisplayString(), origText);
+			return new CD<>(code, codeSystem, codeSystemName, null, concept.getDisplayString(), origText);
 		}
 		
 		throw new APIException("No valid mapping found for the concept with id " + concept.getId()
