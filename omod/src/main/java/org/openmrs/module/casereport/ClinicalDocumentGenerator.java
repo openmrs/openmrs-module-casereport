@@ -9,6 +9,15 @@
  */
 package org.openmrs.module.casereport;
 
+import static org.openmrs.module.casereport.DocumentConstants.CODE_SYSTEM_CIEL;
+import static org.openmrs.module.casereport.DocumentConstants.CODE_SYSTEM_LOINC;
+import static org.openmrs.module.casereport.DocumentConstants.CODE_SYSTEM_NAME_CIEL;
+import static org.openmrs.module.casereport.DocumentConstants.CODE_SYSTEM_NAME_LOINC;
+import static org.openmrs.module.casereport.DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT;
+import static org.openmrs.module.casereport.DocumentConstants.CODE_SYSTEM_SNOMEDCT;
+import static org.openmrs.module.casereport.DocumentConstants.ELEMENT_ITEM;
+import static org.openmrs.module.casereport.DocumentConstants.ELEMENT_LIST;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -157,9 +166,8 @@ public final class ClinicalDocumentGenerator {
 	 * @see #createCD(String, String, String, String, String)
 	 */
 	private CE<String> createLoincCE(String code) {
-		Concept c = CaseReportUtil.getConceptByMapping(code, DocumentConstants.CODE_SYSTEM_NAME_LOINC);
-		return new CE<>(code, DocumentConstants.CODE_SYSTEM_LOINC, DocumentConstants.CODE_SYSTEM_NAME_LOINC, null,
-		        c.getDisplayString(), null);
+		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_LOINC);
+		return new CE<>(code, CODE_SYSTEM_LOINC, CODE_SYSTEM_NAME_LOINC, null, c.getDisplayString(), null);
 	}
 	
 	/**
@@ -168,9 +176,8 @@ public final class ClinicalDocumentGenerator {
 	 * @see #createCD(String, String, String, String, String)
 	 */
 	private CD<String> createCielCD(String code) {
-		Concept c = CaseReportUtil.getConceptByMapping(code, DocumentConstants.CODE_SYSTEM_NAME_CIEL);
-		return createCD(code, DocumentConstants.CODE_SYSTEM_CIEL, DocumentConstants.CODE_SYSTEM_NAME_CIEL,
-		    c.getDisplayString(), null);
+		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_CIEL);
+		return createCD(c, null);
 	}
 	
 	/**
@@ -179,9 +186,8 @@ public final class ClinicalDocumentGenerator {
 	 * @see #createCD(String, String, String, String, String)
 	 */
 	private CD<String> createSnomedCD(String code) {
-		Concept c = CaseReportUtil.getConceptByMapping(code, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT);
-		return createCD(code, DocumentConstants.CODE_SYSTEM_SNOMEDCT, DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT,
-		    c.getDisplayString(), null);
+		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_SNOMEDCT);
+		return createCD(c, null);
 	}
 	
 	/**
@@ -456,18 +462,18 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private StructDocElementNode createTextNodeForDiagnostics() throws ParseException {
 		
-		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		StructDocElementNode rootListNode = new StructDocElementNode(ELEMENT_LIST);
 		if (form.getCurrentHivWhoStage() != null) {
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_WHO_STAGE
+			rootListNode.addElement(ELEMENT_ITEM, DocumentConstants.LABEL_WHO_STAGE
 			        + form.getCurrentHivWhoStage().getValue());
 		}
 		if (form.getMostRecentArvStopReason() != null) {
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_ARV_STOP_REASON
+			rootListNode.addElement(ELEMENT_ITEM, DocumentConstants.LABEL_ARV_STOP_REASON
 			        + form.getMostRecentArvStopReason().getValue());
 		}
 		if (form.getLastVisitDate() != null) {
 			String dateStr = DocumentUtil.getDisplayDate(form.getLastVisitDate().getValue().toString());
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_LAST_VISIT_DATE + dateStr);
+			rootListNode.addElement(ELEMENT_ITEM, DocumentConstants.LABEL_LAST_VISIT_DATE + dateStr);
 		}
 		if (form.getMostRecentCd4Count() != null) {
 			addDatedValueToListNode(rootListNode, form.getMostRecentCd4Count(), DocumentConstants.LABEL_CD4_RECENT_COUNT);
@@ -495,7 +501,7 @@ public final class ClinicalDocumentGenerator {
 	private void addDatedValueToListNode(StructDocElementNode listNode, DatedUuidAndValue datedValue, String label)
 	    throws ParseException {
 		String dateStr = DocumentUtil.getDisplayDate(datedValue.getDate());
-		listNode.addElement(DocumentConstants.ELEMENT_ITEM, label + datedValue.getValue() + " (" + dateStr + ")");
+		listNode.addElement(ELEMENT_ITEM, label + datedValue.getValue() + " (" + dateStr + ")");
 	}
 	
 	/**
@@ -509,10 +515,10 @@ public final class ClinicalDocumentGenerator {
 		
 		ArrayList<Entry> entries = new ArrayList<>();
 		//Add the triggers and any additional comments from surveillance officer
-		StructDocElementNode rootListNode = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		StructDocElementNode rootListNode = new StructDocElementNode(ELEMENT_LIST);
 		addNestedListToRootNode(rootListNode, DocumentConstants.LABEL_TRIGGERS, form.getTriggers());
 		if (StringUtils.isNotBlank(form.getComments())) {
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, DocumentConstants.LABEL_COMMENTS + form.getComments());
+			rootListNode.addElement(ELEMENT_ITEM, DocumentConstants.LABEL_COMMENTS + form.getComments());
 		}
 		entries.addAll(createEntriesForTriggers());
 		
@@ -552,7 +558,7 @@ public final class ClinicalDocumentGenerator {
 				String cause = form.getCauseOfDeath().getValue().toString();
 				deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_CAUSE_OF_DEATH + ": " + cause));
 				Concept c = CaseReportUtil.getConceptByMapping(DocumentConstants.LOINC_CODE_CAUSE_OF_DEATH,
-				    DocumentConstants.CODE_SYSTEM_NAME_LOINC);
+				    CODE_SYSTEM_NAME_LOINC);
 				CD<String> question = createCD(c, null);
 				Concept concept = Context.getConceptService().getConceptByUuid(form.getCauseOfDeath().getUuid());
 				CD<String> value = createCD(concept, cause);
@@ -571,7 +577,7 @@ public final class ClinicalDocumentGenerator {
 		//Add other observational data
 		if (form.containsDiagnosticData()) {
 			StructDocTextNode labelNode = new StructDocTextNode(DocumentConstants.LABEL_OTHER_DIAGNOSTICS);
-			rootListNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, createTextNodeForDiagnostics());
+			rootListNode.addElement(ELEMENT_ITEM, labelNode, createTextNodeForDiagnostics());
 			entries.addAll(createEntriesForDiagnostics());
 		}
 		
@@ -595,12 +601,12 @@ public final class ClinicalDocumentGenerator {
 	private void addNestedListToRootNode(StructDocElementNode parentNode, String label,
 	                                     List<? extends UuidAndValue> itemsToAdd) {
 		
-		StructDocElementNode itemList = new StructDocElementNode(DocumentConstants.ELEMENT_LIST);
+		StructDocElementNode itemList = new StructDocElementNode(ELEMENT_LIST);
 		for (UuidAndValue item : itemsToAdd) {
-			itemList.addElement(DocumentConstants.ELEMENT_ITEM, item.getValue().toString());
+			itemList.addElement(ELEMENT_ITEM, item.getValue().toString());
 		}
 		StructDocTextNode labelNode = new StructDocTextNode(label);
-		parentNode.addElement(DocumentConstants.ELEMENT_ITEM, labelNode, itemList);
+		parentNode.addElement(ELEMENT_ITEM, labelNode, itemList);
 	}
 	
 	/**
@@ -613,6 +619,7 @@ public final class ClinicalDocumentGenerator {
 		
 		ArrayList<Entry> entries = new ArrayList<>(form.getTriggers().size());
 		SchedulerService ss = Context.getSchedulerService();
+		CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER);
 		for (DatedUuidAndValue trigger : form.getTriggers()) {
 			String triggerName = trigger.getValue().toString();
 			TaskDefinition taskDefinition = ss.getTaskByName(triggerName);
@@ -625,7 +632,6 @@ public final class ClinicalDocumentGenerator {
 				        + " trigger has an invalid value for the concept property");
 			}
 			String code = StringUtils.split(conceptMap, CaseReportConstants.CONCEPT_MAPPING_SEPARATOR)[1];
-			CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER);
 			CD<String> value = createCielCD(code);
 			entries.add(createObservationEntry(question, value, trigger.getDate()));
 		}
@@ -670,21 +676,19 @@ public final class ClinicalDocumentGenerator {
 		String codeSystem = null;
 		String codeSystemName = null;
 		for (ConceptMap map : concept.getConceptMappings()) {
-			if (DocumentConstants.CODE_SYSTEM_NAME_CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource()
-			        .getName())) {
+			if (CODE_SYSTEM_NAME_CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 				code = map.getConceptReferenceTerm().getCode();
-				codeSystem = DocumentConstants.CODE_SYSTEM_CIEL;
-				codeSystemName = DocumentConstants.CODE_SYSTEM_NAME_CIEL;
-			} else if (DocumentConstants.CODE_SYSTEM_NAME_LOINC.equalsIgnoreCase(map.getConceptReferenceTerm()
-			        .getConceptSource().getName())) {
+				codeSystem = CODE_SYSTEM_CIEL;
+				codeSystemName = CODE_SYSTEM_NAME_CIEL;
+			} else if (CODE_SYSTEM_NAME_LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 				code = map.getConceptReferenceTerm().getCode();
-				codeSystem = DocumentConstants.CODE_SYSTEM_LOINC;
-				codeSystemName = DocumentConstants.CODE_SYSTEM_NAME_LOINC;
-			} else if (DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT.equalsIgnoreCase(map.getConceptReferenceTerm()
-			        .getConceptSource().getName())) {
+				codeSystem = CODE_SYSTEM_LOINC;
+				codeSystemName = CODE_SYSTEM_NAME_LOINC;
+			} else if (CODE_SYSTEM_NAME_SNOMEDCT
+			        .equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 				code = map.getConceptReferenceTerm().getCode();
-				codeSystem = DocumentConstants.CODE_SYSTEM_SNOMEDCT;
-				codeSystemName = DocumentConstants.CODE_SYSTEM_NAME_SNOMEDCT;
+				codeSystem = CODE_SYSTEM_SNOMEDCT;
+				codeSystemName = CODE_SYSTEM_NAME_SNOMEDCT;
 			}
 		}
 		
