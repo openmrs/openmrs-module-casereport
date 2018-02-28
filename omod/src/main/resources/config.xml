@@ -61,6 +61,16 @@
 	</messages>
 	<!-- /Internationalization -->
 
+    <filter>
+        <filter-name>corsFilter</filter-name>
+        <filter-class>org.openmrs.module.casereport.CrossOriginResourceSharingFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>corsFilter</filter-name>
+        <url-pattern>/ws/rest/*</url-pattern>
+    </filter-mapping>
+
     <!-- GPs -->
     <globalProperty>
         <property>${project.parent.artifactId}.autoSubmitProviderUuid</property>
@@ -151,6 +161,14 @@
     <globalProperty>
         <property>${project.parent.artifactId}.organisationIdentifier</property>
         <description>Identifier of the entity that submits case report documents, MUST be an OID</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.enableCors</property>
+        <description>
+            When set to true, this allows the CBR simulator and any other authenticated code running in
+            the browser to have access to this instance's rest API, for security reasons this should
+            always be set to false if you are not running the simulator against this instance.
+        </description>
     </globalProperty>
 
     <!-- Privileges -->
