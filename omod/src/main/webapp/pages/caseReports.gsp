@@ -40,10 +40,4 @@
             ${ ui.message("casereport.configure.label") }
         </div>
     </a>
-    <a class="button app big" href="${ ui.pageLink("casereport", "simulator") }">
-        <div class="task">
-            <i class="icon-film"></i>
-            ${ ui.message("Simulator") }
-        </div>
-    </a>
 </div>
