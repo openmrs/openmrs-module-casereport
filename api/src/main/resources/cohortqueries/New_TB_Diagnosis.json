@@ -1,0 +1,27 @@
+{
+  "name": "New TB Diagnosis",
+  "concept": "CIEL_164500",
+  "description": "HIV Patients newly diagnosed with TB",
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [
+    "CIEL_6042", /* PROBLEM ADDED */
+    "CIEL_42"   /* PNEUMONIA, TUBERCULOUS */
+  ],
+  "sql": "
+
+  /*
+   * Name: New TB Diagnosis
+   * Query Type: SQL Cohort Query
+   * Description: Patients newly diagnosed with TB
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
+
+  SELECT person_id
+  FROM obs
+  WHERE
+  date(date_created) >= date(:lastExecutionTime)
+  AND (concept_id = :CIEL_6042 AND value_coded = :CIEL_42)
+  AND not voided;
+  "
+}
