@@ -253,7 +253,7 @@ public final class ClinicalDocumentGenerator {
 		author.setTime(Calendar.getInstance());
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String identifier = form.getSubmitter().getValue().toString();
-		assignedAuthor.setId(SET.createSET(new II(form.getAssigningAuthorityId(), identifier)));
+		assignedAuthor.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), identifier)));
 		PersonName personName = DocumentUtil.getPersonNameForProvider(identifier);
 		Person person = createPerson(personName);
 		assignedAuthor.setAssignedAuthorChoice(person);
@@ -697,7 +697,7 @@ public final class ClinicalDocumentGenerator {
 		
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
-		observation.setId(SET.createSET(new II(form.getAssigningAuthorityId(), new Long(System.currentTimeMillis())
+		observation.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), new Long(System.currentTimeMillis())
 		        .toString())));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);

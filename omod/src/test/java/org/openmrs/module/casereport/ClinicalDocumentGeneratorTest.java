@@ -97,7 +97,7 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		assertEquals(0, getAttribute(doc, "//patient/birthTime", "value").indexOf("19750408000000.000"));
 		assertEquals(orgOID, getAttribute(doc, "//providerOrganization/id", "root"));
 		assertEquals(implName, getElement(doc, "//providerOrganization/name"));
-		assertEquals(implId, getAttribute(doc, "//assignedAuthor/id", "root"));
+		assertEquals(orgOID, getAttribute(doc, "//assignedAuthor/id", "root"));
 		assertEquals(provider.getIdentifier(), getAttribute(doc, "//assignedAuthor/id", "extension"));
 		assertEquals(provider.getPerson().getFamilyName(), getElement(doc, "//assignedPerson/name/family"));
 		assertEquals(provider.getPerson().getGivenName(), getElement(doc, "//assignedPerson/name/given"));
