@@ -79,8 +79,6 @@ public final class DocumentConstants {
 	
 	public static final String LANGUAGE_CODE = "en-US";
 	
-	public static final String TEXT_DOCUMENT_NAME = "Public health Case report";
-	
 	public static final String CODE_SYSTEM_LOINC = "2.16.840.1.113883.6.1";
 	
 	public static final String CODE_SYSTEM_NAME_LOINC = "LOINC";
