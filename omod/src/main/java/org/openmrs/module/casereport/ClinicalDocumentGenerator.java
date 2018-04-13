@@ -116,7 +116,7 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_IHE_MED_DOC)));
 		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
-		cdaDocument.setCode(createLoincCE(DocumentConstants.LOINC_CODE_CR));
+		cdaDocument.setCode(createCEFromGP(DocumentConstants.GP_CONCEPT_MAPPING_PUBLIC_HEALTH_CR));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(form.getReportDate());
@@ -161,16 +161,20 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates a CE instance with LOINC as the code system
+	 * Creates a CE instance from the value of the global property with the specified name
+	 *
+	 * @param gpName the global property name object
+	 * @return CE object
 	 */
-	private CE<String> createLoincCE(String code) {
-		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_LOINC);
-		return new CE<>(code, CODE_SYSTEM_LOINC, CODE_SYSTEM_NAME_LOINC, null, c.getDisplayString(), null);
+	private CE<String> createCEFromGP(String gpName) {
+		ReferenceTerm term = DocumentUtil.getReferenceTerm(gpName);
+		return new CE<>(term.getCode(), term.getCodeSystem(), term.getCodeSystemName(), null, term.getName(), null);
 	}
 	
 	/**
 	 * Creates a CD instance with CIEL as the code system
 	 *
+	 * @param code the reference term code
 	 * @see #createCD(Concept, String)
 	 */
 	private CD<String> createCielCD(String code) {
@@ -179,13 +183,15 @@ public final class ClinicalDocumentGenerator {
 	}
 	
 	/**
-	 * Creates a CD instance with SNOMED_CT as the code system
-	 *
+	 * Creates a CD instance from the value of the global property with the specified name
+	 * 
+	 * @param gpName the global property name to match
+	 * @return the CD object
 	 * @see #createCD(Concept, String)
 	 */
-	private CD<String> createSnomedCD(String code) {
-		Concept c = CaseReportUtil.getConceptByMapping(code, CODE_SYSTEM_NAME_SNOMEDCT);
-		return createCD(c, null);
+	private CD<String> createCDFromGP(String gpName) {
+		ReferenceTerm term = DocumentUtil.getReferenceTerm(gpName);
+		return new CD<>(term.getCode(), term.getCodeSystem(), term.getCodeSystemName(), null, term.getName(), null);
 	}
 	
 	/**
@@ -540,9 +546,7 @@ public final class ClinicalDocumentGenerator {
 			if (form.getCauseOfDeath() != null) {
 				String cause = form.getCauseOfDeath().getValue().toString();
 				deathInfoList.add(new UuidAndValue(null, DocumentConstants.TEXT_CAUSE_OF_DEATH + ": " + cause));
-				Concept c = CaseReportUtil.getConceptByMapping(DocumentConstants.LOINC_CODE_CAUSE_OF_DEATH,
-				    CODE_SYSTEM_NAME_LOINC);
-				CD<String> question = createCD(c, null);
+				CD<String> question = createCDFromGP(DocumentConstants.GP_CONCEPT_MAPPING_CAUSE_OF_DEATH);
 				Concept concept = Context.getConceptService().getConceptByUuid(form.getCauseOfDeath().getUuid());
 				CD<String> value = createCD(concept, cause);
 				entries.add(createObservationEntry(question, value, deathDateStr));
@@ -566,7 +570,7 @@ public final class ClinicalDocumentGenerator {
 		
 		Section section = new Section();
 		section.setTemplateId(LIST.createLIST(new II(DocumentConstants.SECTION_TEMPLATE_ID_ROOT1)));
-		section.setCode(createLoincCE(DocumentConstants.LOINC_CODE_DIAGNOSTICS));
+		section.setCode(createCEFromGP(DocumentConstants.GP_CONCEPT_MAPPING_DIAGNOSTICS));
 		section.setText(new SD(rootListNode));
 		section.setEntry(entries);
 		
@@ -602,7 +606,7 @@ public final class ClinicalDocumentGenerator {
 		
 		ArrayList<Entry> entries = new ArrayList<>(form.getTriggers().size());
 		SchedulerService ss = Context.getSchedulerService();
-		CD<String> question = createSnomedCD(DocumentConstants.SNOMED_CODE_TRIGGER);
+		CD<String> question = createCDFromGP(DocumentConstants.GP_CONCEPT_MAPPING_TRIGGER);
 		for (DatedUuidAndValue trigger : form.getTriggers()) {
 			String triggerName = trigger.getValue().toString();
 			TaskDefinition taskDefinition = ss.getTaskByName(triggerName);

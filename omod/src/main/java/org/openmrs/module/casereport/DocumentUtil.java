@@ -219,4 +219,26 @@ public class DocumentUtil {
 			throw new APIException(e);
 		}
 	}
+	
+	/**
+	 * Creates and returns a reference term representation of the value of the specified global
+	 * property name
+	 * 
+	 * @param globalPropertyName the name of the global property to match
+	 * @return a ReferenceTerm object
+	 */
+	public static ReferenceTerm getReferenceTerm(String globalPropertyName) {
+		String mapping = getGlobalProperty(globalPropertyName);
+		if (StringUtils.isBlank(mapping)) {
+			throw new APIException(globalPropertyName + " global property value is required");
+		}
+		
+		String[] fields = StringUtils.split(mapping, ":");
+		if (fields.length != 4) {
+			throw new APIException("Invalid value for the " + globalPropertyName + " global property");
+		}
+		
+		return new ReferenceTerm(fields[0], fields[1], fields[2], fields[3]);
+	}
+	
 }

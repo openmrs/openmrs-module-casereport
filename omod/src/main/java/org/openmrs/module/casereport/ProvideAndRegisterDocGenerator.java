@@ -118,8 +118,9 @@ public final class ProvideAndRegisterDocGenerator {
 		InfosetUtil.addOrOverwriteSlot(authorClassification, XDSConstants.SLOT_NAME_AUTHOR_PERSON, authorId);
 		extrinsicObj.getClassification().add(authorClassification);
 		
-		addClassification(extrinsicObj, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
-		    XDSConstants.UUID_XDSDocumentEntry_classCode, DocumentConstants.TEXT_DOCUMENT_NAME);
+		ReferenceTerm term = DocumentUtil.getReferenceTerm(DocumentConstants.GP_CONCEPT_MAPPING_PUBLIC_HEALTH_CR);
+		addClassification(extrinsicObj, term.getCode(), term.getCodeSystem(), XDSConstants.UUID_XDSDocumentEntry_classCode,
+		    DocumentConstants.TEXT_DOCUMENT_NAME);
 		
 		String confidentiality = DocumentUtil.getConfidentialityCode();
 		addClassification(extrinsicObj, confidentiality, DocumentConstants.CODE_SYSTEM_CONFIDENTIALITY,
@@ -163,7 +164,7 @@ public final class ProvideAndRegisterDocGenerator {
 		regPackage.setName(createName(DocumentConstants.TEXT_TITLE));
 		String dateSubmitted = DocumentUtil.createTS(new Date()).getValue();
 		InfosetUtil.addOrOverwriteSlot(regPackage, XDSConstants.SLOT_NAME_SUBMISSION_TIME, dateSubmitted);
-		addClassification(regPackage, DocumentConstants.LOINC_CODE_CR, DocumentConstants.CODE_SYSTEM_LOINC,
+		addClassification(regPackage, term.getCode(), term.getCodeSystem(),
 		    XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, DocumentConstants.TEXT_DOCUMENT_NAME);
 		
 		addExternalIdentifier(regPackage, patientId, XDSConstants.UUID_XDSSubmissionSet_patientId,

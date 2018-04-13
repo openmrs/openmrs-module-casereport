@@ -170,6 +170,42 @@
             always be set to false if you are not running the simulator against this instance.
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.publicHealthCaseReportConcept</property>
+        <defaultValue>2.16.840.1.113883.6.1:LOINC:55751-2:Public health Case report</defaultValue>
+        <description>
+            Specifies the mapping to use for the concept that represents a public health case report when
+            submitting a case report, a valid value MUST be of the form source_oid:source_name:code:name e.g
+            2.16.840.1.113883.6.1:LOINC:55751-2:Public health Case report
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.causeOfDeathConcept</property>
+        <defaultValue>2.16.840.1.113883.6.1:LOINC:79378-6:Cause of death</defaultValue>
+        <description>
+            Specifies the mapping to use for the concept that represents a cause of death when
+            submitting a case report, a valid value MUST be of the form source_oid:source_name:code:name e.g
+            2.16.840.1.113883.6.1:LOINC:79378-6:Cause of death
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.diagnosticsConcept</property>
+        <defaultValue>2.16.840.1.113883.6.1:LOINC:30954-2:Relevant diagnostic tests and/or laboratory data</defaultValue>
+        <description>
+            Specifies the mapping to use for the concept that represents diagnostic and laboratory test data
+            when submitting a case report, a valid value MUST be of the form source_oid:source_name:code:name e.g
+            2.16.840.1.113883.6.1:LOINC:30954-2:Relevant diagnostic tests and/or laboratory data
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.triggerConcept</property>
+        <defaultValue>2.16.840.1.113883.6.96:SNOMED CT:410658008:Trigger</defaultValue>
+        <description>
+            Specifies the mapping to use for the concept that represents a trigger event when
+            submitting a case report, a valid value MUST be of the form source_oid:source_name:code:name e.g
+            2.16.840.1.113883.6.96:SNOMED CT:410658008:Trigger
+        </description>
+    </globalProperty>
 
     <!-- Privileges -->
     <privilege>

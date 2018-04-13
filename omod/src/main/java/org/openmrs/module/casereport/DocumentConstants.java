@@ -97,16 +97,8 @@ public final class DocumentConstants {
 	
 	public static final String CODE_SYSTEM_NAME_CIEL = "CIEL";
 	
-	public static final String LOINC_CODE_CR = "55751-2";
-	
-	public static final String LOINC_CODE_CAUSE_OF_DEATH = "79378-6";
-	
 	//TODO we need to assign this a proper code
 	public static final String LOINC_CODE_TYPE_CODE_CR = "*";
-	
-	public static final String LOINC_CODE_DIAGNOSTICS = "30954-2";
-	
-	public static final String SNOMED_CODE_TRIGGER = "410658008";
 	
 	public static final String CIEL_CODE_HEALTH_STATUS = "159640";
 	
@@ -133,6 +125,14 @@ public final class DocumentConstants {
 	public static final String GP_PRACTICE_CODING_SCHEME = GP_PREFIX + "practiceSettingCodingSystem";
 	
 	public static final String GP_PRACTICE_NAME = GP_PREFIX + "practiceSettingDisplayName";
+	
+	public static final String GP_CONCEPT_MAPPING_PUBLIC_HEALTH_CR = GP_PREFIX + "publicHealthCaseReportConcept";
+	
+	public static final String GP_CONCEPT_MAPPING_CAUSE_OF_DEATH = GP_PREFIX + "causeOfDeathConcept";
+	
+	public static final String GP_CONCEPT_MAPPING_DIAGNOSTICS = GP_PREFIX + "diagnosticsConcept";
+	
+	public static final String GP_CONCEPT_MAPPING_TRIGGER = GP_PREFIX + "triggerConcept";
 	
 	//This code is actually for a medical summaries, We only used it   
 	//so that the CDA handler can be assigned to it as the handler
