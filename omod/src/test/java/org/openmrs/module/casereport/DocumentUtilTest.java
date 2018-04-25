@@ -83,7 +83,7 @@ public class DocumentUtilTest extends BaseModuleWebContextSensitiveTest {
 	public void getMappedHieIdentifier_shouldReturnTheMappedHieIdentifier() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-HIE.xml");
-		assertEquals("2.16.840.1.113883.1.3", DocumentUtil.getMappedHieIdentifier("2f470aa8-1d73-43b7-81b5-01f0c0dfa53c"));
+		assertEquals("2.16.840.1.113883.1.3", DocumentUtil.getMappedHieIdentifier("1a339fe9-38bc-4ab3-b180-320988c0b968"));
 	}
 	
 }

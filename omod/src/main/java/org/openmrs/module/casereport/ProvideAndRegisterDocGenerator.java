@@ -99,8 +99,9 @@ public final class ProvideAndRegisterDocGenerator {
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_CREATION_TIME, reportDate);
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_LANGUAGE_CODE, DocumentConstants.LANGUAGE_CODE);
 		AdministrationService as = Context.getAdministrationService();
-		String patientId = String.format(DocumentUtil.getIdFormat(), form.getIdentifierType().getValue().toString(), form
-		        .getPatientIdentifier().getValue().toString());
+		String openHieId = DocumentUtil.getMappedHieIdentifier(form.getIdentifierType().getUuid());
+		String patientId = String.format(DocumentUtil.getIdFormat(), openHieId, form.getPatientIdentifier().getValue()
+		        .toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		
 		String[] sourcePatientInfo = createPatientInfo(patientId);
