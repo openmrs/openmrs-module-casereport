@@ -241,4 +241,26 @@ public class DocumentUtil {
 		return new ReferenceTerm(fields[0], fields[1], fields[2], fields[3]);
 	}
 	
+	/**
+	 * Gets the HIE identifier mapped to the specified patient identifier type
+	 *
+	 * @return the mapped HIE identifier
+	 */
+	public static String getMappedHieIdentifier(String idTypeUuid) {
+		String mappingsStr = Context.getAdministrationService().getGlobalProperty(DocumentConstants.GP_ID_MAPPINGS);
+		if (StringUtils.isBlank(mappingsStr)) {
+			throw new APIException(DocumentConstants.GP_ID_MAPPINGS + " global property value needs to be set");
+		}
+		
+		String[] mappings = StringUtils.split(mappingsStr, CaseReportConstants.CHAR_COMMA);
+		for (String mapping : mappings) {
+			String[] localIdAndHieId = StringUtils.split(mapping, CaseReportConstants.CHAR_COLON);
+			if (idTypeUuid.equalsIgnoreCase(localIdAndHieId[0].trim())) {
+				return localIdAndHieId[1].trim();
+			}
+		}
+		
+		throw new APIException("No HIE identifier mapped to identifier type with uuid: " + idTypeUuid);
+	}
+	
 }

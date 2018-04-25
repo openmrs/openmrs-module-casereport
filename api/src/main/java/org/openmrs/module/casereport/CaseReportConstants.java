@@ -28,8 +28,6 @@ public class CaseReportConstants {
 	
 	public static final String GP_AUTO_SUBMIT_PROVIDER_UUID = MODULE_ID + ".autoSubmitProviderUuid";
 	
-	public static final String GP_REPORT_ID_TYPE = MODULE_ID + ".identifierTypeUuid";
-	
 	public static final String PRIV_GET_CASE_REPORTS = "Get Case Reports";
 	
 	public static final String PRIV_MANAGE_CASE_REPORTS = "Manage Case Reports";
@@ -37,6 +35,10 @@ public class CaseReportConstants {
 	public static final String PRIV_GET_TRIGGERS = "Get Triggers";
 	
 	public static final String LAST_EXECUTION_TIME = "lastExecutionTime";
+	
+	public static final String CHAR_COMMA = ",";
+	
+	public static final String CHAR_COLON = ":";
 	
 	public static final String SOURCE_CIEL_HL7_CODE = "CIEL";
 	

@@ -20,10 +20,18 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.openmrs.api.APIException;
 import org.openmrs.util.OpenmrsUtil;
+import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 
-public class DocumentUtilTest {
+public class DocumentUtilTest extends BaseModuleWebContextSensitiveTest {
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Test
 	public void convertToDecimalString_shouldReturnTheStringifiedDecimalFormOfTheSpecifiedUuid() {
@@ -51,4 +59,31 @@ public class DocumentUtilTest {
 		    day, cr.getUuid() + DocumentConstants.DOC_FILE_EXT).toString();
 		assertEquals(expected, file.getAbsolutePath());
 	}
+	
+	@Test
+	public void getMappedHieIdentifier_shouldFailIfTheGpIsNotSet() throws Exception {
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(CoreMatchers.equalTo(DocumentConstants.GP_ID_MAPPINGS
+		        + " global property value needs to be set"));
+		DocumentUtil.getMappedHieIdentifier("some-fake-uuid-81b5-01f0c0dfa53c");
+	}
+	
+	@Test
+	public void getMappedHieIdentifier_shouldFailIfThereIsNoMappedHieIdentifier() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-HIE.xml");
+		final String uuid = "some-fake-uuid-81b5-01f0c0dfa53c";
+		expectedException.expect(APIException.class);
+		expectedException.expectMessage(CoreMatchers.equalTo("No HIE identifier mapped to identifier type with uuid: "
+		        + uuid));
+		DocumentUtil.getMappedHieIdentifier(uuid);
+	}
+	
+	@Test
+	public void getMappedHieIdentifier_shouldReturnTheMappedHieIdentifier() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		executeDataSet("moduleTestData-HIE.xml");
+		assertEquals("2.16.840.1.113883.1.3", DocumentUtil.getMappedHieIdentifier("2f470aa8-1d73-43b7-81b5-01f0c0dfa53c"));
+	}
+	
 }

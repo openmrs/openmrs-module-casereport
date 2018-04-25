@@ -30,6 +30,7 @@
     <global_property property="casereport.causeOfDeathConcept" property_value="2.16.840.1.113883.6.1:LOINC:79378-6:Cause of death" uuid="2b55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.diagnosticsConcept" property_value="2.16.840.1.113883.6.1:LOINC:30954-2:Relevant diagnostic tests and/or laboratory data" uuid="3b55827e-26fe-103b-80cb-0017a47871b3" />
     <global_property property="casereport.triggerConcept" property_value="2.16.840.1.113883.6.96:SNOMED CT:410658008:Trigger" uuid="4b55827e-26fe-103b-80cb-0017a47871b3" />
+    <global_property property="casereport.identifierTypeMappings" property_value="2f470aa8-1d73-43b7-81b5-01f0c0dfa53c:2.16.840.1.113883.1.3" uuid="3a55827e-26fe-103b-80cb-0017a47871b3" />
 
     <!-- Patient health status -->
     <concept concept_id="10002" datatype_id="1" class_id="1" is_set="0" retired="0" creator="1" date_created="2016-01-12 00:00:00.0" uuid="c09ab2c5-567e-4808-b25d-5784167d0214" />

@@ -87,7 +87,7 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		assertEquals(0, getAttribute(doc, "ClinicalDocument/effectiveTime", "value").indexOf("20160330000000.000"));
 		assertEquals("N", getAttribute(doc, "//confidentialityCode", "code"));
 		assertTrue(attributeHasText(doc, "ClinicalDocument/effectiveTime", "value"));
-		PatientIdentifier pid = patient.getPatientIdentifier("Old Identification Number");
+		PatientIdentifier pid = patient.getPatientIdentifier();
 		assertEquals(pid.getIdentifierType().getName(), getAttribute(doc, "//patientRole/id", "root"));
 		assertEquals(pid.getIdentifier(), getAttribute(doc, "//patientRole/id", "extension"));
 		assertEquals(patient.getFamilyName(), getElement(doc, "//patient/name/family"));

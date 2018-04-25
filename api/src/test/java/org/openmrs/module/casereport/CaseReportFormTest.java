@@ -54,7 +54,7 @@ public class CaseReportFormTest extends BaseModuleContextSensitiveTest {
 		assertEquals(patient.getPersonName().getMiddleName(), reportForm.getMiddleName());
 		assertEquals(patient.getPersonName().getFamilyName(), reportForm.getFamilyName());
 		assertEquals(patient.getPersonName().getFullName(), reportForm.getFullName());
-		PatientIdentifier pid = patient.getPatientIdentifier("Old Identification Number");
+		PatientIdentifier pid = patient.getPatientIdentifier();
 		assertEquals(pid.getUuid(), reportForm.getPatientIdentifier().getUuid());
 		assertEquals(pid.getIdentifier(), reportForm.getPatientIdentifier().getValue());
 		assertEquals(pid.getIdentifierType().getUuid(), reportForm.getIdentifierType().getUuid());

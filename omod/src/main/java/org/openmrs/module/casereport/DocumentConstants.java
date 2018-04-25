@@ -25,6 +25,8 @@ public final class DocumentConstants {
 	
 	public static final String GP_OPENHIM_CLIENT_PASSWORD = MODULE_ID + ".openHIMClientPassword";
 	
+	public static final String GP_ID_MAPPINGS = MODULE_ID + ".identifierTypeMappings";
+	
 	public static final String OID_PREFIX = "2.25.";
 	
 	public static final String CONFIDENTIALITY_N = "N";

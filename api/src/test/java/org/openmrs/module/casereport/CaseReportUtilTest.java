@@ -56,7 +56,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	private PatientService patientService;
 	
 	@Autowired
-    private SchedulerService schedulerService;
+	private SchedulerService schedulerService;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -422,7 +422,6 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		adminService.saveGlobalProperty(gp);
 		final Integer patientId = 8;
 		Patient patient = patientService.getPatient(patientId);
-		patient.getPatientIdentifier().setIdentifierType(CaseReportUtil.getCaseReportIdType());
 		assertEquals(0, service.getSubmittedCaseReports(patient).size());
 		assertNull(service.getCaseReportByPatient(patient));
 		
