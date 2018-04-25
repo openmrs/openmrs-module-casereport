@@ -242,9 +242,9 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the HIE identifier mapped to the specified patient identifier type
+	 * Gets the HIE identifier mapped to the patient identifier type with the specified uuid
 	 *
-	 * @return the mapped HIE identifier
+	 * @return the OID of mapped HIE identifier
 	 */
 	public static String getMappedHieIdentifier(String idTypeUuid) {
 		String mappingsStr = Context.getAdministrationService().getGlobalProperty(DocumentConstants.GP_ID_MAPPINGS);
