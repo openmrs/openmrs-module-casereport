@@ -40,4 +40,10 @@
             ${ ui.message("casereport.configure.label") }
         </div>
     </a>
+    <a class="button app big" href="${ ui.pageLink("casereport", "identifierMappings") }">
+        <div class="task">
+            <i class="icon-cog"></i>
+            ${ ui.message("casereport.identifierMappings.label") }
+        </div>
+    </a>
 </div>

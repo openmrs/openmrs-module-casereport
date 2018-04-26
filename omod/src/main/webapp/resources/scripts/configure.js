@@ -62,6 +62,8 @@ angular.module("casereports.configure", [
                     'the client registry e.g. a universal identifier of a patient identifier domain in case of OpenEMPI'
             };
 
+            var hiddenProps = ['casereport.identifierTypeMappings'];
+
             PatientIdentifierTypeService.getPatientIdentifierTypes().then(function(results){
                 $scope.identifierTypes = results;
             });
@@ -73,8 +75,9 @@ angular.module("casereports.configure", [
             SystemSettingService.getSystemSettings(params).then(function(results){
                 var ret = [];
                 for(var i in results){
-                    var r = results[i];
-                    if('casereport.mandatory' == r.property || 'casereport.started' == r.property) {
+                    var r = results[i];console.log(hiddenProps.indexOf(r.property));
+                    if('casereport.mandatory' == r.property || 'casereport.started' == r.property
+                        || hiddenProps.indexOf(r.property) > -1) {
                         continue;
                     }
                     ret.push(r);

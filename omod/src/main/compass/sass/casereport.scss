@@ -210,6 +210,14 @@ td.casereport-focus-element {
   color: #A52A2A;
 }
 
+#casereport-idMapping-table tr td {
+  background-color: white; border: 0;
+}
+
+#casereport-idMapping-table tr th {
+  background-color: $bodyBackground; border: 0;
+}
+
 /*
  * Apparently the bootstrap.css file duplicates some CSS classes in the RA
  * which can mess up the rendering of a page when we include it, we need to override
