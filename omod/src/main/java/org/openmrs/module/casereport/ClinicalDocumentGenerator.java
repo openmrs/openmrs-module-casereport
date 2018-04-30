@@ -224,8 +224,8 @@ public final class ClinicalDocumentGenerator {
 		PatientRole patientRole = new PatientRole();
 		patientRole.setPatient(patient);
 		Object id = form.getPatientIdentifier().getValue();
-		Object idType = form.getIdentifierType().getValue();
-		patientRole.setId(SET.createSET(new II(idType.toString(), id.toString())));
+		String openHieId = DocumentUtil.getMappedHieIdentifier(form.getIdentifierType().getUuid());
+		patientRole.setId(SET.createSET(new II(openHieId, id.toString())));
 		patientRole.setProviderOrganization(createOrganization(form.getAssigningAuthorityId(),
 		    form.getAssigningAuthorityName()));
 		rt.setPatientRole(patientRole);

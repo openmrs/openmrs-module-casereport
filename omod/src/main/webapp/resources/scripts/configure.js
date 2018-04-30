@@ -51,7 +51,7 @@ angular.module("casereports.configure", [
             var settingDescrMap = {
                 'casereport.autoSubmitProviderUuid': 'The provider to set as the submitter of automatically ' +
                     'submitted case reports, must be for a provider account that is either linked to a person ' +
-                    'record or has a name with at least 2 name fields specified ',
+                    'record or has a name with at least 2 name fields specified',
 
                 'casereport.confidentialityCode': 'The code specifying the level of confidentiality of the CDA document'
             };
