@@ -43,10 +43,9 @@ angular.module("casereports.configure", [
 
             var settingPropertyMap = {
                 'casereport.autoSubmitProviderUuid': 'Auto Submit Provider',
-                'casereport.identifierTypeUuid': 'Enterprise Identifier Type',
                 'casereport.openHIMClientId': 'OpenHIM Client Id',
                 'casereport.openHIMClientPassword': 'OpenHIM Client Password',
-                'casereport.openHIMUrl': 'OpenHIM URL '
+                'casereport.openHIMUrl': 'OpenHIM URL'
             };
 
             var settingDescrMap = {
@@ -54,12 +53,7 @@ angular.module("casereports.configure", [
                     'submitted case reports, must be for a provider account that is either linked to a person ' +
                     'record or has a name with at least 2 name fields specified ',
 
-                'casereport.confidentialityCode': 'The code specifying the level of confidentiality of the CDA document',
-
-                'casereport.identifierTypeUuid': 'The identifier type for the patient identifier to use when ' +
-                    'submitting a report, if the report is getting submitted to the health information exchange, ' +
-                    'the name of the identifier type must match a unique identifier of a patient identifier domain in ' +
-                    'the client registry e.g. a universal identifier of a patient identifier domain in case of OpenEMPI'
+                'casereport.confidentialityCode': 'The code specifying the level of confidentiality of the CDA document'
             };
 
             var hiddenProps = ['casereport.identifierTypeMappings'];
