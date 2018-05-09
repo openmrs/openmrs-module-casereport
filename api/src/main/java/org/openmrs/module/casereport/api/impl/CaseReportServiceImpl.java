@@ -155,7 +155,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 * @See CaseReportService#saveCaseReport(CaseReport)
 	 */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public CaseReport saveCaseReport(CaseReport caseReport) throws APIException {
 		return dao.saveCaseReport(caseReport);
 	}
@@ -164,7 +164,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 * @See CaseReportService#submitCaseReport(CaseReport,List, User)
 	 */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public CaseReport submitCaseReport(CaseReport caseReport) throws APIException {
 		
 		if (caseReport.isVoided()) {
@@ -272,7 +272,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 * @See CaseReportService#dismissCaseReport(CaseReport)
 	 */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public CaseReport dismissCaseReport(CaseReport caseReport) throws APIException {
 		if (caseReport.isVoided()) {
 			throw new APIException("Cannot dismiss a voided case report");
@@ -292,7 +292,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 * @See CaseReportService#voidCaseReport(CaseReport,String)
 	 */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public CaseReport voidCaseReport(CaseReport caseReport, String voidReason) throws APIException {
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
@@ -301,7 +301,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 	 * @See CaseReportService#unvoidCaseReport(CaseReport)
 	 */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public CaseReport unvoidCaseReport(CaseReport caseReport) throws APIException {
 		return Context.getService(CaseReportService.class).saveCaseReport(caseReport);
 	}
