@@ -21,7 +21,6 @@
     ui.includeJavascript("uicommons", "filters/display.js")
     ui.includeJavascript("uicommons", "services/systemSettingService.js")
     ui.includeJavascript("uicommons", "services/providerService.js")
-    ui.includeJavascript("uicommons", "services/patientIdentifierTypeService.js")
     ui.includeJavascript("casereport", "configure.js");
 
     ui.includeCss("casereport", "casereport.css");
@@ -82,15 +81,6 @@
                             <option ng-repeat="conf in confidentialityCodes" value="{{ conf.value }}"
                                     ng-selected="conf.value == setting.value">
                                 {{ conf.label }}
-                            </option>
-                        </select>
-                        <select ng-switch-when="casereport.identifierTypeUuid"
-                                name="{{ setting.property }}" ng-model="settings[\$index].value"
-                                ng-required="isRequired(setting)">
-                            <option value="" ng-disabled="true"></option>
-                            <option ng-repeat="iType in identifierTypes" value="{{ iType.uuid }}"
-                                    ng-selected="iType.uuid == setting.value">
-                                {{ iType | omrs.display }}
                             </option>
                         </select>
                         <input ng-switch-when="casereport.openHIMClientPassword" name="{{ setting.property }}"

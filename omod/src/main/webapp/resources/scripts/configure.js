@@ -11,26 +11,23 @@
 angular.module("casereports.configure", [
         "ngSanitize",
         "systemSettingService",
-        "patientIdentifierTypeService",
         "providerService",
         "uicommons.filters",
         "uicommons.common.error"
     ])
 
     .controller("ConfigController", ["$scope", "SystemSettingService", "SystemSetting",
-        "PatientIdentifierTypeService", "ProviderService",
+        "ProviderService",
 
-        function ($scope, SystemSettingService, SystemSetting, PatientIdentifierTypeService, ProviderService) {
+        function ($scope, SystemSettingService, SystemSetting, ProviderService) {
             $scope.settings;
-            $scope.identifierTypes;
             $scope.providers;
 
             $scope.optionsSettings = [
                 'casereport.autoSubmitProviderUuid',
+                'casereport.enableCors',
                 'casereport.healthCareFacilityTypeDisplayName',
-                'casereport.practiceSettingDisplayName',
-                'casereport.openHIMClientId',
-                'casereport.openHIMClientPassword'
+                'casereport.practiceSettingDisplayName'
             ];
 
             $scope.confidentialityCodes = [
@@ -57,10 +54,6 @@ angular.module("casereports.configure", [
             };
 
             var hiddenProps = ['casereport.identifierTypeMappings'];
-
-            PatientIdentifierTypeService.getPatientIdentifierTypes().then(function(results){
-                $scope.identifierTypes = results;
-            });
 
             ProviderService.getProviders().then(function(results){
                 $scope.providers = results;
