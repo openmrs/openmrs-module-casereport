@@ -78,6 +78,8 @@ angular.module("casereports.submitted", [
         function($scope, submittedDocument){
 
             $scope.cdaDocument = beautifyXml(submittedDocument);
+            //Append the root closing tag since it's discarded from the last token when beautifying the doc
+            $scope.cdaDocument += ("<span class='casereport-element'>&lt;/ClinicalDocument&gt;</span>\n");
 
             function beautifyXml(xmlDoc){
                 //Getting fancy with some cool decoration of the xml doc
