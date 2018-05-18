@@ -77,9 +77,41 @@ angular.module("casereports.submitted", [
 
         function($scope, submittedDocument){
 
+            $scope.cdaContainerId = 'casereport-document-panel';
+            $scope.cda = submittedDocument;
             $scope.cdaDocument = beautifyXml(submittedDocument);
             //Append the root closing tag since it's discarded from the last token when beautifying the doc
             $scope.cdaDocument += ("<span class='casereport-element'>&lt;/ClinicalDocument&gt;</span>\n");
+
+            $scope.downloadCdaDoc = function(){
+                var blob = new Blob([ $scope.cda.contents], { type : 'application/xml;charset=utf-8' });
+                saveAs(blob, "cda.xml");
+            }
+
+            $scope.selectCdaDoc = function(){
+                if (document.selection) { // IE
+                    var range = document.body.createTextRange();
+                    range.moveToElementText(document.getElementById($scope.cdaContainerId ));
+                    range.select();
+                } else if (window.getSelection) {
+                    var range = document.createRange();
+                    range.selectNode(document.getElementById($scope.cdaContainerId ));
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                }
+            }
+
+            $scope.copyCdaDoc = function(){
+                $scope.selectCdaDoc();
+                try {
+                    var copied = document.execCommand('copy');
+                    if (!copied) {
+                        alert('Failed to copy to the document contents to the clipboard!');
+                    }
+                } catch (err) {
+                    alert("Ooops! Looks like your browser doesn't support this feature, please try another browser");
+                }
+            }
 
             function beautifyXml(xmlDoc){
                 //Getting fancy with some cool decoration of the xml doc
@@ -154,7 +186,9 @@ angular.module("casereports.submitted", [
 
                 return cda;
             }
+
         }
+        
     ])
 
     .filter('mainFilter', function ($filter) {
