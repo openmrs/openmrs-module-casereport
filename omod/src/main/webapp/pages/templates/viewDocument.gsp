@@ -13,21 +13,26 @@
 <h2>${ui.message('casereport.submitted.document')}</h2>
 
 <br />
-<div class="button-group">
-    <label class="button" ui-sref="list">
-        <i class="icon-chevron-left edit-action" title="${ui.message("general.back")}"></i>
-    </label>
-    <label class="button" ng-click="downloadCdaDoc()">
-        <i class="icon-download-alt edit-action" title="${ui.message("general.download")}"></i>
-    </label>
-    <label class="button" ng-click="selectCdaDoc()" ng-show="false">
-        <i class="icon-check edit-action" title="${ui.message("casereport.selectAll")}"></i>
-    </label>
-    <label class="button" ng-click="copyCdaDoc()">
-        <i class="icon-copy edit-action" title="${ui.message("casereport.copy")}"></i>
-    </label>
+<div class="button-group right">
     <label class="button" onclick="javascript:window.open('http://brynlewis.org/challenge/index.htm', '_blank');">
-        <i class="icon-external-link edit-action" title="${ui.message("casereport.openCdaViewer")}"></i>
+        <i class="icon-external-link edit-action"></i> ${ui.message("casereport.cdaViewer")}
+    </label>
+    <label class="button" onclick="javascript:window.open('https://www.lantanagroup.com/validator/Validator', '_blank');">
+        <i class="icon-external-link edit-action"></i> ${ui.message("casereport.cdaValidator")}
+    </label>
+</div>
+<div class="button-group">
+    <label class="button" ui-sref="list" title="${ui.message("general.back")}">
+        <i class="icon-chevron-left edit-action"></i>
+    </label>
+    <label class="button" ng-click="downloadCdaDoc()" title="${ui.message("general.download")}">
+        <i class="icon-download-alt edit-action"></i>
+    </label>
+    <label class="button" ng-click="selectCdaDoc()" title="${ui.message("casereport.selectAll")}" ng-show="false">
+        <i class="icon-check edit-action"></i>
+    </label>
+    <label class="button" ng-click="copyCdaDoc()" title="${ui.message("casereport.copy")}">
+        <i class="icon-copy edit-action"></i>
     </label>
 </div>
 <br />

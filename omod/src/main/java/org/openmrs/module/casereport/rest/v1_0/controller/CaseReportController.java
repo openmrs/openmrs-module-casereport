@@ -20,6 +20,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.openmrs.api.APIException;
@@ -45,6 +47,8 @@ import org.w3c.dom.Document;
 @Controller
 @RequestMapping("/rest/" + CaseReportRestConstants.REST_NAMESPACE)
 public class CaseReportController extends MainResourceController {
+	
+	protected final Log log = LogFactory.getLog(getClass());
 	
 	@Autowired
 	private CaseReportService service;
@@ -77,7 +81,9 @@ public class CaseReportController extends MainResourceController {
 				Object o = webServiceTemplate.getUnmarshaller().unmarshal(new StringSource(pnrDoc));
 				byte[] bytes = ((JAXBElement<ProvideAndRegisterDocumentSetRequestType>) o).getValue().getDocument().get(0)
 				        .getValue();
-				DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(true);
+				DocumentBuilder db = factory.newDocumentBuilder();
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
