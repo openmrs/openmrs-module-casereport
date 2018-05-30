@@ -1,0 +1,27 @@
+{
+  "name": "HIV Rapid Recency Assay",
+  "concept": "CIEL_165089",
+  "description": "",
+  "repeatInterval": 604800, /* 7 days (in seconds) */
+  "conceptMappings": [
+    "CIEL_165089", /* HIV Rapid Recency Assay */
+    "CIEL_165090"   /* Recent */
+  ],
+  "sql": "
+
+  /*
+   * Name: HIV Rapid Recency Assay
+   * Query Type: SQL Cohort Query
+   * Description: Patients diagnosed with HIV and the infections have been confirmed as recent
+   * Assumption: Database has only HIV patients
+   * HIV Case Reporting Module has already excluded patients previously added to the list.
+   */
+
+  SELECT person_id
+  FROM obs
+  WHERE
+  date(date_created) >= date(:lastExecutionTime)
+  AND (concept_id = :CIEL_165089 AND value_coded = :CIEL_165090)
+  AND not voided;
+  "
+}

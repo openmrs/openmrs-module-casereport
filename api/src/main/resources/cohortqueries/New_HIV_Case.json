@@ -13,7 +13,6 @@
    * Name:New HIV Case
    * Query Type: SQL Cohort Query
    * Description: Patients newly diagnosed with HIV
-   * Assumption: Database has only HIV patients
    * HIV Case Reporting Module has already excluded patients previously added to the list.
    */
 
