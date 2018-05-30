@@ -73,6 +73,22 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportValidator#validate(Object,Errors)
+	 * @verifies fail for a new item if the patient already has an existing report item
+	 */
+	@Test
+	public void validate_shouldFailForANewItemIfThePatientAlreadyHasAnExistingReportItem() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		Patient patient = Context.getPatientService().getPatient(6);
+		CaseReport caseReport = new CaseReport(patient, "HIV Patient Died");
+		Errors errors = new BindException(caseReport, "casereport");
+		validator.validate(caseReport, errors);
+		assertTrue(errors.hasErrors());
+		assertEquals(1, errors.getGlobalErrors().size());
+		assertEquals("casereports.error.patient.alreadyHasQueueItem", errors.getGlobalErrors().get(0).getCode());
+	}
+	
+	/**
+	 * @see CaseReportValidator#validate(Object,Errors)
 	 * @verifies pass for a valid case report
 	 */
 	@Test
@@ -82,21 +98,5 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 		Errors errors = new BindException(caseReport, "casereport");
 		validator.validate(caseReport, errors);
 		assertFalse(errors.hasErrors());
-	}
-	
-	/**
-	 * @see CaseReportValidator#validate(Object,Errors)
-	 * @verifies fail for a new item the patient already has an existing report item
-	 */
-	@Test
-	public void validate_shouldFailForANewItemThePatientAlreadyHasAnExistingReportItem() throws Exception {
-		executeDataSet("moduleTestData-initial.xml");
-		Patient patient = Context.getPatientService().getPatient(6);
-		CaseReport caseReport = new CaseReport(patient, "HIV Patient Died");
-		Errors errors = new BindException(caseReport, "casereport");
-		validator.validate(caseReport, errors);
-		assertTrue(errors.hasErrors());
-		assertEquals(1, errors.getGlobalErrors().size());
-		assertEquals("casereports.error.patient.alreadyHasQueueItem", errors.getGlobalErrors().get(0).getCode());
 	}
 }
