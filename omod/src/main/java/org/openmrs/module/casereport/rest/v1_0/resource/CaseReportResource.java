@@ -154,7 +154,7 @@ public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 			triggerNames[index] = t.getName();
 			index++;
 		}
-		caseReport = CaseReportUtil.createReportIfNecessary(caseReport.getPatient(), triggerNames);
+		caseReport = CaseReportUtil.createReportIfNecessary(caseReport.getPatient(), false, triggerNames);
 		if (caseReport == null) {
 			throw new CaseReportRestException(CaseReportConstants.MODULE_ID + ".error.trigger.duplicate",
 			        new Object[] { triggerNames[0] });

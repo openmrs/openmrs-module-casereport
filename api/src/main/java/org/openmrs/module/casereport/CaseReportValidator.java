@@ -39,7 +39,8 @@ public class CaseReportValidator implements Validator {
 	 * @should fail if the case report object is null
 	 * @should fail if the patient is null
 	 * @should fail if the report has no trigger added
-	 * @should fail for a new item the patient already has an existing report item
+	 * @should fail for a new item if the patient already has an existing report item
+	 * @should pass for auto submit item with unique trigger and patient has existing item
 	 * @should pass for a valid case report
 	 */
 	@Override
@@ -52,7 +53,8 @@ public class CaseReportValidator implements Validator {
 		ValidationUtils.rejectIfEmpty(errors, "patient", "casereports.error.patient.required");
 		if (!errors.hasErrors()) {
 			CaseReportService service = Context.getService(CaseReportService.class);
-			if (caseReport.getId() == null && service.getCaseReportByPatient(caseReport.getPatient()) != null) {
+			if (caseReport.getId() == null && !caseReport.getAutoSubmitted()
+			        && service.getCaseReportByPatient(caseReport.getPatient()) != null) {
 				errors.reject("casereports.error.patient.alreadyHasQueueItem");
 			}
 		}

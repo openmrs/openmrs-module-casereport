@@ -11,6 +11,7 @@ package org.openmrs.module.casereport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
@@ -28,6 +29,9 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	public CaseReportValidator validator;
+	
+	@Autowired
+	public CaseReportService service;
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -79,12 +83,36 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	public void validate_shouldFailForANewItemIfThePatientAlreadyHasAnExistingReportItem() throws Exception {
 		executeDataSet("moduleTestData-initial.xml");
 		Patient patient = Context.getPatientService().getPatient(6);
-		CaseReport caseReport = new CaseReport(patient, "HIV Patient Died");
+		CaseReport existing = service.getCaseReport(2);
+		final String trigger = "HIV Patient Died";
+		assertNotNull(existing);
+		assertNotNull(existing.getCaseReportTriggerByName(trigger));
+		CaseReport caseReport = new CaseReport(patient, trigger);
 		Errors errors = new BindException(caseReport, "casereport");
 		validator.validate(caseReport, errors);
 		assertTrue(errors.hasErrors());
 		assertEquals(1, errors.getGlobalErrors().size());
 		assertEquals("casereports.error.patient.alreadyHasQueueItem", errors.getGlobalErrors().get(0).getCode());
+	}
+	
+	/**
+	 * @see CaseReportValidator#validate(Object,Errors)
+	 * @verifies
+	 * @should pass for auto submit item with unique trigger and patient has existing item
+	 */
+	@Test
+	public void validate_passForAutoSubmitItemWithUniqueTriggerAndPatientHasExistingItem() throws Exception {
+		executeDataSet("moduleTestData-initial.xml");
+		Patient patient = Context.getPatientService().getPatient(6);
+		CaseReport existing = service.getCaseReport(2);
+		final String trigger = "HIV Patient Died";
+		assertNotNull(existing);
+		assertNotNull(existing.getCaseReportTriggerByName(trigger));
+		CaseReport caseReport = new CaseReport(patient, trigger);
+		caseReport.setAutoSubmitted(true);
+		Errors errors = new BindException(caseReport, "casereport");
+		validator.validate(caseReport, errors);
+		assertFalse(errors.hasErrors());
 	}
 	
 	/**

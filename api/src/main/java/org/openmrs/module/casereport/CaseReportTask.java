@@ -33,7 +33,7 @@ public class CaseReportTask extends AbstractTask {
 	public void execute() {
 		if (!isExecuting) {
 			if (log.isDebugEnabled()) {
-				log.debug("Starting case report task ...");
+				log.debug("Executing case report task...");
 			}
 			
 			startExecuting();
@@ -43,15 +43,15 @@ public class CaseReportTask extends AbstractTask {
 				if (StringUtils.isBlank(trigger)) {
 					throw new APIException("The Trigger Name property is required for a Case Report Task");
 				}
-
+				
 				CaseReportUtil.executeTask(getTaskDefinition());
 				
 				if (log.isDebugEnabled()) {
-					log.debug("Case report task completed successfully ...");
+					log.debug("Case report task executed successfully!");
 				}
 			}
 			catch (Exception e) {
-				log.error("Error while running case report task:", e);
+				log.error("Error while running case report task: ", e);
 			}
 			finally {
 				stopExecuting();

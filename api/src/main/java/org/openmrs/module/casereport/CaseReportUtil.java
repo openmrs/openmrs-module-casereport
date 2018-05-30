@@ -298,7 +298,7 @@ public class CaseReportUtil {
 		}
 		SqlCohortDefinition definition = getSqlCohortDefinition(triggerName);
 		if (definition == null) {
-			throw new APIException("No sql cohort query was found that matches the name:" + triggerName);
+			throw new APIException("No sql cohort query was found that matches the name: " + triggerName);
 		}
 		EvaluationContext evaluationContext = new EvaluationContext();
 		Map<String, Object> params = new HashMap<>();
@@ -334,16 +334,20 @@ public class CaseReportUtil {
 		for (Integer patientId : cohort.getMemberIds()) {
 			Patient patient = ps.getPatient(patientId);
 			if (patient == null) {
-				throw new APIException("No patient found with patientId:" + patientId);
+				throw new APIException("No patient found with patientId: " + patientId);
 			}
-			CaseReport caseReport = createReportIfNecessary(patient, triggerName);
+			
+			boolean autoSubmit = false;
+			if ("true".equals(taskDefinition.getProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY))) {
+				autoSubmit = true;
+			}
+			CaseReport caseReport = createReportIfNecessary(patient, autoSubmit, triggerName);
 			if (caseReport != null) {
-				//We can't auto submit this report because the surveillance officer needs
+				//We can't auto submit an existing report because the surveillance officer needs
 				//to take a look at the other triggers to be included in the existing report
-				if (caseReport.getId() == null) {
-					if ("true".equals(taskDefinition.getProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY))) {
-						autoSubmitReports.add(caseReport);
-					}
+				if (caseReport.getId() == null && autoSubmit) {
+					caseReport.setAutoSubmitted(true);
+					autoSubmitReports.add(caseReport);
 				}
 				caseReportService.saveCaseReport(caseReport);
 			} else {
@@ -356,7 +360,6 @@ public class CaseReportUtil {
 			try {
 				CaseReportForm form = new CaseReportForm(caseReport);
 				caseReport.setReportForm(new ObjectMapper().writeValueAsString(form));
-				caseReport.setAutoSubmitted(true);
 				caseReportService.submitCaseReport(caseReport);
 			}
 			catch (Throwable t) {
@@ -372,20 +375,24 @@ public class CaseReportUtil {
 	 * specified triggers then nothing happens.
 	 * 
 	 * @param patient the patient to create a case report for
+	 * @param createNew Specifies if a new case report MUST be created
 	 * @param triggerNames the triggers to add
 	 * @return the created trigger or none was created or if all the triggers are duplicates
 	 */
-	public static CaseReport createReportIfNecessary(Patient patient, String... triggerNames) {
-		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReportByPatient(patient);
-		if (caseReport == null) {
+	public static CaseReport createReportIfNecessary(Patient patient, boolean createNew, String... triggerNames) {
+		CaseReport caseReport;
+		CaseReport existingCR = Context.getService(CaseReportService.class).getCaseReportByPatient(patient);
+		if (createNew || existingCR == null) {
 			caseReport = new CaseReport();
 			caseReport.setPatient(patient);
+		} else {
+			caseReport = existingCR;
 		}
 		
 		int addedTriggerCount = 0;
 		for (String t : triggerNames) {
 			if (StringUtils.isNotBlank(t)) {
-				if (caseReport.getCaseReportTriggerByName(t) == null) {
+				if (existingCR == null || existingCR.getCaseReportTriggerByName(t) == null) {
 					caseReport.addTrigger(new CaseReportTrigger(t));
 					addedTriggerCount++;
 				}
@@ -394,7 +401,7 @@ public class CaseReportUtil {
 			}
 		}
 		
-		if (caseReport.getId() != null && addedTriggerCount == 0) {
+		if (existingCR != null && addedTriggerCount == 0) {
 			//This patient had a queue item and all the 'new' triggers were duplicates
 			//Therefore don't create duplicates for the same patient
 			return null;

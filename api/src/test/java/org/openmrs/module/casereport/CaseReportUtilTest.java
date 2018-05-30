@@ -12,6 +12,8 @@ package org.openmrs.module.casereport;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -290,7 +292,7 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 	public void executeTask_shouldFailIfNoSqlCohortQueryMatchesTheSpecifiedTriggerName() throws Exception {
 		final String name = "some name that doesn't exist";
 		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("No sql cohort query was found that matches the name:" + name));
+		expectedException.expectMessage(equalTo("No sql cohort query was found that matches the name: " + name));
 		TaskDefinition taskDefinition = new TaskDefinition();
 		taskDefinition.setProperty(CaseReportConstants.TRIGGER_NAME_TASK_PROPERTY, name);
 		CaseReportUtil.executeTask(taskDefinition);
@@ -443,4 +445,59 @@ public class CaseReportUtilTest extends BaseModuleContextSensitiveTest {
 		assertEquals(provider.getIdentifier(), submittedForm.getSubmitter().getValue());
 		assertEquals(name, report.getReportTriggers().iterator().next().getName());
 	}
+	
+	/**
+	 * @see CaseReportUtil#executeTask(TaskDefinition)
+	 * @throws Exception
+	 */
+	@Test
+	public void executeTask_shouldCreateAndAutoSubmitANewReportItemForNewTriggerWhenThePatientAlreadyHasAQueueItem()
+	    throws Exception {
+		executeDataSet(XML_DATASET);
+		executeDataSet(XML_OTHER_DATASET);
+		final String name = "HIV Patient Died";
+		//set the implementation id for test purposes
+		AdministrationService adminService = Context.getAdministrationService();
+		String implementationIdGpValue = "<implementationId implementationId=\"implId\">"
+		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>"
+		        + "   <name>implName</name>" + "</implementationId>";
+		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
+		adminService.saveGlobalProperty(gp);
+		Provider provider = new Provider();
+		provider.setIdentifier("some provider id");
+		provider.setName("Some Name");
+		Context.getProviderService().saveProvider(provider);
+		gp = new GlobalProperty(CaseReportConstants.GP_AUTO_SUBMIT_PROVIDER_UUID, provider.getUuid());
+		adminService.saveGlobalProperty(gp);
+		final Integer patientId = 2;
+		Patient patient = patientService.getPatient(patientId);
+		List<CaseReport> initSubmittedReports = service.getSubmittedCaseReports(patient);
+		int submittedReportCount = initSubmittedReports.size();
+		CaseReport cr = service.getCaseReportByPatient(patient);
+		assertNotNull(cr);
+		assertTrue(cr.getReportTriggers().size() > 0);
+		for (CaseReportTrigger crt : cr.getReportTriggers()) {
+			assertNotEquals(name, crt.getName());
+		}
+		
+		SqlCohortDefinition def = CaseReportUtil.getSqlCohortDefinition(name);
+		def.setQuery("select patient_id from patient where patient_id = " + patientId);
+		DefinitionContext.saveDefinition(def);
+		TaskDefinition taskDefinition = schedulerService.getTaskByName(name);
+		taskDefinition.setProperty(CaseReportConstants.AUTO_SUBMIT_TASK_PROPERTY, "true");
+		
+		CaseReportUtil.executeTask(taskDefinition);
+		
+		assertNotNull(service.getCaseReportByPatient(patient));
+		List<CaseReport> submittedReports = service.getSubmittedCaseReports(patient);
+		assertEquals(++submittedReportCount, submittedReports.size());
+		CaseReport report = submittedReports.get(0);
+		assertFalse(initSubmittedReports.contains(report));
+		assertTrue(report.getAutoSubmitted());
+		CaseReportForm submittedForm = new ObjectMapper().readValue(report.getReportForm(), CaseReportForm.class);
+		assertEquals(provider.getUuid(), submittedForm.getSubmitter().getUuid());
+		assertEquals(provider.getIdentifier(), submittedForm.getSubmitter().getValue());
+		assertEquals(name, report.getReportTriggers().iterator().next().getName());
+	}
+	
 }
