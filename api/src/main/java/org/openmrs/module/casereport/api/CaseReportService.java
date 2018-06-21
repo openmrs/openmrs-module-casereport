@@ -101,7 +101,6 @@ public interface CaseReportService extends OpenmrsService {
 	 * @should fail if the case report is voided
 	 * @should fail if the case report is already submitted
 	 * @should fail if the case report is already dismissed
-	 * @should overwrite the assigning authority id if submitter is set to authenticated user
 	 * @should submit the specified case report
 	 * @should call the registered submit event listeners
 	 * @should fail if no concept is linked to the trigger

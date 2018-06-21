@@ -269,24 +269,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
-	 * @verifies overwrite the assigning authority id if submitter is set to authenticated user
-	 */
-	@Test
-	public void submitCaseReport_shouldOverwriteTheAssigningAuthorityIdIfSubmitterIsSetToAuthenticatedUser()
-	    throws Exception {
-		executeDataSet(XML_OTHER_DATASET);
-		CaseReport cr = service.getCaseReport(1);
-		CaseReportForm form = new CaseReportForm(cr);
-		cr.setReportForm(mapper.writeValueAsString(form));
-		service.submitCaseReport(cr);
-		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-		Provider provider = Context.getProviderService()
-		        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next();
-		assertEquals(provider.getUuid(), savedForm.getSubmitter().getUuid());
-	}
-	
-	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport)
 	 * @verifies submit the specified case report
 	 */
 	@Test
