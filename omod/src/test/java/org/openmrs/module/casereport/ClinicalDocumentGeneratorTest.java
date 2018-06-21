@@ -51,8 +51,9 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		executeDataSet("moduleTestData-initial.xml");
 		executeDataSet("moduleTestData-other.xml");
 		executeDataSet("moduleTestData-HIE.xml");
-		final String implId = "Test_Impl";
-		final String implName = "Test_Name";
+		final String orgOID = "2.16.840.1.113883.3.7194.1.1";
+		final String orgExt = "12345";
+		final String orgName = "Dev Clinic";
 		
 		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReport(1);
 		Patient patient = caseReport.getPatient();
@@ -69,8 +70,6 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		Provider provider = Context.getProviderService().getProvider(1);
 		UuidAndValue submitter = new UuidAndValue(provider.getUuid(), provider.getIdentifier());
 		form.setSubmitter(submitter);
-		form.setAssigningAuthorityId(implId);
-		form.setAssigningAuthorityName(implName);
 		
 		ClinicalDocument clinicalDocument = new ClinicalDocumentGenerator(form).generate();
 		
@@ -81,7 +80,6 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 		        .parse(new ByteArrayInputStream(cdaOutput.toByteArray()));
 		
-		final String orgOID = "1.3.6.1.4.1.21367.2010.1.2";
 		assertEquals(orgOID, getAttribute(doc, "ClinicalDocument/id", "root"));
 		assertEquals(caseReport.getUuid(), getAttribute(doc, "ClinicalDocument/id", "extension"));
 		assertEquals(0, getAttribute(doc, "ClinicalDocument/effectiveTime", "value").indexOf("20160330000000.000"));
@@ -96,15 +94,15 @@ public class ClinicalDocumentGeneratorTest extends BaseModuleWebContextSensitive
 		assertEquals(patient.getGender(), getAttribute(doc, "//patient/administrativeGenderCode", "code"));
 		assertEquals(0, getAttribute(doc, "//patient/birthTime", "value").indexOf("19750408000000.000"));
 		assertEquals(orgOID, getAttribute(doc, "//providerOrganization/id", "root"));
-		assertEquals(implName, getElement(doc, "//providerOrganization/name"));
+		assertEquals(orgName, getElement(doc, "//providerOrganization/name"));
 		assertEquals(orgOID, getAttribute(doc, "//assignedAuthor/id", "root"));
 		assertEquals(provider.getIdentifier(), getAttribute(doc, "//assignedAuthor/id", "extension"));
 		assertEquals(provider.getPerson().getFamilyName(), getElement(doc, "//assignedPerson/name/family"));
 		assertEquals(provider.getPerson().getGivenName(), getElement(doc, "//assignedPerson/name/given"));
 		assertTrue(elementExists(doc, "//representedOrganization"));
 		assertEquals(orgOID, getAttribute(doc, "//representedCustodianOrganization/id", "root"));
-		assertEquals(implId, getAttribute(doc, "//representedCustodianOrganization/id", "extension"));
-		assertEquals(implName, getElement(doc, "//representedCustodianOrganization/name"));
+		assertEquals(orgExt, getAttribute(doc, "//representedCustodianOrganization/id", "extension"));
+		assertEquals(orgName, getElement(doc, "//representedCustodianOrganization/name"));
 		assertEquals(5, getCount(doc, "//text/list/item"));
 		assertEquals(2, getCount(doc, "//text/list/item[1]/list/item"));
 		assertTrue(elementContainsText(doc, "//text/list/item[2]", comments));

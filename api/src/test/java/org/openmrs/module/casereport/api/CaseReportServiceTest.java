@@ -31,7 +31,6 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.APIException;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.casereport.CaseReport;
@@ -39,12 +38,10 @@ import org.openmrs.module.casereport.CaseReportConstants;
 import org.openmrs.module.casereport.CaseReportForm;
 import org.openmrs.module.casereport.CaseReportTrigger;
 import org.openmrs.module.casereport.DemoListener;
-import org.openmrs.module.casereport.UuidAndValue;
 import org.openmrs.scheduler.SchedulerService;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.TestUtil;
-import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -272,63 +269,17 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * @see CaseReportService#submitCaseReport(CaseReport)
-	 * @verifies fail if submitter and openmrs impl id GP are not set
-	 */
-	@Test
-	public void submitCaseReport_shouldFailIfSubmitterAndOpenmrsImplIdGPAreNotSet() throws Exception {
-		executeDataSet(XML_OTHER_DATASET);
-		assertNull(Context.getAdministrationService().getImplementationId());
-		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Implementation id must be set to submit case reports if the submitter and "
-		        + "assigning authority id are not set"));
-		CaseReport cr = service.getCaseReport(1);
-		cr.setReportForm(mapper.writeValueAsString(new CaseReportForm(cr)));
-		service.submitCaseReport(cr);
-	}
-	
-	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport)
-	 * @verifies fail if assigningAuthorityId and openmrs impl id GP are not set
-	 */
-	@Test
-	public void submitCaseReport_shouldFailIfAssigningAuthorityIdAndOpenmrsImplIdGPAreNotSet() throws Exception {
-		executeDataSet(XML_OTHER_DATASET);
-		assertNull(Context.getAdministrationService().getImplementationId());
-		expectedException.expect(APIException.class);
-		expectedException.expectMessage(equalTo("Implementation id must be set to submit case reports if the submitter and "
-		        + "assigning authority id are not set"));
-		CaseReport cr = service.getCaseReport(1);
-		CaseReportForm form = new CaseReportForm(cr);
-		form.setSubmitter(new UuidAndValue("some uuid", "some system id"));
-		cr.setReportForm(mapper.writeValueAsString(form));
-		service.submitCaseReport(cr);
-	}
-	
-	/**
-	 * @see CaseReportService#submitCaseReport(CaseReport)
 	 * @verifies overwrite the assigning authority id if submitter is set to authenticated user
 	 */
 	@Test
 	public void submitCaseReport_shouldOverwriteTheAssigningAuthorityIdIfSubmitterIsSetToAuthenticatedUser()
 	    throws Exception {
 		executeDataSet(XML_OTHER_DATASET);
-		final String implId = "Test_Impl";
-		final String implName = "Some name";
-		//set the implementation id for test purposes
-		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId implementationId=\"" + implId + "\">"
-		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>" + "   <name>"
-		        + implName + "</name>" + "</implementationId>";
-		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
-		adminService.saveGlobalProperty(gp);
-		
 		CaseReport cr = service.getCaseReport(1);
 		CaseReportForm form = new CaseReportForm(cr);
-		form.setAssigningAuthorityId("some other id that will be overwritten");
 		cr.setReportForm(mapper.writeValueAsString(form));
 		service.submitCaseReport(cr);
 		CaseReportForm savedForm = mapper.readValue(cr.getReportForm(), CaseReportForm.class);
-		assertEquals(implId, savedForm.getAssigningAuthorityId());
 		Provider provider = Context.getProviderService()
 		        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next();
 		assertEquals(provider.getUuid(), savedForm.getSubmitter().getUuid());
@@ -340,23 +291,11 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void submitCaseReport_shouldSubmitTheSpecifiedCaseReport() throws Exception {
-		final String implId = "Test_Impl";
-		final String implName = "Some name";
-		//set the implementation id for test purposes
-		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId implementationId=\"" + implId + "\">"
-		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>" + "   <name>"
-		        + implName + "</name>" + "</implementationId>";
-		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
-		adminService.saveGlobalProperty(gp);
-		
 		CaseReport cr = service.getCaseReport(2);
 		CaseReportForm form = new ObjectMapper().readValue(cr.getReportForm(), CaseReportForm.class);
 		assertNull(form.getSubmitter());
 		assertNull(form.getSubmitter());
 		assertNull(form.getSubmitter());
-		assertNull(form.getAssigningAuthorityId());
-		assertNull(form.getAssigningAuthorityName());
 		assertNull(cr.getResolutionDate());
 		assertFalse(cr.isSubmitted());
 		
@@ -368,8 +307,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 		        .getProvidersByPerson(Context.getAuthenticatedUser().getPerson(), false).iterator().next();
 		assertEquals(provider.getUuid(), form.getSubmitter().getUuid());
 		assertEquals(provider.getIdentifier(), form.getSubmitter().getValue());
-		assertEquals(implId, form.getAssigningAuthorityId());
-		assertEquals(implName, form.getAssigningAuthorityName());
 	}
 	
 	/**
@@ -379,16 +316,6 @@ public class CaseReportServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void submitCaseReport_shouldCallTheRegisteredSubmitEventListeners() throws Exception {
 		executeDataSet(XML_OTHER_DATASET);
-		final String implId = "Test_Impl";
-		final String implName = "Some name";
-		//set the implementation id for test purposes
-		AdministrationService adminService = Context.getAdministrationService();
-		String implementationIdGpValue = "<implementationId implementationId=\"" + implId + "\">"
-		        + "   <passphrase>Some passphrase</passphrase>" + "   <description>Some descr</description>" + "   <name>"
-		        + implName + "</name>" + "</implementationId>";
-		GlobalProperty gp = new GlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_IMPLEMENTATION_ID, implementationIdGpValue);
-		adminService.saveGlobalProperty(gp);
-		
 		CaseReport cr = service.getCaseReport(1);
 		cr.setReportForm(new ObjectMapper().writeValueAsString(new CaseReportForm(cr)));
 		DemoListener listener = Context.getRegisteredComponent("demoListener", DemoListener.class);

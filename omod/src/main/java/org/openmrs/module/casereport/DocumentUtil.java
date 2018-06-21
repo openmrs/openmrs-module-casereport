@@ -104,12 +104,30 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the organisation oid global property
+	 * Gets the value of the organisation OID global property
 	 *
 	 * @return the organisation's OID
 	 */
 	public static String getOrganisationOID() {
 		return getGlobalProperty(DocumentConstants.GP_ORG_ID);
+	}
+	
+	/**
+	 * Gets the value of the organisation extension global property
+	 *
+	 * @return the organisation's extension
+	 */
+	public static String getOrganisationExtension() {
+		return getGlobalProperty(DocumentConstants.GP_ORG_EXT);
+	}
+	
+	/**
+	 * Gets the value of the organisation name global property
+	 *
+	 * @return the organisation's name
+	 */
+	public static String getOrganisationName() {
+		return getGlobalProperty(DocumentConstants.GP_ORG_NAME);
 	}
 	
 	/**
@@ -122,12 +140,12 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the id format format global property
+	 * Gets the value of the patient id format format global property
 	 * 
-	 * @return the id format
+	 * @return the patient id format
 	 */
-	public static String getIdFormat() {
-		return getGlobalProperty(DocumentConstants.GP_ID_FORMAT);
+	public static String getPatientIdFormat() {
+		return getGlobalProperty(DocumentConstants.GP_PATIENT_ID_FORMAT);
 	}
 	
 	/**

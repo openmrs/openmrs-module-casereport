@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.Concept;
-import org.openmrs.ImplementationId;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.User;
@@ -244,13 +243,6 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		
 		form.setSubmitter(new UuidAndValue(provider.getUuid(), provider.getIdentifier()));
 		
-		ImplementationId implId = Context.getAdministrationService().getImplementationId();
-		if (implId == null || StringUtils.isBlank(implId.getImplementationId())) {
-			throw new APIException("Implementation id must be set to submit case reports if the submitter and "
-			        + "assigning authority id are not set");
-		}
-		form.setAssigningAuthorityId(implId.getImplementationId());
-		form.setAssigningAuthorityName(implId.getName());
 		setProperty(caseReport, "status", Status.SUBMITTED);
 		setProperty(caseReport, "resolutionDate", new Date());
 		

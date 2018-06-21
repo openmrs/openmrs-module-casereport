@@ -80,10 +80,6 @@ public class CaseReportForm {
 	
 	private UuidAndValue submitter;
 	
-	private String assigningAuthorityId;
-	
-	private String assigningAuthorityName;
-	
 	private String comments;
 	
 	public CaseReportForm() {
@@ -383,22 +379,6 @@ public class CaseReportForm {
 	
 	public void setSubmitter(UuidAndValue submitter) {
 		this.submitter = submitter;
-	}
-	
-	public String getAssigningAuthorityId() {
-		return assigningAuthorityId;
-	}
-	
-	public void setAssigningAuthorityId(String assigningAuthorityId) {
-		this.assigningAuthorityId = assigningAuthorityId;
-	}
-	
-	public String getAssigningAuthorityName() {
-		return assigningAuthorityName;
-	}
-	
-	public void setAssigningAuthorityName(String assigningAuthorityName) {
-		this.assigningAuthorityName = assigningAuthorityName;
 	}
 	
 	public String getComments() {

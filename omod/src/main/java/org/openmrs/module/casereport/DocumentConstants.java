@@ -108,9 +108,13 @@ public final class DocumentConstants {
 	
 	public static final String PROV_ID_FORMAT = "%4$s^%3$s^%2$s^^^^^^&%1$s&ISO";
 	
-	public static final String GP_ID_FORMAT = GP_PREFIX + "idFormat";
+	public static final String GP_PATIENT_ID_FORMAT = GP_PREFIX + "patientIdFormat";
 	
-	public static final String GP_ORG_ID = GP_PREFIX + "organisationIdentifier";
+	public static final String GP_ORG_ID = GP_PREFIX + "organisationOID";
+	
+	public static final String GP_ORG_EXT = GP_PREFIX + "organisationExtension";
+	
+	public static final String GP_ORG_NAME = GP_PREFIX + "organisationName";
 	
 	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFIX + "confidentialityCode";
 	

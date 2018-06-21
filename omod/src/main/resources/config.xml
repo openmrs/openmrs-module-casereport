@@ -100,7 +100,7 @@
         <description>The OpenHIM client password, to be set if basic authentication is required</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.idFormat</property>
+        <property>${project.parent.artifactId}.patientIdFormat</property>
         <defaultValue>%2$s^^^&amp;%1$s&amp;ISO</defaultValue>
         <description>
             Specifies the format to use for identifiers in the CDA document, %1$s = Root (or domain)
@@ -162,6 +162,14 @@
     <globalProperty>
         <property>${project.parent.artifactId}.organisationIdentifier</property>
         <description>Identifier of the entity that submits case report documents, MUST be an OID</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.organisationExtension</property>
+        <description>Extension of the entity that submits case report documents</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.organisationName</property>
+        <description>Name of the entity that submits case report documents</description>
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.enableCors</property>

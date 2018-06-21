@@ -226,8 +226,7 @@ public final class ClinicalDocumentGenerator {
 		Object id = form.getPatientIdentifier().getValue();
 		String openHieId = DocumentUtil.getMappedHieIdentifier(form.getIdentifierType().getUuid());
 		patientRole.setId(SET.createSET(new II(openHieId, id.toString())));
-		patientRole.setProviderOrganization(createOrganization(form.getAssigningAuthorityId(),
-		    form.getAssigningAuthorityName()));
+		patientRole.setProviderOrganization(createOrganization());
 		rt.setPatientRole(patientRole);
 		
 		return rt;
@@ -236,15 +235,13 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates an Organization
 	 *
-	 * @param id the identifier of the organisation
-	 * @param name the name of the organisation
 	 * @return an Organisation object
 	 */
-	private Organization createOrganization(String id, String name) {
+	private Organization createOrganization() {
 		Organization org = new Organization();
-		org.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), id)));
+		org.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), DocumentUtil.getOrganisationExtension())));
 		org.setName(SET.createSET(new ON()));
-		org.getName().get(0).getParts().add(new ENXP(name));
+		org.getName().get(0).getParts().add(new ENXP(DocumentUtil.getOrganisationName()));
 		
 		return org;
 	}
@@ -263,8 +260,7 @@ public final class ClinicalDocumentGenerator {
 		PersonName personName = DocumentUtil.getPersonNameForProvider(identifier);
 		Person person = createPerson(personName);
 		assignedAuthor.setAssignedAuthorChoice(person);
-		assignedAuthor.setRepresentedOrganization(createOrganization(form.getAssigningAuthorityId(),
-		    form.getAssigningAuthorityName()));
+		assignedAuthor.setRepresentedOrganization(createOrganization());
 		author.setAssignedAuthor(assignedAuthor);
 		
 		return author;
@@ -297,10 +293,10 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private Custodian createCustodian() {
 		CustodianOrganization custodianOrganization = new CustodianOrganization();
-		custodianOrganization
-		        .setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), form.getAssigningAuthorityId())));
+		custodianOrganization.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), DocumentUtil
+		        .getOrganisationExtension())));
 		custodianOrganization.setName(new ON());
-		custodianOrganization.getName().getParts().add(new ENXP(form.getAssigningAuthorityName()));
+		custodianOrganization.getName().getParts().add(new ENXP(DocumentUtil.getOrganisationName()));
 		AssignedCustodian assignedCustodian = new AssignedCustodian(custodianOrganization);
 		
 		return new Custodian(assignedCustodian);

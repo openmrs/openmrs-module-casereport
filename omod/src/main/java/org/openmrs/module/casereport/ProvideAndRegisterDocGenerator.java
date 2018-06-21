@@ -100,17 +100,18 @@ public final class ProvideAndRegisterDocGenerator {
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_LANGUAGE_CODE, DocumentConstants.LANGUAGE_CODE);
 		AdministrationService as = Context.getAdministrationService();
 		String openHieId = DocumentUtil.getMappedHieIdentifier(form.getIdentifierType().getUuid());
-		String patientId = String.format(DocumentUtil.getIdFormat(), openHieId, form.getPatientIdentifier().getValue()
-		        .toString());
+		String patientId = String.format(DocumentUtil.getPatientIdFormat(), openHieId, form.getPatientIdentifier()
+		        .getValue().toString());
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, patientId);
 		
 		String[] sourcePatientInfo = createPatientInfo(patientId);
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_INFO, sourcePatientInfo);
 		
+		String orgOID = DocumentUtil.getOrganisationOID();
 		String providerId = form.getSubmitter().getValue().toString();
 		PersonName personName = DocumentUtil.getPersonNameForProvider(providerId);
-		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, form.getAssigningAuthorityId(),
-		    personName.getGivenName(), personName.getFamilyName(), providerId);
+		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, orgOID, personName.getGivenName(),
+		    personName.getFamilyName(), providerId);
 		ClassificationType authorClassification = new ClassificationType();
 		authorClassification.setId(DocumentConstants.DOC_ID_PREFIX + idCounter++);
 		authorClassification.setClassifiedObject(extrinsicObj.getId());
@@ -175,7 +176,7 @@ public final class ProvideAndRegisterDocGenerator {
 		addExternalIdentifier(regPackage, subUniqueId, XDSConstants.UUID_XDSSubmissionSet_uniqueId,
 		    DocumentConstants.TEXT_SUBSET_UNIQUE_ID);
 		
-		addExternalIdentifier(regPackage, DocumentUtil.getOrganisationOID(), XDSConstants.UUID_XDSSubmissionSet_sourceId,
+		addExternalIdentifier(regPackage, orgOID, XDSConstants.UUID_XDSSubmissionSet_sourceId,
 		    DocumentConstants.TEXT_SUBSET_SOURCE_ID);
 		
 		addObjectToRequest(registryRequest, regPackage);

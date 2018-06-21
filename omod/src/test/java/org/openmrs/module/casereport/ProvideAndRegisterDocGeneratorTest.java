@@ -51,7 +51,6 @@ public class ProvideAndRegisterDocGeneratorTest extends BaseModuleWebContextSens
 		
 		CaseReport caseReport = Context.getService(CaseReportService.class).getCaseReport(1);
 		CaseReportForm form = new CaseReportForm(caseReport);
-		form.setAssigningAuthorityId("Test_Impl");
 		Provider provider = Context.getProviderService().getProvider(1);
 		UuidAndValue submitter = new UuidAndValue(provider.getUuid(), provider.getIdentifier());
 		form.setSubmitter(submitter);
@@ -74,7 +73,8 @@ public class ProvideAndRegisterDocGeneratorTest extends BaseModuleWebContextSens
 		    getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[2]"));
 		assertEquals("PID-7|19750408", getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[3]"));
 		assertEquals("PID-8|M", getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[4]"));
-		assertEquals("Test^User^Super^^^^^^&Test_Impl&ISO", getElement(doc, "//Slot[@name='authorPerson']/ValueList/Value"));
+		assertEquals("Test^User^Super^^^^^^&" + DocumentUtil.getOrganisationOID() + "&ISO",
+		    getElement(doc, "//Slot[@name='authorPerson']/ValueList/Value"));
 		final String scheme = "classificationScheme";
 		assertEquals(
 		    "N",
@@ -124,7 +124,7 @@ public class ProvideAndRegisterDocGeneratorTest extends BaseModuleWebContextSens
 		        + XDSConstants.UUID_XDSSubmissionSet_uniqueId + "']", "value", DocumentConstants.OID_PREFIX));
 		
 		assertEquals(
-		    "1.3.6.1.4.1.21367.2010.1.2",
+		    DocumentUtil.getOrganisationOID(),
 		    getAttribute(doc, "//ExternalIdentifier[@" + idScheme + "='" + XDSConstants.UUID_XDSSubmissionSet_sourceId
 		            + "']", "value"));
 		

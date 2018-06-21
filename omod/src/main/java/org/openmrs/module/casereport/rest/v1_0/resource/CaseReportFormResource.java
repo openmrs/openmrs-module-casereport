@@ -51,8 +51,6 @@ public class CaseReportFormResource extends DelegatingSubResource<CaseReportForm
 		description.addProperty("mostRecentArvStopReason");
 		description.addProperty("lastVisitDate");
 		description.addProperty("submitter");
-		description.addProperty("assigningAuthorityId");
-		description.addProperty("assigningAuthorityName");
 		description.addProperty("comments");
 		return description;
 	}
