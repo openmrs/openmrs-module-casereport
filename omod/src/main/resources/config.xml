@@ -160,8 +160,11 @@
         <description>The display name of the practice setting</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.organisationIdentifier</property>
-        <description>Identifier of the entity that submits case report documents, MUST be an OID</description>
+        <property>${project.parent.artifactId}.organisationOID</property>
+        <description>
+            Identifier of the entity that submits case report documents, MUST be an OID,
+            please refer to the module documentation for the constraints around the allowed values.
+        </description>
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.organisationExtension</property>
