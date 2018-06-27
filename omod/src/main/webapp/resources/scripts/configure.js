@@ -25,9 +25,7 @@ angular.module("casereports.configure", [
 
             $scope.optionsSettings = [
                 'casereport.autoSubmitProviderUuid',
-                'casereport.enableCors',
-                'casereport.healthCareFacilityTypeDisplayName',
-                'casereport.practiceSettingDisplayName'
+                'casereport.enableCors'
             ];
 
             $scope.confidentialityCodes = [

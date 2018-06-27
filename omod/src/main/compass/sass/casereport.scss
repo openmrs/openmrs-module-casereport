@@ -80,6 +80,13 @@ a.casereport-no-underline:hover {
   background-color: lighten($lighterGrey, 2%);
 }
 
+.casereport-info {
+  @include casereport-lozenge(inherit, #FFF5A3, 0.9em);
+  background-color: #FBFFED;
+  padding: 15px;
+  color: $darkGrey;
+}
+
 .casereport-no-border {
   border: 1px;
 }
@@ -133,8 +140,13 @@ a.casereport-no-underline:hover {
   border-bottom: 1px solid #F5F5F5 !important;
 }
 
-.casereport-small-faint {
+.casereport-xx-small-faint {
   font-size: x-small;
+  color: $darkGrey;
+}
+
+.casereport-small-faint {
+  font-size: small;
   color: $darkGrey;
 }
 

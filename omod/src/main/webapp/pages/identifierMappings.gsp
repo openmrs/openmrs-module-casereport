@@ -41,7 +41,7 @@
         <table id="casereport-idMapping-table">
             <tr>
                 <th>${ ui.message("PatientIdentifier.type") }</th>
-                <th>${ ui.message("casereport.clientRegistryId") }</th>
+                <th>${ ui.message("casereport.universalIdentifier") }</th>
             </tr>
             <tr ng-repeat="(key, value) in idMappings">
                 <td style="width: 65%">{{ getIdTypeByUuid(key) | omrs.display }}</td>
@@ -50,6 +50,17 @@
                 </td>
             </tr>
         </table>
+        <br />
+        <p class="casereport-small-faint">
+            <i>
+                Each listed local identifier type should be mapped to its own identifier domain in OpenEMPI,
+                each value must match the Universal Identifier field of the mapped identifier domain in OpenEMPI.
+            </i>
+        </p>
+        <br />
+        <div class="casereport-info">
+            <i class="icon-info-sign" style="font-size: medium"></i> NOTE: You might have to create new identifier domains in OpenEMPI that map to your local ones.
+        </div>
         <br />
         <p>
             <button type="submit" class="confirm right">

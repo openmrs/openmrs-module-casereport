@@ -125,7 +125,7 @@
                     <tr>
                         <th valign="top">${ui.message("casereport.viralLoad")}</th>
                         <td valign="top" ng-repeat="viralLoad in caseReport.reportForm.mostRecentViralLoads">
-                            {{ viralLoad.value }} <span class="casereport-small-faint">({{ viralLoad.date | serverDate}})</span>
+                            {{ viralLoad.value }} <span class="casereport-xx-small-faint">({{ viralLoad.date | serverDate}})</span>
                         </td>
                         <td ng-show="caseReport.reportForm.mostRecentViralLoads.length < 3">
                             <span ng-show="caseReport.reportForm.mostRecentViralLoads.length == 0">
@@ -138,7 +138,7 @@
                     <tr>
                         <th valign="top">${ui.message("casereport.cd4Count")}</th>
                         <td valign="top" ng-repeat="cd4Count in caseReport.reportForm.mostRecentCd4Counts">
-                            {{ cd4Count.value }} <span class="casereport-small-faint">({{ cd4Count.date | serverDate}})</span>
+                            {{ cd4Count.value }} <span class="casereport-xx-small-faint">({{ cd4Count.date | serverDate}})</span>
                         </td>
                         <td ng-show="caseReport.reportForm.mostRecentCd4Counts.length < 3">
                             <span ng-show="caseReport.reportForm.mostRecentCd4Counts.length == 0">
@@ -151,7 +151,7 @@
                     <tr>
                         <th valign="top">${ui.message("casereport.hivTest")}</th>
                         <td valign="top" ng-repeat="hivTest in caseReport.reportForm.mostRecentHivTests">
-                            {{ hivTest.value }} <span class="casereport-small-faint">({{ hivTest.date | serverDate}})</span>
+                            {{ hivTest.value }} <span class="casereport-xx-small-faint">({{ hivTest.date | serverDate}})</span>
                         </td>
                         <td ng-show="caseReport.reportForm.mostRecentHivTests.length < 3">
                             <span ng-show="caseReport.reportForm.mostRecentHivTests.length == 0">

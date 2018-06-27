@@ -51,7 +51,7 @@
                     {{ printProperty(setting) }}
                     <span class="casereport-red" ng-show="isRequired(setting)">*</span>
                     <br />
-                    <span class="casereport-small-faint" ng-switch="setting.property">
+                    <span class="casereport-xx-small-faint" ng-switch="setting.property">
                         <span ng-switch-when="casereport.healthCareFacilityTypeCode"
                             ng-bind-html="setting.description">
                         </span>
