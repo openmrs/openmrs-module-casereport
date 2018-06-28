@@ -20,6 +20,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.springframework.stereotype.Controller;
 
@@ -30,6 +32,8 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 public class CrossOriginResourceSharingFilter implements Filter {
+	
+	protected Log log = LogFactory.getLog(getClass());
 	
 	/**
 	 * @see Filter#init(FilterConfig)
@@ -43,9 +47,15 @@ public class CrossOriginResourceSharingFilter implements Filter {
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
 	    throws IOException, ServletException {
 		
+		if (log.isDebugEnabled()) {
+			log.debug("In Cors filter...");
+		}
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		String gpValue = Context.getAdministrationService().getGlobalProperty(CaseReportWebConstants.GP_ENABLE_CORS);
 		if (Boolean.valueOf(gpValue)) {
+			if (log.isDebugEnabled()) {
+				log.debug("Cors is enabled");
+			}
 			HttpServletResponse response = (HttpServletResponse) servletResponse;
 			response.addHeader("Access-Control-Allow-Origin", "*");
 			response.addHeader("Access-Control-Allow-Methods", "GET, POST");
@@ -54,9 +64,17 @@ public class CrossOriginResourceSharingFilter implements Filter {
 			
 			//TODO add GP to disable this filter
 			if (request.getMethod().equals("OPTIONS")) {
+				
+				if (log.isDebugEnabled()) {
+					log.debug("Cors filter responding with Ok status");
+				}
 				response.setStatus(HttpServletResponse.SC_OK);
 				
 				return;
+			}
+		} else {
+			if (log.isDebugEnabled()) {
+				log.debug("Cors is disabled");
 			}
 		}
 		
