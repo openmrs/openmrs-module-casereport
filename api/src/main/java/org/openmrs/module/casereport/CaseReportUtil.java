@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
  * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
- *
+ * 
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
@@ -52,8 +52,8 @@ public class CaseReportUtil {
 	private static Concept getCeilConceptByCode(String code) {
 		Concept concept = Context.getConceptService().getConceptByMapping(code, CaseReportConstants.SOURCE_CIEL_HL7_CODE);
 		if (concept == null) {
-			throw new APIException("Failed to find concept with mapping " + CaseReportConstants.SOURCE_CIEL_HL7_CODE + ":"
-			        + code);
+			throw new APIException(
+			        "Failed to find concept with mapping " + CaseReportConstants.SOURCE_CIEL_HL7_CODE + ":" + code);
 		}
 		return concept;
 	}
@@ -71,10 +71,9 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the 3 most recent viral load observations for the specified patient, they are ordered in
-	 * a way such that the most recent comes first and the earliest is last. Note that the method
-	 * can return less than 3 items in case the patient has had less than 3 of them in total in the
-	 * past.
+	 * Gets the 3 most recent viral load observations for the specified patient, they are ordered in a
+	 * way such that the most recent comes first and the earliest is last. Note that the method can
+	 * return less than 3 items in case the patient has had less than 3 of them in total in the past.
 	 *
 	 * @param patient the patient to match against
 	 * @return a list of the most recent viral load observations
@@ -85,10 +84,9 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the 3 most recent cd4 count observations for the specified patient, they are ordered in
-	 * a way such that the most recent comes first and the earliest is last. Note that the method
-	 * can return less than 3 items in case the patient has had less than 3 of them in total in the
-	 * past.
+	 * Gets the 3 most recent cd4 count observations for the specified patient, they are ordered in a
+	 * way such that the most recent comes first and the earliest is last. Note that the method can
+	 * return less than 3 items in case the patient has had less than 3 of them in total in the past.
 	 *
 	 * @param patient the patient to match against
 	 * @return a list of the most recent cd4 count observations
@@ -99,10 +97,9 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the 3 most HIV test result observations for the specified patient, they are ordered in a
-	 * way such that the most recent comes first and the earliest is last. Note that the method can
-	 * return less than 3 items in case the patient has had less than 3 of them in total in the
-	 * past.
+	 * Gets the 3 most HIV test result observations for the specified patient, they are ordered in a way
+	 * such that the most recent comes first and the earliest is last. Note that the method can return
+	 * less than 3 items in case the patient has had less than 3 of them in total in the past.
 	 *
 	 * @param patient the patient to match against
 	 * @return a list of the most recent HIV test observations
@@ -120,7 +117,8 @@ public class CaseReportUtil {
 	 * @should return the most recent WHO stage observation
 	 */
 	public static Obs getMostRecentWHOStage(Patient patient) {
-		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_WHO_STAGE, 1);
+		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_WHO_STAGE,
+		    1);
 		if (whoStages.isEmpty()) {
 			return null;
 		}
@@ -151,8 +149,7 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the most recent observation for the reason why the specified patient stopped taking
-	 * ARVs.
+	 * Gets the most recent observation for the reason why the specified patient stopped taking ARVs.
 	 *
 	 * @param patient the patient to match against
 	 * @return the most recent observation for the reason why the patient stopped taking ARVs
@@ -200,8 +197,8 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the concept that matches the specified mapping string, the mapping is expected to be of
-	 * the form SOURCE_IDENTIFIER e.g CIEL_856
+	 * Gets the concept that matches the specified mapping string, the mapping is expected to be of the
+	 * form SOURCE_IDENTIFIER e.g CIEL_856
 	 *
 	 * @param mappingString the string to match against
 	 * @param failIfNotFound specifies if an exception should be thrown if no match is found
@@ -239,8 +236,8 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Gets the SqlCohortDefinition that matches the specified trigger name, will throw an
-	 * APIException if multiple cohort queries are found that match the trigger name
+	 * Gets the SqlCohortDefinition that matches the specified trigger name, will throw an APIException
+	 * if multiple cohort queries are found that match the trigger name
 	 *
 	 * @param triggerName the name to match against
 	 * @return the sql cohort query that matches the name
@@ -286,7 +283,7 @@ public class CaseReportUtil {
 	 * @should set the concept mappings in the evaluation context
 	 * @should fail for a task where the last execution time cannot be resolved
 	 */
-	public static void executeTask(TaskDefinition taskDefinition) throws APIException, EvaluationException {
+	public synchronized static void executeTask(TaskDefinition taskDefinition) throws APIException, EvaluationException {
 		if (taskDefinition == null) {
 			throw new APIException("TaskDefinition can't be null");
 		}
@@ -369,11 +366,11 @@ public class CaseReportUtil {
 	}
 	
 	/**
-	 * Creates a case report the specified patient with the specified triggers, if the parent
-	 * already has an existing case report then no new one is created instead the unique triggers
-	 * are added to the existing case report. If the patient already has a case report with all the
-	 * specified triggers then nothing happens.
-	 * 
+	 * Creates a case report the specified patient with the specified triggers, if the parent already
+	 * has an existing case report then no new one is created instead the unique triggers are added to
+	 * the existing case report. If the patient already has a case report with all the specified
+	 * triggers then nothing happens.
+	 *
 	 * @param patient the patient to create a case report for
 	 * @param createNew Specifies if a new case report MUST be created
 	 * @param triggerNames the triggers to add
