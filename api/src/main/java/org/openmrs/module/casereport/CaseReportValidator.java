@@ -36,12 +36,12 @@ public class CaseReportValidator implements Validator {
 	
 	/**
 	 * @see Validator#validate(Object, Errors)
-	 * @should fail if the case report object is null
-	 * @should fail if the patient is null
-	 * @should fail if the report has no trigger added
-	 * @should fail for a new item if the patient already has an existing report item
-	 * @should pass for auto submit item with unique trigger and patient has existing item
-	 * @should pass for a valid case report
+	 * <strong>Should</strong> fail if the case report object is null
+	 * <strong>Should</strong> fail if the patient is null
+	 * <strong>Should</strong> fail if the report has no trigger added
+	 * <strong>Should</strong> fail for a new item if the patient already has an existing report item
+	 * <strong>Should</strong> pass for auto submit item with unique trigger and patient has existing item
+	 * <strong>Should</strong> pass for a valid case report
 	 */
 	@Override
 	public void validate(Object target, Errors errors) {

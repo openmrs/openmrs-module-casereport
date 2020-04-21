@@ -102,7 +102,7 @@ public final class ClinicalDocumentGenerator {
 	 * Generates and returns a ClinicalDocument object from its backing CaseReportForm object
 	 * 
 	 * @return ClinicalDocument object
-	 * @should generate a ClinicalDocument object
+	 * <strong>Should</strong> generate a ClinicalDocument object
 	 */
 	public ClinicalDocument generate() throws ParseException {
 		if (log.isDebugEnabled()) {

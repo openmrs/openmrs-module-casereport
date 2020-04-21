@@ -98,7 +98,7 @@ public class CaseReportValidatorTest extends BaseModuleContextSensitiveTest {
 	/**
 	 * @see CaseReportValidator#validate(Object,Errors)
 	 * @verifies
-	 * @should pass for auto submit item with unique trigger and patient has existing item
+	 * <strong>Should</strong> pass for auto submit item with unique trigger and patient has existing item
 	 */
 	@Test
 	public void validate_passForAutoSubmitItemWithUniqueTriggerAndPatientHasExistingItem() throws Exception {

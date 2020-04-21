@@ -44,16 +44,16 @@ public class CaseReportActivator extends BaseModuleActivator {
 	}
 	
 	/**
-	 * @should fail for a query with no name
-	 * @should fail for a query with no sql
-	 * @should fail for a query with no concept
-	 * @should fail for a query with a none ciel concept
-	 * @should fail for a query with an invalid concept mapping
-	 * @should fail for a query with a none existent concept
-	 * @should ignore a cohort query with a duplicate name
-	 * @should save a cohort queries with a name that matches a retired duplicate
-	 * @should load queries and register them with the reporting module
-	 * @should add the case report tasks if they do not exist
+	 * <strong>Should</strong> fail for a query with no name
+	 * <strong>Should</strong> fail for a query with no sql
+	 * <strong>Should</strong> fail for a query with no concept
+	 * <strong>Should</strong> fail for a query with a none ciel concept
+	 * <strong>Should</strong> fail for a query with an invalid concept mapping
+	 * <strong>Should</strong> fail for a query with a none existent concept
+	 * <strong>Should</strong> ignore a cohort query with a duplicate name
+	 * <strong>Should</strong> save a cohort queries with a name that matches a retired duplicate
+	 * <strong>Should</strong> load queries and register them with the reporting module
+	 * <strong>Should</strong> add the case report tasks if they do not exist
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
