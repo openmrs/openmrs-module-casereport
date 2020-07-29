@@ -77,7 +77,7 @@ public class CaseReportUtil {
 	 *
 	 * @param patient the patient to match against
 	 * @return a list of the most recent viral load observations
-	 * @should return the 3 most recent Viral load observations
+	 * <strong>Should</strong> return the 3 most recent Viral load observations
 	 */
 	public static List<Obs> getMostRecentViralLoads(Patient patient) {
 		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_VIRAL_LOAD, 3);
@@ -90,7 +90,7 @@ public class CaseReportUtil {
 	 *
 	 * @param patient the patient to match against
 	 * @return a list of the most recent cd4 count observations
-	 * @should return the 3 most recent cd4 count observations
+	 * <strong>Should</strong> return the 3 most recent cd4 count observations
 	 */
 	public static List<Obs> getMostRecentCD4counts(Patient patient) {
 		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_CD4_COUNT, 3);
@@ -103,7 +103,7 @@ public class CaseReportUtil {
 	 *
 	 * @param patient the patient to match against
 	 * @return a list of the most recent HIV test observations
-	 * @should return the 3 most recent HIV test observations
+	 * <strong>Should</strong> return the 3 most recent HIV test observations
 	 */
 	public static List<Obs> getMostRecentHIVTests(Patient patient) {
 		return getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_HIV_TEST, 3);
@@ -114,7 +114,7 @@ public class CaseReportUtil {
 	 *
 	 * @param patient the patient to match against
 	 * @return the most recent WHO stage observation
-	 * @should return the most recent WHO stage observation
+	 * <strong>Should</strong> return the most recent WHO stage observation
 	 */
 	public static Obs getMostRecentWHOStage(Patient patient) {
 		List<Obs> whoStages = getMostRecentObsByPatientAndConceptMapping(patient, CaseReportConstants.CIEL_CODE_WHO_STAGE,
@@ -131,7 +131,7 @@ public class CaseReportUtil {
 	 * @param patient the patient to match against
 	 * @param asOfDate reference date
 	 * @return a list of active ARV drug orders
-	 * @should get the active ARV drug orders for the specified patient
+	 * <strong>Should</strong> get the active ARV drug orders for the specified patient
 	 */
 	public static List<DrugOrder> getActiveArvDrugOrders(Patient patient, Date asOfDate) {
 		Concept arvMedset = getCeilConceptByCode(CaseReportConstants.CIEL_CODE_ARV_MED_SET);
@@ -153,7 +153,7 @@ public class CaseReportUtil {
 	 *
 	 * @param patient the patient to match against
 	 * @return the most recent observation for the reason why the patient stopped taking ARVs
-	 * @should return the most recent obs for the reason why the patient stopped taking ARVs
+	 * <strong>Should</strong> return the most recent obs for the reason why the patient stopped taking ARVs
 	 */
 	public static Obs getMostRecentReasonARVsStopped(Patient patient) {
 		List<Obs> reasons = getMostRecentObsByPatientAndConceptMapping(patient,
@@ -169,7 +169,7 @@ public class CaseReportUtil {
 	 *
 	 * @param patient the patient to match against
 	 * @return the last visit for the specified patient
-	 * @should return the last visit for the specified patient
+	 * <strong>Should</strong> return the last visit for the specified patient
 	 */
 	public static Visit getLastVisit(Patient patient) {
 		final List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient, true, false);
@@ -242,10 +242,10 @@ public class CaseReportUtil {
 	 * @param triggerName the name to match against
 	 * @return the sql cohort query that matches the name
 	 * @throws APIException
-	 * @should return null if no cohort query is found that matches the trigger name
-	 * @should fail if multiple cohort queries are found that match the trigger name
-	 * @should not return a retired cohort query
-	 * @should return the matched cohort query
+	 * <strong>Should</strong> return null if no cohort query is found that matches the trigger name
+	 * <strong>Should</strong> fail if multiple cohort queries are found that match the trigger name
+	 * <strong>Should</strong> not return a retired cohort query
+	 * <strong>Should</strong> return the matched cohort query
 	 */
 	public static SqlCohortDefinition getSqlCohortDefinition(String triggerName) throws APIException {
 		SqlCohortDefinition ret = null;
@@ -275,13 +275,13 @@ public class CaseReportUtil {
 	 * @param taskDefinition the scheduler taskDefinition inside which the trigger is being run
 	 * @throws APIException
 	 * @throws EvaluationException
-	 * @should fail if no sql cohort query matches the specified trigger name
-	 * @should create case reports for the matched patients
-	 * @should set the last execution time in the evaluation context
-	 * @should add a new trigger to an existing queue item for the patient
-	 * @should not create a duplicate trigger for the same patient
-	 * @should set the concept mappings in the evaluation context
-	 * @should fail for a task where the last execution time cannot be resolved
+	 * <strong>Should</strong> fail if no sql cohort query matches the specified trigger name
+	 * <strong>Should</strong> create case reports for the matched patients
+	 * <strong>Should</strong> set the last execution time in the evaluation context
+	 * <strong>Should</strong> add a new trigger to an existing queue item for the patient
+	 * <strong>Should</strong> not create a duplicate trigger for the same patient
+	 * <strong>Should</strong> set the concept mappings in the evaluation context
+	 * <strong>Should</strong> fail for a task where the last execution time cannot be resolved
 	 */
 	public synchronized static void executeTask(TaskDefinition taskDefinition) throws APIException, EvaluationException {
 		if (taskDefinition == null) {

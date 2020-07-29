@@ -31,13 +31,13 @@ public class CaseReportTriggerValidator implements Validator {
 	
 	/**
 	 * @see Validator#validate(Object, Errors)
-	 * @should fail if the case report trigger object is null
-	 * @should fail if the trigger name is null
-	 * @should fail if the trigger name is an empty string
-	 * @should fail if the trigger name is a white space character
-	 * @should fail if the case report field is null
-	 * @should fail if a case report with the same trigger already exists for the patient
-	 * @should pass for a valid case report trigger
+	 * <strong>Should</strong> fail if the case report trigger object is null
+	 * <strong>Should</strong> fail if the trigger name is null
+	 * <strong>Should</strong> fail if the trigger name is an empty string
+	 * <strong>Should</strong> fail if the trigger name is a white space character
+	 * <strong>Should</strong> fail if the case report field is null
+	 * <strong>Should</strong> fail if a case report with the same trigger already exists for the patient
+	 * <strong>Should</strong> pass for a valid case report trigger
 	 */
 	@Override
 	public void validate(Object target, Errors errors) {
