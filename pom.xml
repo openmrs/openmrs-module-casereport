@@ -238,6 +238,10 @@
             <name>DCM4CHE Repository</name>
             <url>http://www.dcm4che.org/maven2</url>
         </repository>
+        <repository>
+	        <id>rubygems-releases</id>
+	        <url>http://rubygems-proxy.torquebox.org/releases</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
