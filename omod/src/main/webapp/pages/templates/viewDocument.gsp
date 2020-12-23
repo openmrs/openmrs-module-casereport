@@ -9,11 +9,11 @@
     graphic logo is a trademark of OpenMRS Inc.
 
 -->
-
 <h2>${ui.message('casereport.submitted.document')}</h2>
 
 <br />
-<div class="button-group right">
+
+<div class="button-group right" id="button-group-right">
     <label class="button" onclick="javascript:window.open('http://brynlewis.org/challenge/index.htm', '_blank');">
         <i class="icon-external-link edit-action"></i> ${ui.message("casereport.cdaViewer")}
     </label>
@@ -21,6 +21,7 @@
         <i class="icon-external-link edit-action"></i> ${ui.message("casereport.cdaValidator")}
     </label>
 </div>
+
 <div class="button-group">
     <label class="button" ui-sref="list" title="${ui.message("general.back")}">
         <i class="icon-chevron-left edit-action"></i>

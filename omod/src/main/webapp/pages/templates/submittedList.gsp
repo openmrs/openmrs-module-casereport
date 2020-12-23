@@ -32,7 +32,7 @@
         <td class="casereport-identifier-column" valign="top">{{ cr.patient.patientIdentifier.identifier }}</td>
         <td valign="top">{{ cr.patient.person.personName.display }}</td>
         <td valign="top">{{ cr.patient.person.gender }}</td>
-        <td valign="top">{{ cr.reportForm.triggers | omrs.display }}</td>
+        <td valign="top">{{ cr.reportForm.triggers | omrsDisplay }}</td>
         <td valign="top">{{ cr.resolutionDate | serverDate }}</td>
     </tr>
     </tbody>

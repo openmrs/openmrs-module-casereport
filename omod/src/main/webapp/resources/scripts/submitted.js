@@ -44,6 +44,7 @@ angular.module("casereports.submitted", [
                     }
                 }
             })
+            
     }])
 
     .controller("SubmittedCaseReportsController", ["$scope", "$state", "ngDialog", "CaseReportService",
@@ -79,13 +80,20 @@ angular.module("casereports.submitted", [
 
             $scope.cdaContainerId = 'casereport-document-panel';
             $scope.cda = submittedDocument;
-            $scope.cdaDocument = beautifyXml(submittedDocument);
-            //Append the root closing tag since it's discarded from the last token when beautifying the doc
-            $scope.cdaDocument += ("<span class='casereport-element'>&lt;/ClinicalDocument&gt;</span>\n");
-
+           
+            if (submittedDocument.contents.includes("ClinicalDocument")) {            	
+            	$scope.cdaDocument = beautifyXml(submittedDocument);
+           	 	//Append the root closing tag since it's discarded from the last token when beautifying the doc
+            	$scope.cdaDocument += ("<span class='casereport-element'>&lt;/ClinicalDocument&gt;</span>\n");
+			}
+			else {
+			    document.getElementById("button-group-right").style.display = "none";
+				$scope.cdaDocument = JSON.stringify(JSON.parse(submittedDocument.contents), null, 2);
+			}
+			
             $scope.downloadCdaDoc = function(){
                 var blob = new Blob([ $scope.cda.contents], { type : 'application/xml;charset=utf-8' });
-                saveAs(blob, "cda.xml");
+                (blob, "cda.xml");
             }
 
             $scope.selectCdaDoc = function(){
@@ -101,6 +109,7 @@ angular.module("casereports.submitted", [
                 }
             }
 
+
             $scope.copyCdaDoc = function(){
                 $scope.selectCdaDoc();
                 try {
@@ -112,6 +121,8 @@ angular.module("casereports.submitted", [
                     alert("Ooops! Looks like your browser doesn't support this feature, please try another browser");
                 }
             }
+            
+            
 
             function beautifyXml(xmlDoc){
                 //Getting fancy with some cool decoration of the xml doc

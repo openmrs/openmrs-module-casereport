@@ -71,10 +71,19 @@
                             <option value=""></option>
                             <option ng-repeat="p in providers" value="{{ p.uuid }}"
                                     ng-selected="p.uuid == setting.value">
-                                {{ p | omrs.display }}
+                                {{ p | omrsDisplay }}
                             </option>
                         </select>
-                        <select ng-switch-when="casereport.confidentialityCode"
+                        <select ng-switch-when="casereport.caseReportFormat"
+                                name="{{ setting.property }}" ng-model="settings[\$index].value"
+                                ng-required="isRequired(setting)">
+                            <option value="" ng-disabled="true"></option>
+                            <option ng-repeat="conf in caseReportFormat" value="{{ conf.value }}"
+                                    ng-selected="conf.value == setting.value">
+                                {{ conf.label }}
+                            </option>
+                        </select>
+                      	<select ng-switch-when="casereport.confidentialityCode"
                                 name="{{ setting.property }}" ng-model="settings[\$index].value"
                                 ng-required="isRequired(setting)">
                             <option value="" ng-disabled="true"></option>
@@ -82,7 +91,7 @@
                                     ng-selected="conf.value == setting.value">
                                 {{ conf.label }}
                             </option>
-                        </select>
+                        </select>                   
                         <input ng-switch-when="casereport.openHIMClientPassword" name="{{ setting.property }}"
                                value="{{ setting.value }}" type="password"
                                ng-model="settings[\$index].value" size="43" ng-required="isRequired(setting)" />

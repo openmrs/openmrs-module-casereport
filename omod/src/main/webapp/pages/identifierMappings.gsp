@@ -44,7 +44,7 @@
                 <th>${ ui.message("casereport.universalIdentifier") }</th>
             </tr>
             <tr ng-repeat="(key, value) in idMappings">
-                <td style="width: 65%">{{ getIdTypeByUuid(key) | omrs.display }}</td>
+                <td style="width: 65%">{{ getIdTypeByUuid(key) | omrsDisplay }}</td>
                 <td>
                     <input style="float: right" ng-model="idMappings[key]" value="{{ value }}" size="35" />
                 </td>

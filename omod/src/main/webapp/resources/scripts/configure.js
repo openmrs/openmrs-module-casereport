@@ -33,6 +33,11 @@ angular.module("casereports.configure", [
                 {label:'Restricted', value:'R'},
                 {label:'Very Restricted', value:'V'}
             ];
+            
+            $scope.caseReportFormat = [
+                {label:'HL7 CDA', value:'CDA'},
+                {label:'HL7 FHIR', value:'FHIR'}
+            ];
 
             var params = {q: "casereport", v: "custom:(property,value,description,uuid)"};
 
@@ -40,13 +45,16 @@ angular.module("casereports.configure", [
                 'casereport.autoSubmitProviderUuid': 'Auto Submit Provider',
                 'casereport.openHIMClientId': 'OpenHIM Client Id',
                 'casereport.openHIMClientPassword': 'OpenHIM Client Password',
-                'casereport.openHIMUrl': 'OpenHIM URL'
+                'casereport.openHIMUrl': 'OpenHIM URL',
+				'casereport.caseReportFormat':'Case Report Format'
             };
 
             var settingDescrMap = {
                 'casereport.autoSubmitProviderUuid': 'The provider to set as the submitter of automatically ' +
                     'submitted case reports, must be for a provider account that is either linked to a person ' +
                     'record or has a name with at least 2 name fields specified',
+                    
+                 'casereport.caseReportFormat': 'Format of Case Report, can be either CDA or FHIR',
 
                 'casereport.confidentialityCode': 'The code specifying the level of confidentiality of the CDA document'
             };
