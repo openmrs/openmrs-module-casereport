@@ -43,7 +43,7 @@ public class CaseReportForPatientSearchHandler implements SearchHandler {
 	private SearchQuery query = new SearchQuery.Builder("Allows fetching a case report item for a patient")
 	        .withRequiredParameters(CaseReportRestConstants.PARAM_PATIENT).build();
 	
-	private static final List<String> SUPPORTED_VERSIONS = Arrays.asList("1.11.*", "1.12.*");
+	private static final List<String> SUPPORTED_VERSIONS = Arrays.asList("1.11.*", "1.12.*", "2.1.*", "2.2.*", "2.3.*" );
 	
 	/**
 	 * @see SearchHandler#getSearchConfig()

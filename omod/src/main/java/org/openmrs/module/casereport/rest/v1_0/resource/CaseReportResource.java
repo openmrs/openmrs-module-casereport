@@ -45,7 +45,7 @@ import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOp
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_9.PatientResource1_9;
 
-@Resource(name = CaseReportRestConstants.REST_NAMESPACE + "/casereport", supportedClass = CaseReport.class, supportedOpenmrsVersions = { "1.11.*,1.12.*" })
+@Resource(name = CaseReportRestConstants.REST_NAMESPACE + "/casereport", supportedClass = CaseReport.class, supportedOpenmrsVersions = { "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*"  })
 public class CaseReportResource extends DataDelegatingCrudResource<CaseReport> {
 	
 	/**
