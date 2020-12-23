@@ -164,8 +164,8 @@ public class DocumentUtil {
 	 * @param providerIdentifier the provider identifier to match against
 	 * @return the PersonName of the provider
 	 */
-	public static PersonName getPersonNameForProvider(String providerIdentifier) {
-		Provider provider = Context.getProviderService().getProviderByIdentifier(providerIdentifier);
+	public static PersonName getPersonNameForProvider(String uuid) {
+		Provider provider = Context.getProviderService().getProviderByUuid(uuid);
 		PersonName personName = provider.getPerson().getPersonName();
 		if (personName == null) {
 			String[] names = StringUtils.split(provider.getName().trim());

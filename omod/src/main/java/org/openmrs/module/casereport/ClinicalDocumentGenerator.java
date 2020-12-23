@@ -257,7 +257,7 @@ public final class ClinicalDocumentGenerator {
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String identifier = form.getSubmitter().getValue().toString();
 		assignedAuthor.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), identifier)));
-		PersonName personName = DocumentUtil.getPersonNameForProvider(identifier);
+		PersonName personName = DocumentUtil.getPersonNameForProvider(form.getSubmitter().getUuid());
 		Person person = createPerson(personName);
 		assignedAuthor.setAssignedAuthorChoice(person);
 		assignedAuthor.setRepresentedOrganization(createOrganization());

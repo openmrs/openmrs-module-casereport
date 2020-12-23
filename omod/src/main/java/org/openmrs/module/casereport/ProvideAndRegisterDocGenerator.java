@@ -109,7 +109,7 @@ public final class ProvideAndRegisterDocGenerator {
 		
 		String orgOID = DocumentUtil.getOrganisationOID();
 		String providerId = form.getSubmitter().getValue().toString();
-		PersonName personName = DocumentUtil.getPersonNameForProvider(providerId);
+		PersonName personName = DocumentUtil.getPersonNameForProvider(form.getSubmitter().getUuid());
 		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, orgOID, personName.getGivenName(),
 		    personName.getFamilyName(), providerId);
 		ClassificationType authorClassification = new ClassificationType();
