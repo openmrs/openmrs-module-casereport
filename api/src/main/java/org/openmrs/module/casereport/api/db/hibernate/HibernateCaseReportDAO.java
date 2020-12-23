@@ -25,6 +25,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
 import org.openmrs.module.casereport.CaseReport;
 import org.openmrs.module.casereport.api.db.CaseReportDAO;
+import java.lang.reflect.Method;
 
 /**
  * Default implementation of {@link CaseReportDAO}.
@@ -49,8 +50,21 @@ public class HibernateCaseReportDAO implements CaseReportDAO {
 		return sessionFactory;
 	}
 	
-	private Session getCurrentSession() {
-		return getSessionFactory().getCurrentSession();
+
+	private org.hibernate.Session getCurrentSession() {
+		try {
+			return sessionFactory.getCurrentSession();
+		}
+		catch (NoSuchMethodError ex) {
+			try {
+				Method method = sessionFactory.getClass().getMethod("getCurrentSession", null);
+				return (org.hibernate.Session)method.invoke(sessionFactory, null);
+			}
+			catch (Exception e) {
+				log.error("Failed to get the hibernate session", e);
+			}
+			return null;
+		}
 	}
 	
 	/**
