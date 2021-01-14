@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>casereport</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>2.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>casereport-omod</artifactId>
@@ -265,6 +265,12 @@
             <type>gem</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>fhir2-api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>	
+			<scope>provided</scope>				
+		</dependency> 
 
 	</dependencies>
 

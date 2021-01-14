@@ -19,7 +19,7 @@
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
-	<author>Wyclif</author>
+	<author>Wyclif, Ravilla</author>
 	<description>${project.parent.description}</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
 	<require_version>${openMRSVersion}</require_version>
@@ -34,6 +34,7 @@
         <require_module version="${reportingVersion}">${project.parent.groupId}.reporting</require_module>
         <require_module version="${webservices.restVersion}">${project.parent.groupId}.webservices.rest</require_module>
         <require_module version="${appframeworkVersion}">${project.parent.groupId}.appframework</require_module>
+        <require_module>${project.parent.groupId}.fhir2</require_module>
     </require_modules>
 	<!-- / Required Modules -->
 	
@@ -43,7 +44,7 @@
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 		CaseReport.hbm.xml
-        CaseReportTrigger.hbm.xml
+        	CaseReportTrigger.hbm.xml
 	</mappingFiles>
 
 	<!-- Internationalization -->
@@ -82,14 +83,14 @@
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.openHIMUrl</property>
-        <defaultValue>http://openhim_server_ip:5001/xdsrepository</defaultValue>
+        <defaultValue>http://openhim_server_ip:5001/fhir/casereport</defaultValue>
         <description>
             The URL to the OpenHIM server, typically the path should match the URL pattern
             of the channel for the OpenXDS mediator
         </description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.openHIMClientId</property>
+        <property>${project.parent.artifactId}.openHIMClientId</property>        
         <description>
             The OpenHIM client Id, to be set if basic authentication is required, the client must have
             access to the OpenXDS mediator
@@ -98,6 +99,13 @@
     <globalProperty>
         <property>${project.parent.artifactId}.openHIMClientPassword</property>
         <description>The OpenHIM client password, to be set if basic authentication is required</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.caseReportFormat</property>
+        <defaultValue>FHIR</defaultValue>
+        <description>
+            Case Report format, allowed values are FHIR or CDA
+        </description>
     </globalProperty>
     <globalProperty>
         <property>${project.parent.artifactId}.patientIdFormat</property>
@@ -160,18 +168,18 @@
         <description>The display name of the practice setting</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.organisationOID</property>
+        <property>${project.parent.artifactId}.organizationOID</property>
         <description>
             Identifier of the entity that submits case report documents, MUST be an OID,
             please refer to the module documentation for the constraints around the allowed values.
         </description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.organisationExtension</property>
+        <property>${project.parent.artifactId}.organizationExtension</property>
         <description>Extension of the entity that submits case report documents</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.organisationName</property>
+        <property>${project.parent.artifactId}.organizationName</property>
         <description>Name of the entity that submits case report documents</description>
     </globalProperty>
     <globalProperty>

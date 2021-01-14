@@ -75,9 +75,16 @@ public class CaseReportController extends MainResourceController {
 		
 		SimpleObject so = new SimpleObject();
 		String pnrDoc = DocumentUtil.getSubmittedDocumentContents(cr);
+		
 		Exception e = null;
+
 		if (StringUtils.isNotBlank(pnrDoc)) {
 			try {
+				if (!pnrDoc.contains("ProvideAndRegisterDocumentSetRequest")) {					
+					so.add("contents", pnrDoc);
+					return so;
+				}
+				
 				Object o = webServiceTemplate.getUnmarshaller().unmarshal(new StringSource(pnrDoc));
 				byte[] bytes = ((JAXBElement<ProvideAndRegisterDocumentSetRequestType>) o).getValue().getDocument().get(0)
 				        .getValue();
