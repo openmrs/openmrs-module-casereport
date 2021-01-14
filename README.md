@@ -14,7 +14,12 @@ Provides functionality for generating and submitting case reports for patients.
 
 The module is a Java application which is why you need to install a Java JDK.
 
-If you want to build the master branch you will need Java 7.
+If you want to build the master branch you will need Java 8.
+
+#### OpenMRS
+Case Based Reporting module 2.0 was tested using OpenMRS version 2.2/2.3
+
+P.S: Its important to use Reporting Compatibility OMOD version 2.0.8-SNAPSHOT or higher.
 
 #### Maven
 
@@ -42,9 +47,11 @@ git clone https://github.com/openmrs/openmrs-module-casereport.git
 
 After you have taken care of the [Prerequisites](#prerequisites)
 
-Execute the following from the command line
+Execute the following from the command line.
+(Note: some CBR 1.0 test code needs to be cleaned, so use -DskipTests to create OMOD).
 
 ```bash
 cd openmrs-module-casereport
-mvn clean install
+mvn clean install -DskipTests
+or mvn clean install
 ```
