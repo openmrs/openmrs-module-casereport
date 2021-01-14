@@ -110,11 +110,13 @@ public final class DocumentConstants {
 	
 	public static final String GP_PATIENT_ID_FORMAT = GP_PREFIX + "patientIdFormat";
 	
-	public static final String GP_ORG_ID = GP_PREFIX + "organisationOID";
+	public static final String GP_CASEREPORT_FORMAT = GP_PREFIX + "caseReportFormat";
 	
-	public static final String GP_ORG_EXT = GP_PREFIX + "organisationExtension";
+	public static final String GP_ORG_ID = GP_PREFIX + "organizationOID";
 	
-	public static final String GP_ORG_NAME = GP_PREFIX + "organisationName";
+	public static final String GP_ORG_EXT = GP_PREFIX + "organizationExtension";
+	
+	public static final String GP_ORG_NAME = GP_PREFIX + "organizationName";
 	
 	public static final String GP_CONFIDENTIALITY_CODE = GP_PREFIX + "confidentialityCode";
 	

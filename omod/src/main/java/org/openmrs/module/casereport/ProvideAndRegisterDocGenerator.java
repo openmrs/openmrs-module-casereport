@@ -107,7 +107,7 @@ public final class ProvideAndRegisterDocGenerator {
 		String[] sourcePatientInfo = createPatientInfo(patientId);
 		InfosetUtil.addOrOverwriteSlot(extrinsicObj, XDSConstants.SLOT_NAME_SOURCE_PATIENT_INFO, sourcePatientInfo);
 		
-		String orgOID = DocumentUtil.getOrganisationOID();
+		String orgOID = DocumentUtil.getOrganizationOID();
 		String providerId = form.getSubmitter().getValue().toString();
 		PersonName personName = DocumentUtil.getPersonNameForProvider(form.getSubmitter().getUuid());
 		String authorId = String.format(DocumentConstants.PROV_ID_FORMAT, orgOID, personName.getGivenName(),

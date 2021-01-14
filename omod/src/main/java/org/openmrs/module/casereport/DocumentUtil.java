@@ -104,29 +104,29 @@ public class DocumentUtil {
 	}
 	
 	/**
-	 * Gets the value of the organisation OID global property
+	 * Gets the value of the Organization OID global property
 	 *
-	 * @return the organisation's OID
+	 * @return the Organization's OID
 	 */
-	public static String getOrganisationOID() {
+	public static String getOrganizationOID() {
 		return getGlobalProperty(DocumentConstants.GP_ORG_ID);
 	}
 	
 	/**
-	 * Gets the value of the organisation extension global property
+	 * Gets the value of the Organization extension global property
 	 *
-	 * @return the organisation's extension
+	 * @return the Organization's extension
 	 */
-	public static String getOrganisationExtension() {
+	public static String getOrganizationExtension() {
 		return getGlobalProperty(DocumentConstants.GP_ORG_EXT);
 	}
 	
 	/**
-	 * Gets the value of the organisation name global property
+	 * Gets the value of the Organization name global property
 	 *
-	 * @return the organisation's name
+	 * @return the Organization's name
 	 */
-	public static String getOrganisationName() {
+	public static String getOrganizationName() {
 		return getGlobalProperty(DocumentConstants.GP_ORG_NAME);
 	}
 	
@@ -280,5 +280,10 @@ public class DocumentUtil {
 		
 		throw new APIException("No HIE identifier mapped to identifier type with uuid: " + idTypeUuid);
 	}
+	
+	public static String getCaseReportFormat() {
+		return getGlobalProperty(DocumentConstants.GP_CASEREPORT_FORMAT);		
+	}
+
 	
 }

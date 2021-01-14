@@ -115,7 +115,7 @@ public final class ClinicalDocumentGenerator {
 		cdaDocument.setRealmCode(new SET<>(new CS<>(BindingRealm.UniversalRealmOrContextUsedInEveryInstance)));
 		cdaDocument.setTypeId(DocumentConstants.TYPE_ID_ROOT, DocumentConstants.TEXT_EXTENSION);
 		cdaDocument.setTemplateId(Arrays.asList(new II(DocumentConstants.TEMPLATE_IHE_MED_DOC)));
-		cdaDocument.setId(DocumentUtil.getOrganisationOID(), form.getReportUuid());
+		cdaDocument.setId(DocumentUtil.getOrganizationOID(), form.getReportUuid());
 		cdaDocument.setCode(createCEFromGP(DocumentConstants.GP_CONCEPT_MAPPING_PUBLIC_HEALTH_CR));
 		cdaDocument.setTitle(DocumentConstants.TEXT_TITLE);
 		Calendar calendar = Calendar.getInstance();
@@ -235,13 +235,13 @@ public final class ClinicalDocumentGenerator {
 	/**
 	 * Creates an Organization
 	 *
-	 * @return an Organisation object
+	 * @return an Organization object
 	 */
 	private Organization createOrganization() {
 		Organization org = new Organization();
-		org.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), DocumentUtil.getOrganisationExtension())));
+		org.setId(SET.createSET(new II(DocumentUtil.getOrganizationOID(), DocumentUtil.getOrganizationExtension())));
 		org.setName(SET.createSET(new ON()));
-		org.getName().get(0).getParts().add(new ENXP(DocumentUtil.getOrganisationName()));
+		org.getName().get(0).getParts().add(new ENXP(DocumentUtil.getOrganizationName()));
 		
 		return org;
 	}
@@ -256,7 +256,7 @@ public final class ClinicalDocumentGenerator {
 		author.setTime(Calendar.getInstance());
 		AssignedAuthor assignedAuthor = new AssignedAuthor();
 		String identifier = form.getSubmitter().getValue().toString();
-		assignedAuthor.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), identifier)));
+		assignedAuthor.setId(SET.createSET(new II(DocumentUtil.getOrganizationOID(), identifier)));
 		PersonName personName = DocumentUtil.getPersonNameForProvider(form.getSubmitter().getUuid());
 		Person person = createPerson(personName);
 		assignedAuthor.setAssignedAuthorChoice(person);
@@ -293,10 +293,10 @@ public final class ClinicalDocumentGenerator {
 	 */
 	private Custodian createCustodian() {
 		CustodianOrganization custodianOrganization = new CustodianOrganization();
-		custodianOrganization.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), DocumentUtil
-		        .getOrganisationExtension())));
+		custodianOrganization.setId(SET.createSET(new II(DocumentUtil.getOrganizationOID(), DocumentUtil
+		        .getOrganizationExtension())));
 		custodianOrganization.setName(new ON());
-		custodianOrganization.getName().getParts().add(new ENXP(DocumentUtil.getOrganisationName()));
+		custodianOrganization.getName().getParts().add(new ENXP(DocumentUtil.getOrganizationName()));
 		AssignedCustodian assignedCustodian = new AssignedCustodian(custodianOrganization);
 		
 		return new Custodian(assignedCustodian);
@@ -697,7 +697,7 @@ public final class ClinicalDocumentGenerator {
 		
 		Observation observation = new Observation(x_ActMoodDocumentObservation.Eventoccurrence, questionConcept);
 		observation.setTemplateId(LIST.createLIST(new II(DocumentConstants.OBS_TEMPLATE_ID_ROOT)));
-		observation.setId(SET.createSET(new II(DocumentUtil.getOrganisationOID(), new Long(System.currentTimeMillis())
+		observation.setId(SET.createSET(new II(DocumentUtil.getOrganizationOID(), new Long(System.currentTimeMillis())
 		        .toString())));
 		observation.setValue(value);
 		observation.setStatusCode(statusCode);

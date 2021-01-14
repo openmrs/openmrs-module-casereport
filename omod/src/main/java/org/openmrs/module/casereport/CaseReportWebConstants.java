@@ -13,4 +13,6 @@ public class CaseReportWebConstants {
 	
 	public static final String GP_ENABLE_CORS = CaseReportConstants.MODULE_ID + ".enableCors";
 	
+	public static final String ORG_NAME = CaseReportConstants.MODULE_ID + ".organizationName";
+	
 }

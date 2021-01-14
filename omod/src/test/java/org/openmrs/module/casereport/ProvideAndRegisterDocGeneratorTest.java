@@ -73,7 +73,7 @@ public class ProvideAndRegisterDocGeneratorTest extends BaseModuleWebContextSens
 		    getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[2]"));
 		assertEquals("PID-7|19750408", getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[3]"));
 		assertEquals("PID-8|M", getElement(doc, "//Slot[@name='sourcePatientInfo']/ValueList/Value[4]"));
-		assertEquals("Test^User^Super^^^^^^&" + DocumentUtil.getOrganisationOID() + "&ISO",
+		assertEquals("Test^User^Super^^^^^^&" + DocumentUtil.getOrganizationOID() + "&ISO",
 		    getElement(doc, "//Slot[@name='authorPerson']/ValueList/Value"));
 		final String scheme = "classificationScheme";
 		assertEquals(
@@ -124,7 +124,7 @@ public class ProvideAndRegisterDocGeneratorTest extends BaseModuleWebContextSens
 		        + XDSConstants.UUID_XDSSubmissionSet_uniqueId + "']", "value", DocumentConstants.OID_PREFIX));
 		
 		assertEquals(
-		    DocumentUtil.getOrganisationOID(),
+		    DocumentUtil.getOrganizationOID(),
 		    getAttribute(doc, "//ExternalIdentifier[@" + idScheme + "='" + XDSConstants.UUID_XDSSubmissionSet_sourceId
 		            + "']", "value"));
 		
