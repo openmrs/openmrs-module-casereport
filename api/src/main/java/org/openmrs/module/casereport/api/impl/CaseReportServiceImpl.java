@@ -124,11 +124,7 @@ public class CaseReportServiceImpl extends BaseOpenmrsService implements CaseRep
 		List<CaseReport> caseReports = crs.getCaseReports(patient, false, null, null, getQueueStatuses());
 		if (caseReports.size() == 0) {
 			return null;
-		} else if (caseReports.size() > 1) {
-			throw new APIException("Found multiple case reports(" + caseReports.size() + ") that match the patient with id:"
-			        + patient.getId());
-		}
-		
+		} 
 		return caseReports.get(0);
 	}
 	
