@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-
-    This Source Code Form is subject to the terms of the Mozilla Public License,
-    v. 2.0. If a copy of the MPL was not distributed with this file, You can
-    obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
-    the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
-
-    Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
-    graphic logo is a trademark of OpenMRS Inc.
-
--->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -220,23 +207,23 @@
 		<repository>
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
-			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<url>https://mavenrepo.openmrs.org/public</url>
 		</repository>
         <repository>
             <id>central</id>
             <name>Maven Repository Switchboard</name>
             <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
         </repository>
         <repository>
             <id>marc-te-main</id>
             <name>MARC-HI Technology Exchange Private Maven Repository</name>
-            <url>http://te.marc-hi.ca/mvn</url>
+            <url>https://te.marc-hi.ca/mvn</url>
         </repository>
         <repository>
             <id>dcm4che-repo</id>
             <name>DCM4CHE Repository</name>
-            <url>http://www.dcm4che.org/maven2</url>
+            <url>https://www.dcm4che.org/maven2</url>
         </repository>
         <repository>
 	        <id>rubygems-releases</id>
@@ -248,7 +235,7 @@
 		<pluginRepository>
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
-			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<url>https://mavenrepo.openmrs.org/public</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -259,12 +246,12 @@
         <repository>
             <id>openmrs-repo-modules</id>
             <name>OpenMRS Modules</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules</url>
+            <url>https://mavenrepo.openmrs.org/modules</url>
         </repository>
         <snapshotRepository>
             <id>openmrs-repo-snapshots</id>
             <name>OpenMRS Snapshots</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+            <url>https://mavenrepo.openmrs.org/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
