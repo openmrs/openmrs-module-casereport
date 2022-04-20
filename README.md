@@ -52,6 +52,6 @@ Execute the following from the command line.
 
 ```bash
 cd openmrs-module-casereport
-mvn clean install -DskipTests
+mvn clean install -DskipTests -Dlicense.skip
 or mvn clean install
 ```
