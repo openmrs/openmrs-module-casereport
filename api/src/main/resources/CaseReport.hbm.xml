@@ -33,9 +33,7 @@
 
         <property name="status" length="50" not-null="true">
             <type name="org.hibernate.type.EnumType">
-                <param name="enumClass">
-                    ${project.parent.groupId}.${project.parent.artifactId}.CaseReport$Status
-                </param>
+                <param name="enumClass">${project.parent.groupId}.${project.parent.artifactId}.CaseReport$Status</param>
                 <param name="type">12</param>
             </type>
         </property>
